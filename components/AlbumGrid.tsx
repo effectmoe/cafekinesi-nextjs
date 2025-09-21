@@ -1,15 +1,19 @@
+'use client'
+
 import AlbumCard from "./AlbumCard";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import aboutImage from "@/assets/about.webp";
-import schoolImage from "@/assets/school.webp";
-import instructorImage from "@/assets/instructor.webp";
-import blogImage from "@/assets/blog.webp";
-import aromaImage from "@/assets/aroma.webp";
-import memberImage from "@/assets/member.webp";
-import hiddenHeroImage from "@/assets/hidden-content-hero.webp";
-import kinesiTherapyImage from "@/assets/kinesi-therapy.webp";
-import aromaSetupImage from "@/assets/aroma-setup.webp";
+import Link from "next/link";
+
+// Placeholder images - will be replaced with Sanity images
+const aboutImage = "/images/about.webp";
+const schoolImage = "/images/school.webp";
+const instructorImage = "/images/instructor.webp";
+const blogImage = "/images/blog.webp";
+const aromaImage = "/images/aroma.webp";
+const memberImage = "/images/member.webp";
+const hiddenHeroImage = "/images/hidden-content-hero.webp";
+const kinesiTherapyImage = "/images/kinesi-therapy.webp";
+const aromaSetupImage = "/images/aroma-setup.webp";
 
 const AlbumGrid = () => {
   const [showHiddenContent, setShowHiddenContent] = useState(false);

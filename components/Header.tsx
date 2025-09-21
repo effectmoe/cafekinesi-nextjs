@@ -1,7 +1,9 @@
+'use client'
+
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import logo from "@/assets/logo.jpeg";
+import Link from "next/link";
+const logo = "/images/logo.jpeg";
 
 const Header = () => {
   const navItems = ["カフェキネシについて", "スクール", "インストラクター", "ブログ", "アロマ", "メンバー"];

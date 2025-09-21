@@ -1,3 +1,5 @@
+'use client'
+
 const SocialLinks = () => {
   const socialLinks = [
     { name: "Facebook", url: "#" },

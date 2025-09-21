@@ -1,17 +1,19 @@
+'use client'
+
 import BlogCard from "./BlogCard";
 import { useScheduledPosts } from '@/hooks/useScheduledPosts';
-import { urlFor } from '@/lib/sanity';
+import { urlFor } from '@/lib/sanity.client';
 
 // ローカルの画像をインポート（フォールバック用）
-import blog1 from "@/assets/blog-1.webp";
-import blog2 from "@/assets/blog-2.webp";
-import blog3 from "@/assets/blog-3.webp";
-import blog4 from "@/assets/blog-4.webp";
-import blog5 from "@/assets/blog-5.webp";
-import blog6 from "@/assets/blog-6.webp";
-import blog7 from "@/assets/blog-7.webp";
-import blog8 from "@/assets/blog-8.webp";
-import blog9 from "@/assets/blog-9.webp";
+const blog1 = "/images/blog-1.webp";
+const blog2 = "/images/blog-2.webp";
+const blog3 = "/images/blog-3.webp";
+const blog4 = "/images/blog-4.webp";
+const blog5 = "/images/blog-5.webp";
+const blog6 = "/images/blog-6.webp";
+const blog7 = "/images/blog-7.webp";
+const blog8 = "/images/blog-8.webp";
+const blog9 = "/images/blog-9.webp";
 
 interface BlogPost {
   _id: string;

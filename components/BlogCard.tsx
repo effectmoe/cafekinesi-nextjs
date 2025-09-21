@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client'
+
+import Link from 'next/link';
 
 interface BlogCardProps {
   image: string;
@@ -12,11 +14,7 @@ interface BlogCardProps {
 const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProps) => {
   // プリロード用の関数
   const handleMouseEnter = () => {
-    if (slug) {
-      const slugStr = typeof slug === 'string' ? slug : slug.current;
-      // React Routerのプリロード
-      import('../pages/BlogPost');
-    }
+    // Next.jsでは自動的にプリロードされるため、特別な処理は不要
   };
 
   const content = (
