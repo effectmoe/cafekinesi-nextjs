@@ -1,28 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
-import {
-  initPerformanceMonitoring,
-  measurePageLoad,
-  measureResourceLoading,
-  monitorMemoryUsage
-} from '@/lib/performance'
-
 interface PerformanceOptimizerProps {
   children: React.ReactNode
 }
 
+// パフォーマンス監視を完全に無効化（web-vitalsのインポートエラーを回避）
 export function PerformanceOptimizer({ children }: PerformanceOptimizerProps) {
-  useEffect(() => {
-    // パフォーマンス監視の初期化（一時的に無効化）
-    // TODO: web-vitals v4のAPI変更に対応後、再度有効化する
-    // initPerformanceMonitoring()
-    // measurePageLoad()
-    // measureResourceLoading()
-    // monitorMemoryUsage()
-
-    console.log('Performance monitoring temporarily disabled due to web-vitals API changes')
-  }, [])
-
+  // パフォーマンス監視機能は一時的に削除
+  // TODO: 将来的に再実装する場合は、web-vitals v4の新しいAPIに対応する必要がある
   return <>{children}</>
 }
