@@ -36,6 +36,9 @@ export function AccessibilityProvider({
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'extra-large'>('normal')
 
   useEffect(() => {
+    // ブラウザ環境でのみ実行
+    if (typeof window === 'undefined') return
+
     // メディアクエリの監視
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const prefersHighContrast = window.matchMedia('(prefers-contrast: high)')
@@ -46,8 +49,13 @@ export function AccessibilityProvider({
     const handleMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
     const handleContrastChange = (e: MediaQueryListEvent) => setHighContrast(e.matches)
 
-    prefersReducedMotion.addEventListener('change', handleMotionChange)
-    prefersHighContrast.addEventListener('change', handleContrastChange)
+    // addEventListenerメソッドの存在確認
+    if (prefersReducedMotion.addEventListener) {
+      prefersReducedMotion.addEventListener('change', handleMotionChange)
+    }
+    if (prefersHighContrast.addEventListener) {
+      prefersHighContrast.addEventListener('change', handleContrastChange)
+    }
 
     // 開発環境でのアクセシビリティ監査
     if (enableDevAudit) {
@@ -68,14 +76,22 @@ export function AccessibilityProvider({
 
       return () => {
         clearInterval(intervalId)
-        prefersReducedMotion.removeEventListener('change', handleMotionChange)
-        prefersHighContrast.removeEventListener('change', handleContrastChange)
+        if (prefersReducedMotion.removeEventListener) {
+          prefersReducedMotion.removeEventListener('change', handleMotionChange)
+        }
+        if (prefersHighContrast.removeEventListener) {
+          prefersHighContrast.removeEventListener('change', handleContrastChange)
+        }
       }
     }
 
     return () => {
-      prefersReducedMotion.removeEventListener('change', handleMotionChange)
-      prefersHighContrast.removeEventListener('change', handleContrastChange)
+      if (prefersReducedMotion?.removeEventListener) {
+        prefersReducedMotion.removeEventListener('change', handleMotionChange)
+      }
+      if (prefersHighContrast?.removeEventListener) {
+        prefersHighContrast.removeEventListener('change', handleContrastChange)
+      }
     }
   }, [enableDevAudit])
 
