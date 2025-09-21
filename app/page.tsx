@@ -46,6 +46,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const page = await getHomepage()
 
+  // Homepageデータがない場合もデフォルトレイアウトを表示
+  if (!page) {
+    console.log('[HomePage] No homepage data found, showing default layout')
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -58,5 +63,3 @@ export default async function HomePage() {
     </div>
   )
 }
-
-export const dynamic = 'force-dynamic'
