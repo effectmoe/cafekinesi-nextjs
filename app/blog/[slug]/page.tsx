@@ -1,4 +1,4 @@
-import { sanityFetch } from '@/lib/sanity.client'
+import { sanityFetch, urlFor } from '@/lib/sanity.client'
 import { SanityImage } from '@/components/SanityImage'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
@@ -106,7 +106,25 @@ export default async function BlogPostPage({
 
       {post.content && (
         <div className="prose prose-lg max-w-none">
-          <PortableText value={post.content} />
+          <PortableText
+            value={post.content}
+            components={{
+              types: {
+                image: ({value}: any) => {
+                  if (!value?.asset?._ref) {
+                    return null
+                  }
+                  return (
+                    <img
+                      src={urlFor(value).width(800).height(450).url()}
+                      alt={value.alt || ''}
+                      className="w-full h-auto rounded-lg my-8"
+                    />
+                  )
+                }
+              }
+            }}
+          />
         </div>
       )}
     </article>
