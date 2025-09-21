@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image';
+
 interface AlbumCardProps {
   image: string;
   title: string;
@@ -11,11 +13,13 @@ interface AlbumCardProps {
 const AlbumCard = ({ image, title, artist, backgroundClass, className = "" }: AlbumCardProps) => {
   return (
     <div className={`album-card ${backgroundClass} p-8 rounded-none ${className}`}>
-      <div className="aspect-square mb-6">
-        <img 
-          src={image} 
+      <div className="aspect-square relative mb-6">
+        <Image
+          src={image}
           alt={`${title} by ${artist}`}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <div className="space-y-1">
