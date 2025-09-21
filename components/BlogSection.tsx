@@ -135,20 +135,37 @@ const BlogSection = async () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {usingSanityData ? (
           // Sanityからのデータを表示
-          displayPosts.map((post: any) => (
-            <BlogCard
-              key={post._id}
-              image={post.mainImage ? urlFor(post.mainImage).width(400).height(300).quality(80).url() : blog1}
-              title={post.title}
-              excerpt={post.excerpt}
-              date={new Date(post.publishedAt).toLocaleDateString('ja-JP', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-              }).replace(/\//g, '.')}
-              slug={post.slug}
-            />
-          ))
+          displayPosts.map((post: any) => {
+            // 画像URLを安全に生成
+            let imageUrl = blog1; // デフォルト画像
+            if (post.mainImage?.asset) {
+              try {
+                imageUrl = urlFor(post.mainImage)
+                  .width(400)
+                  .height(300)
+                  .quality(80)
+                  .format('webp')
+                  .url();
+              } catch (error) {
+                console.warn('Image URL generation failed:', error);
+              }
+            }
+
+            return (
+              <BlogCard
+                key={post._id}
+                image={imageUrl}
+                title={post.title}
+                excerpt={post.excerpt}
+                date={new Date(post.publishedAt).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                }).replace(/\//g, '.')}
+                slug={post.slug}
+              />
+            );
+          })
         ) : (
           // デフォルトデータを表示
           displayPosts.map((post: any) => (

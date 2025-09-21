@@ -25,6 +25,13 @@ const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProp
           alt={title}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            // 画像読み込みエラー時のフォールバック
+            const target = e.target as HTMLImageElement;
+            if (!target.src.includes('/images/blog-1.webp')) {
+              target.src = '/images/blog-1.webp';
+            }
+          }}
         />
       </div>
       <div className="space-y-3">

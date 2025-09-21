@@ -15,7 +15,7 @@ export const client = createClient({
   projectId: projectId.trim(),
   dataset: dataset.trim(),
   apiVersion: apiVersion.trim(),
-  useCdn: false,
+  useCdn: true, // 本番環境ではCDNを有効にして画像配信を安定化
   perspective: 'published',
 })
 
