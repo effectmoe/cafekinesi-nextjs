@@ -35,8 +35,11 @@ const BlogSection = async () => {
   let error: any = null;
 
   try {
+    console.log('[BlogSection] Fetching posts from Sanity...');
     const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
+    console.log('[BlogSection] Raw posts data:', posts);
     blogPosts = posts || [];
+    console.log('[BlogSection] Processed posts count:', blogPosts.length);
   } catch (err) {
     console.error('[BlogSection] Error fetching posts:', err);
     error = err;
