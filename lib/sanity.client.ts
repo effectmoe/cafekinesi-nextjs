@@ -1,70 +1,87 @@
-import { createClient } from 'next-sanity'
+import { createClient, type QueryParams } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
-const projectId = (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590').trim()
-const dataset = (process.env.NEXT_PUBLIC_SANITY_DATASET || 'production').trim()
-const apiVersion = (process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01').trim()
+// 環境変数の取得と検証
+export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
+export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+export const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
 
-// Validate projectId format - must be non-empty
-if (!projectId || projectId.trim() === '') {
-  throw new Error(`Sanity project ID is required but got: ${projectId}`)
+// サーバーサイドでのデバッグ出力
+if (typeof window === 'undefined') {
+  console.log('[Sanity Config] Initializing with:', {
+    projectId,
+    dataset,
+    apiVersion,
+    hasToken: !!process.env.NEXT_PUBLIC_SANITY_API_TOKEN
+  })
 }
 
+// Sanityクライアントの作成
 export const client = createClient({
-  projectId: projectId.trim(),
-  dataset: dataset.trim(),
-  apiVersion: apiVersion.trim(),
-  useCdn: true, // 本番環境ではCDNを有効にして画像配信を安定化
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: true,
   perspective: 'published',
 })
 
+// プレビュー用クライアント
 export const previewClient = createClient({
-  projectId: projectId.trim(),
-  dataset: dataset.trim(),
-  apiVersion: apiVersion.trim(),
+  projectId,
+  dataset,
+  apiVersion,
   useCdn: false,
   perspective: 'previewDrafts',
-  token: process.env.SANITY_API_TOKEN,
+  token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
 })
 
+// 画像URLビルダー
 const builder = imageUrlBuilder(client)
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 
-// Re-export sanityFetch from next-sanity for consistency with existing code
-export async function sanityFetch<T = any>(
-  query: string,
-  params: Record<string, any> = {},
-  options: { next?: NextFetchRequestConfig } = {}
-): Promise<T> {
+// Next.js App Router用のsanityFetch関数（公式推奨パターン）
+export async function sanityFetch<QueryString extends string>(
+  query: QueryString,
+  params: QueryParams = {},
+  options: {
+    revalidate?: number | false
+    tags?: string[]
+  } = {}
+) {
+  // デフォルトのrevalidateを60秒に設定
+  const { revalidate = 60, tags = [] } = options
+
   try {
-    console.log('[Sanity Client] Fetching with config:', {
-      projectId: projectId,
-      dataset: dataset,
-      apiVersion: apiVersion,
-      query: query.substring(0, 100) + '...'
+    console.log('[sanityFetch] Starting fetch with:', {
+      queryPreview: query.substring(0, 100),
+      paramsKeys: Object.keys(params),
+      revalidate,
+      tags
     })
 
-    const result = await client.fetch<T>(query, params, {
-      next: options.next || { revalidate: 60 }, // デフォルト1分キャッシュ
+    const result = await client.fetch(query, params, {
+      cache: revalidate === false ? 'no-store' : 'force-cache',
+      next: {
+        revalidate: tags.length ? false : revalidate,
+        tags,
+      },
     })
 
-    if (!result) {
-      console.log('[Sanity Client] Query returned no results')
-    }
+    console.log('[sanityFetch] Fetch completed:', {
+      hasResult: !!result,
+      resultType: Array.isArray(result) ? `Array(${result.length})` : typeof result,
+      resultKeys: result && typeof result === 'object' && !Array.isArray(result) ? Object.keys(result) : null
+    })
 
     return result
   } catch (error) {
-    console.error('[Sanity Client] Fetch error:', error)
+    console.error('[sanityFetch] ERROR:', error)
+    console.error('[sanityFetch] Query was:', query)
+    console.error('[sanityFetch] Params were:', params)
     throw error
   }
-}
-
-// 型定義を追加
-interface NextFetchRequestConfig {
-  revalidate?: number | false
-  tags?: string[]
 }

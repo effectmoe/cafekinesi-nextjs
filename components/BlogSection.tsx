@@ -34,8 +34,22 @@ const BlogSection = async () => {
   let blogPosts: BlogPost[] = [];
   let error: any = null;
 
+  console.log('[BlogSection] Starting render...');
+  console.log('[BlogSection] Environment check:', {
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET
+  });
+
   try {
-    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
+    console.log('[BlogSection] Fetching posts with query:', BLOG_POSTS_QUERY);
+    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY, {}, {
+      revalidate: 60 // 60秒ごとにキャッシュを更新
+    });
+    console.log('[BlogSection] Fetched posts:', posts?.length || 0);
+    if (posts && posts.length > 0) {
+      console.log('[BlogSection] First post data:', JSON.stringify(posts[0], null, 2));
+    }
     blogPosts = posts || [];
   } catch (err) {
     console.error('[BlogSection] Error fetching posts:', err);
@@ -122,6 +136,12 @@ const BlogSection = async () => {
   const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = blogPosts && blogPosts.length > 0;
 
+  console.log('[BlogSection] Display decision:', {
+    blogPostsLength: blogPosts.length,
+    usingSanityData,
+    displayPostsLength: displayPosts.length
+  });
+
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
@@ -162,7 +182,7 @@ const BlogSection = async () => {
                   month: '2-digit',
                   day: '2-digit'
                 }).replace(/\//g, '.')}
-                slug={post.slug}
+                slug={post.slug?.current || post.slug}
               />
             );
           })
