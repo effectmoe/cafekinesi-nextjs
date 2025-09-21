@@ -25,12 +25,12 @@ function getRating(value: number, thresholds: { good: number; poor: number }): '
 
 // メトリクスの送信（本番環境では分析サービスに送信）
 function sendToAnalytics(metric: PerformanceMetric) {
-  if (import.meta.env.DEV) {
+  if (process.env.NODE_ENV === 'development') {
     console.log('Performance Metric:', metric)
   } else {
     // 本番環境では Google Analytics 4 や他の分析サービスに送信
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'web_vitals', {
+    if (typeof (window as any).gtag !== 'undefined') {
+      (window as any).gtag('event', 'web_vitals', {
         event_category: 'Web Vitals',
         event_label: metric.name,
         value: Math.round(metric.value),
