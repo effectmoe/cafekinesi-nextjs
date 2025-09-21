@@ -17,10 +17,6 @@ export const client = createClient({
   apiVersion: apiVersion.trim(),
   useCdn: false,
   perspective: 'published',
-  stega: {
-    enabled: false,
-    studioUrl: '/studio',
-  },
 })
 
 export const previewClient = createClient({
@@ -30,10 +26,6 @@ export const previewClient = createClient({
   useCdn: false,
   perspective: 'previewDrafts',
   token: process.env.SANITY_API_TOKEN,
-  stega: {
-    enabled: true,
-    studioUrl: '/studio',
-  },
 })
 
 const builder = imageUrlBuilder(client)

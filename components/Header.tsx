@@ -15,7 +15,7 @@ const Header = () => {
         <div className="max-w-screen-2xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <Link href="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity">
               <img 
                 src={logo} 
                 alt="Cafe Kinesi Logo" 

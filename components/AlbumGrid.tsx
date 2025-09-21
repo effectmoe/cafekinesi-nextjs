@@ -75,7 +75,7 @@ const AlbumGrid = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {sections.map((section) => (
           section.id === 1 ? (
-            <Link key={section.id} to="/about" className="block">
+            <Link key={section.id} href="/about" className="block">
               <AlbumCard
                 image={section.image}
                 title={section.title}
