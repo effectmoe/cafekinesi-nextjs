@@ -2,6 +2,7 @@
 
 import { Hero } from './sections/Hero'
 import { Feature } from './sections/Feature'
+import { FeaturesSection } from './sections/FeaturesSection'
 import { CTA } from './sections/CTA'
 import { Testimonial } from './sections/Testimonial'
 import type { PageSection } from '@/types/sanity.types'
@@ -10,7 +11,7 @@ const components = {
   types: {
     hero: ({ value }: { value: any }) => <Hero {...value} />,
     feature: ({ value }: { value: any }) => <Feature {...value} />,
-    featuresSection: ({ value }: { value: any }) => <Feature {...value} />,
+    featuresSection: ({ value }: { value: any }) => <FeaturesSection {...value} />,
     cta: ({ value }: { value: any }) => <CTA {...value} />,
     testimonial: ({ value }: { value: any }) => <Testimonial {...value} />
   }
