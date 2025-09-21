@@ -46,61 +46,74 @@ function sendToAnalytics(metric: PerformanceMetric) {
 export function initPerformanceMonitoring() {
   // 動的インポートでweb-vitalsを読み込み
   if (typeof window !== 'undefined') {
-    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-      // Cumulative Layout Shift
-      getCLS((metric) => {
-        const perfMetric: PerformanceMetric = {
-          name: 'CLS',
-          value: metric.value,
-          rating: getRating(metric.value, THRESHOLDS.CLS),
-          timestamp: Date.now()
+    import('web-vitals').then((webVitals) => {
+      // エラーハンドリングを追加
+      try {
+        // 各関数の存在を確認してから呼び出し
+        if (webVitals.onCLS) {
+          webVitals.onCLS((metric) => {
+            const perfMetric: PerformanceMetric = {
+              name: 'CLS',
+              value: metric.value,
+              rating: getRating(metric.value, THRESHOLDS.CLS),
+              timestamp: Date.now()
+            }
+            sendToAnalytics(perfMetric)
+          })
         }
-        sendToAnalytics(perfMetric)
-      })
 
-      // First Input Delay
-      getFID((metric) => {
-        const perfMetric: PerformanceMetric = {
-          name: 'FID',
-          value: metric.value,
-          rating: getRating(metric.value, THRESHOLDS.FID),
-          timestamp: Date.now()
+        if (webVitals.onFID) {
+          webVitals.onFID((metric) => {
+            const perfMetric: PerformanceMetric = {
+              name: 'FID',
+              value: metric.value,
+              rating: getRating(metric.value, THRESHOLDS.FID),
+              timestamp: Date.now()
+            }
+            sendToAnalytics(perfMetric)
+          })
         }
-        sendToAnalytics(perfMetric)
-      })
 
-      // First Contentful Paint
-      getFCP((metric) => {
-        const perfMetric: PerformanceMetric = {
-          name: 'FCP',
-          value: metric.value,
-          rating: getRating(metric.value, THRESHOLDS.FCP),
-          timestamp: Date.now()
+        if (webVitals.onFCP) {
+          webVitals.onFCP((metric) => {
+            const perfMetric: PerformanceMetric = {
+              name: 'FCP',
+              value: metric.value,
+              rating: getRating(metric.value, THRESHOLDS.FCP),
+              timestamp: Date.now()
+            }
+            sendToAnalytics(perfMetric)
+          })
         }
-        sendToAnalytics(perfMetric)
-      })
 
-      // Largest Contentful Paint
-      getLCP((metric) => {
-        const perfMetric: PerformanceMetric = {
-          name: 'LCP',
-          value: metric.value,
-          rating: getRating(metric.value, THRESHOLDS.LCP),
-          timestamp: Date.now()
+        if (webVitals.onLCP) {
+          webVitals.onLCP((metric) => {
+            const perfMetric: PerformanceMetric = {
+              name: 'LCP',
+              value: metric.value,
+              rating: getRating(metric.value, THRESHOLDS.LCP),
+              timestamp: Date.now()
+            }
+            sendToAnalytics(perfMetric)
+          })
         }
-        sendToAnalytics(perfMetric)
-      })
 
-      // Time to First Byte
-      getTTFB((metric) => {
-        const perfMetric: PerformanceMetric = {
-          name: 'TTFB',
-          value: metric.value,
-          rating: getRating(metric.value, THRESHOLDS.TTFB),
-          timestamp: Date.now()
+        if (webVitals.onTTFB) {
+          webVitals.onTTFB((metric) => {
+            const perfMetric: PerformanceMetric = {
+              name: 'TTFB',
+              value: metric.value,
+              rating: getRating(metric.value, THRESHOLDS.TTFB),
+              timestamp: Date.now()
+            }
+            sendToAnalytics(perfMetric)
+          })
         }
-        sendToAnalytics(perfMetric)
-      })
+      } catch (error) {
+        console.warn('Web Vitals initialization error:', error)
+      }
+    }).catch(error => {
+      console.warn('Failed to load web-vitals:', error)
     })
   }
 }
