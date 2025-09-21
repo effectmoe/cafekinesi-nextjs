@@ -1,26 +1,122 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Kitchen Label Design System - Minimal & Clean */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Base colors */
+    --background: 0 0% 100%; /* Pure white */
+    --foreground: 0 0% 15%; /* Dark charcoal for text */
+
+    /* Brand colors */
+    --brand-beige: 35 22% 91%; /* Album background beige */
+    --brand-blue-gray: 210 20% 70%; /* Album background blue-gray */
+    --brand-purple: 260 15% 75%; /* Album background purple */
+    --brand-teal: 180 25% 25%; /* Album background dark teal */
+    --brand-light-gray: 0 0% 91%; /* Album background light gray */
+
+    /* Interaction colors */
+    --hover: 0 0% 95%; /* Subtle hover */
+    --border: 0 0% 90%; /* Light border */
+    
+    /* Typography */
+    --text-primary: 0 0% 15%; /* Main text */
+    --text-secondary: 0 0% 45%; /* Secondary text */
+    --text-muted: 0 0% 65%; /* Muted text */
+
+    /* Layout */
+    --header-height: 80px;
+    --container-padding: 24px;
+    --grid-gap: 24px;
+  }
+
+  /* Typography system */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: hsl(var(--text-primary));
+    background: hsl(var(--background));
+  }
+
+  /* Navigation text styling */
+  .nav-text {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: hsl(var(--text-primary));
+    transition: color 0.2s ease;
+  }
+
+  .nav-text:hover {
+    color: hsl(var(--text-secondary));
+  }
+
+  /* Album title styling */
+  .album-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: hsl(var(--text-primary));
+    line-height: 1.4;
+  }
+
+  /* Social links vertical styling */
+  .social-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: hsl(var(--text-secondary));
+  }
+
+  /* Button styling */
+  .view-all-button {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border: 1px solid hsl(var(--border));
+    background: transparent;
+    color: hsl(var(--text-primary));
+    transition: all 0.2s ease;
+  }
+
+  .view-all-button:hover {
+    background: hsl(var(--hover));
+  }
+
+  /* Album card backgrounds */
+  .album-beige { background: hsl(var(--brand-beige)); }
+  .album-blue-gray { background: hsl(var(--brand-blue-gray)); }
+  .album-purple { background: hsl(var(--brand-purple)); }
+  .album-teal { background: hsl(180 20% 85%); } /* Lighter teal for better text contrast */
+  .album-light-gray { background: hsl(var(--brand-light-gray)); }
+
+  /* Transitions for interactions */
+  .album-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .album-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }

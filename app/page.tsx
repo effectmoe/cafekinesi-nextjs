@@ -1,9 +1,11 @@
 import { sanityFetch } from '@/lib/sanity.client'
-import { PageBuilder } from '@/components/PageBuilder'
-import { generateSEOMetadata, generateJSONLD } from '@/components/SEO'
+import AlbumGrid from '@/components/AlbumGrid'
+import BlogSection from '@/components/BlogSection'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import SocialLinks from '@/components/SocialLinks'
 import type { Homepage } from '@/types/sanity.types'
 import type { Metadata } from 'next'
-import Script from 'next/script'
 
 const HOMEPAGE_QUERY = `*[_type == "homepage"][0] {
   _id,
@@ -24,22 +26,10 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0] {
 
 async function getHomepage() {
   try {
-    // クエリを直接渡す（params オブジェクトではなく）
     const result = await sanityFetch<Homepage>(HOMEPAGE_QUERY)
-
-    if (!result) {
-      console.error('[Sanity] No homepage data returned from query')
-      console.error('[Sanity] Project ID:', process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
-      console.error('[Sanity] Dataset:', process.env.NEXT_PUBLIC_SANITY_DATASET)
-    }
-
     return result
   } catch (error) {
     console.error('[Sanity] Error fetching homepage:', error)
-    console.error('[Sanity] Environment variables:')
-    console.error('- Project ID:', process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
-    console.error('- Dataset:', process.env.NEXT_PUBLIC_SANITY_DATASET)
-    console.error('- API Version:', process.env.NEXT_PUBLIC_SANITY_API_VERSION)
     return null
   }
 }
@@ -47,68 +37,25 @@ async function getHomepage() {
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getHomepage()
 
-  if (!page?.seo) {
-    return generateSEOMetadata()
+  return {
+    title: page?.seo?.title || 'Cafe Kinesi - 心と身体を整える空間',
+    description: page?.seo?.description || 'アロマテラピーとキネシオロジーが融合した新しい体験',
   }
-
-  return generateSEOMetadata({
-    title: page.seo.title || 'Cafe Kinesi',
-    description: page.seo.description,
-    keywords: page.seo.keywords,
-    ogImage: page.seo.ogImage,
-    type: 'website',
-  })
 }
 
 export default async function HomePage() {
   const page = await getHomepage()
 
-  if (!page) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl mb-4">ホームページコンテンツが見つかりません</p>
-          <div className="text-sm text-gray-600">
-            <p>環境変数の状態:</p>
-            <p>Project ID: {process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '未設定'}</p>
-            <p>Dataset: {process.env.NEXT_PUBLIC_SANITY_DATASET || '未設定'}</p>
-            <p>API Version: {process.env.NEXT_PUBLIC_SANITY_API_VERSION || '未設定'}</p>
-            <p>Use CDN: {process.env.NEXT_PUBLIC_SANITY_USE_CDN || '未設定'}</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const jsonLd = generateJSONLD({
-    type: 'WebPage',
-    title: page.seo?.title || page.title || 'Cafe Kinesi',
-    description: page.seo?.description,
-    url: 'https://cafekinesi.com',
-  })
-
   return (
-    <>
-      <Script
-        id="json-ld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <main className="min-h-screen">
-        {page.sections && page.sections.length > 0 ? (
-          <PageBuilder sections={page.sections} />
-        ) : (
-          <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-            <div className="container mx-auto px-4 py-16">
-              <h1 className="text-4xl font-bold text-center mb-8">{page.title || 'Cafe Kinesi'}</h1>
-              <p className="text-center text-gray-600">
-                Sanity Studioでコンテンツを追加してください。
-              </p>
-            </div>
-          </div>
-        )}
+    <div className="min-h-screen bg-white">
+      <Header />
+      <main className="relative">
+        <AlbumGrid />
+        <BlogSection />
       </main>
-    </>
+      <SocialLinks />
+      <Footer />
+    </div>
   )
 }
 

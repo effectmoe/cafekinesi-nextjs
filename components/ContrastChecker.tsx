@@ -150,7 +150,7 @@ export function ContrastChecker({ enabled = false }: ContrastCheckerProps) {
 
 // 開発環境でのみ使用するコントラストチェッカー
 export function DevContrastChecker() {
-  if (process.env.NODE_ENV === 'production') return null
+  if (import.meta.env.PROD) return null
 
   return <ContrastChecker enabled={true} />
 }

@@ -1,37 +1,64 @@
-'use client'
-
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { enableVisualEditing } from '@sanity/visual-editing'
+import { VisualEditingWrapper } from './VisualEditingWrapper'
 
-export function VisualEditingProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export function VisualEditingProvider({ children }: { children: React.ReactNode }) {
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
+
+  const checkPreviewMode = () => {
+    if (typeof window === 'undefined') return false
+    return window.location.search.includes('preview=true') ||
+           window.parent !== window ||
+           window.location.pathname.includes('/studio')
+  }
+
   useEffect(() => {
-    // Visual Editingの有効化（Sanity Studioでのプレビュー時）
-    const isInIframe = window.parent !== window
-    const isStudioPreview = window.location.search.includes('preview=true')
+    const previewMode = checkPreviewMode()
+    setIsPreviewMode(previewMode)
 
-    if (isInIframe || isStudioPreview) {
-      const cleanup = enableVisualEditing({
-        refresh: async (payload) => {
-          // ページのリフレッシュまたはナビゲーション
-          if (!payload?.source) return
+    // プレビューモード時のメッセージリスナー設定
+    if (previewMode && typeof window !== 'undefined') {
+      // Sanity Studioとの双方向通信を設定
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data?.type === 'presentation/navigate') {
+          const url = event.data.url
+          if (url && url !== window.location.href) {
+            window.history.pushState({}, '', url)
+            window.dispatchEvent(new PopStateEvent('popstate'))
+          }
+        }
+      }
 
-          // Vercelのリロード
-          if (typeof window !== 'undefined') {
-            window.location.reload()
+      window.addEventListener('message', handleMessage)
+
+      // Sanity Studioに準備完了を通知
+      window.parent.postMessage(
+        {
+          type: 'presentation/ready',
+          payload: {
+            projectId: import.meta.env.VITE_SANITY_PROJECT_ID || 'e4aqw590',
+            dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
+            url: window.location.href
           }
         },
-        zIndex: 9999,
-      })
+        '*'
+      )
 
       return () => {
-        cleanup()
+        window.removeEventListener('message', handleMessage)
       }
     }
   }, [])
 
-  return <>{children}</>
+  return (
+    <>
+      {children}
+      {isPreviewMode && <VisualEditingWrapper />}
+      {isPreviewMode && (
+        <div className="fixed top-0 right-0 z-50 bg-blue-500 text-white px-2 py-1 text-xs">
+          プレビューモード
+        </div>
+      )}
+    </>
+  )
 }
