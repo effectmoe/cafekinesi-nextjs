@@ -35,14 +35,7 @@ const BlogSection = async () => {
   let error: any = null;
 
   try {
-    console.log('[BlogSection] Starting to fetch blog posts...');
     const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
-    console.log('[BlogSection] Fetched posts count:', posts?.length || 0);
-    console.log('[BlogSection] Environment check:', {
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION
-    });
     blogPosts = posts || [];
   } catch (err) {
     console.error('[BlogSection] Error fetching posts:', err);
@@ -128,13 +121,6 @@ const BlogSection = async () => {
   // Sanityからのデータがある場合はそちらを優先、ない場合はデフォルトデータを使用
   const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = blogPosts && blogPosts.length > 0;
-
-  console.log('[BlogSection] Render info:', {
-    blogPostsLength: blogPosts.length,
-    usingSanityData,
-    displayPostsLength: displayPosts.length,
-    hasError: !!error
-  });
 
 
   return (

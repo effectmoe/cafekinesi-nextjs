@@ -43,6 +43,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+// 動的レンダリングを強制してSanityデータを確実に取得
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const page = await getHomepage()
 
