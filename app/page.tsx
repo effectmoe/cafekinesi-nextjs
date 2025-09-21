@@ -55,7 +55,7 @@ export default async function HomePage() {
 
   const jsonLd = generateJSONLD({
     type: 'WebPage',
-    title: page.seo?.title || 'Cafe Kinesi',
+    title: page.seo?.title || page.title || 'Cafe Kinesi',
     description: page.seo?.description,
     url: 'https://cafekinesi.com',
   })
@@ -68,7 +68,18 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main className="min-h-screen">
-        <PageBuilder sections={page.sections} />
+        {page.sections && page.sections.length > 0 ? (
+          <PageBuilder sections={page.sections} />
+        ) : (
+          <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+            <div className="container mx-auto px-4 py-16">
+              <h1 className="text-4xl font-bold text-center mb-8">{page.title || 'Cafe Kinesi'}</h1>
+              <p className="text-center text-gray-600">
+                Sanity Studioでコンテンツを追加してください。
+              </p>
+            </div>
+          </div>
+        )}
       </main>
     </>
   )

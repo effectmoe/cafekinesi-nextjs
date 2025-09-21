@@ -1,0 +1,32 @@
+// Sanity Vision (https://cafekinesi.sanity.studio/vision) で実行するミューテーション
+
+// まず、既存のhomepageドキュメントを確認:
+*[_type == "homepage"]
+
+// もし結果が空の場合、以下のミューテーションを実行:
+
+{
+  "mutations": [
+    {
+      "createOrReplace": {
+        "_id": "homepage",
+        "_type": "homepage",
+        "title": "Cafe Kinesi",
+        "sections": [
+          {
+            "_key": "hero1",
+            "_type": "hero",
+            "heading": "心と体を癒す空間へようこそ",
+            "subheading": "アロマテラピーとキネシオロジーが融合した新しい体験"
+          }
+        ],
+        "seo": {
+          "_type": "seo",
+          "title": "Cafe Kinesi - 心と体を癒すアロマテラピーカフェ",
+          "description": "アロマテラピーとキネシオロジーが融合した癒しの空間。オーガニック食材を使用したカフェメニューもご用意。",
+          "keywords": "アロマテラピー,キネシオロジー,オーガニックカフェ,癒し,リラクゼーション"
+        }
+      }
+    }
+  ]
+}
