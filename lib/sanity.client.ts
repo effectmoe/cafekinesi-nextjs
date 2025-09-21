@@ -48,5 +48,24 @@ export async function sanityFetch<T = any>(
   preview = false
 ): Promise<T> {
   const selectedClient = preview ? previewClient : client
-  return selectedClient.fetch<T>(query, params)
+
+  try {
+    console.log('[Sanity Client] Fetching with config:', {
+      projectId: projectId,
+      dataset: dataset,
+      apiVersion: apiVersion,
+      query: query.substring(0, 100) + '...'
+    })
+
+    const result = await selectedClient.fetch<T>(query, params)
+
+    if (!result) {
+      console.log('[Sanity Client] Query returned no results')
+    }
+
+    return result
+  } catch (error) {
+    console.error('[Sanity Client] Fetch error:', error)
+    throw error
+  }
 }
