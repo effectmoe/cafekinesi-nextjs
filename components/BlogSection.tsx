@@ -1,8 +1,9 @@
 'use client'
 
 import BlogCard from "./BlogCard";
-import { useScheduledPosts } from '@/hooks/useScheduledPosts';
-import { urlFor } from '@/lib/sanity.client';
+import { sanityFetch, urlFor } from '@/lib/sanity.client';
+import { BLOG_POSTS_QUERY } from '@/lib/queries';
+import { useEffect, useState } from 'react';
 
 // ローカルの画像をインポート（フォールバック用）
 const blog1 = "/images/blog-1.webp";
@@ -33,11 +34,27 @@ interface BlogPost {
 }
 
 const BlogSection = () => {
-  // 予約投稿対応のカスタムHookを使用（1分ごとに自動更新）
-  const { posts: blogPosts, loading, error } = useScheduledPosts({
-    limit: 9,
-    refetchInterval: 60000, // 1分ごとに自動更新
-  });
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchBlogPosts() {
+      try {
+        console.log('[BlogSection] Fetching blog posts...');
+        const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
+        console.log('[BlogSection] Fetched posts:', posts);
+        setBlogPosts(posts || []);
+      } catch (err) {
+        console.error('[BlogSection] Error fetching posts:', err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBlogPosts();
+  }, []);
 
   // デフォルトのブログ記事データ（Sanityにデータがない場合のフォールバック）
   const defaultBlogPosts = [
