@@ -19,3 +19,10 @@ export function setPreviewToken(token: string | null) {
     }
   }
 }
+
+export function isPreviewMode() {
+  if (typeof window !== 'undefined') {
+    return !!getPreviewToken()
+  }
+  return false
+}
