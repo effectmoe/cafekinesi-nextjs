@@ -41,4 +41,4 @@ export default function RootLayout({
     </html>
   );
 }
-// Force rebuild at #午後
+// Force rebuild at 2025-01-22 - Clear Vercel cache

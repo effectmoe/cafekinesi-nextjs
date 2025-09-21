@@ -1,11 +1,12 @@
 {
-  "framework": "nextjs",
-  "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "functions": {
-    "app/api/revalidate/route.ts": {
-      "maxDuration": 60
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "crons": [],
+  "env": {},
+  "build": {
+    "env": {
+      "VERCEL_FORCE_NO_BUILD_CACHE": "1"
     }
   }
 }
