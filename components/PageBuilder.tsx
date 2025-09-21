@@ -9,7 +9,13 @@ import type { PageSection } from '@/types/sanity.types'
 
 const components = {
   types: {
-    hero: ({ value }: { value: any }) => <Hero {...value} />,
+    hero: ({ value }: { value: any }) => <Hero
+      title={value.heading || value.title}
+      subtitle={value.subtitle}
+      description={value.subheading || value.description}
+      backgroundImage={value.backgroundImage}
+      buttons={value.cta ? [{ text: value.cta.text, link: value.cta.link, style: 'primary' }] : []}
+    />,
     feature: ({ value }: { value: any }) => <Feature {...value} />,
     featuresSection: ({ value }: { value: any }) => <FeaturesSection {...value} />,
     cta: ({ value }: { value: any }) => <CTA {...value} />,
