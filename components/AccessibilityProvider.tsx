@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { FocusManager, LiveRegion, auditAccessibility } from '@/lib/accessibility'
 
@@ -66,7 +68,7 @@ export function AccessibilityProvider({
     reducedMotionMedia.addEventListener('change', handleReducedMotionChange)
 
     // 開発環境でのアクセシビリティ監査
-    if (enableDevAudit && import.meta.env.DEV) {
+    if (enableDevAudit && process.env.NODE_ENV === 'development') {
       const runAudit = () => {
         const issues = auditAccessibility()
         if (issues.length > 0) {

@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { checkContrastCompliance } from '@/lib/accessibility'
 
@@ -150,7 +152,7 @@ export function ContrastChecker({ enabled = false }: ContrastCheckerProps) {
 
 // 開発環境でのみ使用するコントラストチェッカー
 export function DevContrastChecker() {
-  if (import.meta.env.PROD) return null
+  if (process.env.NODE_ENV === 'production') return null
 
   return <ContrastChecker enabled={true} />
 }
