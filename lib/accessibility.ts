@@ -66,6 +66,8 @@ export class FocusManager {
 
   // フォーカストラップ（モーダルなどで使用）
   trapFocus(container: HTMLElement) {
+    if (typeof window === 'undefined') return
+
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     ) as NodeListOf<HTMLElement>
@@ -101,6 +103,8 @@ export class FocusManager {
 
   // フォーカスの保存と復元
   saveFocus() {
+    if (typeof window === 'undefined') return
+
     const activeElement = document.activeElement as HTMLElement
     if (activeElement) {
       this.focusStack.push(activeElement)
@@ -108,6 +112,8 @@ export class FocusManager {
   }
 
   restoreFocus() {
+    if (typeof window === 'undefined') return
+
     const lastFocused = this.focusStack.pop()
     if (lastFocused && document.contains(lastFocused)) {
       lastFocused.focus()
@@ -117,9 +123,11 @@ export class FocusManager {
 
 // スクリーンリーダー用のライブリージョン
 export class LiveRegion {
-  private element: HTMLElement
+  private element: HTMLElement | null = null
 
   constructor(ariaLive: 'polite' | 'assertive' = 'polite') {
+    if (typeof window === 'undefined') return
+
     this.element = document.createElement('div')
     this.element.setAttribute('aria-live', ariaLive)
     this.element.setAttribute('aria-atomic', 'true')
@@ -133,16 +141,20 @@ export class LiveRegion {
   }
 
   announce(message: string) {
+    if (!this.element) return
+
     this.element.textContent = message
 
     // テキストをクリアして再度アナウンスできるようにする
     setTimeout(() => {
-      this.element.textContent = ''
+      if (this.element) {
+        this.element.textContent = ''
+      }
     }, 1000)
   }
 
   destroy() {
-    if (this.element.parentNode) {
+    if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element)
     }
   }
@@ -218,12 +230,16 @@ export function isScreenReaderActive(): boolean {
 }
 
 // アクセシビリティエラーの自動検出
-export function auditAccessibility(container: HTMLElement = document.body): Array<{
+export function auditAccessibility(container?: HTMLElement): Array<{
   element: HTMLElement
   issue: string
   severity: 'error' | 'warning'
   wcagRule: string
 }> {
+  if (typeof window === 'undefined') return []
+
+  const targetContainer = container || document.body
+
   const issues: Array<{
     element: HTMLElement
     issue: string
@@ -232,7 +248,7 @@ export function auditAccessibility(container: HTMLElement = document.body): Arra
   }> = []
 
   // 画像のalt属性チェック
-  const images = container.querySelectorAll('img')
+  const images = targetContainer.querySelectorAll('img')
   images.forEach(img => {
     if (!img.getAttribute('alt')) {
       issues.push({
@@ -245,14 +261,14 @@ export function auditAccessibility(container: HTMLElement = document.body): Arra
   })
 
   // フォームラベルのチェック
-  const inputs = container.querySelectorAll('input, select, textarea')
+  const inputs = targetContainer.querySelectorAll('input, select, textarea')
   inputs.forEach(input => {
     const id = input.getAttribute('id')
     const ariaLabel = input.getAttribute('aria-label')
     const ariaLabelledby = input.getAttribute('aria-labelledby')
 
     if (id) {
-      const label = container.querySelector(`label[for="${id}"]`)
+      const label = targetContainer.querySelector(`label[for="${id}"]`)
       if (!label && !ariaLabel && !ariaLabelledby) {
         issues.push({
           element: input as HTMLElement,
@@ -265,7 +281,7 @@ export function auditAccessibility(container: HTMLElement = document.body): Arra
   })
 
   // 見出しの階層チェック
-  const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6')
+  const headings = targetContainer.querySelectorAll('h1, h2, h3, h4, h5, h6')
   let lastLevel = 0
   headings.forEach(heading => {
     const level = parseInt(heading.tagName.substring(1))
