@@ -66,7 +66,16 @@ export default async function HomePage() {
   if (!page) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>ホームページコンテンツが見つかりません</p>
+        <div className="text-center">
+          <p className="text-xl mb-4">ホームページコンテンツが見つかりません</p>
+          <div className="text-sm text-gray-600">
+            <p>環境変数の状態:</p>
+            <p>Project ID: {process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '未設定'}</p>
+            <p>Dataset: {process.env.NEXT_PUBLIC_SANITY_DATASET || '未設定'}</p>
+            <p>API Version: {process.env.NEXT_PUBLIC_SANITY_API_VERSION || '未設定'}</p>
+            <p>Use CDN: {process.env.NEXT_PUBLIC_SANITY_USE_CDN || '未設定'}</p>
+          </div>
+        </div>
       </div>
     )
   }
