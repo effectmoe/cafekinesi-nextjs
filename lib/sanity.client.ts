@@ -6,9 +6,9 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
 
-// Validate projectId format
-if (!projectId || !/^[a-z0-9-]+$/.test(projectId)) {
-  throw new Error(`Invalid Sanity project ID: ${projectId}. It must contain only a-z, 0-9, and dashes.`)
+// Validate projectId format - must be non-empty
+if (!projectId || projectId.trim() === '') {
+  throw new Error(`Sanity project ID is required but got: ${projectId}`)
 }
 
 export const client = createClient({
