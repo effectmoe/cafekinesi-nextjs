@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface BlogCardProps {
   image: string;
@@ -19,20 +20,31 @@ const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProp
 
   const content = (
     <article className={`group cursor-pointer ${className}`} onMouseEnter={handleMouseEnter}>
-      <div className="aspect-[4/3] overflow-hidden mb-4">
-        <img
-          src={image}
-          alt={title}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          onError={(e) => {
-            // 画像読み込みエラー時のフォールバック
-            const target = e.target as HTMLImageElement;
-            if (!target.src.includes('/images/blog-1.webp')) {
-              target.src = '/images/blog-1.webp';
-            }
-          }}
-        />
+      <div className="aspect-[4/3] relative overflow-hidden mb-4 bg-gray-100">
+        {image.startsWith('http') ? (
+          // Sanityの画像
+          <img
+            src={image}
+            alt={title}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (!target.src.includes('/images/blog-1.webp')) {
+                target.src = '/images/blog-1.webp';
+              }
+            }}
+          />
+        ) : (
+          // ローカル画像はNext.js Imageコンポーネントを使用
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        )}
       </div>
       <div className="space-y-3">
         <h3 className="font-noto-serif text-lg font-medium text-[hsl(var(--text-primary))] leading-relaxed group-hover:text-[hsl(var(--primary))] transition-colors">

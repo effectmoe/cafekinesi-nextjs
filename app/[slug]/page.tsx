@@ -45,7 +45,8 @@ export default async function DynamicPage({
 }: {
   params: { slug: string }
 }) {
-  const page = await getPage(params.slug)
+  const { slug } = await params
+  const page = await getPage(slug)
 
   if (!page) {
     notFound()
