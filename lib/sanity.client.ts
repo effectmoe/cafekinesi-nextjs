@@ -2,9 +2,9 @@ import { createClient, type QueryParams } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION!
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
 
 // Validate projectId format - must be non-empty
 if (!projectId || projectId.trim() === '') {
@@ -15,7 +15,7 @@ export const client = createClient({
   projectId: projectId.trim(),
   dataset: dataset.trim(),
   apiVersion: apiVersion.trim(),
-  useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === 'true',
+  useCdn: false,
   perspective: 'published',
   stega: {
     enabled: false,
