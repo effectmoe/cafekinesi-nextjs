@@ -10,7 +10,7 @@ const POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][0] {
   slug,
   excerpt,
   mainImage,
-  body,
+  content,
   publishedAt,
   author-> {
     name,
@@ -103,9 +103,9 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {post.body && (
+      {post.content && (
         <div className="prose prose-lg max-w-none">
-          <PortableText value={post.body} />
+          <PortableText value={post.content} />
         </div>
       )}
     </article>

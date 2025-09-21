@@ -137,6 +137,22 @@ const BlogSection = () => {
   const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = blogPosts && blogPosts.length > 0;
 
+  if (loading) {
+    return (
+      <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
+        <div className="text-center mb-12">
+          <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
+            ブログ
+          </h2>
+          <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-[hsl(var(--text-secondary))]">読み込み中...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
       <div className="text-center mb-12">
