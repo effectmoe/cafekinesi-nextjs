@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { enableVisualEditing } from '@sanity/visual-editing'
 import { VisualEditingWrapper } from './VisualEditingWrapper'
@@ -36,8 +38,8 @@ export function VisualEditingProvider({ children }: { children: React.ReactNode 
         {
           type: 'presentation/ready',
           payload: {
-            projectId: import.meta.env.VITE_SANITY_PROJECT_ID || 'e4aqw590',
-            dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
+            projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
+            dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
             url: window.location.href
           }
         },

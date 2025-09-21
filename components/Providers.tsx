@@ -2,7 +2,6 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
-import { VisualEditingProvider } from './VisualEditing'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 
@@ -21,11 +20,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <VisualEditingProvider>
-        {children}
-        <Toaster />
-        <Sonner />
-      </VisualEditingProvider>
+      {children}
+      <Toaster />
+      <Sonner />
     </QueryClientProvider>
   )
 }
