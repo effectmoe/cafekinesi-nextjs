@@ -23,7 +23,25 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0] {
 }`
 
 async function getHomepage() {
-  return sanityFetch<Homepage>(HOMEPAGE_QUERY)
+  try {
+    // クエリを直接渡す（params オブジェクトではなく）
+    const result = await sanityFetch<Homepage>(HOMEPAGE_QUERY)
+
+    if (!result) {
+      console.error('[Sanity] No homepage data returned from query')
+      console.error('[Sanity] Project ID:', process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
+      console.error('[Sanity] Dataset:', process.env.NEXT_PUBLIC_SANITY_DATASET)
+    }
+
+    return result
+  } catch (error) {
+    console.error('[Sanity] Error fetching homepage:', error)
+    console.error('[Sanity] Environment variables:')
+    console.error('- Project ID:', process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
+    console.error('- Dataset:', process.env.NEXT_PUBLIC_SANITY_DATASET)
+    console.error('- API Version:', process.env.NEXT_PUBLIC_SANITY_API_VERSION)
+    return null
+  }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
