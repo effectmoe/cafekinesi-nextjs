@@ -1,9 +1,6 @@
-'use client'
-
 import BlogCard from "./BlogCard";
 import { sanityFetch, urlFor } from '@/lib/sanity.client';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
-import { useEffect, useState } from 'react';
 
 // ローカルの画像をインポート（フォールバック用）
 const blog1 = "/images/blog-1.webp";
@@ -33,28 +30,17 @@ interface BlogPost {
   };
 }
 
-const BlogSection = () => {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+const BlogSection = async () => {
+  let blogPosts: BlogPost[] = [];
+  let error: any = null;
 
-  useEffect(() => {
-    async function fetchBlogPosts() {
-      try {
-        console.log('[BlogSection] Fetching blog posts...');
-        const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
-        console.log('[BlogSection] Fetched posts:', posts);
-        setBlogPosts(posts || []);
-      } catch (err) {
-        console.error('[BlogSection] Error fetching posts:', err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchBlogPosts();
-  }, []);
+  try {
+    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY);
+    blogPosts = posts || [];
+  } catch (err) {
+    console.error('[BlogSection] Error fetching posts:', err);
+    error = err;
+  }
 
   // デフォルトのブログ記事データ（Sanityにデータがない場合のフォールバック）
   const defaultBlogPosts = [
@@ -137,21 +123,6 @@ const BlogSection = () => {
   const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = blogPosts && blogPosts.length > 0;
 
-  if (loading) {
-    return (
-      <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
-            ブログ
-          </h2>
-          <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
-        </div>
-        <div className="text-center py-8">
-          <p className="text-[hsl(var(--text-secondary))]">読み込み中...</p>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
