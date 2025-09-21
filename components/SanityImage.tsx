@@ -1,3 +1,5 @@
+'use client'
+
 import { urlFor } from '@/lib/sanity.client'
 import type { SanityImage as SanityImageType } from '@/types/sanity.types'
 import { useState, useRef, useEffect } from 'react'
