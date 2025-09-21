@@ -1,4 +1,4 @@
-import { createClient, type QueryParams } from '@sanity/client'
+import { createClient } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
@@ -34,13 +34,12 @@ export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 
+// Re-export sanityFetch from next-sanity for consistency with existing code
 export async function sanityFetch<T = any>(
   query: string,
-  params: QueryParams = {},
-  preview = false
+  params: Record<string, any> = {},
+  options: { next?: NextFetchRequestConfig } = {}
 ): Promise<T> {
-  const selectedClient = preview ? previewClient : client
-
   try {
     console.log('[Sanity Client] Fetching with config:', {
       projectId: projectId,
@@ -49,7 +48,9 @@ export async function sanityFetch<T = any>(
       query: query.substring(0, 100) + '...'
     })
 
-    const result = await selectedClient.fetch<T>(query, params)
+    const result = await client.fetch<T>(query, params, {
+      next: options.next || { revalidate: 60 }, // デフォルト1分キャッシュ
+    })
 
     if (!result) {
       console.log('[Sanity Client] Query returned no results')
@@ -60,4 +61,10 @@ export async function sanityFetch<T = any>(
     console.error('[Sanity Client] Fetch error:', error)
     throw error
   }
+}
+
+// 型定義を追加
+interface NextFetchRequestConfig {
+  revalidate?: number | false
+  tags?: string[]
 }
