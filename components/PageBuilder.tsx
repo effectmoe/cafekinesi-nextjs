@@ -10,6 +10,7 @@ const components = {
   types: {
     hero: ({ value }: { value: any }) => <Hero {...value} />,
     feature: ({ value }: { value: any }) => <Feature {...value} />,
+    featuresSection: ({ value }: { value: any }) => <Feature {...value} />,
     cta: ({ value }: { value: any }) => <CTA {...value} />,
     testimonial: ({ value }: { value: any }) => <Testimonial {...value} />
   }
