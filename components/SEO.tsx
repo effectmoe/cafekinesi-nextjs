@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 interface SEOProps {
   title?: string
   description?: string
-  keywords?: string[]
+  keywords?: string[] | string
   ogImage?: {
     asset?: {
       url?: string
@@ -32,7 +32,7 @@ export function generateSEOMetadata(props: SEOProps = {}): Metadata {
   const metadata: Metadata = {
     title,
     description,
-    keywords: keywords.join(', '),
+    keywords: Array.isArray(keywords) ? keywords.join(', ') : keywords || '',
     openGraph: {
       title,
       description,
