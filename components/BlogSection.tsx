@@ -58,23 +58,10 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('[BlogSection Client] Fetching posts using GROQ URL...');
+        console.log('[BlogSection Client] Fetching posts from API route...');
 
-        // GROQ APIを直接使用（CORSに対応）
-        const projectId = 'e4aqw590';
-        const dataset = 'production';
-        const apiVersion = 'v2024-01-01';
-        const query = encodeURIComponent(BLOG_POSTS_QUERY);
-
-        // Sanity CDN URLを使用（CORSが設定されている）
-        const url = `https://${projectId}.apicdn.sanity.io/${apiVersion}/data/query/${dataset}?query=${query}`;
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-        });
+        // API Routeを使用してCORSを回避
+        const response = await fetch('/api/blog-posts');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -83,9 +70,9 @@ const BlogSection = () => {
         const data = await response.json();
         console.log('[BlogSection Client] API Response:', data);
 
-        if (data.result) {
-          setPosts(data.result);
-          console.log('[BlogSection Client] Set posts:', data.result.length);
+        if (data.success && data.posts) {
+          setPosts(data.posts);
+          console.log('[BlogSection Client] Set posts:', data.posts.length);
         }
       } catch (err) {
         console.error('[BlogSection Client] Error fetching posts:', err);
