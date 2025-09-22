@@ -35,28 +35,44 @@ const BlogSection = async () => {
   let blogPosts: BlogPost[] = [];
   let error: any = null;
 
+  console.log('[BlogSection] Component rendering started');
+  console.log('[BlogSection] Environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET
+  });
+
   try {
-    console.log('[BlogSection] Fetching posts directly with client');
+    console.log('[BlogSection] About to fetch with query:', BLOG_POSTS_QUERY);
+    console.log('[BlogSection] Client config:', {
+      projectId: client.config()?.projectId,
+      dataset: client.config()?.dataset,
+      apiVersion: client.config()?.apiVersion
+    });
 
     // clientを直接使用してデータを取得
     const posts = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
 
-    console.log('[BlogSection] Fetch result:', {
-      success: true,
+    console.log('[BlogSection] Raw fetch result:', posts);
+    console.log('[BlogSection] Fetch result analysis:', {
+      isArray: Array.isArray(posts),
       postCount: posts?.length || 0,
-      firstPostTitle: posts?.[0]?.title || 'N/A',
+      firstPost: posts?.[0] ? JSON.stringify(posts[0], null, 2) : 'N/A',
       postsReceived: !!posts
     });
 
     if (posts && posts.length > 0) {
-      console.log('[BlogSection] Successfully fetched Sanity data');
+      console.log('[BlogSection] ✅ Successfully fetched Sanity data');
       blogPosts = posts;
     } else {
-      console.log('[BlogSection] No posts found in Sanity');
+      console.log('[BlogSection] ⚠️ No posts found in Sanity');
     }
   } catch (err: any) {
-    console.error('[BlogSection] ERROR fetching posts:', {
+    console.error('[BlogSection] ❌ ERROR fetching posts:', err);
+    console.error('[BlogSection] Error details:', {
       message: err?.message,
+      stack: err?.stack,
       errorType: err?.constructor?.name
     });
     error = err;
