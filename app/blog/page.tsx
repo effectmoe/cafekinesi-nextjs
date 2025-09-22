@@ -3,6 +3,10 @@ import Link from 'next/link'
 import { SanityImage } from '@/components/SanityImage'
 import type { BlogPost } from '@/types/sanity.types'
 
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
   _id,
   title,
@@ -65,4 +69,4 @@ export default async function BlogPage() {
   )
 }
 
-export const revalidate = 60
+// export const revalidate = 60 // 上部で定義済み

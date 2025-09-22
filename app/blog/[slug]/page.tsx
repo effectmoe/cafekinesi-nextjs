@@ -1,4 +1,8 @@
 import { sanityFetch, urlFor } from '@/lib/sanity.client'
+
+// 動的レンダリングを強制（no-store fetchを使用するため）
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import { SanityImage } from '@/components/SanityImage'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
@@ -37,12 +41,13 @@ async function getAllPosts() {
   return sanityFetch<{ slug: { current: string } }[]>(ALL_POSTS_QUERY)
 }
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  return posts.map((post) => ({
-    slug: post.slug.current,
-  }))
-}
+// generateStaticParamsを削除して完全に動的レンダリングに
+// export async function generateStaticParams() {
+//   const posts = await getAllPosts()
+//   return posts.map((post) => ({
+//     slug: post.slug.current,
+//   }))
+// }
 
 export default async function BlogPostPage({
   params,
@@ -131,4 +136,4 @@ export default async function BlogPostPage({
   )
 }
 
-export const revalidate = 60
+// export const revalidate = 60 // 上部で定義済み
