@@ -2,7 +2,9 @@ import BlogCard from "./BlogCard";
 import blogData from '../public/blog-posts.json';
 
 const BlogSectionStatic = () => {
+  console.log('[BlogSectionStatic] Loaded data:', blogData);
   const posts = blogData.slice(0, 9);
+  console.log('[BlogSectionStatic] Displaying posts:', posts.length);
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
@@ -12,6 +14,12 @@ const BlogSectionStatic = () => {
         </h2>
         <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
       </div>
+
+      {posts.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">データの読み込みに失敗しました</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {posts.map((post: any) => (
