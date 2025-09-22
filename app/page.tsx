@@ -1,4 +1,5 @@
-import { sanityFetch, client } from '@/lib/sanity.client'
+import { sanityFetch } from '@/lib/sanity.client'
+import { simpleFetch } from '@/lib/sanity.simple'
 import AlbumGrid from '@/components/AlbumGrid'
 import BlogSection from '@/components/BlogSection'
 import Header from '@/components/Header'
@@ -60,8 +61,8 @@ export default async function HomePage() {
   // ブログ記事を取得
   let blogPosts = []
   try {
-    console.log('[HomePage] Fetching blog posts')
-    blogPosts = await client.fetch(BLOG_POSTS_QUERY)
+    console.log('[HomePage] Fetching blog posts with simpleFetch')
+    blogPosts = await simpleFetch(BLOG_POSTS_QUERY)
     console.log('[HomePage] Fetched blog posts:', blogPosts?.length || 0)
   } catch (error) {
     console.error('[HomePage] Error fetching blog posts:', error)
