@@ -45,6 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // 動的レンダリングを強制してSanityデータを確実に取得
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // キャッシュを完全に無効化
+export const fetchCache = 'force-no-store' // fetchキャッシュを無効化
 
 export default async function HomePage() {
   const page = await getHomepage()

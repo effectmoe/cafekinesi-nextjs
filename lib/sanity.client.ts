@@ -67,9 +67,9 @@ export async function sanityFetch<QueryString extends string>(
     })
 
     const result = await client.fetch(query, params, {
-      cache: revalidate === false ? 'no-store' : 'force-cache',
+      cache: 'no-store', // キャッシュを完全に無効化
       next: {
-        revalidate: tags.length ? false : revalidate,
+        revalidate: false, // キャッシュを使用しない
         tags,
       },
     })

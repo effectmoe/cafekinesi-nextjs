@@ -34,6 +34,10 @@ const BlogSection = async () => {
   let blogPosts: BlogPost[] = [];
   let error: any = null;
 
+  // 本番環境でのデバッグ情報を追加
+  const isProd = process.env.NODE_ENV === 'production';
+  const isVercel = process.env.VERCEL === '1';
+
   console.log('[BlogSection] Starting render...');
   console.log('[BlogSection] Environment check:', {
     NODE_ENV: process.env.NODE_ENV,
