@@ -43,16 +43,35 @@ const BlogSection = async () => {
 
   try {
     console.log('[BlogSection] Fetching posts with query:', BLOG_POSTS_QUERY);
-    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY, {}, {
-      revalidate: 60 // 60秒ごとにキャッシュを更新
+    console.log('[BlogSection] Using sanityFetch with config:', {
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION
     });
-    console.log('[BlogSection] Fetched posts:', posts?.length || 0);
+
+    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY, {}, {
+      revalidate: false // キャッシュを無効化して常に最新データを取得
+    });
+
+    console.log('[BlogSection] Fetch result:', {
+      success: true,
+      postCount: posts?.length || 0,
+      firstPostTitle: posts?.[0]?.title || 'N/A',
+      postsReceived: !!posts
+    });
+
     if (posts && posts.length > 0) {
       console.log('[BlogSection] First post data:', JSON.stringify(posts[0], null, 2));
     }
     blogPosts = posts || [];
-  } catch (err) {
-    console.error('[BlogSection] Error fetching posts:', err);
+  } catch (err: any) {
+    console.error('[BlogSection] CRITICAL ERROR fetching posts:', {
+      message: err?.message,
+      stack: err?.stack,
+      response: err?.response,
+      statusCode: err?.statusCode,
+      errorType: err?.constructor?.name
+    });
     error = err;
   }
 
@@ -139,8 +158,15 @@ const BlogSection = async () => {
   console.log('[BlogSection] Display decision:', {
     blogPostsLength: blogPosts.length,
     usingSanityData,
-    displayPostsLength: displayPosts.length
+    displayPostsLength: displayPosts.length,
+    error: error?.message || null,
+    willShowDefault: !usingSanityData
   });
+
+  // 本番環境でデフォルトデータが表示される場合の警告
+  if (!usingSanityData && process.env.NODE_ENV === 'production') {
+    console.error('[BlogSection] WARNING: Using default data in production!');
+  }
 
 
   return (
@@ -202,8 +228,10 @@ const BlogSection = async () => {
       </div>
 
       {error && (
-        <div className="text-center mt-8 text-sm text-gray-500">
-          ※ 現在、サンプルデータを表示しています
+        <div className="text-center mt-8 p-4 bg-red-50 text-red-600 rounded">
+          <p className="font-bold">エラーが発生しました</p>
+          <p className="text-sm mt-2">{error?.message || 'データの取得に失敗しました'}</p>
+          <p className="text-xs mt-2">※ 現在、サンプルデータを表示しています</p>
         </div>
       )}
 
