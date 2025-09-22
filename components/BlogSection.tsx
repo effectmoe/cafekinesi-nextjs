@@ -1,5 +1,8 @@
+'use client';
+
 import BlogCard from "./BlogCard";
-import { sanityFetch, urlFor } from '@/lib/sanity.client';
+import { useEffect, useState } from 'react';
+import { client, urlFor } from '@/lib/sanity.client';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
 // ローカルの画像をインポート（フォールバック用）
@@ -30,56 +33,47 @@ interface BlogPost {
   };
 }
 
-const BlogSection = async () => {
-  let blogPosts: BlogPost[] = [];
-  let error: any = null;
+const BlogSection = () => {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 本番環境でのデバッグ情報を追加
-  const isProd = process.env.NODE_ENV === 'production';
-  const isVercel = process.env.VERCEL === '1';
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        console.log('[BlogSection] Fetching posts with query:', BLOG_POSTS_QUERY);
 
-  console.log('[BlogSection] Starting render...');
-  console.log('[BlogSection] Environment check:', {
-    NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET
-  });
+        // clientを直接使用してデータを取得
+        const posts = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
 
-  try {
-    console.log('[BlogSection] Fetching posts with query:', BLOG_POSTS_QUERY);
-    console.log('[BlogSection] Using sanityFetch with config:', {
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION
-    });
+        console.log('[BlogSection] Fetch result:', {
+          success: true,
+          postCount: posts?.length || 0,
+          firstPostTitle: posts?.[0]?.title || 'N/A',
+          postsReceived: !!posts
+        });
 
-    const posts = await sanityFetch<BlogPost[]>(BLOG_POSTS_QUERY, {}, {
-      revalidate: false // キャッシュを無効化して常に最新データを取得
-    });
+        if (posts && posts.length > 0) {
+          console.log('[BlogSection] Using Sanity data');
+          setBlogPosts(posts);
+        } else {
+          console.log('[BlogSection] No Sanity data found');
+        }
+      } catch (err: any) {
+        console.error('[BlogSection] CRITICAL ERROR fetching posts:', {
+          message: err?.message,
+          errorType: err?.constructor?.name
+        });
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    console.log('[BlogSection] Fetch result:', {
-      success: true,
-      postCount: posts?.length || 0,
-      firstPostTitle: posts?.[0]?.title || 'N/A',
-      postsReceived: !!posts
-    });
+    fetchPosts();
+  }, []);
 
-    if (posts && posts.length > 0) {
-      console.log('[BlogSection] First post data:', JSON.stringify(posts[0], null, 2));
-    }
-    blogPosts = posts || [];
-  } catch (err: any) {
-    console.error('[BlogSection] CRITICAL ERROR fetching posts:', {
-      message: err?.message,
-      stack: err?.stack,
-      response: err?.response,
-      statusCode: err?.statusCode,
-      errorType: err?.constructor?.name
-    });
-    error = err;
-  }
-
-  // デフォルトのブログ記事データ（Sanityにデータがない場合のフォールバック）
+  // デフォルトのブログ記事データ（エラー時のフォールバック）
   const defaultBlogPosts = [
     {
       id: 1,
@@ -156,21 +150,17 @@ const BlogSection = async () => {
   ];
 
   // Sanityからのデータがある場合はそちらを優先、ない場合はデフォルトデータを使用
-  const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
+  const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : (loading ? [] : defaultBlogPosts);
   const usingSanityData = blogPosts && blogPosts.length > 0;
 
   console.log('[BlogSection] Display decision:', {
     blogPostsLength: blogPosts.length,
     usingSanityData,
     displayPostsLength: displayPosts.length,
+    loading,
     error: error?.message || null,
-    willShowDefault: !usingSanityData
+    willShowDefault: !usingSanityData && !loading
   });
-
-  // 本番環境でデフォルトデータが表示される場合の警告
-  if (!usingSanityData && process.env.NODE_ENV === 'production') {
-    console.error('[BlogSection] WARNING: Using default data in production!');
-  }
 
 
   return (
@@ -182,6 +172,13 @@ const BlogSection = async () => {
         <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
       </div>
 
+      {loading && (
+        <div className="text-center py-8">
+          <p className="text-sm text-gray-500">読み込み中...</p>
+        </div>
+      )}
+
+      {!loading && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {usingSanityData ? (
           // Sanityからのデータを表示
@@ -230,6 +227,7 @@ const BlogSection = async () => {
           ))
         )}
       </div>
+      )}
 
       {error && (
         <div className="text-center mt-8 p-4 bg-red-50 text-red-600 rounded">
