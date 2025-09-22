@@ -21,9 +21,9 @@ export default defineConfig({
       previewUrl: {
         origin: typeof location !== 'undefined'
           ? location.hostname === 'localhost'
-            ? 'http://localhost:8082'
-            : 'https://cafekinesi-99dc5473.vercel.app'
-          : 'http://localhost:8082',
+            ? 'http://localhost:3000'
+            : 'https://cafekinesi-nextjs.vercel.app'
+          : 'http://localhost:3000',
         preview: '/:slug',
         draftMode: {
           enable: '/:slug?preview=true',
