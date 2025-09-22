@@ -3,6 +3,7 @@ import { sanityFetch } from '@/lib/sanity.client'
 import { sanityServerFetch } from '@/lib/sanity.server'
 import AlbumGrid from '@/components/AlbumGrid'
 import BlogSection from '@/components/BlogSection'
+import BlogSectionServer from '@/components/BlogSectionServer'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -61,7 +62,27 @@ export default async function HomePage() {
   }
 
   // Server Componentでブログ記事を取得
-  const blogPosts = await sanityServerFetch(BLOG_POSTS_QUERY)
+  let blogPosts = []
+  try {
+    // Sanity CDN APIを直接使用
+    const projectId = 'e4aqw590'
+    const dataset = 'production'
+    const query = encodeURIComponent(BLOG_POSTS_QUERY)
+    const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`
+
+    const response = await fetch(url, {
+      next: { revalidate: 0 },
+      cache: 'no-store'
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      blogPosts = data.result || []
+    }
+  } catch (error) {
+    console.error('[HomePage] Error fetching blog posts:', error)
+  }
+
   console.log('[HomePage Server] Fetched blog posts:', blogPosts?.length || 0)
 
   return (
@@ -69,7 +90,7 @@ export default async function HomePage() {
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSection />
+        <BlogSectionServer posts={blogPosts} />
       </main>
       <SocialLinks />
       <Footer />

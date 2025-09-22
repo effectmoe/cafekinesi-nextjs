@@ -1,5 +1,4 @@
 import BlogCard from "./BlogCard";
-import { createClient } from '@sanity/client';
 import { urlFor } from '@/lib/sanity.client';
 
 // ローカルの画像をインポート（フォールバック用）
@@ -13,46 +12,12 @@ const blog7 = "/images/blog-7.webp";
 const blog8 = "/images/blog-8.webp";
 const blog9 = "/images/blog-9.webp";
 
-// Server-side Sanity client
-const client = createClient({
-  projectId: 'e4aqw590',
-  dataset: 'production',
-  apiVersion: '2024-01-01',
-  useCdn: false,
-  perspective: 'published',
-});
 
-const BLOG_POSTS_QUERY = `
-  *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt,
-    category,
-    featured,
-    "author": author->{
-      name,
-      image
-    }
-  }
-`;
-
-async function getBlogPosts() {
-  try {
-    console.log('[BlogSectionServer] Fetching from Sanity...');
-    const posts = await client.fetch(BLOG_POSTS_QUERY);
-    console.log('[BlogSectionServer] Fetched posts:', posts?.length || 0);
-    return posts || [];
-  } catch (error) {
-    console.error('[BlogSectionServer] Error:', error);
-    return [];
-  }
+interface BlogSectionServerProps {
+  posts?: any[]
 }
 
-const BlogSectionServer = async () => {
-  const posts = await getBlogPosts();
+const BlogSectionServer = ({ posts = [] }: BlogSectionServerProps) => {
 
   // デフォルトのブログ記事データ
   const defaultBlogPosts = [
