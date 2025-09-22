@@ -33,50 +33,31 @@ interface BlogPost {
   };
 }
 
-const BLOG_POSTS_QUERY = `
-  *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt,
-    category,
-    featured,
-    "author": author->{
-      name,
-      image
-    }
-  }
-`;
-
 const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('[BlogSection Client] Fetching posts from API route...');
+        console.log('[BlogSection] Fetching from static JSON...');
 
-        // 新しいAPIエンドポイントを使用
-        const response = await fetch('/api/get-posts');
+        // publicフォルダのJSONファイルを読み込む
+        const response = await fetch('/blog-posts.json');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('[BlogSection Client] API Response:', data);
+        console.log('[BlogSection] Loaded posts:', data.length);
 
-        if (data.posts) {
-          setPosts(data.posts);
-          console.log('[BlogSection Client] Set posts:', data.posts.length);
-        }
+        setPosts(data);
       } catch (err) {
-        console.error('[BlogSection Client] Error fetching posts:', err);
-        setError('データの取得に失敗しました');
+        console.error('[BlogSection] Error:', err);
+
+        // エラー時はデフォルトデータを使用
+        setPosts([]);
       } finally {
         setLoading(false);
       }
@@ -182,11 +163,10 @@ const BlogSection = () => {
   const displayPosts = (posts && posts.length > 0) ? posts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = posts && posts.length > 0;
 
-  console.log('[BlogSection Client] Display decision:', {
+  console.log('[BlogSection] Display decision:', {
     postsLength: posts?.length || 0,
     usingSanityData,
-    displayPostsLength: displayPosts.length,
-    hasError: !!error
+    displayPostsLength: displayPosts.length
   });
 
   return (
@@ -246,12 +226,6 @@ const BlogSection = () => {
           ))
         )}
       </div>
-
-      {error && !usingSanityData && (
-        <div className="text-center mt-8 p-4 bg-yellow-50 text-yellow-600 rounded">
-          <p className="text-sm">※ 現在、サンプルデータを表示しています</p>
-        </div>
-      )}
 
       <div className="text-center mt-12">
         <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">
