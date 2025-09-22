@@ -54,7 +54,11 @@ const BlogSection = () => {
 
         setPosts(data);
       } catch (err) {
-        console.error('[BlogSection] Error:', err);
+        console.error('[BlogSection] Error fetching JSON:', err);
+        console.error('[BlogSection] Error details:', {
+          message: err instanceof Error ? err.message : 'Unknown error',
+          stack: err instanceof Error ? err.stack : undefined
+        });
 
         // エラー時はデフォルトデータを使用
         setPosts([]);
