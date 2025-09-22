@@ -66,16 +66,8 @@ export async function sanityFetch<QueryString extends string>(
       tags
     })
 
-    // ビルド時とランタイムで異なるキャッシュ戦略を使用
-    const isBuilding = process.env.NODE_ENV === 'production' && !process.env.VERCEL_URL;
-
-    const result = await client.fetch(query, params, {
-      cache: isBuilding ? undefined : 'no-store',
-      next: {
-        revalidate: isBuilding ? 60 : false,
-        tags,
-      },
-    })
+    // シンプルにキャッシュなしで取得
+    const result = await client.fetch(query, params)
 
     console.log('[sanityFetch] Fetch completed:', {
       hasResult: !!result,
