@@ -1,85 +1,21 @@
-import { createClient, type QueryParams } from 'next-sanity'
+import { createClient } from 'next-sanity'
+import { groq } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
-import { getSanityConfig } from './sanity.config'
 
-// Sanity設定を取得（環境変数の問題を回避）
-const config = getSanityConfig()
-
-export const projectId = config.projectId
-export const dataset = config.dataset
-export const apiVersion = config.apiVersion
-
-// サーバーサイドでのデバッグ出力
-if (typeof window === 'undefined') {
-  console.log('[Sanity Config] Using configuration:', {
-    projectId,
-    dataset,
-    apiVersion,
-    hasToken: !!config.apiToken
-  })
-}
-
-// Sanityクライアントの作成
+// 公式ドキュメント推奨の設定（シンプルに）
 export const client = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: config.useCdn,
-  perspective: 'published',
-})
-
-// プレビュー用クライアント
-export const previewClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: false,
-  perspective: 'previewDrafts',
-  token: config.apiToken,
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2024-01-01',
+  useCdn: false, // Server Componentsでは必ずfalse（公式推奨）
 })
 
 // 画像URLビルダー
 const builder = imageUrlBuilder(client)
 
-export function urlFor(source: SanityImageSource) {
+export function urlFor(source: any) {
   return builder.image(source)
 }
 
-// Next.js App Router用のsanityFetch関数（公式推奨パターン）
-export async function sanityFetch<QueryString extends string>(
-  query: QueryString,
-  params: QueryParams = {},
-  options: {
-    revalidate?: number | false
-    tags?: string[]
-  } = {}
-) {
-  // デフォルトのrevalidateを60秒に設定
-  const { revalidate = 60, tags = [] } = options
-
-  try {
-    console.log('[sanityFetch] Starting fetch with:', {
-      queryPreview: query.substring(0, 100),
-      paramsKeys: Object.keys(params),
-      revalidate,
-      tags
-    })
-
-    // シンプルにキャッシュなしで取得
-    const result = await client.fetch(query, params)
-
-    console.log('[sanityFetch] Fetch completed:', {
-      hasResult: !!result,
-      resultType: Array.isArray(result) ? `Array(${result.length})` : typeof result,
-      resultKeys: result && typeof result === 'object' && !Array.isArray(result) ? Object.keys(result) : null
-    })
-
-    return result
-  } catch (error) {
-    console.error('[sanityFetch] ERROR:', error)
-    console.error('[sanityFetch] Query was:', query)
-    console.error('[sanityFetch] Params were:', params)
-    throw error
-  }
-}
+// groqをエクスポート（公式推奨）
+export { groq }
