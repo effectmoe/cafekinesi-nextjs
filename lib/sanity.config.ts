@@ -11,8 +11,8 @@ export const sanityConfig = {
   // APIバージョン
   apiVersion: '2024-01-01',
 
-  // CDN使用フラグ
-  useCdn: true,
+  // CDN使用フラグ（本番環境では無効に）
+  useCdn: false,
 
   // APIトークン（読み取り専用）
   apiToken: 'skmH5807aTZkc80e9wXtUGh6YGxvS9fmTcsxwG0vDPy9XPJ3lTpX7wYmAXl5SKy1HEOllZf3NDEg1ULmn'
