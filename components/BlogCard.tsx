@@ -61,15 +61,10 @@ const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProp
   );
 
   // slugがある場合はリンクでラップ
-  if (slug && slug.current) {
+  if (slug) {
+    const slugValue = typeof slug === 'object' && slug.current ? slug.current : slug;
     return (
-      <Link href={`/blog/${slug.current}`} className="block">
-        {content}
-      </Link>
-    );
-  } else if (slug && typeof slug === 'string') {
-    return (
-      <Link href={`/blog/${slug}`} className="block">
+      <Link href={`/blog/${slugValue}`} className="block">
         {content}
       </Link>
     );
