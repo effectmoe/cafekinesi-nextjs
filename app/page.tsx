@@ -75,9 +75,15 @@ export default async function HomePage() {
     getFAQs()
   ])
 
+  console.log('[HomePage] Homepage data:', JSON.stringify(homepage, null, 2))
+  console.log('[HomePage] FAQs:', faqs?.length || 0)
+
   // ヒーローセクションとフィーチャーセクションのデータを抽出
   const heroSection = homepage?.sections?.find((s: any) => s._type === 'hero')
   const featuresSection = homepage?.sections?.find((s: any) => s._type === 'featuresSection')
+
+  console.log('[HomePage] Hero section:', heroSection ? 'Found' : 'Not found')
+  console.log('[HomePage] Features section:', featuresSection ? 'Found' : 'Not found')
 
   return (
     <div className="min-h-screen bg-white">
