@@ -17,8 +17,9 @@ interface BlogPost {
   _id: string;
   title: string;
   slug: {
+    _type?: string;
     current: string;
-  };
+  } | string;
   excerpt: string;
   mainImage?: any;
   publishedAt: string;
@@ -188,7 +189,7 @@ const BlogSection = async () => {
                   month: '2-digit',
                   day: '2-digit'
                 }).replace(/\//g, '.')}
-                slug={post.slug?.current || post.slug}
+                slug={typeof post.slug === 'string' ? post.slug : post.slug?.current}
               />
             );
           })
