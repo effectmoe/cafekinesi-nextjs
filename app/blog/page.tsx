@@ -1,4 +1,4 @@
-import { sanityFetch } from '@/lib/sanity.client'
+import { client, groq } from '@/lib/sanity.client'
 import Link from 'next/link'
 import { SanityImage } from '@/components/SanityImage'
 import type { BlogPost } from '@/types/sanity.types'
@@ -6,7 +6,7 @@ import type { BlogPost } from '@/types/sanity.types'
 // 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
 
-const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
+const POSTS_QUERY = groq`*[_type == "blogPost"] | order(publishedAt desc) {
   _id,
   title,
   slug,
@@ -20,7 +20,7 @@ const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
 }`
 
 async function getPosts() {
-  return sanityFetch<BlogPost[]>(POSTS_QUERY)
+  return client.fetch<BlogPost[]>(POSTS_QUERY)
 }
 
 export default async function BlogPage() {

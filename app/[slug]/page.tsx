@@ -1,9 +1,9 @@
-import { sanityFetch } from '@/lib/sanity.client'
+import { client, groq } from '@/lib/sanity.client'
 import { PageBuilder } from '@/components/PageBuilder'
 import { notFound } from 'next/navigation'
 import type { Page } from '@/types/sanity.types'
 
-const PAGE_QUERY = `*[_type == "page" && slug.current == $slug][0] {
+const PAGE_QUERY = groq`*[_type == "page" && slug.current == $slug][0] {
   _id,
   _type,
   title,
@@ -21,16 +21,16 @@ const PAGE_QUERY = `*[_type == "page" && slug.current == $slug][0] {
   }
 }`
 
-const ALL_PAGES_QUERY = `*[_type == "page"] {
+const ALL_PAGES_QUERY = groq`*[_type == "page"] {
   slug
 }`
 
 async function getPage(slug: string) {
-  return sanityFetch<Page>(PAGE_QUERY, { slug })
+  return client.fetch<Page>(PAGE_QUERY, { slug })
 }
 
 async function getAllPages() {
-  return sanityFetch<{ slug: { current: string } }[]>(ALL_PAGES_QUERY)
+  return client.fetch<{ slug: { current: string } }[]>(ALL_PAGES_QUERY)
 }
 
 export async function generateStaticParams() {

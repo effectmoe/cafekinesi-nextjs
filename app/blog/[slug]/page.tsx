@@ -1,4 +1,4 @@
-import { sanityFetch, urlFor } from '@/lib/sanity.client'
+import { client, groq, urlFor } from '@/lib/sanity.client'
 
 // 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
 
-const POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][0] {
+const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
   title,
   slug,
@@ -28,16 +28,16 @@ const POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][0] {
   }
 }`
 
-const ALL_POSTS_QUERY = `*[_type == "blogPost"] {
+const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
 async function getPost(slug: string) {
-  return sanityFetch<BlogPost>(POST_QUERY, { slug })
+  return client.fetch<BlogPost>(POST_QUERY, { slug })
 }
 
 async function getAllPosts() {
-  return sanityFetch<{ slug: { current: string } }[]>(ALL_POSTS_QUERY)
+  return client.fetch<{ slug: { current: string } }[]>(ALL_POSTS_QUERY)
 }
 
 // generateStaticParamsを削除して完全に動的レンダリングに
