@@ -1,19 +1,22 @@
 import { createClient, type QueryParams } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
+import { getSanityConfig } from './sanity.config'
 
-// 環境変数の取得と検証（改行文字を除去）
-export const projectId = (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590').trim()
-export const dataset = (process.env.NEXT_PUBLIC_SANITY_DATASET || 'production').trim()
-export const apiVersion = (process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01').trim()
+// Sanity設定を取得（環境変数の問題を回避）
+const config = getSanityConfig()
+
+export const projectId = config.projectId
+export const dataset = config.dataset
+export const apiVersion = config.apiVersion
 
 // サーバーサイドでのデバッグ出力
 if (typeof window === 'undefined') {
-  console.log('[Sanity Config] Initializing with:', {
+  console.log('[Sanity Config] Using configuration:', {
     projectId,
     dataset,
     apiVersion,
-    hasToken: !!process.env.NEXT_PUBLIC_SANITY_API_TOKEN
+    hasToken: !!config.apiToken
   })
 }
 
@@ -22,7 +25,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  useCdn: config.useCdn,
   perspective: 'published',
 })
 
@@ -33,7 +36,7 @@ export const previewClient = createClient({
   apiVersion,
   useCdn: false,
   perspective: 'previewDrafts',
-  token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
+  token: config.apiToken,
 })
 
 // 画像URLビルダー
