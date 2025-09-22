@@ -1,5 +1,5 @@
 import AlbumGrid from '@/components/AlbumGrid'
-import BlogSectionHardcoded from '@/components/BlogSectionHardcoded'
+import BlogSectionDynamic from '@/components/BlogSectionDynamic'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: 'アロマテラピーとキネシオロジーが融合した新しい体験',
 }
 
-export const dynamic = 'force-static'
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default function HomePage() {
   return (
@@ -19,7 +19,7 @@ export default function HomePage() {
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSectionHardcoded />
+        <BlogSectionDynamic />
       </main>
       <SocialLinks />
       <Footer />
