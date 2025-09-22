@@ -2,7 +2,7 @@ import { connection } from 'next/server'
 import { sanityFetch } from '@/lib/sanity.client'
 import { sanityServerFetch } from '@/lib/sanity.server'
 import AlbumGrid from '@/components/AlbumGrid'
-import BlogSectionServer from '@/components/BlogSectionServer'
+import BlogSection from '@/components/BlogSection'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -69,7 +69,7 @@ export default async function HomePage() {
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSectionServer />
+        <BlogSection />
       </main>
       <SocialLinks />
       <Footer />

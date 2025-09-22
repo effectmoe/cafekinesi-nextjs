@@ -61,7 +61,7 @@ const BlogSection = () => {
         console.log('[BlogSection Client] Fetching posts from API route...');
 
         // API Routeを使用してCORSを回避
-        const response = await fetch('/api/blog-posts');
+        const response = await fetch('/api/sanity-posts');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
