@@ -19,11 +19,15 @@ export const sanityConfig = {
 } as const
 
 // 環境変数から値を取得する関数
+// 現在は環境変数の問題を回避するため、ハードコードされた値のみを使用
 export function getSanityConfig() {
-  // 環境変数をクリーンアップする関数
+  // 環境変数の問題が解決するまで、ハードコードされた値を直接返す
+  return sanityConfig;
+
+  // 以下は環境変数が正しく設定された後に有効化
+  /*
   const clean = (value: string | undefined): string | undefined => {
     if (!value) return undefined;
-    // 改行、タブ、余分なスペースを削除
     return value.replace(/[\r\n\t]/g, '').trim();
   };
 
@@ -34,4 +38,5 @@ export function getSanityConfig() {
     useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === 'false' ? false : sanityConfig.useCdn,
     apiToken: clean(process.env.NEXT_PUBLIC_SANITY_API_TOKEN) || sanityConfig.apiToken,
   };
+  */
 }
