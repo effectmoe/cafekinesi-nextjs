@@ -13,6 +13,8 @@ const blog8 = "/images/blog-8.webp";
 const blog9 = "/images/blog-9.webp";
 
 
+'use client'
+
 interface BlogSectionServerProps {
   posts?: any[]
 }
