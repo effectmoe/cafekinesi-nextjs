@@ -1,5 +1,9 @@
+'use client';
+
 import BlogCard from "./BlogCard";
 import { urlFor } from '@/lib/sanity.client';
+import { useEffect, useState } from 'react';
+import { createClient } from '@sanity/client';
 
 // ローカルの画像をインポート（フォールバック用）
 const blog1 = "/images/blog-1.webp";
@@ -30,15 +34,54 @@ interface BlogPost {
   };
 }
 
-interface BlogSectionProps {
-  posts?: BlogPost[];
-}
+// クライアントサイドで直接Sanityクライアントを作成
+const client = createClient({
+  projectId: 'e4aqw590',
+  dataset: 'production',
+  apiVersion: '2024-01-01',
+  useCdn: true, // クライアントサイドではCDNを有効化
+  perspective: 'published',
+});
 
-const BlogSection = ({ posts = [] }: BlogSectionProps) => {
-  console.log('[BlogSection] Component rendered with props:', {
-    postCount: posts?.length || 0,
-    hasData: posts && posts.length > 0
-  });
+const BLOG_POSTS_QUERY = `
+  *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    publishedAt,
+    category,
+    featured,
+    "author": author->{
+      name,
+      image
+    }
+  }
+`;
+
+const BlogSection = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        console.log('[BlogSection Client] Fetching posts from Sanity...');
+        const data = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
+        console.log('[BlogSection Client] Fetched posts:', data?.length || 0);
+        setPosts(data || []);
+      } catch (err) {
+        console.error('[BlogSection Client] Error fetching posts:', err);
+        setError('データの取得に失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   // デフォルトのブログ記事データ（エラー時のフォールバック）
   const defaultBlogPosts = [
@@ -116,15 +159,32 @@ const BlogSection = ({ posts = [] }: BlogSectionProps) => {
     }
   ];
 
+  // ローディング中の表示
+  if (loading) {
+    return (
+      <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
+        <div className="text-center mb-12">
+          <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
+            ブログ
+          </h2>
+          <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-gray-500">読み込み中...</p>
+        </div>
+      </section>
+    );
+  }
+
   // Sanityからのデータがある場合はそちらを優先、ない場合はデフォルトデータを使用
   const displayPosts = (posts && posts.length > 0) ? posts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = posts && posts.length > 0;
 
-  console.log('[BlogSection] Display decision:', {
+  console.log('[BlogSection Client] Display decision:', {
     postsLength: posts?.length || 0,
     usingSanityData,
     displayPostsLength: displayPosts.length,
-    willShowDefault: !usingSanityData
+    hasError: !!error
   });
 
   return (
@@ -184,6 +244,12 @@ const BlogSection = ({ posts = [] }: BlogSectionProps) => {
           ))
         )}
       </div>
+
+      {error && !usingSanityData && (
+        <div className="text-center mt-8 p-4 bg-yellow-50 text-yellow-600 rounded">
+          <p className="text-sm">※ 現在、サンプルデータを表示しています</p>
+        </div>
+      )}
 
       <div className="text-center mt-12">
         <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">

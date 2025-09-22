@@ -58,22 +58,12 @@ export default async function HomePage() {
     console.log('[HomePage] No homepage data found, showing default layout')
   }
 
-  // ブログ記事を取得
-  let blogPosts = []
-  try {
-    console.log('[HomePage] Fetching blog posts with simpleFetch')
-    blogPosts = await simpleFetch(BLOG_POSTS_QUERY)
-    console.log('[HomePage] Fetched blog posts:', blogPosts?.length || 0)
-  } catch (error) {
-    console.error('[HomePage] Error fetching blog posts:', error)
-  }
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSection posts={blogPosts} />
+        <BlogSection />
       </main>
       <SocialLinks />
       <Footer />
