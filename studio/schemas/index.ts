@@ -9,6 +9,7 @@ import shopInfo from './documents/shopInfo'
 import page from './documents/page'
 import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
+import { faq } from './faq'
 
 // オブジェクトスキーマ
 import seo from './objects/seo'
@@ -36,6 +37,7 @@ export const schemaTypes = [
   page,
   homepage,
   siteSettings,
+  faq,
 
   // オブジェクト
   seo,
