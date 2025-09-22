@@ -40,19 +40,28 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('[BlogSection] Fetching from static JSON...');
+        console.log('[BlogSection] Fetching from API...');
 
-        // publicフォルダのJSONファイルを読み込む
-        const response = await fetch('/blog-posts.json');
+        // APIエンドポイント経由で読み込む
+        const response = await fetch('/api/test-json');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('[BlogSection] Loaded posts:', data.length);
+        console.log('[BlogSection] API response:', data);
 
-        setPosts(data);
+        if (data.success && data.posts) {
+          console.log('[BlogSection] Loaded posts:', data.posts.length);
+          setPosts(data.posts);
+        } else if (data.posts) {
+          // 直接postsがある場合
+          setPosts(data.posts);
+        } else {
+          console.error('[BlogSection] No posts in response');
+          setPosts([]);
+        }
       } catch (err) {
         console.error('[BlogSection] Error fetching JSON:', err);
         console.error('[BlogSection] Error details:', {
