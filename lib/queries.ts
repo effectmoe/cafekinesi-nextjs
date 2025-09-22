@@ -81,7 +81,7 @@ export const BLOG_POSTS_QUERY = `
   *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
     _id,
     title,
-    "slug": slug.current,
+    slug,
     excerpt,
     mainImage,
     publishedAt,

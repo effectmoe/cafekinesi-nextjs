@@ -1,7 +1,4 @@
-'use client';
-
 import BlogCard from "./BlogCard";
-import { useEffect, useState } from 'react';
 import { client, urlFor } from '@/lib/sanity.client';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
@@ -33,45 +30,36 @@ interface BlogPost {
   };
 }
 
-const BlogSection = () => {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+const BlogSection = async () => {
+  let blogPosts: BlogPost[] = [];
+  let error: any = null;
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        console.log('[BlogSection] Fetching posts with query:', BLOG_POSTS_QUERY);
+  try {
+    console.log('[BlogSection] Fetching posts directly with client');
 
-        // clientを直接使用してデータを取得
-        const posts = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
+    // clientを直接使用してデータを取得
+    const posts = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
 
-        console.log('[BlogSection] Fetch result:', {
-          success: true,
-          postCount: posts?.length || 0,
-          firstPostTitle: posts?.[0]?.title || 'N/A',
-          postsReceived: !!posts
-        });
+    console.log('[BlogSection] Fetch result:', {
+      success: true,
+      postCount: posts?.length || 0,
+      firstPostTitle: posts?.[0]?.title || 'N/A',
+      postsReceived: !!posts
+    });
 
-        if (posts && posts.length > 0) {
-          console.log('[BlogSection] Using Sanity data');
-          setBlogPosts(posts);
-        } else {
-          console.log('[BlogSection] No Sanity data found');
-        }
-      } catch (err: any) {
-        console.error('[BlogSection] CRITICAL ERROR fetching posts:', {
-          message: err?.message,
-          errorType: err?.constructor?.name
-        });
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
+    if (posts && posts.length > 0) {
+      console.log('[BlogSection] Successfully fetched Sanity data');
+      blogPosts = posts;
+    } else {
+      console.log('[BlogSection] No posts found in Sanity');
+    }
+  } catch (err: any) {
+    console.error('[BlogSection] ERROR fetching posts:', {
+      message: err?.message,
+      errorType: err?.constructor?.name
+    });
+    error = err;
+  }
 
   // デフォルトのブログ記事データ（エラー時のフォールバック）
   const defaultBlogPosts = [
@@ -150,18 +138,16 @@ const BlogSection = () => {
   ];
 
   // Sanityからのデータがある場合はそちらを優先、ない場合はデフォルトデータを使用
-  const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : (loading ? [] : defaultBlogPosts);
+  const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
   const usingSanityData = blogPosts && blogPosts.length > 0;
 
   console.log('[BlogSection] Display decision:', {
     blogPostsLength: blogPosts.length,
     usingSanityData,
     displayPostsLength: displayPosts.length,
-    loading,
     error: error?.message || null,
-    willShowDefault: !usingSanityData && !loading
+    willShowDefault: !usingSanityData
   });
-
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
@@ -172,13 +158,6 @@ const BlogSection = () => {
         <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
       </div>
 
-      {loading && (
-        <div className="text-center py-8">
-          <p className="text-sm text-gray-500">読み込み中...</p>
-        </div>
-      )}
-
-      {!loading && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {usingSanityData ? (
           // Sanityからのデータを表示
@@ -227,7 +206,6 @@ const BlogSection = () => {
           ))
         )}
       </div>
-      )}
 
       {error && (
         <div className="text-center mt-8 p-4 bg-red-50 text-red-600 rounded">
