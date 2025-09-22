@@ -3,7 +3,6 @@
 import BlogCard from "./BlogCard";
 import { urlFor } from '@/lib/sanity.client';
 import { useEffect, useState } from 'react';
-import { createClient } from '@sanity/client';
 
 // ローカルの画像をインポート（フォールバック用）
 const blog1 = "/images/blog-1.webp";
@@ -34,15 +33,6 @@ interface BlogPost {
   };
 }
 
-// クライアントサイドで直接Sanityクライアントを作成
-const client = createClient({
-  projectId: 'e4aqw590',
-  dataset: 'production',
-  apiVersion: '2024-01-01',
-  useCdn: true, // クライアントサイドではCDNを有効化
-  perspective: 'published',
-});
-
 const BLOG_POSTS_QUERY = `
   *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
     _id,
@@ -68,10 +58,35 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('[BlogSection Client] Fetching posts from Sanity...');
-        const data = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
-        console.log('[BlogSection Client] Fetched posts:', data?.length || 0);
-        setPosts(data || []);
+        console.log('[BlogSection Client] Fetching posts using GROQ URL...');
+
+        // GROQ APIを直接使用（CORSに対応）
+        const projectId = 'e4aqw590';
+        const dataset = 'production';
+        const apiVersion = 'v2024-01-01';
+        const query = encodeURIComponent(BLOG_POSTS_QUERY);
+
+        // Sanity CDN URLを使用（CORSが設定されている）
+        const url = `https://${projectId}.apicdn.sanity.io/${apiVersion}/data/query/${dataset}?query=${query}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('[BlogSection Client] API Response:', data);
+
+        if (data.result) {
+          setPosts(data.result);
+          console.log('[BlogSection Client] Set posts:', data.result.length);
+        }
       } catch (err) {
         console.error('[BlogSection Client] Error fetching posts:', err);
         setError('データの取得に失敗しました');
