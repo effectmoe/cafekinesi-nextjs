@@ -1,5 +1,5 @@
 import AlbumGrid from '@/components/AlbumGrid'
-import BlogSection from '@/components/BlogSection'
+import BlogSectionStatic from '@/components/BlogSectionStatic'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -16,7 +16,7 @@ export default function HomePage() {
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSection />
+        <BlogSectionStatic />
       </main>
       <SocialLinks />
       <Footer />
