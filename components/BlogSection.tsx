@@ -60,8 +60,8 @@ const BlogSection = () => {
       try {
         console.log('[BlogSection Client] Fetching posts from API route...');
 
-        // API Routeを使用してCORSを回避
-        const response = await fetch('/api/sanity-posts');
+        // 新しいAPIエンドポイントを使用
+        const response = await fetch('/api/get-posts');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -70,7 +70,7 @@ const BlogSection = () => {
         const data = await response.json();
         console.log('[BlogSection Client] API Response:', data);
 
-        if (data.success && data.posts) {
+        if (data.posts) {
           setPosts(data.posts);
           console.log('[BlogSection Client] Set posts:', data.posts.length);
         }
