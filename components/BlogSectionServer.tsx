@@ -1,3 +1,5 @@
+'use client'
+
 import BlogCard from "./BlogCard";
 import { urlFor } from '@/lib/sanity.client';
 
@@ -11,9 +13,6 @@ const blog6 = "/images/blog-6.webp";
 const blog7 = "/images/blog-7.webp";
 const blog8 = "/images/blog-8.webp";
 const blog9 = "/images/blog-9.webp";
-
-
-'use client'
 
 interface BlogSectionServerProps {
   posts?: any[]
