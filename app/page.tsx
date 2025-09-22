@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: 'アロマテラピーとキネシオロジーが融合した新しい体験',
 }
 
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
