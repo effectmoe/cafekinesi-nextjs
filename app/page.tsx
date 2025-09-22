@@ -1,5 +1,6 @@
+import { connection } from 'next/server'
 import { sanityFetch } from '@/lib/sanity.client'
-import { simpleFetch } from '@/lib/sanity.simple'
+import { sanityServerFetch } from '@/lib/sanity.server'
 import AlbumGrid from '@/components/AlbumGrid'
 import BlogSection from '@/components/BlogSection'
 import Header from '@/components/Header'
@@ -45,12 +46,13 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-// 動的レンダリングを強制してSanityデータを確実に取得
+// 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
-export const revalidate = 0 // キャッシュを完全に無効化
-export const fetchCache = 'force-no-store' // fetchキャッシュを無効化
 
 export default async function HomePage() {
+  // Connection APIで動的実行を保証
+  await connection()
+
   const page = await getHomepage()
 
   // Homepageデータがない場合もデフォルトレイアウトを表示
@@ -58,11 +60,16 @@ export default async function HomePage() {
     console.log('[HomePage] No homepage data found, showing default layout')
   }
 
+  // Server Componentでブログ記事を取得
+  const blogPosts = await sanityServerFetch(BLOG_POSTS_QUERY)
+  console.log('[HomePage Server] Fetched blog posts:', blogPosts?.length || 0)
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative">
         <AlbumGrid />
+        {/* Client ComponentとServerデータのハイブリッド */}
         <BlogSection />
       </main>
       <SocialLinks />

@@ -3,9 +3,8 @@ import Link from 'next/link'
 import { SanityImage } from '@/components/SanityImage'
 import type { BlogPost } from '@/types/sanity.types'
 
-// 動的レンダリングを強制
+// 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
   _id,

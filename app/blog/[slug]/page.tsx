@@ -1,8 +1,7 @@
 import { sanityFetch, urlFor } from '@/lib/sanity.client'
 
-// 動的レンダリングを強制（no-store fetchを使用するため）
+// 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 import { SanityImage } from '@/components/SanityImage'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
