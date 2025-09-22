@@ -1,6 +1,5 @@
 import BlogCard from "./BlogCard";
-import { client, urlFor } from '@/lib/sanity.client';
-import { BLOG_POSTS_QUERY } from '@/lib/queries';
+import { urlFor } from '@/lib/sanity.client';
 
 // ローカルの画像をインポート（フォールバック用）
 const blog1 = "/images/blog-1.webp";
@@ -31,52 +30,15 @@ interface BlogPost {
   };
 }
 
-const BlogSection = async () => {
-  let blogPosts: BlogPost[] = [];
-  let error: any = null;
+interface BlogSectionProps {
+  posts?: BlogPost[];
+}
 
-  console.log('[BlogSection] Component rendering started');
-  console.log('[BlogSection] Environment:', {
-    NODE_ENV: process.env.NODE_ENV,
-    VERCEL: process.env.VERCEL,
-    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET
+const BlogSection = ({ posts = [] }: BlogSectionProps) => {
+  console.log('[BlogSection] Component rendered with props:', {
+    postCount: posts?.length || 0,
+    hasData: posts && posts.length > 0
   });
-
-  try {
-    console.log('[BlogSection] About to fetch with query:', BLOG_POSTS_QUERY);
-    console.log('[BlogSection] Client config:', {
-      projectId: client.config()?.projectId,
-      dataset: client.config()?.dataset,
-      apiVersion: client.config()?.apiVersion
-    });
-
-    // clientを直接使用してデータを取得
-    const posts = await client.fetch<BlogPost[]>(BLOG_POSTS_QUERY);
-
-    console.log('[BlogSection] Raw fetch result:', posts);
-    console.log('[BlogSection] Fetch result analysis:', {
-      isArray: Array.isArray(posts),
-      postCount: posts?.length || 0,
-      firstPost: posts?.[0] ? JSON.stringify(posts[0], null, 2) : 'N/A',
-      postsReceived: !!posts
-    });
-
-    if (posts && posts.length > 0) {
-      console.log('[BlogSection] ✅ Successfully fetched Sanity data');
-      blogPosts = posts;
-    } else {
-      console.log('[BlogSection] ⚠️ No posts found in Sanity');
-    }
-  } catch (err: any) {
-    console.error('[BlogSection] ❌ ERROR fetching posts:', err);
-    console.error('[BlogSection] Error details:', {
-      message: err?.message,
-      stack: err?.stack,
-      errorType: err?.constructor?.name
-    });
-    error = err;
-  }
 
   // デフォルトのブログ記事データ（エラー時のフォールバック）
   const defaultBlogPosts = [
@@ -155,14 +117,13 @@ const BlogSection = async () => {
   ];
 
   // Sanityからのデータがある場合はそちらを優先、ない場合はデフォルトデータを使用
-  const displayPosts = (blogPosts && blogPosts.length > 0) ? blogPosts.slice(0, 9) : defaultBlogPosts;
-  const usingSanityData = blogPosts && blogPosts.length > 0;
+  const displayPosts = (posts && posts.length > 0) ? posts.slice(0, 9) : defaultBlogPosts;
+  const usingSanityData = posts && posts.length > 0;
 
   console.log('[BlogSection] Display decision:', {
-    blogPostsLength: blogPosts.length,
+    postsLength: posts?.length || 0,
     usingSanityData,
     displayPostsLength: displayPosts.length,
-    error: error?.message || null,
     willShowDefault: !usingSanityData
   });
 
@@ -223,14 +184,6 @@ const BlogSection = async () => {
           ))
         )}
       </div>
-
-      {error && (
-        <div className="text-center mt-8 p-4 bg-red-50 text-red-600 rounded">
-          <p className="font-bold">エラーが発生しました</p>
-          <p className="text-sm mt-2">{error?.message || 'データの取得に失敗しました'}</p>
-          <p className="text-xs mt-2">※ 現在、サンプルデータを表示しています</p>
-        </div>
-      )}
 
       <div className="text-center mt-12">
         <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">

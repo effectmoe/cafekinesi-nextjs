@@ -1,9 +1,10 @@
-import { sanityFetch } from '@/lib/sanity.client'
+import { sanityFetch, client } from '@/lib/sanity.client'
 import AlbumGrid from '@/components/AlbumGrid'
 import BlogSection from '@/components/BlogSection'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
+import { BLOG_POSTS_QUERY } from '@/lib/queries'
 import type { Homepage } from '@/types/sanity.types'
 import type { Metadata } from 'next'
 
@@ -56,12 +57,22 @@ export default async function HomePage() {
     console.log('[HomePage] No homepage data found, showing default layout')
   }
 
+  // ブログ記事を取得
+  let blogPosts = []
+  try {
+    console.log('[HomePage] Fetching blog posts')
+    blogPosts = await client.fetch(BLOG_POSTS_QUERY)
+    console.log('[HomePage] Fetched blog posts:', blogPosts?.length || 0)
+  } catch (error) {
+    console.error('[HomePage] Error fetching blog posts:', error)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative">
         <AlbumGrid />
-        <BlogSection />
+        <BlogSection posts={blogPosts} />
       </main>
       <SocialLinks />
       <Footer />
