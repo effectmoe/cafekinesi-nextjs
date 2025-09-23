@@ -2,11 +2,13 @@ import {StructureBuilder} from 'sanity/structure'
 
 export const structure = (S: StructureBuilder) =>
   S.list()
+    .id('root')
     .title('コンテンツ')
     .items([
       // サイト設定（シングルトン）
       S.listItem()
         .title('サイト設定')
+        .id('siteSettings')
         .child(
           S.document()
             .schemaType('siteSettings')
@@ -16,6 +18,7 @@ export const structure = (S: StructureBuilder) =>
       // ホームページ（シングルトン）
       S.listItem()
         .title('ホームページ')
+        .id('homepage')
         .child(
           S.document()
             .schemaType('homepage')
@@ -27,6 +30,7 @@ export const structure = (S: StructureBuilder) =>
       // ページ
       S.listItem()
         .title('ページ')
+        .id('pages')
         .child(
           S.documentTypeList('page')
             .title('ページ')
@@ -35,6 +39,7 @@ export const structure = (S: StructureBuilder) =>
       // ブログ記事
       S.listItem()
         .title('ブログ記事')
+        .id('blogPosts')
         .child(
           S.documentTypeList('blogPost')
             .title('ブログ記事')
