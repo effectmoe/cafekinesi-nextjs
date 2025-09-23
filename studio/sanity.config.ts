@@ -19,14 +19,9 @@ export default defineConfig({
     visionTool(),
     presentationTool({
       previewUrl: {
-        origin: typeof location !== 'undefined'
-          ? location.hostname === 'localhost'
-            ? 'http://localhost:3000'
-            : 'https://cafekinesi-nextjs.vercel.app'
-          : 'http://localhost:3000',
-        preview: '/:slug',
+        origin: 'https://cafekinesi-nextjs.vercel.app',
         draftMode: {
-          enable: '/:slug?preview=true',
+          enable: '/api/draft',
         },
       },
       resolve: {
