@@ -27,8 +27,8 @@ export default {
         { type: 'hero' },
         { type: 'feature' },
         { type: 'cta' },
-        { type: 'testimonial' },
-        { type: 'reference', to: [{ type: 'globalWidget' }] }
+        { type: 'testimonial' }
+        // { type: 'reference', to: [{ type: 'globalWidget' }] } // globalWidgetは未実装
       ]
     },
     {
