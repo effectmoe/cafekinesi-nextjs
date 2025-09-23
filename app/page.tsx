@@ -89,22 +89,6 @@ export default async function HomePage() {
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative">
-        {heroSection && (
-          <HeroSection
-            heading={heroSection.heading}
-            subheading={heroSection.subheading}
-            backgroundImage={heroSection.backgroundImage}
-            cta={heroSection.cta}
-          />
-        )}
-
-        {featuresSection && (
-          <FeaturesSection
-            title={featuresSection.title}
-            features={featuresSection.features || []}
-          />
-        )}
-
         <AlbumGrid />
         <BlogSectionDynamic />
         <FAQSection faqs={faqs} />
