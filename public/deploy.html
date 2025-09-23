@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>デプロイ中...</title>
+    <style>
+        body {
+            font-family: system-ui;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #000;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+        }
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 デプロイ開始中...</h1>
+        <div class="spinner"></div>
+        <p id="status">Webhookを送信しています...</p>
+    </div>
+    <script>
+        // ページ読み込み時に自動的にPOSTリクエストを送信
+        fetch('https://api.vercel.com/v1/integrations/deploy/prj_mRxfRYnAxSW4mFGtjtwfE0udEiKE/fHurgj2TqS', {
+            method: 'POST'
+        })
+        .then(() => {
+            document.getElementById('status').innerHTML = '✅ デプロイが開始されました！<br>このウィンドウは閉じても大丈夫です。';
+        })
+        .catch(() => {
+            document.getElementById('status').innerHTML = '⚠️ レスポンスが遅いですが、デプロイは開始されている可能性があります。<br>このウィンドウは閉じても大丈夫です。';
+        });
+    </script>
+</body>
+</html>
