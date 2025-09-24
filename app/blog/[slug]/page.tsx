@@ -53,7 +53,7 @@ export default async function BlogPostPage({
     notFound()
   }
 
-  // 関連記事を取得（シンプルな実装）
+  // 関連記事を取得
   let relatedPosts: any[] = []
   try {
     relatedPosts = await client.fetch(
@@ -62,11 +62,7 @@ export default async function BlogPostPage({
         title,
         slug,
         excerpt,
-        mainImage {
-          asset-> {
-            url
-          }
-        },
+        mainImage,
         publishedAt,
         author-> {
           name
@@ -76,6 +72,23 @@ export default async function BlogPostPage({
     )
   } catch (error) {
     console.error('Failed to fetch related posts:', error)
+  }
+
+  // 画像URL生成のヘルパー関数
+  function getImageUrl(imageAsset: any, width: number = 800, height: number = 600): string {
+    if (!imageAsset) return '/images/blog-1.webp'
+
+    try {
+      return urlFor(imageAsset)
+        .width(width)
+        .height(height)
+        .quality(80)
+        .format('webp')
+        .url()
+    } catch (error) {
+      console.error('Failed to generate image URL:', error)
+      return imageAsset?.asset?.url || '/images/blog-1.webp'
+    }
   }
 
   return (
@@ -98,7 +111,7 @@ export default async function BlogPostPage({
             {post.author.image && (
               <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
                 <img
-                  src={post.author.image?.asset?.url || '/images/blog-1.webp'}
+                  src={getImageUrl(post.author.image, 48, 48)}
                   alt={post.author.name}
                   className="w-full h-full object-cover"
                 />
@@ -114,7 +127,7 @@ export default async function BlogPostPage({
       {post.mainImage && (
         <div className="mb-8 rounded-lg overflow-hidden">
           <img
-            src={post.mainImage?.asset?.url || '/images/blog-1.webp'}
+            src={getImageUrl(post.mainImage, 1200, 630)}
             alt={post.title}
             className="w-full h-auto rounded-lg"
           />
@@ -158,7 +171,7 @@ export default async function BlogPostPage({
                   }
                   return (
                     <img
-                      src={urlFor(value).width(800).height(450).url()}
+                      src={getImageUrl(value, 800, 450)}
                       alt={value.alt || ''}
                       className="w-full h-auto rounded-lg my-8"
                     />
@@ -231,7 +244,7 @@ export default async function BlogPostPage({
               >
                 <div className="aspect-[3/2] relative overflow-hidden bg-gray-100">
                   <img
-                    src={relatedPost.mainImage?.asset?.url || '/images/blog-1.webp'}
+                    src={getImageUrl(relatedPost.mainImage, 400, 267)}
                     alt={relatedPost.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
