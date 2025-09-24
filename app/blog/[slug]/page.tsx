@@ -12,8 +12,14 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   title,
   slug,
   excerpt,
+  tldr,
   mainImage,
   content,
+  keyPoint,
+  summary,
+  faq,
+  category,
+  tags,
   publishedAt,
   author-> {
     name,
@@ -108,8 +114,33 @@ export default async function BlogPostPage({
         </div>
       )}
 
+      {/* TL;DR セクション */}
+      {post.tldr && (
+        <section className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+          <h2 className="text-xl font-semibold mb-3 text-blue-700">TL;DR（要約）</h2>
+          <p className="text-gray-700">{post.tldr}</p>
+        </section>
+      )}
+
+      {/* カテゴリー・タグ表示 */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {post.category && (
+          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
+            {post.category}
+          </span>
+        )}
+        {post.tags && Array.isArray(post.tags) && post.tags.length > 0 &&
+          post.tags.map((tag: string, index: number) => (
+            <span key={`tag-${index}`} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+
+      {/* メインコンテンツ */}
       {post.content && (
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none mb-12">
           <PortableText
             value={post.content}
             components={{
@@ -130,6 +161,54 @@ export default async function BlogPostPage({
             }}
           />
         </div>
+      )}
+
+      {/* 重要なポイント */}
+      {post.keyPoint && (
+        <section className="mb-8 p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
+          <h2 className="text-xl font-semibold mb-3 text-yellow-700">
+            {typeof post.keyPoint === 'object' && post.keyPoint.title
+              ? post.keyPoint.title
+              : '重要なポイント'}
+          </h2>
+          <p className="text-gray-700">
+            {typeof post.keyPoint === 'string'
+              ? post.keyPoint
+              : (typeof post.keyPoint === 'object' && post.keyPoint.content
+                  ? post.keyPoint.content
+                  : '')}
+          </p>
+        </section>
+      )}
+
+      {/* まとめ */}
+      {post.summary && (
+        <section className="mb-8 p-6 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+          <h2 className="text-xl font-semibold mb-3 text-green-700">まとめ</h2>
+          <p className="text-gray-700">{post.summary}</p>
+        </section>
+      )}
+
+      {/* FAQ */}
+      {post.faq && Array.isArray(post.faq) && post.faq.length > 0 && (
+        <section className="mb-8 p-6 bg-gray-50 border-l-4 border-gray-400 rounded-r-lg">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">よくある質問</h2>
+          <div className="space-y-4">
+            {post.faq.map((item: any, index: number) => {
+              if (!item || typeof item !== 'object') return null;
+              return (
+                <div key={index} className="border-b border-gray-200 pb-3 last:border-b-0">
+                  <h3 className="font-medium text-gray-800 mb-2">
+                    Q: {item.question || '質問'}
+                  </h3>
+                  <p className="text-gray-600">
+                    A: {item.answer || '回答'}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )}
     </article>
   )
