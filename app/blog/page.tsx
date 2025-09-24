@@ -50,9 +50,9 @@ export default async function BlogPage() {
               {posts.map((post) => (
                 <article key={post._id} className="group">
                   <Link href={`/blog/${post.slug.current}`} className="block focus:outline-none">
-                    {/* 画像 - 縦長の比率 */}
-                    {post.mainImage && (
-                      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6">
+                    {/* 画像 - 縦長の比率（画像がない場合はプレースホルダー） */}
+                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6">
+                      {post.mainImage ? (
                         <SanityImage
                           image={post.mainImage}
                           alt={post.title}
@@ -60,21 +60,30 @@ export default async function BlogPage() {
                           height={533}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                          <span className="text-gray-400 text-lg">No Image</span>
+                        </div>
+                      )}
+                    </div>
 
                     {/* テキストコンテンツ */}
                     <div className="space-y-3">
-                      {/* 日付 */}
-                      {post.publishedAt && (
-                        <time className="text-xs tracking-wider text-gray-500 uppercase">
-                          {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </time>
-                      )}
+                      {/* 日付と著者 */}
+                      <div className="flex items-center justify-between text-xs tracking-wider text-gray-500 uppercase">
+                        {post.publishedAt && (
+                          <time>
+                            {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </time>
+                        )}
+                        {post.author?.name && (
+                          <span>{post.author.name}</span>
+                        )}
+                      </div>
 
                       {/* タイトル */}
                       <h2 className="text-xl font-light text-gray-900 leading-tight group-hover:text-gray-600 transition-colors duration-300">

@@ -162,33 +162,38 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* TL;DR セクション - よりミニマルに */}
+      {/* TL;DR セクション - エレガントなスタイル */}
       {post.tldr && (
-        <section className="mb-8 sm:mb-12 p-6 sm:p-8 bg-gray-100 rounded-sm">
-          <h2 className="text-xs sm:text-sm font-light tracking-wider uppercase text-gray-600 mb-3 sm:mb-4">TL;DR（要約）</h2>
-          <p className="text-base sm:text-lg font-light text-gray-800 leading-relaxed">{post.tldr}</p>
+        <section className="mb-12 sm:mb-16">
+          <div className="border-l-2 border-gray-900 pl-6">
+            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">要約</h2>
+            <p className="text-lg font-light text-gray-700 leading-relaxed">{post.tldr}</p>
+          </div>
         </section>
       )}
 
-      {/* カテゴリー・タグ表示 */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {post.category && (
-          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
-            {post.category}
-          </span>
-        )}
-        {post.tags && Array.isArray(post.tags) && post.tags.length > 0 &&
-          post.tags.map((tag: string, index: number) => (
-            <span key={`tag-${index}`} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-              {tag}
+      {/* タグ表示 - ミニマルスタイル */}
+      {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
+        <div className="flex flex-wrap gap-4 mb-12 pb-12 border-b border-gray-200">
+          {post.tags.map((tag: string, index: number) => (
+            <span key={`tag-${index}`} className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer">
+              #{tag}
             </span>
-          ))
-        }
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* メインコンテンツ */}
+      {/* メインコンテンツ - 洗練されたタイポグラフィ */}
       {post.content && (
-        <div className="prose prose-lg max-w-none mb-12">
+        <div className="prose prose-lg prose-gray max-w-none mb-16
+                       prose-headings:font-light prose-headings:text-gray-900 prose-headings:tracking-tight
+                       prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
+                       prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
+                       prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6
+                       prose-a:text-gray-900 prose-a:underline-offset-4 prose-a:decoration-gray-400
+                       prose-strong:font-medium prose-strong:text-gray-900
+                       prose-ul:my-6 prose-li:text-gray-700
+                       prose-blockquote:border-gray-300 prose-blockquote:italic prose-blockquote:text-gray-600">
           <PortableText
             value={post.content}
             components={{
@@ -211,15 +216,15 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* 重要なポイント */}
+      {/* 重要なポイント - モダンなアクセント */}
       {post.keyPoint && (
-        <section className="mb-8 p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-          <h2 className="text-xl font-semibold mb-3 text-yellow-700">
+        <section className="mb-12 py-8 border-t border-b border-gray-200">
+          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">
             {typeof post.keyPoint === 'object' && post.keyPoint.title
               ? post.keyPoint.title
               : '重要なポイント'}
           </h2>
-          <p className="text-gray-700">
+          <p className="text-lg text-gray-700 leading-relaxed font-light">
             {typeof post.keyPoint === 'string'
               ? post.keyPoint
               : (typeof post.keyPoint === 'object' && post.keyPoint.content
@@ -229,27 +234,27 @@ export default async function BlogPostPage({
         </section>
       )}
 
-      {/* まとめ */}
+      {/* まとめ - クリーンなデザイン */}
       {post.summary && (
-        <section className="mb-8 p-6 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
-          <h2 className="text-xl font-semibold mb-3 text-green-700">まとめ</h2>
-          <p className="text-gray-700">{post.summary}</p>
+        <section className="mb-12 p-8 bg-gray-50">
+          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">まとめ</h2>
+          <p className="text-lg text-gray-700 leading-relaxed font-light">{post.summary}</p>
         </section>
       )}
 
-      {/* FAQ */}
+      {/* FAQ - ミニマルスタイル */}
       {post.faq && Array.isArray(post.faq) && post.faq.length > 0 && (
-        <section className="mb-8 p-6 bg-gray-50 border-l-4 border-gray-400 rounded-r-lg">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">よくある質問</h2>
-          <div className="space-y-4">
+        <section className="mb-16">
+          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-8 font-light">よくある質問</h2>
+          <div className="space-y-8">
             {post.faq.map((item: any, index: number) => {
               if (!item || typeof item !== 'object') return null;
               return (
-                <div key={index} className="border-b border-gray-200 pb-3 last:border-b-0">
-                  <h3 className="font-medium text-gray-800 mb-2">
+                <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
+                  <h3 className="text-base font-normal text-gray-900 mb-3">
                     Q: {item.question || '質問'}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-base text-gray-600 leading-relaxed font-light">
                     A: {item.answer || '回答'}
                   </p>
                 </div>
