@@ -41,6 +41,9 @@ async function getPost(slug: string) {
   return client.fetch<BlogPost>(POST_QUERY, { slug })
 }
 
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -92,7 +95,9 @@ export default async function BlogPostPage({
   }
 
   return (
-    <article className="container mx-auto px-4 py-16 max-w-4xl">
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
+      <article className="container mx-auto px-4 py-16 max-w-4xl flex-grow">
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
 
@@ -295,7 +300,9 @@ export default async function BlogPostPage({
           ブログ一覧に戻る
         </a>
       </div>
-    </article>
+      </article>
+      <Footer />
+    </div>
   )
 }
 

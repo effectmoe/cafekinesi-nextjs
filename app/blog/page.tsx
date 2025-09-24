@@ -23,12 +23,17 @@ async function getPosts() {
   return client.fetch<BlogPost[]>(POSTS_QUERY)
 }
 
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+
 export default async function BlogPage() {
   const posts = await getPosts()
 
   return (
-    <main className="container mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold mb-12">ブログ</h1>
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
+      <main className="container mx-auto px-4 py-16 flex-grow">
+        <h1 className="text-4xl font-bold mb-12">ブログ</h1>
 
       {posts.length === 0 ? (
         <p className="text-gray-600">まだブログ記事がありません。</p>
@@ -36,7 +41,7 @@ export default async function BlogPage() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <article key={post._id} className="group">
-              <Link href={`/blog/${post.slug.current}`}>
+              <Link href={`/blog/${post.slug.current}`} className="focus:outline-none">
                 {post.mainImage && (
                   <div className="relative aspect-video overflow-hidden rounded-lg mb-4">
                     <SanityImage
@@ -64,7 +69,9 @@ export default async function BlogPage() {
           ))}
         </div>
       )}
-    </main>
+      </main>
+      <Footer />
+    </div>
   )
 }
 
