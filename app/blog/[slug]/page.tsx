@@ -90,30 +90,51 @@ async function getPost(slug: string) {
 }
 
 async function getRelatedPosts(slug: string, category?: string) {
-  try {
-    console.log('[getRelatedPosts] Fetching for slug:', slug, 'category:', category)
+  if (category) {
+    // 同じカテゴリーの関連記事を優先取得
+    const categoryQuery = groq`*[_type == "blogPost" && slug.current != $slug && category == $category] | order(publishedAt desc) [0...3] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      mainImage,
+      publishedAt,
+      category,
+      author-> {
+        name,
+        image {
+          asset-> {
+            url
+          }
+        }
+      }
+    }`
+    const categoryPosts = await client.fetch(categoryQuery, { slug, category })
 
-    // まず一般的な関連記事を取得
-    const posts = await client.fetch(RELATED_POSTS_QUERY, { slug })
-    console.log('[getRelatedPosts] Found posts:', posts.length)
+    if (categoryPosts.length >= 3) {
+      return categoryPosts
+    }
 
-    return posts.slice(0, 3)
-  } catch (error) {
-    console.error('[getRelatedPosts] Error:', error)
-    return []
+    // カテゴリー記事が少ない場合は一般的な関連記事で補完
+    const generalPosts = await client.fetch(RELATED_POSTS_QUERY, { slug })
+    const combined = [...categoryPosts]
+
+    for (const post of generalPosts) {
+      if (combined.length >= 3) break
+      if (!combined.find(p => p._id === post._id)) {
+        combined.push(post)
+      }
+    }
+
+    return combined.slice(0, 3)
   }
+
+  const posts = await client.fetch(RELATED_POSTS_QUERY, { slug })
+  return posts.slice(0, 3)
 }
 
 async function getAdjacentPosts(currentDate: string) {
-  try {
-    console.log('[getAdjacentPosts] Fetching for date:', currentDate)
-    const result = await client.fetch(ADJACENT_POSTS_QUERY, { currentDate })
-    console.log('[getAdjacentPosts] Result:', result)
-    return result
-  } catch (error) {
-    console.error('[getAdjacentPosts] Error:', error)
-    return { previous: null, next: null }
-  }
+  return client.fetch(ADJACENT_POSTS_QUERY, { currentDate })
 }
 
 async function getAllPosts() {
@@ -146,11 +167,6 @@ export default async function BlogPostPage({
     getAdjacentPosts(post.publishedAt)
   ])
 
-  console.log('[BlogPost] Related posts:', relatedPosts?.length || 0)
-  console.log('[BlogPost] Adjacent posts:', adjacentPosts)
-  console.log('[BlogPost] Post category:', post.category)
-  console.log('[BlogPost] Post publishedAt:', post.publishedAt)
-
   return (
     <article className="container mx-auto px-4 py-16 max-w-4xl">
       <header className="mb-8">
@@ -167,36 +183,20 @@ export default async function BlogPostPage({
         )}
 
         {post.author && (
-          <div className="flex items-center gap-4 mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-4 mt-6">
             {post.author.image && (
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                <img
-                  src={(() => {
-                    try {
-                      return urlFor(post.author.image)
-                        .width(48)
-                        .height(48)
-                        .quality(80)
-                        .format('webp')
-                        .url()
-                    } catch {
-                      return '/images/blog-1.webp'
-                    }
-                  })()}
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <SanityImage
+                  image={post.author.image}
                   alt={post.author.name}
+                  width={48}
+                  height={48}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                  }}
                 />
               </div>
             )}
             <div>
-              <p className="font-medium text-gray-900">著者: {post.author.name}</p>
-              {post.author.bio && (
-                <p className="text-sm text-gray-600 mt-1">{post.author.bio}</p>
-              )}
+              <p className="font-medium">{post.author.name}</p>
             </div>
           </div>
         )}
@@ -204,30 +204,13 @@ export default async function BlogPostPage({
 
       {post.mainImage && (
         <div className="mb-8 rounded-lg overflow-hidden">
-          <img
-            src={(() => {
-              try {
-                return urlFor(post.mainImage)
-                  .width(1200)
-                  .height(630)
-                  .quality(80)
-                  .format('webp')
-                  .url()
-              } catch (error) {
-                console.error('Failed to generate main image URL:', error)
-                return '/images/blog-1.webp'
-              }
-            })()}
+          <SanityImage
+            image={post.mainImage}
             alt={post.title}
-            className="w-full h-auto rounded-lg"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              console.error('Main image failed to load:', target.src)
-              if (!target.src.includes('/images/blog-1.webp')) {
-                target.src = '/images/blog-1.webp'
-              }
-            }}
-            onLoad={() => console.log('Main image loaded successfully')}
+            width={1200}
+            height={630}
+            className="w-full h-auto"
+            priority
           />
         </div>
       )}
@@ -330,18 +313,15 @@ export default async function BlogPostPage({
       )}
 
       {/* 前後ナビゲーション */}
-      <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">記事ナビゲーション</h2>
-        <PostNavigation
-          previousPost={adjacentPosts?.previous}
-          nextPost={adjacentPosts?.next}
-        />
-      </div>
+      <PostNavigation
+        previousPost={adjacentPosts.previous}
+        nextPost={adjacentPosts.next}
+      />
 
       {/* 関連記事セクション */}
-      <section className="mt-16 pt-8 border-t border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
-        {relatedPosts && relatedPosts.length > 0 ? (
+      {relatedPosts && relatedPosts.length > 0 && (
+        <section className="mt-16 pt-8 border-t border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedPosts.map((relatedPost: any) => (
               <RelatedPostCard
@@ -350,13 +330,8 @@ export default async function BlogPostPage({
               />
             ))}
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-500">関連記事が見つかりませんでした</p>
-            <p className="text-sm text-gray-400 mt-2">他の記事もぜひご覧ください</p>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* ブログ一覧に戻るボタン */}
       <div className="mt-12 text-center">
