@@ -19,7 +19,7 @@ const Header = () => {
               <img
                 src={logo}
                 alt="Cafe Kinesi Logo"
-                className="w-12 h-12 object-contain rounded-full"
+                className="w-8 h-8 object-contain"
               />
               <div className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] tracking-wide">
                 Cafe Kinesi
