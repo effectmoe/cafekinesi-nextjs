@@ -116,10 +116,11 @@
     @apply bg-white text-gray-900;
   }
 
-  /* Remove focus outline for link cards and images */
+  /* Remove focus outline for link cards and images - v2 */
   a:focus,
   a:focus-visible {
     outline: none !important;
+    box-shadow: none !important;
   }
 
   /* Specific for blog cards and link elements */

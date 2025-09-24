@@ -48,4 +48,4 @@ export default function RootLayout({
     </html>
   );
 }
-// Force rebuild at 2025-01-22 - Clear Vercel cache
+// Force rebuild at 2025-01-22 14:00 - Clear cache for blog design updates
