@@ -9,65 +9,6 @@ import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
 
-// ヘルパーコンポーネント
-function MainImageComponent({ image, title }: { image: any, title: string }) {
-  let imageUrl = '/images/blog-1.webp'
-  try {
-    imageUrl = urlFor(image)
-      .width(1200)
-      .height(630)
-      .quality(80)
-      .format('webp')
-      .url()
-  } catch (error) {
-    console.error('Failed to generate main image URL:', error)
-  }
-
-  return (
-    <div className="mb-8 rounded-lg overflow-hidden">
-      <img
-        src={imageUrl}
-        alt={title}
-        className="w-full h-auto rounded-lg"
-        onError={(e) => {
-          const target = e.target as HTMLImageElement
-          if (!target.src.includes('/images/blog-1.webp')) {
-            target.src = '/images/blog-1.webp'
-          }
-        }}
-      />
-    </div>
-  )
-}
-
-function AuthorImageComponent({ image, name }: { image: any, name: string }) {
-  let imageUrl = '/images/blog-1.webp'
-  try {
-    imageUrl = urlFor(image)
-      .width(48)
-      .height(48)
-      .quality(80)
-      .format('webp')
-      .url()
-  } catch (error) {
-    console.error('Failed to generate author image URL:', error)
-  }
-
-  return (
-    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-      <img
-        src={imageUrl}
-        alt={name}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-          const target = e.target as HTMLImageElement
-          target.style.display = 'none'
-        }}
-      />
-    </div>
-  )
-}
-
 const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
   title,
@@ -200,22 +141,15 @@ export default async function BlogPostPage({
   }
 
   // 関連記事と前後ナビゲーションのデータを並行取得
-  let relatedPosts = []
-  let adjacentPosts = { previous: null, next: null }
+  const [relatedPosts, adjacentPosts] = await Promise.all([
+    getRelatedPosts(slug, post.category),
+    getAdjacentPosts(post.publishedAt)
+  ])
 
-  try {
-    const results = await Promise.all([
-      getRelatedPosts(slug, post.category),
-      getAdjacentPosts(post.publishedAt)
-    ])
-    relatedPosts = results[0] || []
-    adjacentPosts = results[1] || { previous: null, next: null }
-
-    console.log('[BlogPost] Related posts:', relatedPosts?.length || 0)
-    console.log('[BlogPost] Adjacent posts:', adjacentPosts)
-  } catch (error) {
-    console.error('[BlogPost] Error fetching related content:', error)
-  }
+  console.log('[BlogPost] Related posts:', relatedPosts?.length || 0)
+  console.log('[BlogPost] Adjacent posts:', adjacentPosts)
+  console.log('[BlogPost] Post category:', post.category)
+  console.log('[BlogPost] Post publishedAt:', post.publishedAt)
 
   return (
     <article className="container mx-auto px-4 py-16 max-w-4xl">
@@ -235,7 +169,28 @@ export default async function BlogPostPage({
         {post.author && (
           <div className="flex items-center gap-4 mt-6 p-4 bg-gray-50 rounded-lg">
             {post.author.image && (
-              <AuthorImageComponent image={post.author.image} name={post.author.name} />
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                <img
+                  src={(() => {
+                    try {
+                      return urlFor(post.author.image)
+                        .width(48)
+                        .height(48)
+                        .quality(80)
+                        .format('webp')
+                        .url()
+                    } catch {
+                      return '/images/blog-1.webp'
+                    }
+                  })()}
+                  alt={post.author.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                  }}
+                />
+              </div>
             )}
             <div>
               <p className="font-medium text-gray-900">著者: {post.author.name}</p>
@@ -248,7 +203,33 @@ export default async function BlogPostPage({
       </header>
 
       {post.mainImage && (
-        <MainImageComponent image={post.mainImage} title={post.title} />
+        <div className="mb-8 rounded-lg overflow-hidden">
+          <img
+            src={(() => {
+              try {
+                return urlFor(post.mainImage)
+                  .width(1200)
+                  .height(630)
+                  .quality(80)
+                  .format('webp')
+                  .url()
+              } catch (error) {
+                console.error('Failed to generate main image URL:', error)
+                return '/images/blog-1.webp'
+              }
+            })()}
+            alt={post.title}
+            className="w-full h-auto rounded-lg"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              console.error('Main image failed to load:', target.src)
+              if (!target.src.includes('/images/blog-1.webp')) {
+                target.src = '/images/blog-1.webp'
+              }
+            }}
+            onLoad={() => console.log('Main image loaded successfully')}
+          />
+        </div>
       )}
 
       {/* TL;DR セクション */}
