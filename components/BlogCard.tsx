@@ -23,7 +23,7 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
     <article className={`group cursor-pointer ${className}`} onMouseEnter={handleMouseEnter}>
       <div className="aspect-[4/3] relative overflow-hidden mb-4 bg-gray-100">
         {image.startsWith('http') ? (
-          // Sanityの画像
+          // Sanityの画像（通常のimg tag）
           <img
             src={image}
             alt={title}
@@ -31,14 +31,25 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              console.warn('Image failed to load:', target.src);
+              console.error('❌ Image failed to load:', {
+                src: target.src,
+                title: title,
+                naturalWidth: target.naturalWidth,
+                naturalHeight: target.naturalHeight
+              });
               if (!target.src.includes('/images/blog-1.webp')) {
-                console.log('Falling back to default image');
+                console.log('🔄 Falling back to default image');
                 target.src = '/images/blog-1.webp';
               }
             }}
-            onLoad={() => {
-              console.log('Image loaded successfully:', image);
+            onLoad={(e) => {
+              const target = e.target as HTMLImageElement;
+              console.log('✅ Image loaded successfully:', {
+                src: image,
+                title: title,
+                naturalWidth: target.naturalWidth,
+                naturalHeight: target.naturalHeight
+              });
             }}
           />
         ) : (
@@ -49,7 +60,8 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={() => console.warn('Local image failed to load:', image)}
+            onError={() => console.warn('❌ Local image failed to load:', image)}
+            onLoad={() => console.log('✅ Local image loaded:', image)}
           />
         )}
       </div>
