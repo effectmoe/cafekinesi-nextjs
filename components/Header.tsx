@@ -12,7 +12,7 @@ const Header = () => {
   return (
     <>
       <header className="w-full bg-white border-b border-gray-100 relative z-50">
-        <div className="max-w-screen-2xl mx-auto px-6 py-6">
+        <div className="max-w-screen-2xl mx-auto px-8 py-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity focus:outline-none">
@@ -28,7 +28,7 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
-              <nav className="flex items-center gap-6">
+              <nav className="flex items-center gap-8">
                 {navItems.map((item) => (
                   <a 
                     key={item}
@@ -74,7 +74,7 @@ const Header = () => {
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-lg z-40">
-            <nav className="px-6 py-4 space-y-4">
+            <nav className="px-8 py-6 space-y-4">
               {navItems.map((item) => (
                 <a 
                   key={item}
