@@ -19,7 +19,11 @@ const query = groq`
     featured,
     author-> {
       name,
-      image
+      image {
+        asset-> {
+          url
+        }
+      }
     }
   }
 `;
@@ -85,6 +89,9 @@ const BlogSectionDynamic = async () => {
           } else {
             console.warn(`[BlogSectionDynamic] No image asset found for "${post.title}", using fallback`);
           }
+
+          // 著者情報のデバッグ
+          console.log(`[BlogSectionDynamic] Author for "${post.title}":`, post.author);
 
           return (
             <BlogCard
