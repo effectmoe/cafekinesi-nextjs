@@ -1,8 +1,7 @@
-import { client, groq, urlFor } from '@/lib/sanity.client'
+'use client'
 
-// 動的レンダリングを強制（Next.js 15ではこれだけで十分）
-export const dynamic = 'force-dynamic'
-import { SanityImage } from '@/components/SanityImage'
+import { useEffect, useState } from 'react'
+import { client, groq, urlFor } from '@/lib/sanity.client'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
@@ -38,57 +37,73 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
-async function getPost(slug: string) {
-  return client.fetch<BlogPost>(POST_QUERY, { slug })
-}
-
-async function getAllPosts() {
-  return client.fetch<{ slug: { current: string } }[]>(ALL_POSTS_QUERY)
-}
-
-// generateStaticParamsを削除して完全に動的レンダリングに
-// export async function generateStaticParams() {
-//   const posts = await getAllPosts()
-//   return posts.map((post) => ({
-//     slug: post.slug.current,
-//   }))
-// }
-
-export default async function BlogPostPage({
+export default function BlogPostPage({
   params,
 }: {
   params: { slug: string }
 }) {
-  const { slug } = await params
-  const post = await getPost(slug)
+  const [post, setPost] = useState<BlogPost | null>(null)
+  const [relatedPosts, setRelatedPosts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resolvedParams = await params
+        const { slug } = resolvedParams
+
+        // 投稿を取得
+        const postData = await client.fetch<BlogPost>(POST_QUERY, { slug })
+
+        if (!postData) {
+          notFound()
+          return
+        }
+
+        setPost(postData)
+
+        // 関連記事を取得
+        try {
+          const relatedData = await client.fetch(
+            `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
+              _id,
+              title,
+              slug,
+              excerpt,
+              mainImage {
+                asset-> {
+                  url
+                }
+              },
+              publishedAt,
+              author-> {
+                name
+              }
+            }`,
+            { slug }
+          )
+          setRelatedPosts(relatedData || [])
+        } catch (error) {
+          console.error('Failed to fetch related posts:', error)
+        }
+      } catch (error) {
+        console.error('Failed to fetch post:', error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [params])
+
+  if (loading) {
+    return <div className="container mx-auto px-4 py-16 max-w-4xl">読み込み中...</div>
+  }
 
   if (!post) {
     notFound()
-  }
-
-  // 関連記事を取得（エラーが発生しても継続）
-  let relatedPosts = []
-  try {
-    relatedPosts = await client.fetch(
-      `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
-        _id,
-        title,
-        slug,
-        excerpt,
-        mainImage {
-          asset-> {
-            url
-          }
-        },
-        publishedAt,
-        author-> {
-          name
-        }
-      }`,
-      { slug }
-    )
-  } catch (error) {
-    console.error('Failed to fetch related posts:', error)
+    return null
   }
 
   return (
