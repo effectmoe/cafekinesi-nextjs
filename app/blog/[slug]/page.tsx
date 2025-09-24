@@ -95,55 +95,78 @@ export default async function BlogPostPage({
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <article className="container mx-auto px-4 py-16 max-w-4xl flex-grow">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+      <article className="flex-grow">
+        {/* ヒーローセクション - より洗練されたデザイン */}
+        <header className="bg-white border-b border-gray-100">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            {/* 日付とカテゴリー */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+              {post.publishedAt && (
+                <time className="text-xs tracking-wider text-gray-500 uppercase">
+                  {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              )}
+              {post.category && (
+                <>
+                  <span className="text-xs tracking-wider text-gray-500 uppercase hidden sm:inline">•</span>
+                  <span className="text-xs tracking-wider text-gray-500 uppercase">
+                    {post.category}
+                  </span>
+                </>
+              )}
+            </div>
 
-        {post.publishedAt && (
-          <time className="text-gray-600">
-            {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-        )}
+            {/* タイトル */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-gray-900 mb-6 sm:mb-8">
+              {post.title}
+            </h1>
 
-        {post.author && (
-          <div className="flex items-center gap-4 mt-6">
-            {post.author.image && (
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                <img
-                  src={getImageUrl(post.author.image, 48, 48)}
-                  alt={post.author.name}
-                  className="w-full h-full object-cover"
-                />
+            {/* 著者情報 */}
+            {post.author && (
+              <div className="flex items-center gap-3 sm:gap-4">
+                {post.author.image && (
+                  <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full overflow-hidden bg-gray-100">
+                    <img
+                      src={getImageUrl(post.author.image, 48, 48)}
+                      alt={post.author.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-light text-gray-700">{post.author.name}</p>
+                </div>
               </div>
             )}
-            <div>
-              <p className="font-medium">{post.author.name}</p>
-            </div>
           </div>
-        )}
-      </header>
+        </header>
 
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+
+      {/* メイン画像 - レスポンシブ対応 */}
       {post.mainImage && (
-        <div className="mb-8 rounded-lg overflow-hidden">
-          <img
-            src={getImageUrl(post.mainImage, 1200, 630)}
-            alt={post.title}
-            className="w-full h-auto rounded-lg"
-          />
+        <div className="-mx-4 sm:-mx-6 lg:-mx-8 mb-8 sm:mb-12 lg:mb-16">
+          <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-gray-100">
+            <img
+              src={getImageUrl(post.mainImage, 1400, 600)}
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       )}
 
-      {/* TL;DR セクション */}
+      {/* TL;DR セクション - よりミニマルに */}
       {post.tldr && (
-        <section className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-          <h2 className="text-xl font-semibold mb-3 text-blue-700">TL;DR（要約）</h2>
-          <p className="text-gray-700">{post.tldr}</p>
+        <section className="mb-8 sm:mb-12 p-6 sm:p-8 bg-gray-100 rounded-sm">
+          <h2 className="text-xs sm:text-sm font-light tracking-wider uppercase text-gray-600 mb-3 sm:mb-4">TL;DR（要約）</h2>
+          <p className="text-base sm:text-lg font-light text-gray-800 leading-relaxed">{post.tldr}</p>
         </section>
       )}
 
@@ -288,18 +311,19 @@ export default async function BlogPostPage({
         </section>
       )}
 
-      {/* ブログ一覧に戻るボタン */}
-      <div className="mt-12 text-center">
+      {/* ブログ一覧に戻るボタン - ミニマルに */}
+      <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
         <a
           href="/blog"
-          className="inline-flex items-center gap-2 px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
+          className="inline-flex items-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wider text-gray-600 uppercase hover:text-gray-900 transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg className="w-3 sm:w-4 h-3 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
           </svg>
           ブログ一覧に戻る
         </a>
       </div>
+        </div>
       </article>
       <Footer />
     </div>
