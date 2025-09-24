@@ -3,6 +3,8 @@ import { client, groq, urlFor } from '@/lib/sanity.client'
 // 動的レンダリングを強制（Next.js 15ではこれだけで十分）
 export const dynamic = 'force-dynamic'
 import { SanityImage } from '@/components/SanityImage'
+import { RelatedPostCard } from '@/components/RelatedPostCard'
+import { PostNavigation } from '@/components/PostNavigation'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
@@ -38,8 +40,101 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
+// 関連記事取得クエリ
+const RELATED_POSTS_QUERY = groq`*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...6] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  mainImage,
+  publishedAt,
+  category,
+  author-> {
+    name,
+    image {
+      asset-> {
+        url
+      }
+    }
+  }
+}`
+
+// 前後の記事取得クエリ
+const ADJACENT_POSTS_QUERY = groq`{
+  "previous": *[_type == "blogPost" && publishedAt < $currentDate] | order(publishedAt desc) [0] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    publishedAt,
+    author-> {
+      name
+    }
+  },
+  "next": *[_type == "blogPost" && publishedAt > $currentDate] | order(publishedAt asc) [0] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    publishedAt,
+    author-> {
+      name
+    }
+  }
+}`
+
 async function getPost(slug: string) {
   return client.fetch<BlogPost>(POST_QUERY, { slug })
+}
+
+async function getRelatedPosts(slug: string, category?: string) {
+  if (category) {
+    // 同じカテゴリーの関連記事を優先取得
+    const categoryQuery = groq`*[_type == "blogPost" && slug.current != $slug && category == $category] | order(publishedAt desc) [0...3] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      mainImage,
+      publishedAt,
+      category,
+      author-> {
+        name,
+        image {
+          asset-> {
+            url
+          }
+        }
+      }
+    }`
+    const categoryPosts = await client.fetch(categoryQuery, { slug, category })
+
+    if (categoryPosts.length >= 3) {
+      return categoryPosts
+    }
+
+    // カテゴリー記事が少ない場合は一般的な関連記事で補完
+    const generalPosts = await client.fetch(RELATED_POSTS_QUERY, { slug })
+    const combined = [...categoryPosts]
+
+    for (const post of generalPosts) {
+      if (combined.length >= 3) break
+      if (!combined.find(p => p._id === post._id)) {
+        combined.push(post)
+      }
+    }
+
+    return combined.slice(0, 3)
+  }
+
+  const posts = await client.fetch(RELATED_POSTS_QUERY, { slug })
+  return posts.slice(0, 3)
+}
+
+async function getAdjacentPosts(currentDate: string) {
+  return client.fetch(ADJACENT_POSTS_QUERY, { currentDate })
 }
 
 async function getAllPosts() {
@@ -65,6 +160,12 @@ export default async function BlogPostPage({
   if (!post) {
     notFound()
   }
+
+  // 関連記事と前後ナビゲーションのデータを並行取得
+  const [relatedPosts, adjacentPosts] = await Promise.all([
+    getRelatedPosts(slug, post.category),
+    getAdjacentPosts(post.publishedAt)
+  ])
 
   return (
     <article className="container mx-auto px-4 py-16 max-w-4xl">
@@ -210,6 +311,40 @@ export default async function BlogPostPage({
           </div>
         </section>
       )}
+
+      {/* 前後ナビゲーション */}
+      <PostNavigation
+        previousPost={adjacentPosts.previous}
+        nextPost={adjacentPosts.next}
+      />
+
+      {/* 関連記事セクション */}
+      {relatedPosts && relatedPosts.length > 0 && (
+        <section className="mt-16 pt-8 border-t border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedPosts.map((relatedPost: any) => (
+              <RelatedPostCard
+                key={relatedPost._id}
+                post={relatedPost}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ブログ一覧に戻るボタン */}
+      <div className="mt-12 text-center">
+        <a
+          href="/blog"
+          className="inline-flex items-center gap-2 px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          ブログ一覧に戻る
+        </a>
+      </div>
     </article>
   )
 }
