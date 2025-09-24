@@ -3,7 +3,7 @@
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-const logo = "/images/cafe-logo.jpeg";
+const logo = "/images/simple-logo.svg";
 
 const Header = () => {
   const navItems = ["カフェキネシについて", "スクール", "インストラクター", "ブログ", "アロマ", "メンバー"];
