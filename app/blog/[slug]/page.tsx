@@ -111,28 +111,13 @@ export default async function BlogPostPage({
             {post.author.image && (
               <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
                 <img
-                  src={(() => {
-                    try {
-                      return urlFor(post.author.image)
-                        .width(48)
-                        .height(48)
-                        .quality(80)
-                        .format('webp')
-                        .url()
-                    } catch (error) {
-                      console.error('Failed to generate author image URL:', error)
-                      return post.author.image?.asset?.url || '/images/blog-1.webp'
-                    }
-                  })()}
+                  src={post.author.image?.asset?.url || '/images/blog-1.webp'}
                   alt={post.author.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
-                    console.error('Author image failed to load:', target.src)
-                    if (post.author.image?.asset?.url && !target.src.includes(post.author.image.asset.url)) {
-                      target.src = post.author.image.asset.url
-                    } else {
-                      target.style.display = 'none'
+                    if (!target.src.includes('/images/blog-1.webp')) {
+                      target.src = '/images/blog-1.webp'
                     }
                   }}
                 />
@@ -148,29 +133,12 @@ export default async function BlogPostPage({
       {post.mainImage && (
         <div className="mb-8 rounded-lg overflow-hidden">
           <img
-            src={(() => {
-              try {
-                return urlFor(post.mainImage)
-                  .width(1200)
-                  .height(630)
-                  .quality(80)
-                  .format('webp')
-                  .url()
-              } catch (error) {
-                console.error('Failed to generate main image URL:', error)
-                // フォールバック: 直接URLを使用
-                return post.mainImage?.asset?.url || '/images/blog-1.webp'
-              }
-            })()}
+            src={post.mainImage?.asset?.url || '/images/blog-1.webp'}
             alt={post.title}
             className="w-full h-auto rounded-lg"
             onError={(e) => {
               const target = e.target as HTMLImageElement
-              console.error('Main image failed to load:', target.src)
-              // Sanityの直接URLにフォールバック
-              if (post.mainImage?.asset?.url && !target.src.includes(post.mainImage.asset.url)) {
-                target.src = post.mainImage.asset.url
-              } else if (!target.src.includes('/images/blog-1.webp')) {
+              if (!target.src.includes('/images/blog-1.webp')) {
                 target.src = '/images/blog-1.webp'
               }
             }}
