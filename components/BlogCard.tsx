@@ -8,11 +8,12 @@ interface BlogCardProps {
   title: string;
   excerpt: string;
   date: string;
+  author?: { name: string; image?: any } | null;  // 著者情報を追加
   slug?: string | { current: string };  // Sanityからのデータ用
   className?: string;
 }
 
-const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProps) => {
+const BlogCard = ({ image, title, excerpt, date, author, slug, className }: BlogCardProps) => {
   // プリロード用の関数
   const handleMouseEnter = () => {
     // Next.jsでは自動的にプリロードされるため、特別な処理は不要
@@ -53,9 +54,16 @@ const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProp
         <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed line-clamp-3">
           {excerpt}
         </p>
-        <time className="text-xs text-[hsl(var(--text-muted))] font-light tracking-wider uppercase">
-          {date}
-        </time>
+        <div className="flex items-center justify-between text-xs text-[hsl(var(--text-muted))]">
+          <time className="font-light tracking-wider uppercase">
+            {date}
+          </time>
+          {author && (
+            <span className="font-light">
+              {author.name}
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );

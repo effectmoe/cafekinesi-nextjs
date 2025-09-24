@@ -83,6 +83,7 @@ const BlogSectionDynamic = async () => {
                 month: '2-digit',
                 day: '2-digit'
               }).replace(/\//g, '.')}
+              author={post.author}
               slug={post.slug}
             />
           );
