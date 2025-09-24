@@ -12,7 +12,7 @@ const Header = () => {
   return (
     <>
       <header className="w-full bg-white border-b border-gray-100 relative z-50">
-        <div className="max-w-screen-2xl mx-auto px-8 py-8">
+        <div className="max-w-screen-2xl mx-auto px-8 py-12">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity focus:outline-none">
