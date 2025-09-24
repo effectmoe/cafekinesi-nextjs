@@ -3,7 +3,7 @@
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-const logo = "/images/kitchen-logo.png";
+const logo = "/images/cafe-logo.jpeg";
 
 const Header = () => {
   const navItems = ["カフェキネシについて", "スクール", "インストラクター", "ブログ", "アロマ", "メンバー"];
@@ -15,11 +15,11 @@ const Header = () => {
         <div className="max-w-screen-2xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <Link href="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-90 transition-opacity focus:outline-none">
               <img
                 src={logo}
                 alt="Cafe Kinesi Logo"
-                className="w-16 h-16 object-contain"
+                className="w-12 h-12 object-contain rounded-full"
               />
               <div className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] tracking-wide">
                 Cafe Kinesi
