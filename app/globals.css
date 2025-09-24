@@ -115,4 +115,33 @@
   body {
     @apply bg-white text-gray-900;
   }
+
+  /* Remove focus outline for link cards and images */
+  a:focus,
+  a:focus-visible {
+    outline: none !important;
+  }
+
+  /* Specific for blog cards and link elements */
+  .group:focus,
+  .group:focus-visible,
+  article:focus,
+  article:focus-visible,
+  img:focus,
+  img:focus-visible {
+    outline: none !important;
+  }
+
+  /* Remove all focus outlines from links containing images */
+  a img,
+  a > * {
+    outline: none !important;
+  }
+
+  /* Override accessibility.css focus styles for links and cards */
+  a.block:focus,
+  a.block:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 }
