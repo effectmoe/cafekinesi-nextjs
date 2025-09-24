@@ -1,10 +1,10 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import { client, groq, urlFor } from '@/lib/sanity.client'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
+
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
 
 const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
@@ -37,73 +37,45 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
-export default function BlogPostPage({
+async function getPost(slug: string) {
+  return client.fetch<BlogPost>(POST_QUERY, { slug })
+}
+
+export default async function BlogPostPage({
   params,
 }: {
   params: { slug: string }
 }) {
-  const [post, setPost] = useState<BlogPost | null>(null)
-  const [relatedPosts, setRelatedPosts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resolvedParams = await params
-        const { slug } = resolvedParams
-
-        // 投稿を取得
-        const postData = await client.fetch<BlogPost>(POST_QUERY, { slug })
-
-        if (!postData) {
-          notFound()
-          return
-        }
-
-        setPost(postData)
-
-        // 関連記事を取得
-        try {
-          const relatedData = await client.fetch(
-            `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
-              _id,
-              title,
-              slug,
-              excerpt,
-              mainImage {
-                asset-> {
-                  url
-                }
-              },
-              publishedAt,
-              author-> {
-                name
-              }
-            }`,
-            { slug }
-          )
-          setRelatedPosts(relatedData || [])
-        } catch (error) {
-          console.error('Failed to fetch related posts:', error)
-        }
-      } catch (error) {
-        console.error('Failed to fetch post:', error)
-        notFound()
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [params])
-
-  if (loading) {
-    return <div className="container mx-auto px-4 py-16 max-w-4xl">読み込み中...</div>
-  }
+  const { slug } = await params
+  const post = await getPost(slug)
 
   if (!post) {
     notFound()
-    return null
+  }
+
+  // 関連記事を取得（シンプルな実装）
+  let relatedPosts: any[] = []
+  try {
+    relatedPosts = await client.fetch(
+      `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        mainImage {
+          asset-> {
+            url
+          }
+        },
+        publishedAt,
+        author-> {
+          name
+        }
+      }`,
+      { slug }
+    )
+  } catch (error) {
+    console.error('Failed to fetch related posts:', error)
   }
 
   return (
@@ -129,12 +101,6 @@ export default function BlogPostPage({
                   src={post.author.image?.asset?.url || '/images/blog-1.webp'}
                   alt={post.author.name}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    if (!target.src.includes('/images/blog-1.webp')) {
-                      target.src = '/images/blog-1.webp'
-                    }
-                  }}
                 />
               </div>
             )}
@@ -151,12 +117,6 @@ export default function BlogPostPage({
             src={post.mainImage?.asset?.url || '/images/blog-1.webp'}
             alt={post.title}
             className="w-full h-auto rounded-lg"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              if (!target.src.includes('/images/blog-1.webp')) {
-                target.src = '/images/blog-1.webp'
-              }
-            }}
           />
         </div>
       )}
@@ -274,12 +234,6 @@ export default function BlogPostPage({
                     src={relatedPost.mainImage?.asset?.url || '/images/blog-1.webp'}
                     alt={relatedPost.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      if (!target.src.includes('/images/blog-1.webp')) {
-                        target.src = '/images/blog-1.webp'
-                      }
-                    }}
                   />
                 </div>
 
