@@ -49,3 +49,4 @@ export default function RootLayout({
   );
 }
 // Force rebuild at 2025-01-22 14:00 - Clear cache for blog design updates
+// Force redeploy #午後
