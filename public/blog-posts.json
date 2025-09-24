@@ -1,5 +1,24 @@
 [
   {
+    "_id": "breathing-stress-relief",
+    "category": "wellness",
+    "excerpt": "深呼吸は最もシンプルで効果的なストレス解消法です。正しい呼吸法を身につけることで、心身のバランスを整えましょう。",
+    "featured": true,
+    "mainImage": {
+      "_type": "image",
+      "asset": {
+        "_ref": "image-94222f3b9fed4fa881e8bc3468c496d718d8fb6f-2880x2160-jpg",
+        "_type": "reference"
+      }
+    },
+    "publishedAt": "2025-09-24T13:33:41.704Z",
+    "slug": {
+      "_type": "slug",
+      "current": "marker-test-post2"
+    },
+    "title": "呼吸法で日常のストレスを解放したよ！"
+  },
+  {
     "_id": "post-9",
     "category": "wellness",
     "excerpt": "簡単にできる呼吸法を身につけることで、日常のストレスを効果的に解放することができます。正しい呼吸が心身に与える影響について詳しく解説します。",
@@ -35,7 +54,7 @@
       "_type": "slug",
       "current": "marker-test-post"
     },
-    "title": "マーカー機能テスト記事"
+    "title": "マーカー機能テスト記事｜寺の写真"
   },
   {
     "_id": "post-1",
@@ -94,13 +113,19 @@
     "category": "wellness",
     "excerpt": "自宅でできる簡単なセルフマッサージの方法をお伝えします。緊張した筋肉をほぐし、血行を促進することで、心身のリラクゼーションを深めることができます。",
     "featured": false,
-    "mainImage": null,
+    "mainImage": {
+      "_type": "image",
+      "asset": {
+        "_ref": "image-02b7aa7db2b2f3b0607a4bae6b279cbc400edda6-971x918-jpg",
+        "_type": "reference"
+      }
+    },
     "publishedAt": "2024-11-17T00:00:00.000Z",
     "slug": {
       "_type": "slug",
       "current": "healing-massage-techniques"
     },
-    "title": "癒しのマッサージ技法"
+    "title": "癒しのマッサージ技法２"
   },
   {
     "_id": "post-6",
@@ -114,18 +139,5 @@
       "current": "healthy-eating-beauty"
     },
     "title": "健康的な食事で内側から美しく"
-  },
-  {
-    "_id": "post-7",
-    "category": "nature",
-    "excerpt": "小さなスペースでも楽しめる庭づくりのコツをご紹介します。植物と触れ合う時間は、忙しい日常の中で心を癒し、自然とのつながりを感じさせてくれます。",
-    "featured": false,
-    "mainImage": null,
-    "publishedAt": "2024-11-03T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "nature-harmony-garden"
-    },
-    "title": "自然との調和を感じる庭づくり"
   }
 ]
