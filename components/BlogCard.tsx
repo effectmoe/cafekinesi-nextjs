@@ -76,11 +76,9 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
           <time className="font-light tracking-wider uppercase">
             {date}
           </time>
-          {author && (
-            <span className="font-light">
-              {author.name}
-            </span>
-          )}
+          <span className="font-light">
+            {author?.name || 'カフェきねし'}
+          </span>
         </div>
       </div>
     </article>

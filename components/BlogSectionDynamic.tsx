@@ -90,6 +90,11 @@ const BlogSectionDynamic = async () => {
 
           // 著者情報のデバッグ
           console.log(`[BlogSectionDynamic] Author for "${post.title}":`, post.author);
+          if (!post.author) {
+            console.warn(`[BlogSectionDynamic] ❌ No author set for "${post.title}" - will show default`);
+          } else {
+            console.log(`[BlogSectionDynamic] ✅ Author "${post.author.name}" for "${post.title}"`);
+          }
 
           return (
             <BlogCard
@@ -102,7 +107,7 @@ const BlogSectionDynamic = async () => {
                 month: '2-digit',
                 day: '2-digit'
               }).replace(/\//g, '.')}
-              author={post.author}
+              author={post.author || { name: 'カフェきねし', image: null }}
               slug={post.slug}
             />
           );
