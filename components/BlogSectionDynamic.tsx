@@ -8,7 +8,12 @@ const query = groq`
     title,
     slug,
     excerpt,
-    mainImage,
+    mainImage {
+      asset-> {
+        _id,
+        url
+      }
+    },
     publishedAt,
     category,
     featured,
@@ -64,12 +69,21 @@ const BlogSectionDynamic = async () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {posts.map((post: any) => {
-          // Sanity画像URLの生成
+          // Sanity画像URLの生成（修正版）
           let imageUrl = '/images/blog-1.webp';
-          if (post.mainImage?.asset?._ref) {
+
+          if (post.mainImage?.asset?.url) {
+            // 直接URLがある場合（推奨）
+            imageUrl = `${post.mainImage.asset.url}?w=400&h=300&q=80&fm=webp`;
+            console.log(`[BlogSectionDynamic] Using direct URL for "${post.title}":`, imageUrl);
+          } else if (post.mainImage?.asset?._ref) {
+            // _refからURL生成（フォールバック）
             const ref = post.mainImage.asset._ref;
             const imageId = ref.replace('image-', '').replace(/-([a-z]+)$/, '.$1');
             imageUrl = `https://cdn.sanity.io/images/e4aqw590/production/${imageId}?w=400&h=300&q=80&fm=webp`;
+            console.log(`[BlogSectionDynamic] Generated URL from _ref for "${post.title}":`, imageUrl);
+          } else {
+            console.warn(`[BlogSectionDynamic] No image asset found for "${post.title}", using fallback`);
           }
 
           return (

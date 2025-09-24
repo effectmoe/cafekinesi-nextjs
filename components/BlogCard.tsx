@@ -31,9 +31,14 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
+              console.warn('Image failed to load:', target.src);
               if (!target.src.includes('/images/blog-1.webp')) {
+                console.log('Falling back to default image');
                 target.src = '/images/blog-1.webp';
               }
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', image);
             }}
           />
         ) : (
@@ -44,6 +49,7 @@ const BlogCard = ({ image, title, excerpt, date, author, slug, className }: Blog
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => console.warn('Local image failed to load:', image)}
           />
         )}
       </div>
