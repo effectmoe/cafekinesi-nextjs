@@ -1,6 +1,5 @@
-import { client, groq } from '@/lib/sanity.client'
+import { client, groq, urlFor } from '@/lib/sanity.client'
 import Link from 'next/link'
-import { SanityImage } from '@/components/SanityImage'
 import type { BlogPost } from '@/types/sanity.types'
 
 // 動的レンダリングを強制（Next.js 15ではこれだけで十分）
@@ -49,15 +48,17 @@ export default async function BlogPage() {
                   <Link href={`/blog/${post.slug.current}`} className="block focus:outline-none">
                     {/* 画像 - 横長のアスペクト比 */}
                     <div className="relative aspect-[16/10] overflow-hidden bg-gray-50 mb-5">
-                      {post.mainImage && post.mainImage.asset ? (
-                        <SanityImage
-                          image={post.mainImage}
+                      {post.mainImage ? (
+                        <img
+                          src={urlFor(post.mainImage)
+                            .width(800)
+                            .height(500)
+                            .quality(85)
+                            .format('webp')
+                            .url()}
                           alt={post.title || ''}
-                          width={800}
-                          height={500}
-                          priority={index < 3}
-                          quality={85}
-                          className="transition-transform duration-500 group-hover:scale-105"
+                          loading={index < 3 ? 'eager' : 'lazy'}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-100 flex items-center justify-center">
