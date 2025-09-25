@@ -2,16 +2,34 @@ import { createClient } from 'next-sanity'
 import { groq } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 
-// 公式ドキュメント推奨の設定（シンプルに）
+// パフォーマンス最適化されたクライアント設定
 export const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-01-01',
-  useCdn: false, // Server Componentsでは必ずfalse（公式推奨）
+  apiVersion: '2024-09-25',
+  useCdn: process.env.NODE_ENV === 'production', // 本番ではCDNを使用
   stega: {
     enabled: process.env.NODE_ENV === 'development',
     studioUrl: 'http://localhost:3333',
   },
+})
+
+// 公開コンテンツ用（高速、キャッシュ有効）
+export const publicClient = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2024-09-25',
+  useCdn: true,
+  perspective: 'published'
+})
+
+// プレビュー用（最新データ、キャッシュ無効）
+export const previewClient = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2024-09-25',
+  useCdn: false,
+  perspective: 'previewDrafts'
 })
 
 // ドラフト用クライアント
@@ -25,11 +43,14 @@ export function getClient(preview?: boolean) {
   return client
 }
 
-// 画像URLビルダー
+// 最適化された画像URLビルダー
 const builder = imageUrlBuilder(client)
 
 export function urlFor(source: any) {
   return builder.image(source)
+    .auto('format')        // WebP/AVIF自動変換
+    .quality(75)           // 品質とサイズのバランス
+    .fit('max')            // アップスケーリング防止
 }
 
 // groqをエクスポート（公式推奨）

@@ -13,20 +13,28 @@ export default defineConfig({
   projectId: 'e4aqw590',
   dataset: 'production',
 
-  plugins: [
-    structureTool({
-      structure
-    }),
-    visionTool(),
-    previewPlugin({
-      baseUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
-        ? 'https://cafekinesi-nextjs.vercel.app'
-        : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
-      previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
-      enabledTypes: ['blogPost', 'page', 'homepage', 'album'],
-      previewMode: 'tab'
-    }),
-    presentationTool({
+  plugins: (() => {
+    const basePlugins = [
+      structureTool({
+        structure
+      }),
+      previewPlugin({
+        baseUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
+          ? 'https://cafekinesi-nextjs.vercel.app'
+          : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
+        previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
+        enabledTypes: ['blogPost', 'page', 'homepage', 'album'],
+        previewMode: 'tab'
+      }),
+    ]
+
+    // 開発環境のみのプラグイン
+    if (process.env.NODE_ENV === 'development') {
+      basePlugins.push(visionTool())
+    }
+
+    // Presentation機能は必要時のみ追加
+    basePlugins.push(presentationTool({
       previewUrl: {
         origin: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
           ? 'https://cafekinesi-nextjs.vercel.app'
@@ -112,8 +120,10 @@ export default defineConfig({
           },
         },
       },
-    })
-  ],
+    }))
+
+    return basePlugins
+  })(),
 
   schema: {
     types: schemaTypes,
