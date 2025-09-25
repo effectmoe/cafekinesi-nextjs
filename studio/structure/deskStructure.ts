@@ -44,6 +44,7 @@ export const structure = (S: StructureBuilder) =>
           S.documentTypeList('blogPost')
             .title('ブログ記事')
             .filter('_type == "blogPost"')
+            .apiVersion('2024-01-01')
             .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
         ),
 
