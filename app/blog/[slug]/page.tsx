@@ -422,7 +422,7 @@ export default async function BlogPostPage({
               {relatedPosts.map((relatedPost: any) => (
                 <a
                   key={relatedPost._id}
-                  href={`/blog/${relatedPost.slug?.current || relatedPost.slug?.current}`}
+                  href={`/blog/${relatedPost.slug?.current || ''}`}
                   className="block group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300"
                 >
                   <div className="aspect-[3/2] relative overflow-hidden bg-gray-100">
