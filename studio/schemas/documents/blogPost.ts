@@ -2,18 +2,47 @@ export default {
   name: 'blogPost',
   title: 'ブログ記事',
   type: 'document',
+  groups: [
+    {
+      name: 'basic',
+      title: '基本情報',
+      default: true,
+    },
+    {
+      name: 'media',
+      title: 'メディア',
+    },
+    {
+      name: 'content',
+      title: 'コンテンツ',
+    },
+    {
+      name: 'navigation',
+      title: 'ナビゲーション',
+    },
+    {
+      name: 'layout',
+      title: 'レイアウト',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     // === 基本情報（必須項目） ===
     {
       name: 'title',
       title: 'タイトル',
       type: 'string',
+      group: 'basic',
       validation: (Rule: any) => Rule.required(),
     },
     {
       name: 'slug',
       title: 'スラッグ',
       type: 'slug',
+      group: 'basic',
       description: '記事のURL用の識別子です。タイトルから自動生成されます。',
       options: {
         source: 'title',
@@ -95,6 +124,7 @@ export default {
       name: 'excerpt',
       title: '抜粋',
       type: 'text',
+      group: 'basic',
       rows: 3,
       description: '記事一覧・SNSシェア用の短い説明文（トップページやSNSでの表示に使用）',
       validation: (Rule: any) => Rule.required().max(200),
@@ -103,6 +133,7 @@ export default {
       name: 'publishedAt',
       title: '公開日時',
       type: 'datetime',
+      group: 'basic',
       description: '記事が公開される日時を設定します。未来の日時を設定すると予約投稿になります。',
       validation: (Rule: any) => Rule.required(),
       initialValue: () => new Date().toISOString(),
@@ -117,6 +148,7 @@ export default {
       name: 'category',
       title: 'カテゴリー',
       type: 'string',
+      group: 'basic',
       options: {
         list: [
           {title: 'ウェルネス', value: 'wellness'},
@@ -135,6 +167,7 @@ export default {
       name: 'tags',
       title: 'タグ',
       type: 'array',
+      group: 'basic',
       of: [{type: 'string'}],
       options: {
         layout: 'tags',
@@ -144,6 +177,7 @@ export default {
       name: 'featured',
       title: '注目記事',
       type: 'boolean',
+      group: 'basic',
       description: 'トップページで目立つように表示する',
       initialValue: false,
     },
@@ -151,6 +185,7 @@ export default {
       name: 'author',
       title: '著者',
       type: 'reference',
+      group: 'basic',
       to: [{type: 'author'}],
     },
 
@@ -159,6 +194,7 @@ export default {
       name: 'mainImage',
       title: 'メイン画像',
       type: 'image',
+      group: 'media',
       options: {
         hotspot: true,
       },
@@ -168,6 +204,7 @@ export default {
       name: 'gallery',
       title: 'ギャラリー画像',
       type: 'array',
+      group: 'media',
       description: '複数の画像を追加できます（スライドショー表示用）',
       of: [
         {
@@ -201,6 +238,7 @@ export default {
       name: 'additionalImages',
       title: '追加画像（シンプル）',
       type: 'array',
+      group: 'media',
       description: 'シンプルに画像を追加（説明不要の場合）',
       of: [
         {
@@ -215,6 +253,7 @@ export default {
       name: 'ogImage',
       title: 'OGP画像',
       type: 'image',
+      group: 'media',
       description: 'SNSシェア時に表示される画像（1200x630px推奨）',
       options: {
         hotspot: false,
@@ -227,6 +266,7 @@ export default {
       name: 'tldr',
       title: 'TL;DR（要約）',
       type: 'text',
+      group: 'content',
       rows: 3,
       description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
       validation: (Rule: any) => Rule.max(300),
@@ -235,6 +275,7 @@ export default {
       name: 'content',
       title: '本文',
       type: 'array',
+      group: 'content',
       of: [
         {
           type: 'block',
@@ -266,6 +307,7 @@ export default {
       name: 'keyPoint',
       title: '重要なポイント',
       type: 'object',
+      group: 'content',
       fields: [
         {
           name: 'title',
@@ -286,6 +328,7 @@ export default {
       name: 'summary',
       title: 'まとめ',
       type: 'text',
+      group: 'content',
       rows: 4,
       description: '記事の締めくくりとなるまとめの文章',
     },
@@ -293,6 +336,7 @@ export default {
       name: 'faq',
       title: 'FAQ（よくある質問）',
       type: 'array',
+      group: 'content',
       description: 'この記事に関するよくある質問と回答',
       of: [
         {
@@ -327,6 +371,7 @@ export default {
       name: 'relatedArticles',
       title: '関連記事',
       type: 'array',
+      group: 'navigation',
       of: [
         {
           type: 'reference',
@@ -342,6 +387,7 @@ export default {
       name: 'contentOrder',
       title: 'コンテンツ表示順序',
       type: 'array',
+      group: 'layout',
       description: 'ページ上でのコンテンツの表示順序を設定（ドラッグで並び替え可能）',
       of: [
         {
@@ -377,6 +423,7 @@ export default {
       name: 'seo',
       title: 'SEO設定',
       type: 'object',
+      group: 'seo',
       fields: [
         {
           name: 'title',
