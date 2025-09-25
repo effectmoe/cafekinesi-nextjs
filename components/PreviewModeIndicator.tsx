@@ -9,16 +9,21 @@ export default function PreviewModeIndicator() {
   useEffect(() => {
     // URLパラメータやCookieからプレビューモードを検知
     const checkPreviewMode = () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      const hasPreviewParam = urlParams.get('preview') === 'true'
-      const hasPreviewCookie = document.cookie.includes('__prerender_bypass')
+      try {
+        const urlParams = new URLSearchParams(window.location.search)
+        const hasPreviewParam = urlParams.get('preview') === 'true'
+        const hasPreviewCookie = document.cookie.includes('__prerender_bypass')
 
-      // ドキュメントIDからドラフトかどうか判定
-      const docId = document.querySelector('[data-sanity-id]')?.getAttribute('data-sanity-id')
-      const isDocDraft = docId?.startsWith('drafts.') || false
+        // ドキュメントIDからドラフトかどうか判定
+        const docId = document.querySelector('[data-sanity-id]')?.getAttribute('data-sanity-id')
+        const isDocDraft = Boolean(docId?.startsWith && docId.startsWith('drafts.'))
 
-      setIsDraft(isDocDraft)
-      return hasPreviewParam || hasPreviewCookie
+        setIsDraft(isDocDraft)
+        return hasPreviewParam || hasPreviewCookie
+      } catch (error) {
+        console.warn('Preview mode detection error:', error)
+        return false
+      }
     }
 
     setIsPreview(checkPreviewMode())

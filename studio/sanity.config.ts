@@ -93,7 +93,7 @@ export default defineConfig({
               locations: [
                 {
                   title: doc?.title || 'Untitled',
-                  href: `/blog/${doc?.slug}`,
+                  href: doc?.slug ? `/blog/${doc.slug}` : '/blog',
                 },
               ],
             }),
@@ -107,7 +107,7 @@ export default defineConfig({
               locations: [
                 {
                   title: doc?.title || 'Untitled',
-                  href: `/${doc?.slug}`,
+                  href: doc?.slug ? `/${doc.slug}` : '/',
                 },
               ],
             }),
@@ -134,7 +134,7 @@ export default defineConfig({
               locations: [
                 {
                   title: doc?.title || 'Untitled Album',
-                  href: `/albums/${doc?.slug}`,
+                  href: doc?.slug ? `/albums/${doc.slug}` : '/albums',
                 },
               ],
             }),
