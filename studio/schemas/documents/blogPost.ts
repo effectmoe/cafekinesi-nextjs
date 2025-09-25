@@ -17,6 +17,76 @@ export default {
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: (input: any) => {
+          // 日本語タイトルから適切なスラッグを生成
+          return input
+            .toLowerCase()
+            .trim()
+            // 日本語文字を英語に変換
+            .replace(/[ァ-ヶ]/g, (match: string) => {
+              const katakanaToRomaji: { [key: string]: string } = {
+                'ア': 'a', 'イ': 'i', 'ウ': 'u', 'エ': 'e', 'オ': 'o',
+                'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
+                'サ': 'sa', 'シ': 'shi', 'ス': 'su', 'セ': 'se', 'ソ': 'so',
+                'タ': 'ta', 'チ': 'chi', 'ツ': 'tsu', 'テ': 'te', 'ト': 'to',
+                'ナ': 'na', 'ニ': 'ni', 'ヌ': 'nu', 'ネ': 'ne', 'ノ': 'no',
+                'ハ': 'ha', 'ヒ': 'hi', 'フ': 'fu', 'ヘ': 'he', 'ホ': 'ho',
+                'マ': 'ma', 'ミ': 'mi', 'ム': 'mu', 'メ': 'me', 'モ': 'mo',
+                'ヤ': 'ya', 'ユ': 'yu', 'ヨ': 'yo',
+                'ラ': 'ra', 'リ': 'ri', 'ル': 'ru', 'レ': 're', 'ロ': 'ro',
+                'ワ': 'wa', 'ヲ': 'wo', 'ン': 'n',
+                'ー': '', 'ッ': 'tsu',
+                // よく使われる単語のマッピング
+                '呼吸': 'breathing', '法': 'method', 'ストレス': 'stress', '解放': 'relief',
+                'マーカー': 'marker', '機能': 'function', 'テスト': 'test', '記事': 'post',
+                '日本茶': 'japanese-tea', 'マインドフルネス': 'mindfulness', '時間': 'time',
+                'アロマテラピー': 'aromatherapy', '朝': 'morning', '習慣': 'routine',
+                '瞑想': 'meditation', '空間': 'space', 'ヨガ': 'yoga', 'ポーズ': 'poses',
+                '心': 'mind', '癒し': 'healing', 'マッサージ': 'massage', '技法': 'techniques',
+                '健康': 'healthy', '食事': 'eating', '美': 'beauty', '自然': 'nature',
+                '調和': 'harmony', '庭': 'garden', 'スキンケア': 'skincare'
+              }
+              return katakanaToRomaji[match] || match
+            })
+            // ひらがなをカタカナに変換してから処理
+            .replace(/[ぁ-ゖ]/g, (match: string) => {
+              const hiraganaToKatakana = String.fromCharCode(match.charCodeAt(0) + 0x60)
+              const katakanaToRomaji: { [key: string]: string } = {
+                'ア': 'a', 'イ': 'i', 'ウ': 'u', 'エ': 'e', 'オ': 'o',
+                'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
+                'サ': 'sa', 'シ': 'shi', 'ス': 'su', 'セ': 'se', 'ソ': 'so',
+                'タ': 'ta', 'チ': 'chi', 'ツ': 'tsu', 'テ': 'te', 'ト': 'to',
+                'ナ': 'na', 'ニ': 'ni', 'ヌ': 'nu', 'ネ': 'ne', 'ノ': 'no',
+                'ハ': 'ha', 'ヒ': 'hi', 'フ': 'fu', 'ヘ': 'he', 'ホ': 'ho',
+                'マ': 'ma', 'ミ': 'mi', 'ム': 'mu', 'メ': 'me', 'モ': 'mo',
+                'ヤ': 'ya', 'ユ': 'yu', 'ヨ': 'yo',
+                'ラ': 'ra', 'リ': 'ri', 'ル': 'ru', 'レ': 're', 'ロ': 'ro',
+                'ワ': 'wa', 'ヲ': 'wo', 'ン': 'n',
+              }
+              return katakanaToRomaji[hiraganaToKatakana] || hiraganaToKatakana.toLowerCase()
+            })
+            // 漢字を意味のある英語に変換（主要なもののみ）
+            .replace(/呼吸法/g, 'breathing-method')
+            .replace(/ストレス解放/g, 'stress-relief')
+            .replace(/日常/g, 'daily')
+            .replace(/心と身体/g, 'mind-body')
+            .replace(/整える/g, 'balance')
+            .replace(/新しい朝/g, 'new-morning')
+            .replace(/住まいづくり/g, 'home-design')
+            .replace(/内側から美しく/g, 'inner-beauty')
+            .replace(/庭づくり/g, 'garden-making')
+            .replace(/由来/g, 'natural')
+            // 残った日本語文字を削除
+            .replace(/[^\w\s-]/g, '')
+            // スペースをハイフンに変換
+            .replace(/\s+/g, '-')
+            // 連続するハイフンを一つに
+            .replace(/-+/g, '-')
+            // 前後のハイフンを削除
+            .replace(/^-|-$/g, '')
+            // 空文字列の場合はタイムスタンプベースのフォールバック
+            || `post-${Date.now()}`
+        },
       },
       validation: (Rule: any) => Rule.required(),
     },
