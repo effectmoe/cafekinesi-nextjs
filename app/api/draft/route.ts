@@ -6,17 +6,20 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const slug = searchParams.get('slug')
   const secret = searchParams.get('secret')
+  const preview = searchParams.get('preview')
+  const redirectPath = searchParams.get('redirect')
 
-  // In production, you would want to add a secret check here
-  // if (secret !== process.env.SANITY_PREVIEW_SECRET) {
-  //   return new Response('Invalid token', { status: 401 })
-  // }
+  // プレビューリクエストの簡単な検証
+  if (preview !== 'true' && !secret) {
+    return new Response('Invalid preview request', { status: 401 })
+  }
 
   const draft = await draftMode()
   draft.enable()
 
-  // Redirect to the path from the fetched post
-  redirect(slug || '/')
+  // redirectパラメータがある場合はそれを使用、なければslugを使用
+  const path = redirectPath || slug || '/'
+  redirect(path)
 }
 
 export async function POST() {

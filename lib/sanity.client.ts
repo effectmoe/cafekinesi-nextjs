@@ -14,6 +14,18 @@ export const client = createClient({
   },
 })
 
+// ドラフト用クライアント
+export function getClient(preview?: boolean) {
+  if (preview) {
+    return client.withConfig({
+      useCdn: false,
+      perspective: 'previewDrafts',
+      token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
+    })
+  }
+  return client
+}
+
 // 画像URLビルダー
 const builder = imageUrlBuilder(client)
 
