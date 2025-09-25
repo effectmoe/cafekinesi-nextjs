@@ -7,8 +7,6 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 import RelatedPosts from '@/app/components/RelatedPosts'
-import SiteSchemas from '@/components/SiteSchemas'
-import AutoSchema from '@/components/AutoSchema'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -22,30 +20,17 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   excerpt,
   tldr,
   mainImage,
-  gallery,
-  ogImage,
-  additionalImages,
   content,
   keyPoint,
   summary,
   faq,
-  contentOrder,
   category,
   tags,
   publishedAt,
-  featured,
   author-> {
     name,
     image,
     bio
-  },
-  relatedArticles[]-> {
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt
   },
   seo {
     title,
@@ -53,51 +38,35 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
     keywords,
     ogImage
   },
-  customSchema,
   "isDraft": _id in path("drafts.*")
 }`
 
 // ドラフトを優先的に取得するquery（同じ構造でdrafts perspectiveが自動処理）
 const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
-  _type,
   title,
   slug,
   excerpt,
   tldr,
   mainImage,
-  gallery,
-  ogImage,
-  additionalImages,
   content,
   keyPoint,
   summary,
   faq,
-  contentOrder,
   category,
   tags,
   publishedAt,
-  featured,
   author-> {
     name,
     image,
     bio
-  },
-  relatedArticles[]-> {
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt
   },
   seo {
     title,
     description,
     keywords,
     ogImage
-  },
-  customSchema
+  }
 }`
 
 const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
@@ -289,32 +258,28 @@ export default async function BlogPostPage({
     notFound()
   }
 
-  // 関連記事を取得（relatedArticlesフィールドがあればそれを使用）
-  let relatedPosts: any[] = post.relatedArticles || []
+  // 関連記事を取得（同じクライアントを使用）
+  let relatedPosts: any[] = []
+  try {
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
 
-  // relatedArticlesが空の場合は自動で取得
-  if (relatedPosts.length === 0) {
-    try {
-      const isPreview = draft.isEnabled
-      const selectedClient = isPreview ? previewClient : publicClient
-
-      relatedPosts = await selectedClient.fetch(
-        `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
-          _id,
-          title,
-          slug,
-          excerpt,
-          mainImage,
-          publishedAt,
-          author-> {
-            name
-          }
-        }`,
-        { slug }
-      )
-    } catch (error) {
-      console.error('Failed to fetch related posts:', error)
-    }
+    relatedPosts = await selectedClient.fetch(
+      `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        mainImage,
+        publishedAt,
+        author-> {
+          name
+        }
+      }`,
+      { slug }
+    )
+  } catch (error) {
+    console.error('Failed to fetch related posts:', error)
   }
 
   // 画像URL生成のヘルパー関数
@@ -342,32 +307,16 @@ export default async function BlogPostPage({
     previewEnabled: draft.isEnabled
   }
 
-  const breadcrumbs = [
-    { name: 'ホーム', url: '/' },
-    { name: 'ブログ', url: '/blog' },
-    { name: post.title, url: `/blog/${slug}` }
-  ]
-
   return (
-    <>
-      <SiteSchemas
-        currentPage={{
-          title: post.title,
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'}/blog/${slug}`,
-          breadcrumbs
-        }}
-      />
-      <AutoSchema document={post} />
-
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* デバッグ表示 */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="fixed bottom-0 left-0 z-50 bg-black text-white text-xs p-2 font-mono">
-            Debug: {JSON.stringify(debugInfo)}
-          </div>
-        )}
-        <PreviewModeIndicator />
-        <Header />
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* デバッグ表示 */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-0 left-0 z-50 bg-black text-white text-xs p-2 font-mono">
+          Debug: {JSON.stringify(debugInfo)}
+        </div>
+      )}
+      <PreviewModeIndicator />
+      <Header />
       <article className="flex-grow">
         {/* ヒーローセクション - より洗練されたデザイン */}
         <header className="bg-white border-b border-gray-100">
@@ -419,15 +368,6 @@ export default async function BlogPostPage({
         </header>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-
-      {/* 注目記事バッジ */}
-      {post.featured && (
-        <div className="mb-4">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-            ⭐ 注目記事
-          </span>
-        </div>
-      )}
 
       {/* メイン画像 - レスポンシブ対応 */}
       {post.mainImage && (
@@ -544,52 +484,6 @@ export default async function BlogPostPage({
         </section>
       )}
 
-      {/* ギャラリー画像 */}
-      {post.gallery && Array.isArray(post.gallery) && post.gallery.length > 0 && (
-        <section className="mb-16">
-          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-8 font-light">ギャラリー</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {post.gallery.map((image: any, index: number) => {
-              if (!image) return null;
-              return (
-                <div key={index} className="relative">
-                  <img
-                    src={getImageUrl(image, 400, 300)}
-                    alt={image.alt || `ギャラリー画像 ${index + 1}`}
-                    className="w-full h-auto rounded-lg"
-                  />
-                  {image.caption && (
-                    <p className="text-sm text-gray-600 mt-2 text-center">
-                      {image.caption}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* 追加画像 */}
-      {post.additionalImages && Array.isArray(post.additionalImages) && post.additionalImages.length > 0 && (
-        <section className="mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {post.additionalImages.map((image: any, index: number) => {
-              if (!image) return null;
-              return (
-                <div key={index}>
-                  <img
-                    src={getImageUrl(image, 600, 400)}
-                    alt={`追加画像 ${index + 1}`}
-                    className="w-full h-auto rounded-lg"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
       {/* 関連記事セクション */}
       {relatedPosts && relatedPosts.length > 0 && (
         <section className="mt-16 pt-8 border-t border-gray-200">
@@ -664,7 +558,6 @@ export default async function BlogPostPage({
         />
       </article>
     </div>
-    </>
   )
 }
 

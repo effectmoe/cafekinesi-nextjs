@@ -33,30 +33,13 @@ async function getPosts() {
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import SiteSchemas from '@/components/SiteSchemas'
 
 export default async function BlogPage() {
   const posts = await getPosts()
 
-  // パンくずリストを生成
-  const breadcrumbs = [
-    { name: 'ホーム', url: '/' },
-    { name: 'ブログ', url: '/blog' }
-  ]
-
   return (
-    <>
-      {/* Schema.org構造化データ */}
-      <SiteSchemas
-        currentPage={{
-          title: 'ブログ一覧 - Cafe Kinesi',
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'}/blog`,
-          breadcrumbs
-        }}
-      />
-
-      <div className="min-h-screen bg-white flex flex-col">
-        <Header />
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
       <main className="flex-grow">
         {/* シンプルなタイトル */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
@@ -131,10 +114,9 @@ export default async function BlogPage() {
             </div>
           )}
         </div>
-        </main>
-        <Footer />
-      </div>
-    </>
+      </main>
+      <Footer />
+    </div>
   )
 }
 

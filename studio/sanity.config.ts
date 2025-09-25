@@ -2,9 +2,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
-import {dashboardTool} from '@sanity/dashboard'
 import contentModelGraph from 'sanity-plugin-content-model-graph'
-import {schemaMarkup} from '@operationnation/sanity-plugin-schema-markup'
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
@@ -21,16 +19,6 @@ export default defineConfig({
       structureTool({
         structure
       }),
-      dashboardTool({
-        widgets: [
-          {
-            name: 'schema-dashboard',
-            component: () => import('./plugins/schema-dashboard/SchemaWidget').then(m => m.SchemaWidget),
-            layout: { width: 'medium', height: 'large' }
-          }
-        ]
-      }),
-      schemaMarkup(), // Schema.orgプラグイン追加
       contentModelGraph({
         exclude: ['system.*', 'sanity.*'],
         maxDepth: 4,

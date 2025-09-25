@@ -6,7 +6,7 @@ import imageUrlBuilder from '@sanity/image-url'
 export const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
+  apiVersion: '2024-09-25',
   useCdn: process.env.NODE_ENV === 'production', // 本番ではCDNを使用
   stega: {
     enabled: process.env.NODE_ENV === 'development',
@@ -18,7 +18,7 @@ export const client = createClient({
 export const publicClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
+  apiVersion: '2024-09-25',
   useCdn: true,
   perspective: 'published'
 })
@@ -27,7 +27,7 @@ export const publicClient = createClient({
 export const previewClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
+  apiVersion: '2024-09-25',
   useCdn: false, // ⭐ 重要：ドラフト取得時は必ずfalse
   perspective: 'drafts', // ⭐ 'previewDrafts'は非推奨、'drafts'を使用
   token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN, // トークンを使用
