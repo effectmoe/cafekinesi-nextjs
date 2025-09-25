@@ -339,40 +339,44 @@ export default async function BlogPostPage({
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">ギャラリー</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {post.gallery.map((image: any, index: number) => (
-                <div key={index} className="relative">
-                  <img
-                    src={(() => {
-                      try {
-                        if (image?._ref || image?.asset?._ref) {
-                          return urlFor(image)
-                            .width(400)
-                            .height(300)
-                            .quality(80)
-                            .format('webp')
-                            .url()
+              {post.gallery.map((image: any, index: number) => {
+                if (!image) return null;
+                return (
+                  <div key={index} className="relative">
+                    <img
+                      src={(() => {
+                        try {
+                          if (image._ref || image.asset?._ref) {
+                            return urlFor(image)
+                              .width(400)
+                              .height(300)
+                              .quality(80)
+                              .format('webp')
+                              .url()
+                          }
+                          return image.asset?.url || '/images/blog-1.webp'
+                        } catch (error) {
+                          console.error('Gallery image error:', error)
+                          return '/images/blog-1.webp'
                         }
-                        return image?.asset?.url || '/images/blog-1.webp'
-                      } catch (error) {
-                        return '/images/blog-1.webp'
-                      }
-                    })()}
-                    alt={image.alt || `ギャラリー画像 ${index + 1}`}
-                    className="w-full h-auto rounded-lg"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      if (!target.src.includes('/images/blog-1.webp')) {
-                        target.src = '/images/blog-1.webp'
-                      }
-                    }}
-                  />
-                  {image.caption && (
-                    <p className="text-sm text-gray-600 mt-2 text-center">
-                      {image.caption}
-                    </p>
-                  )}
-                </div>
-              ))}
+                      })()}
+                      alt={image.alt || `ギャラリー画像 ${index + 1}`}
+                      className="w-full h-auto rounded-lg"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        if (!target.src.includes('/images/blog-1.webp')) {
+                          target.src = '/images/blog-1.webp'
+                        }
+                      }}
+                    />
+                    {image.caption && (
+                      <p className="text-sm text-gray-600 mt-2 text-center">
+                        {image.caption}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
@@ -381,35 +385,39 @@ export default async function BlogPostPage({
         {post.additionalImages && Array.isArray(post.additionalImages) && post.additionalImages.length > 0 && (
           <section className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {post.additionalImages.map((image: any, index: number) => (
-                <div key={index}>
-                  <img
-                    src={(() => {
-                      try {
-                        if (image?._ref || image?.asset?._ref) {
-                          return urlFor(image)
-                            .width(600)
-                            .height(400)
-                            .quality(80)
-                            .format('webp')
-                            .url()
+              {post.additionalImages.map((image: any, index: number) => {
+                if (!image) return null;
+                return (
+                  <div key={index}>
+                    <img
+                      src={(() => {
+                        try {
+                          if (image._ref || image.asset?._ref) {
+                            return urlFor(image)
+                              .width(600)
+                              .height(400)
+                              .quality(80)
+                              .format('webp')
+                              .url()
+                          }
+                          return image.asset?.url || '/images/blog-1.webp'
+                        } catch (error) {
+                          console.error('Additional image error:', error)
+                          return '/images/blog-1.webp'
                         }
-                        return image?.asset?.url || '/images/blog-1.webp'
-                      } catch (error) {
-                        return '/images/blog-1.webp'
-                      }
-                    })()}
-                    alt={`追加画像 ${index + 1}`}
-                    className="w-full h-auto rounded-lg"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      if (!target.src.includes('/images/blog-1.webp')) {
-                        target.src = '/images/blog-1.webp'
-                      }
-                    }}
-                  />
-                </div>
-              ))}
+                      })()}
+                      alt={`追加画像 ${index + 1}`}
+                      className="w-full h-auto rounded-lg"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        if (!target.src.includes('/images/blog-1.webp')) {
+                          target.src = '/images/blog-1.webp'
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
