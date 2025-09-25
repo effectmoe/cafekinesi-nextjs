@@ -18,8 +18,8 @@ export default function BlogContentRenderer({
   nextPost
 }: BlogContentRendererProps) {
 
-  // デフォルトの表示順序
-  const defaultOrder = ['featured', 'publishedAt', 'category', 'author', 'mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
+  // デフォルトの表示順序（全項目を含む）
+  const defaultOrder = ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
 
   // contentOrderが設定されていればそれを使用、なければデフォルト
   const contentOrder = post.contentOrder && post.contentOrder.length > 0 ? post.contentOrder : defaultOrder
