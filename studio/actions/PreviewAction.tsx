@@ -1,11 +1,10 @@
-import { useState } from 'react'
 import { EyeOpenIcon } from '@sanity/icons'
 import type { DocumentActionComponent, DocumentActionProps } from 'sanity'
 
 export const PreviewAction: DocumentActionComponent = (
   props: DocumentActionProps
 ) => {
-  const { draft, published, id, type } = props
+  const { draft, published, type } = props
 
   // ドラフトが存在する場合はドラフトを、なければ公開済みを使用
   const doc = draft || published
@@ -20,7 +19,12 @@ export const PreviewAction: DocumentActionComponent = (
     if (!doc) return
 
     // プレビューURLの生成
-    const baseUrl = process.env.SANITY_STUDIO_PREVIEW_URL || 'https://cafekinesi-nextjs.vercel.app'
+    // 開発環境と本番環境を判定
+    const isDevelopment = window.location.hostname === 'localhost'
+    const baseUrl = isDevelopment
+      ? 'http://localhost:3000'
+      : 'https://cafekinesi-nextjs.vercel.app'
+
     const previewUrl = generatePreviewUrl(doc, baseUrl)
 
     // 新しいタブでプレビューを開く
@@ -29,7 +33,6 @@ export const PreviewAction: DocumentActionComponent = (
 
   const generatePreviewUrl = (document: any, baseUrl: string) => {
     const slug = document.slug?.current || ''
-    const isDraft = document._id.startsWith('drafts.')
 
     // URLパラメータの構築
     const params = new URLSearchParams({
@@ -65,9 +68,6 @@ export const PreviewAction: DocumentActionComponent = (
     icon: EyeOpenIcon,
     tone: draft ? 'primary' : 'default',
     disabled: !doc,
-    title: draft
-      ? 'Preview draft changes'
-      : 'Preview published version',
     onHandle: handlePreview,
   }
 }
