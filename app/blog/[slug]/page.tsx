@@ -140,7 +140,32 @@ export default async function BlogPostPage({
 
             {post.content && (
               <div className="prose prose-lg max-w-none">
-                <PortableText value={post.content} />
+                <PortableText
+                  value={post.content}
+                  components={{
+                    types: {
+                      image: ({value}: any) => {
+                        if (!value?.asset?._ref) {
+                          return null
+                        }
+                        return (
+                          <div className="my-8">
+                            <img
+                              src={urlFor(value).width(800).url()}
+                              alt={value.alt || ''}
+                              className="w-full rounded-lg"
+                            />
+                            {value.caption && (
+                              <p className="text-sm text-gray-600 mt-2 text-center">
+                                {value.caption}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      }
+                    }
+                  }}
+                />
               </div>
             )}
           </article>
