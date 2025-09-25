@@ -115,32 +115,6 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
         }
 
         return [...prev, PreviewAction]
-      },
-
-      // Production URLの自動生成
-      productionUrl: async (prev, { document }) => {
-        const pattern = finalUrlPatterns[document._type]
-        if (!pattern) return prev
-
-        try {
-          const path = pattern(document)
-          const effectiveBaseUrl = typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
-            ? 'https://cafekinesi-nextjs.vercel.app'
-            : baseUrl
-
-          const url = new URL(path, effectiveBaseUrl)
-
-          if (previewSecret) {
-            url.searchParams.set('preview', previewSecret)
-            url.searchParams.set('type', document._type)
-            url.searchParams.set('id', document._id)
-          }
-
-          return url.toString()
-        } catch (error) {
-          console.error('Production URL生成エラー:', error)
-          return prev
-        }
       }
     }
   }

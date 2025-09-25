@@ -49,6 +49,10 @@ export default defineConfig({
             route: '/blog/:slug',
             filter: '_type == "blogPost" && slug.current == $slug',
           },
+          {
+            route: '/albums/:slug',
+            filter: '_type == "album" && slug.current == $slug',
+          },
         ],
         locations: {
           blogPost: {
@@ -88,6 +92,20 @@ export default defineConfig({
                 {
                   title: doc?.title || 'Homepage',
                   href: '/',
+                },
+              ],
+            }),
+          },
+          album: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled Album',
+                  href: `/albums/${doc?.slug}`,
                 },
               ],
             }),
