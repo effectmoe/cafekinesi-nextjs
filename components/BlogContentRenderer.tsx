@@ -45,14 +45,8 @@ export default function BlogContentRenderer({
   const renderContentBlock = (blockType: string) => {
     switch (blockType) {
       case 'title':
-        if (!post.title) return null
-        return (
-          <div key="title" className="mb-6">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-gray-900">
-              {post.title}
-            </h1>
-          </div>
-        )
+        // タイトルは既にページのヘッダーセクションで表示されているため、ここでは何も表示しない
+        return null
 
       case 'slug':
         // スラッグは通常表示しないが、デバッグ目的で表示可能
