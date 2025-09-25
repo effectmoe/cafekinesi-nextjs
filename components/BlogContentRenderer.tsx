@@ -44,6 +44,35 @@ export default function BlogContentRenderer({
   // 各コンテンツブロックのレンダリング関数
   const renderContentBlock = (blockType: string) => {
     switch (blockType) {
+      case 'title':
+        if (!post.title) return null
+        return (
+          <div key="title" className="mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-gray-900">
+              {post.title}
+            </h1>
+          </div>
+        )
+
+      case 'slug':
+        // スラッグは通常表示しないが、デバッグ目的で表示可能
+        return null
+
+      case 'ogImage':
+        if (!post.ogImage) return null
+        return (
+          <div key="ogImage" className="mb-8">
+            <div className="text-xs text-gray-500 mb-2">OGP画像</div>
+            <div className="relative aspect-[1200/630] overflow-hidden bg-gray-100 rounded-lg">
+              <img
+                src={getImageUrl(post.ogImage, 1200, 630)}
+                alt="OGP画像"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )
+
       case 'featured':
         if (!post.featured) return null
         return (
