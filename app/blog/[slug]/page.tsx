@@ -18,9 +18,24 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   excerpt,
   mainImage,
   content,
+  tldr,
+  summary,
+  keyPoint,
+  faq,
+  contentOrder,
+  gallery,
+  additionalImages,
   category,
   tags,
   publishedAt,
+  featured,
+  relatedArticles[]-> {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage
+  },
   author-> {
     name,
     image,
@@ -31,7 +46,8 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
     description,
     keywords,
     ogImage
-  }
+  },
+  customSchema
 }`
 
 async function getPost(slug: string) {
@@ -138,6 +154,30 @@ export default async function BlogPostPage({
               </div>
             )}
 
+            {/* TL;DR セクション */}
+            {post.tldr && (
+              <div className="mb-8 p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+                <h2 className="text-2xl font-bold mb-3 text-yellow-800">TL;DR（要約）</h2>
+                <p className="text-gray-800 whitespace-pre-wrap">{post.tldr}</p>
+              </div>
+            )}
+
+            {/* 目次（仮実装） */}
+            {post.content && post.content.length > 3 && (
+              <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+                <h2 className="text-2xl font-bold mb-3">目次</h2>
+                <ul className="space-y-2">
+                  {post.content
+                    .filter((block: any) => block._type === 'block' && block.style === 'h2')
+                    .map((heading: any, index: number) => (
+                      <li key={index} className="text-blue-600 hover:text-blue-800">
+                        • {heading.children?.[0]?.text || ''}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+
             {post.content && (
               <div className="prose prose-lg max-w-none">
                 <PortableText
@@ -166,6 +206,60 @@ export default async function BlogPostPage({
                     }
                   }}
                 />
+              </div>
+            )}
+
+            {/* 重要なポイント */}
+            {post.keyPoint && (
+              <div className="my-8 p-6 bg-green-50 border-l-4 border-green-400 rounded-lg">
+                <h2 className="text-2xl font-bold mb-3 text-green-800">
+                  {post.keyPoint.title || '重要なポイント'}
+                </h2>
+                <p className="text-gray-800">{post.keyPoint.content}</p>
+              </div>
+            )}
+
+            {/* まとめ */}
+            {post.summary && (
+              <div className="my-8 p-6 bg-purple-50 rounded-lg">
+                <h2 className="text-2xl font-bold mb-3 text-purple-800">まとめ</h2>
+                <p className="text-gray-800 whitespace-pre-wrap">{post.summary}</p>
+              </div>
+            )}
+
+            {/* FAQ */}
+            {post.faq && post.faq.length > 0 && (
+              <div className="my-8">
+                <h2 className="text-2xl font-bold mb-6">よくある質問（FAQ）</h2>
+                <div className="space-y-4">
+                  {post.faq.map((item: any, index: number) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <h3 className="font-bold text-lg mb-2">Q: {item.question}</h3>
+                      <p className="text-gray-700">A: {item.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 関連記事 */}
+            {post.relatedArticles && post.relatedArticles.length > 0 && (
+              <div className="my-8 p-6 bg-gray-50 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">関連記事</h2>
+                <div className="grid gap-4">
+                  {post.relatedArticles.map((article: any) => (
+                    <a
+                      key={article._id}
+                      href={`/blog/${article.slug.current}`}
+                      className="block p-4 border rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <h3 className="font-bold text-lg mb-1">{article.title}</h3>
+                      {article.excerpt && (
+                        <p className="text-gray-600 text-sm">{article.excerpt}</p>
+                      )}
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
           </article>
