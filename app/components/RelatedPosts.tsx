@@ -1,4 +1,5 @@
-import { client } from '@/lib/sanity.client'
+import { client, previewClient } from '@/lib/sanity.client'
+import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
 import { urlFor } from '@/lib/sanity.client'
 import Link from 'next/link'
@@ -47,6 +48,10 @@ export default async function RelatedPosts({
   category,
   tags = [],
 }: RelatedPostsProps) {
+  // プレビューモードの確認
+  const { isEnabled: isDraftMode } = draftMode()
+  const sanityClient = isDraftMode ? previewClient : client
+
   // 関連記事を取得するGROQクエリ
   const RELATED_POSTS_QUERY = groq`
     *[_type == "blogPost" && _id != $currentPostId && !(_id in path("drafts.*"))] {
@@ -69,16 +74,21 @@ export default async function RelatedPosts({
   `
 
   try {
-    const relatedPosts = await client.fetch<RelatedPost[]>(
+    console.log(`[RelatedPosts] Fetching related posts for ${currentPostId}, isDraftMode: ${isDraftMode}`)
+
+    const relatedPosts = await sanityClient.fetch<RelatedPost[]>(
       RELATED_POSTS_QUERY,
       {
         currentPostId,
-        category,
-        tags,
+        category: category || null,
+        tags: tags || [],
       }
     )
 
+    console.log(`[RelatedPosts] Found ${relatedPosts?.length || 0} related posts`)
+
     if (!relatedPosts || relatedPosts.length === 0) {
+      console.log('[RelatedPosts] No related posts found')
       return null
     }
 
@@ -178,7 +188,31 @@ export default async function RelatedPosts({
       </section>
     )
   } catch (error) {
-    console.error('Failed to fetch related posts:', error)
+    console.error('[RelatedPosts] Error details:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      currentPostId,
+      category,
+      tags,
+      isDraftMode,
+    })
+
+    // 開発環境でのみエラー表示
+    if (process.env.NODE_ENV === 'development') {
+      return (
+        <section className="mt-16 pt-16 border-t border-red-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h3 className="text-red-800 font-semibold">関連記事の読み込みエラー</h3>
+              <p className="text-red-600 text-sm mt-2">
+                {error instanceof Error ? error.message : '不明なエラーが発生しました'}
+              </p>
+            </div>
+          </div>
+        </section>
+      )
+    }
+
     return null
   }
 }
