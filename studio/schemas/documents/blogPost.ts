@@ -384,6 +384,80 @@ export default {
         },
       ],
     },
+    {
+      name: 'customSchema',
+      title: 'カスタムSchema.org',
+      type: 'object',
+      description: '手動でSchema.orgデータをカスタマイズできます。設定しない場合は自動生成されます。',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'カスタムスキーマを使用',
+          type: 'boolean',
+          description: 'ONにすると自動生成を無効にして、下記のカスタムスキーマを使用します',
+          initialValue: false,
+        },
+        {
+          name: 'jsonld',
+          title: 'JSON-LD Schema',
+          type: 'text',
+          rows: 20,
+          description: 'JSON-LD形式でSchema.orgデータを記述してください',
+          placeholder: `{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "記事のタイトル",
+  "description": "記事の説明",
+  "author": {
+    "@type": "Person",
+    "name": "著者名"
+  },
+  "datePublished": "2024-01-01",
+  "image": "https://example.com/image.jpg"
+}`,
+          hidden: ({ parent }: any) => !parent?.enabled,
+        },
+        {
+          name: 'validationResult',
+          title: '検証結果',
+          type: 'object',
+          readOnly: true,
+          fields: [
+            {
+              name: 'valid',
+              title: '有効性',
+              type: 'boolean',
+            },
+            {
+              name: 'score',
+              title: 'スコア',
+              type: 'number',
+            },
+            {
+              name: 'errors',
+              title: 'エラー',
+              type: 'array',
+              of: [{type: 'string'}],
+            },
+            {
+              name: 'warnings',
+              title: '警告',
+              type: 'array',
+              of: [{type: 'string'}],
+            },
+            {
+              name: 'lastValidated',
+              title: '最終検証日時',
+              type: 'datetime',
+            },
+          ],
+        },
+      ],
+      options: {
+        collapsible: true,
+        collapsed: true,
+      },
+    },
   ],
   preview: {
     select: {

@@ -14,6 +14,19 @@ const AutoSchema: FC<AutoSchemaProps> = ({ document, additionalSchemas = [] }) =
   }
 
   try {
+    // カスタムスキーマがある場合はそれを優先
+    const customSchema = (document as any).customSchema
+    if (customSchema?.enabled && customSchema?.jsonld) {
+      try {
+        const parsedSchema = JSON.parse(customSchema.jsonld)
+        return <JsonLd data={parsedSchema} />
+      } catch (error) {
+        console.error('Error parsing custom schema:', error)
+        // カスタムスキーマの解析に失敗した場合は自動生成にフォールバック
+      }
+    }
+
+    // 自動生成スキーマを使用
     const mainSchema = schemaGenerator.generate(document)
 
     if (!mainSchema && additionalSchemas.length === 0) {
