@@ -18,8 +18,10 @@
     "@sanity/icons": "^3.7.4",
     "@sanity/rich-date-input": "^3.0.6",
     "@sanity/vision": "^4.9.0",
+    "@vercel/og": "^0.8.5",
     "date-fns": "^4.1.0",
     "sanity": "^4.10.0",
+    "sanity-plugin-content-model-graph": "^2.0.0",
     "styled-components": "^6.1.19"
   }
 }

@@ -3,6 +3,7 @@ import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
+import type { Metadata } from 'next'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -69,6 +70,63 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
+// メタデータを動的生成
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+
+  try {
+    const post = await publicClient.fetch<BlogPost>(POST_QUERY, { slug })
+
+    if (!post) {
+      return {
+        title: 'Not Found',
+        description: 'The page you are looking for does not exist.',
+      }
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi-nextjs.vercel.app'
+    const ogImageUrl = `${baseUrl}/api/og?type=blogPost&slug=${slug}`
+
+    return {
+      title: post.seo?.title || post.title || 'Cafe Kinesi Blog',
+      description: post.seo?.description || post.excerpt || '',
+      keywords: post.seo?.keywords || post.tags?.join(', ') || '',
+      openGraph: {
+        title: post.seo?.title || post.title || 'Cafe Kinesi Blog',
+        description: post.seo?.description || post.excerpt || '',
+        type: 'article',
+        publishedTime: post.publishedAt,
+        authors: post.author?.name ? [post.author.name] : undefined,
+        tags: post.tags || undefined,
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: post.title || 'Cafe Kinesi',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.seo?.title || post.title || 'Cafe Kinesi Blog',
+        description: post.seo?.description || post.excerpt || '',
+        images: [ogImageUrl],
+      },
+    }
+  } catch (error) {
+    console.error('Error generating metadata:', error)
+    return {
+      title: 'Cafe Kinesi Blog',
+      description: '心と身体を整えるブログ',
+    }
+  }
+}
+
 // 静的パラメータを生成（動的レンダリング時は効果なしだが、型の整合性のため）
 export async function generateStaticParams() {
   try {
@@ -118,6 +176,7 @@ async function getPost(slug: string) {
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
+import RelatedPosts from '@/app/components/RelatedPosts'
 
 export default async function BlogPostPage({
   params,
@@ -491,6 +550,13 @@ export default async function BlogPostPage({
         </a>
       </div>
         </div>
+
+        {/* 関連記事コンポーネント */}
+        <RelatedPosts
+          currentPostId={post._id}
+          category={post.category}
+          tags={post.tags}
+        />
       </article>
       <Footer />
     </div>

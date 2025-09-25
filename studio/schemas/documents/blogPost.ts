@@ -269,6 +269,51 @@ export default {
       type: 'reference',
       to: [{type: 'author'}],
     },
+    {
+      name: 'relatedArticles',
+      title: '関連記事',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'blogPost'}],
+        },
+      ],
+      description: 'この記事と関連する記事を選択（3-5記事推奨）',
+      validation: (Rule: any) => Rule.max(5).warning('関連記事は最大5記事までを推奨します'),
+    },
+    {
+      name: 'seo',
+      title: 'SEO設定',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'SEO Title',
+          type: 'string',
+          description: '検索結果に表示されるタイトル（60文字以内推奨）',
+          validation: (Rule: any) => Rule.max(60).warning('60文字以内を推奨します'),
+        },
+        {
+          name: 'description',
+          title: 'Meta Description',
+          type: 'text',
+          rows: 3,
+          description: '検索結果に表示される説明文（160文字以内推奨）',
+          validation: (Rule: any) => Rule.max(160).warning('160文字以内を推奨します'),
+        },
+        {
+          name: 'keywords',
+          title: 'Keywords',
+          type: 'array',
+          of: [{type: 'string'}],
+          options: {
+            layout: 'tags',
+          },
+          description: 'SEOキーワード',
+        },
+      ],
+    },
   ],
   preview: {
     select: {

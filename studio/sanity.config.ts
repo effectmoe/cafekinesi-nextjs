@@ -2,6 +2,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
+import {contentModelGraph} from 'sanity-plugin-content-model-graph'
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
@@ -17,6 +18,26 @@ export default defineConfig({
     const basePlugins = [
       structureTool({
         structure
+      }),
+      contentModelGraph({
+        exclude: ['system.*', 'sanity.*'],
+        maxDepth: 4,
+        style: {
+          node: {
+            base: {
+              fill: '#667eea',
+              stroke: '#764ba2',
+            },
+            hover: {
+              fill: '#764ba2',
+              stroke: '#667eea',
+            },
+          },
+          edge: {
+            stroke: '#667eea',
+            strokeWidth: 2,
+          },
+        },
       }),
       previewPlugin({
         baseUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
