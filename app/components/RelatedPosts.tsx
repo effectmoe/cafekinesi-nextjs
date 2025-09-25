@@ -93,7 +93,7 @@ export default async function RelatedPosts({
                 key={post._id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden border border-gray-100"
               >
-                <Link href={`/blog/${post.slug.current}`}>
+                <Link href={`/blog/${post.slug.current}`} data-related-post-id={post._id}>
                   {/* 画像 */}
                   <div className="aspect-[16/10] relative overflow-hidden bg-gray-100">
                     {post.mainImage ? (

@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     }
 
     // OG画像のレンダリング
-    return new ImageResponse(
+    const response = new ImageResponse(
       (
         <div
           style={{
@@ -224,6 +224,16 @@ export async function GET(request: NextRequest) {
         ],
       }
     )
+
+    // キャッシュ制御ヘッダーを追加（1時間キャッシュ、再検証）
+    return new Response(response.body, {
+      headers: {
+        ...Object.fromEntries(response.headers.entries()),
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+        'CDN-Cache-Control': 'public, max-age=86400',
+        'Vercel-CDN-Cache-Control': 'public, max-age=86400',
+      },
+    })
   } catch (error) {
     console.error('OG Image Generation Error:', error)
 
