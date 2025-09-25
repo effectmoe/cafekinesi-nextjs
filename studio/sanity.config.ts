@@ -105,5 +105,11 @@ export default defineConfig({
       'https://*.vercel.app'
     ],
     credentials: true
+  },
+
+  // API設定
+  api: {
+    projectId: 'e4aqw590',
+    dataset: 'production'
   }
 })
