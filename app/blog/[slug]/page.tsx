@@ -7,7 +7,7 @@ import { PortableText } from '@portabletext/react'
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
 
-const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
+const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug] | order(_updatedAt desc) [0] {
   _id,
   title,
   slug,
@@ -38,6 +38,19 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
   slug
 }`
 
+// 静的パラメータを生成（動的レンダリング時は効果なしだが、型の整合性のため）
+export async function generateStaticParams() {
+  try {
+    const posts = await publicClient.fetch<{ slug: { current: string } }[]>(ALL_POSTS_QUERY)
+    return posts.map((post) => ({
+      slug: post.slug.current,
+    }))
+  } catch (error) {
+    console.error('Failed to generate static params:', error)
+    return []
+  }
+}
+
 async function getPost(slug: string) {
   const draft = await draftMode()
   const isPreview = draft.isEnabled
@@ -45,9 +58,16 @@ async function getPost(slug: string) {
   // プレビューモード時はpreviewClient、通常時はpublicClientを使用
   const selectedClient = isPreview ? previewClient : publicClient
 
-  console.log(`Fetching post: ${slug}, preview: ${isPreview}`)
+  console.log(`Fetching post: ${slug}, preview: ${isPreview}, client: ${selectedClient === previewClient ? 'preview' : 'public'}`)
 
-  return selectedClient.fetch<BlogPost>(POST_QUERY, { slug })
+  try {
+    const result = await selectedClient.fetch<BlogPost>(POST_QUERY, { slug })
+    console.log(`Post result for ${slug}:`, result ? `Found: ${result._id}` : 'Not found')
+    return result
+  } catch (error) {
+    console.error(`Error fetching post ${slug}:`, error)
+    return null
+  }
 }
 
 import Header from '@/components/Header'
