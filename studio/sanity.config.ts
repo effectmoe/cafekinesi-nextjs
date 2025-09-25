@@ -50,23 +50,9 @@ export default defineConfig({
 
   // ドキュメントアクションの設定 - プレビューボタンを追加
   document: {
-    actions: (prev, context) => {
-      // プレビューアクションを既存のアクションに追加
-      const actions = [...prev]
-
-      // Publishボタンの直前にPreviewボタンを挿入
-      const publishIndex = actions.findIndex(
-        (action) => action.name === 'publish'
-      )
-
-      if (publishIndex > -1) {
-        actions.splice(publishIndex, 0, PreviewAction)
-      } else {
-        // Publishボタンが見つからない場合は最後に追加
-        actions.push(PreviewAction)
-      }
-
-      return actions
+    actions: (prev) => {
+      // デフォルトのアクションにPreviewActionを追加
+      return [...prev, PreviewAction]
     },
   },
 

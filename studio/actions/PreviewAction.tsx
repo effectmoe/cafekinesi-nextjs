@@ -1,9 +1,7 @@
 import { EyeOpenIcon } from '@sanity/icons'
-import type { DocumentActionComponent, DocumentActionProps } from 'sanity'
+import type { DocumentActionComponent } from 'sanity'
 
-export const PreviewAction: DocumentActionComponent = (
-  props: DocumentActionProps
-) => {
+export const PreviewAction: DocumentActionComponent = (props) => {
   const { draft, published, type } = props
 
   // ドラフトが存在する場合はドラフトを、なければ公開済みを使用
@@ -63,11 +61,14 @@ export const PreviewAction: DocumentActionComponent = (
     return `${baseUrl}/api/draft?${params}&redirect=${encodeURIComponent(path)}`
   }
 
+  if (!doc) {
+    return null
+  }
+
   return {
     label: 'Preview',
     icon: EyeOpenIcon,
-    tone: draft ? 'primary' : 'default',
-    disabled: !doc,
+    tone: draft ? 'positive' : undefined,
     onHandle: handlePreview,
   }
 }
