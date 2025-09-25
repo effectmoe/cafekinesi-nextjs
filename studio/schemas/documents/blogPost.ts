@@ -272,18 +272,23 @@ export default {
           type: 'string',
           options: {
             list: [
+              {title: '抜粋', value: 'excerpt'},
+              {title: 'メイン画像', value: 'mainImage'},
               {title: 'TL;DR（要約）', value: 'tldr'},
               {title: '目次', value: 'toc'},
+              {title: 'タグ', value: 'tags'},
               {title: '本文', value: 'content'},
-              {title: 'FAQ', value: 'faq'},
+              {title: 'ギャラリー画像', value: 'gallery'},
+              {title: '追加画像', value: 'additionalImages'},
               {title: '重要ポイント', value: 'keyPoint'},
               {title: 'まとめ', value: 'summary'},
+              {title: 'FAQ', value: 'faq'},
               {title: '関連記事', value: 'related'}
             ]
           }
         }
       ],
-      initialValue: ['tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related']
+      initialValue: ['mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related']
     },
     {
       name: 'category',
