@@ -121,13 +121,11 @@ export default {
       validation: (Rule: any) => Rule.required(),
     },
     {
-      name: 'excerpt',
-      title: '抜粋',
-      type: 'text',
+      name: 'author',
+      title: '著者',
+      type: 'reference',
       group: 'basic',
-      rows: 3,
-      description: '記事一覧・SNSシェア用の短い説明文（トップページやSNSでの表示に使用）',
-      validation: (Rule: any) => Rule.required().max(200),
+      to: [{type: 'author'}],
     },
     {
       name: 'publishedAt',
@@ -174,19 +172,21 @@ export default {
       },
     },
     {
+      name: 'excerpt',
+      title: '抜粋',
+      type: 'text',
+      group: 'basic',
+      rows: 3,
+      description: '記事一覧・SNSシェア用の短い説明文（トップページやSNSでの表示に使用）',
+      validation: (Rule: any) => Rule.required().max(200),
+    },
+    {
       name: 'featured',
       title: '注目記事',
       type: 'boolean',
       group: 'basic',
       description: 'トップページで目立つように表示する',
       initialValue: false,
-    },
-    {
-      name: 'author',
-      title: '著者',
-      type: 'reference',
-      group: 'basic',
-      to: [{type: 'author'}],
     },
 
     // === 画像・メディア ===
@@ -263,15 +263,6 @@ export default {
 
     // === コンテンツ ===
     {
-      name: 'tldr',
-      title: 'TL;DR（要約）',
-      type: 'text',
-      group: 'content',
-      rows: 3,
-      description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
-      validation: (Rule: any) => Rule.max(300),
-    },
-    {
       name: 'content',
       title: '本文',
       type: 'array',
@@ -302,6 +293,15 @@ export default {
           },
         },
       ],
+    },
+    {
+      name: 'tldr',
+      title: 'TL;DR（要約）',
+      type: 'text',
+      group: 'content',
+      rows: 3,
+      description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
+      validation: (Rule: any) => Rule.max(300),
     },
     {
       name: 'keyPoint',
@@ -415,7 +415,7 @@ export default {
           }
         }
       ],
-      initialValue: ['featured', 'publishedAt', 'category', 'author', 'mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
+      initialValue: ['featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
     },
 
     // === SEO設定 ===
