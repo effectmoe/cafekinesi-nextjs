@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default {
   name: 'blogPost',
   title: 'ブログ記事',
@@ -68,22 +66,7 @@ export default {
           }
         }
       ],
-      initialValue: ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext'],
-      components: {
-        input: (props: any) => {
-          const {value, onChange, ...rest} = props
-
-          // 値が未定義または空配列の場合、デフォルト値を設定
-          React.useEffect(() => {
-            if (!value || (Array.isArray(value) && value.length === 0)) {
-              const defaultValue = ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
-              onChange(defaultValue.map(v => ({_type: 'string', _key: Math.random().toString(36).substr(2, 9), value: v})))
-            }
-          }, [value, onChange])
-
-          return React.createElement(rest.renderDefault, {value, onChange, ...rest})
-        }
-      }
+      initialValue: ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
     },
 
     // === 基本情報（必須項目） ===
