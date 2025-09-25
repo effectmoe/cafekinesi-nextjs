@@ -135,6 +135,23 @@ export default async function BlogPostPage({
 
   if (!post) {
     console.error(`[BlogPostPage] Post not found for slug: ${slug}, preview mode: ${draft.isEnabled}`)
+
+    // デバッグ用にすべてのドラフトを取得
+    let debugDrafts: any[] = []
+    if (draft.isEnabled) {
+      try {
+        debugDrafts = await previewClient.fetch(
+          `*[_id in path("drafts.*") && _type == "blogPost"][0...5] {
+            _id,
+            title,
+            slug
+          }`
+        )
+      } catch (err) {
+        console.error('Failed to fetch debug drafts:', err)
+      }
+    }
+
     // デバッグ用: Vercel環境でのみ詳細を表示
     if (process.env.VERCEL) {
       return (
@@ -146,6 +163,28 @@ export default async function BlogPostPage({
                 <strong>Slug:</strong> {slug}<br/>
                 <strong>Preview Mode:</strong> {draft.isEnabled ? '有効' : '無効'}<br/>
                 <strong>Environment:</strong> {process.env.NODE_ENV}<br/>
+                <strong>API Token:</strong> {(process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN) ? '設定済み' : '未設定'}<br/>
+              </p>
+            </div>
+
+            {debugDrafts.length > 0 && (
+              <div className="bg-blue-50 rounded p-4 mb-4">
+                <p className="text-sm font-semibold text-blue-900 mb-2">利用可能なドラフト:</p>
+                <ul className="text-sm text-blue-700">
+                  {debugDrafts.map((d: any) => (
+                    <li key={d._id}>
+                      {d.title} (slug: {d.slug?.current || 'none'})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="bg-yellow-50 rounded p-4 mb-4">
+              <p className="text-sm text-yellow-800">
+                <a href="/api/debug-sanity?slug={slug}" target="_blank" className="underline">
+                  デバッグ情報を表示
+                </a>
               </p>
             </div>
             <p className="text-gray-600 mb-4">

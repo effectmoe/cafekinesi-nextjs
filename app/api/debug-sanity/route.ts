@@ -1,48 +1,104 @@
+import { NextResponse } from 'next/server'
+import { client, publicClient, previewClient } from '@/lib/sanity.client'
+import { draftMode } from 'next/headers'
+
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  const debugInfo = {
-    timestamp: new Date().toISOString(),
-    env: {
-      NODE_ENV: process.env.NODE_ENV,
-      VERCEL_ENV: process.env.VERCEL_ENV,
-      VERCEL_REGION: process.env.VERCEL_REGION,
-    },
-    sanity: {
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-      hasToken: !!process.env.SANITY_TOKEN,
-    }
-  }
-
+export async function GET(request: Request) {
   try {
-    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
-    const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
-    const apiVersion = '2024-01-01'
+    const { searchParams } = new URL(request.url)
+    const slug = searchParams.get('slug') || 'marker-test-post2'
+    const testPreview = searchParams.get('testPreview') === 'true'
 
-    const query = encodeURIComponent('*[_type == "blogPost"][0...1]')
-    const url = `https://${projectId}.apicdn.sanity.io/v${apiVersion}/data/query/${dataset}?query=${query}`
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled || testPreview
 
-    console.log('[Debug API] Fetching from:', url)
+    // 各クライアントでデータを取得
+    const queries = {
+      // 通常のクエリ
+      published: `*[_type == "blogPost" && slug.current == "${slug}"][0] {
+        _id,
+        title,
+        slug,
+        "status": "published"
+      }`,
 
-    const response = await fetch(url, { cache: 'no-store' })
-    const data = await response.json()
+      // ドラフトを含むクエリ
+      withDrafts: `*[_type == "blogPost" && slug.current == "${slug}"] {
+        _id,
+        title,
+        slug,
+        "isDraft": _id in path("drafts.*")
+      }`,
 
-    return Response.json({
+      // ドラフトのみを取得
+      draftsOnly: `*[_type == "blogPost" && slug.current == "${slug}" && _id in path("drafts.*")] {
+        _id,
+        title,
+        slug
+      }`,
+
+      // すべてのドラフト
+      allDrafts: `*[_id in path("drafts.*") && _type == "blogPost"][0...10] {
+        _id,
+        title,
+        slug
+      }`
+    }
+
+    const results: any = {}
+
+    // publicClientでの結果
+    results.publicClient = {
+      published: await publicClient.fetch(queries.published),
+      withDrafts: await publicClient.fetch(queries.withDrafts),
+      config: {
+        perspective: publicClient.config().perspective,
+        useCdn: publicClient.config().useCdn,
+        hasToken: !!publicClient.config().token
+      }
+    }
+
+    // previewClientでの結果
+    results.previewClient = {
+      published: await previewClient.fetch(queries.published),
+      withDrafts: await previewClient.fetch(queries.withDrafts),
+      draftsOnly: await previewClient.fetch(queries.draftsOnly),
+      allDrafts: await previewClient.fetch(queries.allDrafts),
+      config: {
+        perspective: previewClient.config().perspective,
+        useCdn: previewClient.config().useCdn,
+        hasToken: !!previewClient.config().token,
+        apiVersion: previewClient.config().apiVersion
+      }
+    }
+
+    // 現在使用中のクライアント
+    const activeClient = isPreview ? previewClient : publicClient
+    results.activeClient = {
+      name: isPreview ? 'previewClient' : 'publicClient',
+      result: await activeClient.fetch(queries.withDrafts)
+    }
+
+    return NextResponse.json({
       success: true,
-      debug: debugInfo,
-      sanityResponse: {
-        status: response.status,
-        dataCount: data?.result?.length || 0,
-        firstPost: data?.result?.[0]?.title || 'No data'
-      },
-      fullUrl: url
+      slug,
+      isPreview,
+      draftModeEnabled: draft.isEnabled,
+      results,
+      environment: {
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+        hasToken: !!(process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN),
+        nodeEnv: process.env.NODE_ENV
+      }
     })
-  } catch (error) {
-    return Response.json({
+  } catch (error: any) {
+    console.error('Sanity debug error:', error)
+    return NextResponse.json({
       success: false,
-      debug: debugInfo,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message || 'Unknown error',
+      stack: error.stack
     }, { status: 500 })
   }
 }

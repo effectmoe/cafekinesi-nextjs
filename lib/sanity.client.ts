@@ -30,7 +30,7 @@ export const previewClient = createClient({
   apiVersion: '2024-09-25',
   useCdn: false, // ⭐ 重要：ドラフト取得時は必ずfalse
   perspective: 'drafts', // ⭐ 'previewDrafts'は非推奨、'drafts'を使用
-  token: process.env.SANITY_API_READ_TOKEN, // 読み取り専用トークンがあれば使用
+  token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN, // トークンを使用
   ignoreBrowserTokenWarning: true
 })
 
