@@ -6,6 +6,7 @@ import FAQSection from '@/components/FAQSection'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
+import SiteSchemas from '@/components/SiteSchemas'
 import { client, publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
@@ -95,15 +96,25 @@ export default async function HomePage() {
   console.log('[HomePage] Features section:', featuresSection ? 'Found' : 'Not found')
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <main className="relative">
-        <AlbumGrid />
-        <BlogSectionDynamic />
-        <FAQSection faqs={faqs} />
-      </main>
-      <SocialLinks />
-      <Footer />
-    </div>
+    <>
+      {/* Schema.org構造化データ */}
+      <SiteSchemas
+        currentPage={{
+          title: homepage?.title || 'Cafe Kinesi - 心と身体を整える空間',
+          url: process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+        }}
+      />
+
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="relative">
+          <AlbumGrid />
+          <BlogSectionDynamic />
+          <FAQSection faqs={faqs} />
+        </main>
+        <SocialLinks />
+        <Footer />
+      </div>
+    </>
   )
 }
