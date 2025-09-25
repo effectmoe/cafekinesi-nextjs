@@ -7,7 +7,36 @@ import { PortableText } from '@portabletext/react'
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
 
-const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug] | order(_updatedAt desc) [0] {
+// プレビューモードと通常モードで異なるqueryを使用
+const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  tldr,
+  mainImage,
+  content,
+  keyPoint,
+  summary,
+  faq,
+  category,
+  tags,
+  publishedAt,
+  author-> {
+    name,
+    image,
+    bio
+  },
+  seo {
+    title,
+    description,
+    keywords,
+    ogImage
+  }
+}`
+
+// ドラフトを優先的に取得するquery
+const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug] | order(_id desc) [0] {
   _id,
   title,
   slug,
@@ -57,11 +86,12 @@ async function getPost(slug: string) {
 
   // プレビューモード時はpreviewClient、通常時はpublicClientを使用
   const selectedClient = isPreview ? previewClient : publicClient
+  const query = isPreview ? DRAFT_POST_QUERY : POST_QUERY
 
   console.log(`Fetching post: ${slug}, preview: ${isPreview}, client: ${selectedClient === previewClient ? 'preview' : 'public'}`)
 
   try {
-    const result = await selectedClient.fetch<BlogPost>(POST_QUERY, { slug })
+    const result = await selectedClient.fetch<BlogPost>(query, { slug })
     console.log(`Post result for ${slug}:`, result ? `Found: ${result._id}` : 'Not found')
     return result
   } catch (error) {
@@ -77,12 +107,42 @@ import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+  console.log('[BlogPostPage] Rendering with slug:', slug)
+
+  // ドラフトモードの状態を確認
+  const draft = await draftMode()
+  console.log('[BlogPostPage] Draft mode status:', draft.isEnabled)
+
   const post = await getPost(slug)
 
   if (!post) {
+    console.error(`[BlogPostPage] Post not found for slug: ${slug}, preview mode: ${draft.isEnabled}`)
+    // デバッグ用: Vercel環境でのみ詳細を表示
+    if (process.env.VERCEL) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
+          <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">404 - 記事が見つかりません</h1>
+            <div className="bg-gray-100 rounded p-4 mb-4">
+              <p className="text-sm text-gray-700">
+                <strong>Slug:</strong> {slug}<br/>
+                <strong>Preview Mode:</strong> {draft.isEnabled ? '有効' : '無効'}<br/>
+                <strong>Environment:</strong> {process.env.NODE_ENV}<br/>
+              </p>
+            </div>
+            <p className="text-gray-600 mb-4">
+              この記事はSanity Studioで公開されているか確認してください。
+            </p>
+            <a href="/blog" className="text-blue-600 hover:underline">
+              ブログ一覧に戻る
+            </a>
+          </div>
+        </div>
+      )
+    }
     notFound()
   }
 
@@ -128,8 +188,23 @@ export default async function BlogPostPage({
     }
   }
 
+  // デバッグ情報
+  const draft = await draftMode()
+  const debugInfo = {
+    slug,
+    postId: post._id,
+    isDraft: post._id.startsWith('drafts.'),
+    previewEnabled: draft.isEnabled
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* デバッグ表示 */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-0 left-0 z-50 bg-black text-white text-xs p-2 font-mono">
+          Debug: {JSON.stringify(debugInfo)}
+        </div>
+      )}
       <PreviewModeIndicator />
       <Header />
       <article className="flex-grow">

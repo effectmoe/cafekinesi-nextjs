@@ -29,7 +29,9 @@ export const previewClient = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-09-25',
   useCdn: false,
-  perspective: 'previewDrafts'
+  perspective: 'previewDrafts',
+  token: process.env.SANITY_API_READ_TOKEN, // 読み取り専用トークンがあれば使用
+  ignoreBrowserTokenWarning: true
 })
 
 // ドラフト用クライアント
