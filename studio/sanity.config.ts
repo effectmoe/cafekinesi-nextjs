@@ -19,7 +19,9 @@ export default defineConfig({
     visionTool(),
     presentationTool({
       previewUrl: {
-        origin: process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
+        origin: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
+          ? 'https://cafekinesi-nextjs.vercel.app'
+          : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
         draftMode: {
           enable: '/api/draft',
         },

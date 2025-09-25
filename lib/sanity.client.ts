@@ -19,8 +19,7 @@ export function getClient(preview?: boolean) {
   if (preview) {
     return client.withConfig({
       useCdn: false,
-      perspective: 'previewDrafts',
-      token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
+      perspective: 'previewDrafts', // 'raw' | 'previewDrafts' | 'published'
     })
   }
   return client
