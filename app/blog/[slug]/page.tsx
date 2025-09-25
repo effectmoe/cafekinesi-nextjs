@@ -149,7 +149,6 @@ export default async function BlogPostPage({
   // 関連記事を取得（同じクライアントを使用）
   let relatedPosts: any[] = []
   try {
-    const draft = await draftMode()
     const isPreview = draft.isEnabled
     const selectedClient = isPreview ? previewClient : publicClient
 
@@ -189,7 +188,6 @@ export default async function BlogPostPage({
   }
 
   // デバッグ情報
-  const draft = await draftMode()
   const debugInfo = {
     slug,
     postId: post._id,
