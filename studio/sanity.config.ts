@@ -19,9 +19,12 @@ export default defineConfig({
     }),
     visionTool(),
     previewPlugin({
-      previewUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
+      baseUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
         ? 'https://cafekinesi-nextjs.vercel.app'
-        : 'http://localhost:3000'
+        : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
+      previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
+      enabledTypes: ['blogPost', 'page', 'homepage', 'album'],
+      previewMode: 'tab'
     }),
     presentationTool({
       previewUrl: {
