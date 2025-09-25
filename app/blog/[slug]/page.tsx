@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic'
 // プレビューモードと通常モードで異なるqueryを使用
 const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
+  _type,
   title,
   slug,
   excerpt,
@@ -32,11 +33,12 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
     description,
     keywords,
     ogImage
-  }
+  },
+  "isDraft": _id in path("drafts.*")
 }`
 
-// ドラフトを優先的に取得するquery
-const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug] | order(_id desc) [0] {
+// ドラフトを優先的に取得するquery（同じ構造でdrafts perspectiveが自動処理）
+const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
   title,
   slug,
@@ -90,9 +92,22 @@ async function getPost(slug: string) {
 
   console.log(`Fetching post: ${slug}, preview: ${isPreview}, client: ${selectedClient === previewClient ? 'preview' : 'public'}`)
 
+  // デバッグ用：クライアント設定を確認
+  if (isPreview) {
+    console.log('Preview client config:', {
+      perspective: previewClient.config().perspective,
+      useCdn: previewClient.config().useCdn,
+      hasToken: !!previewClient.config().token,
+      apiVersion: previewClient.config().apiVersion,
+    })
+  }
+
   try {
-    const result = await selectedClient.fetch<BlogPost>(query, { slug })
-    console.log(`Post result for ${slug}:`, result ? `Found: ${result._id}` : 'Not found')
+    const result = await selectedClient.fetch<BlogPost>(query, { slug }, {
+      // キャッシュを無効化してリアルタイムデータを取得
+      cache: isPreview ? 'no-store' : 'force-cache'
+    } as any)
+    console.log(`Post result for ${slug}:`, result ? `Found: ${result._id}, isDraft: ${result._id?.startsWith('drafts.')}` : 'Not found')
     return result
   } catch (error) {
     console.error(`Error fetching post ${slug}:`, error)

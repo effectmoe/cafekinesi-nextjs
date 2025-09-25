@@ -38,7 +38,9 @@ async function getPage(slug: string) {
 
   console.log(`Fetching page: ${slug}, preview: ${isPreview}`)
 
-  return selectedClient.fetch<Page>(PAGE_QUERY, { slug })
+  return selectedClient.fetch<Page>(PAGE_QUERY, { slug }, {
+    cache: isPreview ? 'no-store' : 'force-cache'
+  } as any)
 }
 
 async function getAllPages() {

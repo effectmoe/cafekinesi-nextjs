@@ -39,20 +39,27 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Draft Modeを有効化
     const draft = await draftMode()
     draft.enable()
-    console.log('[Draft API] Draft mode enabled')
+    console.log('[Draft API] Draft mode enabled successfully')
 
     // リダイレクト先の決定
     // Presentation機能からの場合はsanityPathnameを使用
     const path = redirectPath || sanityPathname || slug || '/'
     console.log('[Draft API] Redirecting to:', path)
 
-    // リダイレクトレスポンスを作成
-    const response = NextResponse.redirect(new URL(path, request.url), 307)
+    // リダイレクトURLを作成
+    const redirectUrl = new URL(path, request.url)
+
+    // デバッグ用にプレビューパラメータを追加
+    redirectUrl.searchParams.set('preview', 'true')
+
+    const response = NextResponse.redirect(redirectUrl, 307)
 
     // draft modeが有効になったことを確認するためのヘッダーを追加
     response.headers.set('x-draft-mode', 'enabled')
+    response.headers.set('x-preview-slug', slug || '')
 
     return response
   } catch (error) {

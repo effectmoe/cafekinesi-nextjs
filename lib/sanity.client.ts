@@ -28,8 +28,8 @@ export const previewClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-09-25',
-  useCdn: false,
-  perspective: 'previewDrafts',
+  useCdn: false, // ⭐ 重要：ドラフト取得時は必ずfalse
+  perspective: 'drafts', // ⭐ 'previewDrafts'は非推奨、'drafts'を使用
   token: process.env.SANITY_API_READ_TOKEN, // 読み取り専用トークンがあれば使用
   ignoreBrowserTokenWarning: true
 })
