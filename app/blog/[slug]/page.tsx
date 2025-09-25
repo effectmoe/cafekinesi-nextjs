@@ -6,6 +6,7 @@ import { PortableText } from '@portabletext/react'
 import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
+import BlogContentRenderer from '@/components/BlogContentRenderer'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -19,6 +20,8 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   excerpt,
   tldr,
   mainImage,
+  gallery,
+  additionalImages,
   content,
   keyPoint,
   summary,
@@ -27,6 +30,7 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   tags,
   publishedAt,
   featured,
+  contentOrder,
   relatedArticles[]-> {
     _id,
     title,
@@ -60,6 +64,8 @@ const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0]
   excerpt,
   tldr,
   mainImage,
+  gallery,
+  additionalImages,
   content,
   keyPoint,
   summary,
@@ -68,6 +74,7 @@ const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0]
   tags,
   publishedAt,
   featured,
+  contentOrder,
   relatedArticles[]-> {
     _id,
     title,
@@ -355,289 +362,36 @@ export default async function BlogPostPage({
       <PreviewModeIndicator />
       <Header />
       <article className="flex-grow">
-        {/* ヒーローセクション - より洗練されたデザイン */}
+        {/* ヒーローセクション - タイトルのみ */}
         <header className="bg-white border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-            {/* 日付とカテゴリー */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-              {post.publishedAt && (
-                <time className="text-xs tracking-wider text-gray-500 uppercase">
-                  {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              )}
-              {post.category && (
-                <>
-                  <span className="text-xs tracking-wider text-gray-500 uppercase hidden sm:inline">•</span>
-                  <span className="text-xs tracking-wider text-gray-500 uppercase">
-                    {post.category}
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* タイトル */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-gray-900 mb-6 sm:mb-8">
               {post.title}
             </h1>
-
-            {/* 著者情報 */}
-            {post.author && (
-              <div className="flex items-center gap-3 sm:gap-4">
-                {post.author.image && (
-                  <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full overflow-hidden bg-gray-100">
-                    <img
-                      src={getImageUrl(post.author.image, 48, 48)}
-                      alt={post.author.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm font-light text-gray-700">{post.author.name}</p>
-                </div>
-              </div>
-            )}
           </div>
         </header>
 
+        {/* 動的コンテンツレンダラー */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-
-      {/* メイン画像 - レスポンシブ対応 */}
-      {post.mainImage && (
-        <div className="-mx-4 sm:-mx-6 lg:-mx-8 mb-8 sm:mb-12 lg:mb-16">
-          <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-gray-100">
-            <img
-              src={getImageUrl(post.mainImage, 1400, 600)}
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* TL;DR セクション - エレガントなスタイル */}
-      {post.tldr && (
-        <section className="mb-12 sm:mb-16">
-          <div className="border-l-2 border-gray-900 pl-6">
-            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">要約</h2>
-            <p className="text-lg font-light text-gray-700 leading-relaxed">{post.tldr}</p>
-          </div>
-        </section>
-      )}
-
-      {/* タグ表示 - ミニマルスタイル */}
-      {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-4 mb-12 pb-12 border-b border-gray-200">
-          {post.tags.map((tag: string, index: number) => (
-            <span key={`tag-${index}`} className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer">
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* メインコンテンツ - 洗練されたタイポグラフィ */}
-      {post.content && (
-        <div className="prose prose-lg prose-gray max-w-none mb-16
-                       prose-headings:font-light prose-headings:text-gray-900 prose-headings:tracking-tight
-                       prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-                       prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
-                       prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6
-                       prose-a:text-gray-900 prose-a:underline-offset-4 prose-a:decoration-gray-400
-                       prose-strong:font-medium prose-strong:text-gray-900
-                       prose-ul:my-6 prose-li:text-gray-700
-                       prose-blockquote:border-gray-300 prose-blockquote:italic prose-blockquote:text-gray-600">
-          <PortableText
-            value={post.content}
-            components={{
-              types: {
-                image: ({value}: any) => {
-                  if (!value?.asset?._ref) {
-                    return null
-                  }
-                  return (
-                    <img
-                      src={getImageUrl(value, 800, 450)}
-                      alt={value.alt || ''}
-                      className="w-full h-auto rounded-lg my-8"
-                    />
-                  )
-                }
-              }
-            }}
+          <BlogContentRenderer
+            post={post}
+            relatedPosts={relatedPosts}
+            prevPost={prevPost}
+            nextPost={nextPost}
           />
-        </div>
-      )}
 
-      {/* 重要なポイント - モダンなアクセント */}
-      {post.keyPoint && (
-        <section className="mb-12 py-8 border-t border-b border-gray-200">
-          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">
-            {typeof post.keyPoint === 'object' && post.keyPoint.title
-              ? post.keyPoint.title
-              : '重要なポイント'}
-          </h2>
-          <p className="text-lg text-gray-700 leading-relaxed font-light">
-            {typeof post.keyPoint === 'string'
-              ? post.keyPoint
-              : (typeof post.keyPoint === 'object' && post.keyPoint.content
-                  ? post.keyPoint.content
-                  : '')}
-          </p>
-        </section>
-      )}
-
-      {/* まとめ - クリーンなデザイン */}
-      {post.summary && (
-        <section className="mb-12 p-8 bg-gray-50">
-          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">まとめ</h2>
-          <p className="text-lg text-gray-700 leading-relaxed font-light">{post.summary}</p>
-        </section>
-      )}
-
-      {/* FAQ - ミニマルスタイル */}
-      {post.faq && Array.isArray(post.faq) && post.faq.length > 0 && (
-        <section className="mb-16">
-          <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-8 font-light">よくある質問</h2>
-          <div className="space-y-8">
-            {post.faq.map((item: any, index: number) => {
-              if (!item || typeof item !== 'object') return null;
-              return (
-                <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                  <h3 className="text-base font-normal text-gray-900 mb-3">
-                    Q: {item.question || '質問'}
-                  </h3>
-                  <p className="text-base text-gray-600 leading-relaxed font-light">
-                    A: {item.answer || '回答'}
-                  </p>
-                </div>
-              );
-            })}
+          {/* ブログ一覧に戻るボタン */}
+          <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
+            <a
+              href="/blog"
+              className="inline-flex items-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wider text-gray-600 uppercase hover:text-gray-900 transition-colors"
+            >
+              <svg className="w-3 sm:w-4 h-3 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+              </svg>
+              ブログ一覧に戻る
+            </a>
           </div>
-        </section>
-      )}
-
-      {/* 注目記事バッジ */}
-      {post.featured && (
-        <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-full">
-          <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-          <span className="text-sm font-medium text-yellow-700">注目の記事</span>
-        </div>
-      )}
-
-      {/* 前後の記事ナビゲーション */}
-      <nav className="mt-16 pt-8 border-t border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 前の記事（新しい記事） */}
-          <div className="text-left">
-            {prevPost ? (
-              <a
-                href={`/blog/${prevPost.slug?.current}`}
-                className="group inline-flex flex-col"
-              >
-                <span className="text-xs text-gray-500 mb-2 uppercase tracking-wider">← 前の記事</span>
-                <span className="text-base text-gray-900 group-hover:text-blue-600 transition-colors font-medium">
-                  {prevPost.title}
-                </span>
-              </a>
-            ) : (
-              <div className="text-gray-400">
-                <span className="text-xs uppercase tracking-wider">前の記事はありません</span>
-              </div>
-            )}
-          </div>
-
-          {/* 次の記事（古い記事） */}
-          <div className="text-right">
-            {nextPost ? (
-              <a
-                href={`/blog/${nextPost.slug?.current}`}
-                className="group inline-flex flex-col items-end"
-              >
-                <span className="text-xs text-gray-500 mb-2 uppercase tracking-wider">次の記事 →</span>
-                <span className="text-base text-gray-900 group-hover:text-blue-600 transition-colors font-medium">
-                  {nextPost.title}
-                </span>
-              </a>
-            ) : (
-              <div className="text-gray-400">
-                <span className="text-xs uppercase tracking-wider">次の記事はありません</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* 関連記事セクション（Sanityで設定された記事のみ表示） */}
-      {relatedPosts && relatedPosts.length > 0 && (
-        <section className="mt-12 pt-8 border-t border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedPosts.map((relatedPost: any) => (
-              <a
-                key={relatedPost._id}
-                href={`/blog/${relatedPost.slug?.current}`}
-                className="block group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300"
-              >
-                <div className="aspect-[3/2] relative overflow-hidden bg-gray-100">
-                  <img
-                    src={getImageUrl(relatedPost.mainImage, 400, 267)}
-                    alt={relatedPost.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
-                    <time>
-                      {new Date(relatedPost.publishedAt).toLocaleDateString('ja-JP', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      }).replace(/\//g, '.')}
-                    </time>
-                    {relatedPost.author && (
-                      <>
-                        <span>•</span>
-                        <span>{relatedPost.author.name}</span>
-                      </>
-                    )}
-                  </div>
-
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {relatedPost.title}
-                  </h3>
-
-                  {relatedPost.excerpt && (
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {relatedPost.excerpt}
-                    </p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ブログ一覧に戻るボタン - ミニマルに */}
-      <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
-        <a
-          href="/blog"
-          className="inline-flex items-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wider text-gray-600 uppercase hover:text-gray-900 transition-colors"
-        >
-          <svg className="w-3 sm:w-4 h-3 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-          </svg>
-          ブログ一覧に戻る
-        </a>
-      </div>
         </div>
       </article>
     </div>
