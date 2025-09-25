@@ -4,7 +4,6 @@ import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
-import {PreviewAction} from './actions/PreviewAction'
 
 export default defineConfig({
   name: 'default',
@@ -40,6 +39,49 @@ export default defineConfig({
             filter: '_type == "blogPost" && slug.current == $slug',
           },
         ],
+        locations: {
+          blogPost: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/blog/${doc?.slug}`,
+                },
+              ],
+            }),
+          },
+          page: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/${doc?.slug}`,
+                },
+              ],
+            }),
+          },
+          homepage: {
+            select: {
+              title: 'title',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Homepage',
+                  href: '/',
+                },
+              ],
+            }),
+          },
+        },
       },
     })
   ],
@@ -48,13 +90,6 @@ export default defineConfig({
     types: schemaTypes,
   },
 
-  // ドキュメントアクションの設定 - プレビューボタンを追加
-  document: {
-    actions: (prev) => {
-      // デフォルトのアクションにPreviewActionを追加
-      return [...prev, PreviewAction]
-    },
-  },
 
   cors: {
     origin: [
