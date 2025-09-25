@@ -30,6 +30,42 @@ export default {
     },
   ],
   fields: [
+    // === レイアウト設定 ===
+    {
+      name: 'contentOrder',
+      title: 'コンテンツ表示順序',
+      type: 'array',
+      group: 'layout',
+      description: 'ページ上でのコンテンツの表示順序を設定（ドラッグで並び替え可能）',
+      of: [
+        {
+          type: 'string',
+          options: {
+            list: [
+              {title: '注目記事バッジ', value: 'featured'},
+              {title: '公開日時', value: 'publishedAt'},
+              {title: 'カテゴリー', value: 'category'},
+              {title: '著者情報', value: 'author'},
+              {title: '抜粋', value: 'excerpt'},
+              {title: 'メイン画像', value: 'mainImage'},
+              {title: 'TL;DR（要約）', value: 'tldr'},
+              {title: '目次', value: 'toc'},
+              {title: 'タグ', value: 'tags'},
+              {title: '本文', value: 'content'},
+              {title: 'ギャラリー画像', value: 'gallery'},
+              {title: '追加画像', value: 'additionalImages'},
+              {title: '重要ポイント', value: 'keyPoint'},
+              {title: 'まとめ', value: 'summary'},
+              {title: 'FAQ', value: 'faq'},
+              {title: '関連記事', value: 'related'},
+              {title: '前後の記事ナビゲーション', value: 'prevNext'}
+            ]
+          }
+        }
+      ],
+      initialValue: ['featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
+    },
+
     // === 基本情報（必須項目） ===
     {
       name: 'title',
@@ -380,42 +416,6 @@ export default {
       ],
       description: 'この記事と関連する記事を選択（3-5記事推奨）',
       validation: (Rule: any) => Rule.max(5).warning('関連記事は最大5記事までを推奨します'),
-    },
-
-    // === レイアウト設定 ===
-    {
-      name: 'contentOrder',
-      title: 'コンテンツ表示順序',
-      type: 'array',
-      group: 'layout',
-      description: 'ページ上でのコンテンツの表示順序を設定（ドラッグで並び替え可能）',
-      of: [
-        {
-          type: 'string',
-          options: {
-            list: [
-              {title: '注目記事バッジ', value: 'featured'},
-              {title: '公開日時', value: 'publishedAt'},
-              {title: 'カテゴリー', value: 'category'},
-              {title: '著者情報', value: 'author'},
-              {title: '抜粋', value: 'excerpt'},
-              {title: 'メイン画像', value: 'mainImage'},
-              {title: 'TL;DR（要約）', value: 'tldr'},
-              {title: '目次', value: 'toc'},
-              {title: 'タグ', value: 'tags'},
-              {title: '本文', value: 'content'},
-              {title: 'ギャラリー画像', value: 'gallery'},
-              {title: '追加画像', value: 'additionalImages'},
-              {title: '重要ポイント', value: 'keyPoint'},
-              {title: 'まとめ', value: 'summary'},
-              {title: 'FAQ', value: 'faq'},
-              {title: '関連記事', value: 'related'},
-              {title: '前後の記事ナビゲーション', value: 'prevNext'}
-            ]
-          }
-        }
-      ],
-      initialValue: ['featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
     },
 
     // === SEO設定 ===
