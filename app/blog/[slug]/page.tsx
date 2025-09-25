@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
 import type { Metadata } from 'next'
+import Header from '@/components/Header'
+import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 import RelatedPosts from '@/app/components/RelatedPosts'
 
 // 動的レンダリングを強制
@@ -174,10 +176,6 @@ async function getPost(slug: string) {
   }
 }
 
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import PreviewModeIndicator from '@/components/PreviewModeIndicator'
-import RelatedPosts from '@/app/components/RelatedPosts'
 
 export default async function BlogPostPage({
   params,
