@@ -272,6 +272,10 @@ export default {
           type: 'string',
           options: {
             list: [
+              {title: '注目記事バッジ', value: 'featured'},
+              {title: '公開日時', value: 'publishedAt'},
+              {title: 'カテゴリー', value: 'category'},
+              {title: '著者情報', value: 'author'},
               {title: '抜粋', value: 'excerpt'},
               {title: 'メイン画像', value: 'mainImage'},
               {title: 'TL;DR（要約）', value: 'tldr'},
@@ -283,12 +287,13 @@ export default {
               {title: '重要ポイント', value: 'keyPoint'},
               {title: 'まとめ', value: 'summary'},
               {title: 'FAQ', value: 'faq'},
-              {title: '関連記事', value: 'related'}
+              {title: '関連記事', value: 'related'},
+              {title: '前後の記事ナビゲーション', value: 'prevNext'}
             ]
           }
         }
       ],
-      initialValue: ['mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related']
+      initialValue: ['featured', 'publishedAt', 'category', 'author', 'mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
     },
     {
       name: 'category',
