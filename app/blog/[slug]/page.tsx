@@ -6,7 +6,6 @@ import { PortableText } from '@portabletext/react'
 import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
-import RelatedPosts from '@/app/components/RelatedPosts'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -176,6 +175,38 @@ async function getPost(slug: string) {
   }
 }
 
+// 前後の記事を取得
+async function getAdjacentPosts(currentDate: string, currentSlug: string) {
+  const draft = await draftMode()
+  const isPreview = draft.isEnabled
+  const selectedClient = isPreview ? previewClient : publicClient
+
+  try {
+    // 前の記事（より新しい記事）
+    const prevPost = await selectedClient.fetch(
+      `*[_type == "blogPost" && publishedAt > $currentDate && slug.current != $currentSlug] | order(publishedAt asc) [0] {
+        title,
+        slug
+      }`,
+      { currentDate, currentSlug }
+    )
+
+    // 次の記事（より古い記事）
+    const nextPost = await selectedClient.fetch(
+      `*[_type == "blogPost" && publishedAt < $currentDate && slug.current != $currentSlug] | order(publishedAt desc) [0] {
+        title,
+        slug
+      }`,
+      { currentDate, currentSlug }
+    )
+
+    return { prevPost, nextPost }
+  } catch (error) {
+    console.error('Failed to fetch adjacent posts:', error)
+    return { prevPost: null, nextPost: null }
+  }
+}
+
 
 export default async function BlogPostPage({
   params,
@@ -281,6 +312,9 @@ export default async function BlogPostPage({
   } catch (error) {
     console.error('Failed to fetch related posts:', error)
   }
+
+  // 前後の記事を取得
+  const { prevPost, nextPost } = await getAdjacentPosts(post.publishedAt, slug)
 
   // 画像URL生成のヘルパー関数
   function getImageUrl(imageAsset: any, width: number = 800, height: number = 600): string {
@@ -484,9 +518,52 @@ export default async function BlogPostPage({
         </section>
       )}
 
+      {/* 前後の記事ナビゲーション */}
+      <nav className="mt-16 pt-8 border-t border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 前の記事（新しい記事） */}
+          <div className="text-left">
+            {prevPost ? (
+              <a
+                href={`/blog/${prevPost.slug?.current}`}
+                className="group inline-flex flex-col"
+              >
+                <span className="text-xs text-gray-500 mb-2 uppercase tracking-wider">← 前の記事</span>
+                <span className="text-base text-gray-900 group-hover:text-blue-600 transition-colors font-medium">
+                  {prevPost.title}
+                </span>
+              </a>
+            ) : (
+              <div className="text-gray-400">
+                <span className="text-xs uppercase tracking-wider">前の記事はありません</span>
+              </div>
+            )}
+          </div>
+
+          {/* 次の記事（古い記事） */}
+          <div className="text-right">
+            {nextPost ? (
+              <a
+                href={`/blog/${nextPost.slug?.current}`}
+                className="group inline-flex flex-col items-end"
+              >
+                <span className="text-xs text-gray-500 mb-2 uppercase tracking-wider">次の記事 →</span>
+                <span className="text-base text-gray-900 group-hover:text-blue-600 transition-colors font-medium">
+                  {nextPost.title}
+                </span>
+              </a>
+            ) : (
+              <div className="text-gray-400">
+                <span className="text-xs uppercase tracking-wider">次の記事はありません</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+
       {/* 関連記事セクション */}
       {relatedPosts && relatedPosts.length > 0 && (
-        <section className="mt-16 pt-8 border-t border-gray-200">
+        <section className="mt-12 pt-8 border-t border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedPosts.map((relatedPost: any) => (
@@ -549,13 +626,6 @@ export default async function BlogPostPage({
         </a>
       </div>
         </div>
-
-        {/* 関連記事コンポーネント */}
-        <RelatedPosts
-          currentPostId={post._id}
-          category={post.category}
-          tags={post.tags}
-        />
       </article>
     </div>
   )
