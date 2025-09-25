@@ -4,6 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
+import {previewPlugin} from './plugins/previewPlugin'
 
 export default defineConfig({
   name: 'default',
@@ -17,6 +18,11 @@ export default defineConfig({
       structure
     }),
     visionTool(),
+    previewPlugin({
+      previewUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
+        ? 'https://cafekinesi-nextjs.vercel.app'
+        : 'http://localhost:3000'
+    }),
     presentationTool({
       previewUrl: {
         origin: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
