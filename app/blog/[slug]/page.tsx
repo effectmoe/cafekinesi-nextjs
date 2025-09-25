@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
 import type { Metadata } from 'next'
+import RelatedPosts from '@/app/components/RelatedPosts'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -558,7 +559,6 @@ export default async function BlogPostPage({
           tags={post.tags}
         />
       </article>
-      <Footer />
     </div>
   )
 }
