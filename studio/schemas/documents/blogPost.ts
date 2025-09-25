@@ -3,6 +3,7 @@ export default {
   title: 'ブログ記事',
   type: 'document',
   fields: [
+    // === 基本情報（必須項目） ===
     {
       name: 'title',
       title: 'タイトル',
@@ -99,6 +100,62 @@ export default {
       validation: (Rule: any) => Rule.required().max(200),
     },
     {
+      name: 'publishedAt',
+      title: '公開日時',
+      type: 'datetime',
+      description: '記事が公開される日時を設定します。未来の日時を設定すると予約投稿になります。',
+      validation: (Rule: any) => Rule.required(),
+      initialValue: () => new Date().toISOString(),
+      options: {
+        dateFormat: 'YYYY年MM月DD日',
+        timeFormat: 'HH:mm',
+        timeStep: 15,
+        calendarTodayLabel: '今日',
+      },
+    },
+    {
+      name: 'category',
+      title: 'カテゴリー',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'ウェルネス', value: 'wellness'},
+          {title: '食と健康', value: 'food_health'},
+          {title: 'ライフスタイル', value: 'lifestyle'},
+          {title: 'メディテーション', value: 'meditation'},
+          {title: 'ヨガ', value: 'yoga'},
+          {title: 'アロマテラピー', value: 'aromatherapy'},
+          {title: 'スキンケア', value: 'skincare'},
+          {title: '自然', value: 'nature'},
+        ],
+      },
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'tags',
+      title: 'タグ',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        layout: 'tags',
+      },
+    },
+    {
+      name: 'featured',
+      title: '注目記事',
+      type: 'boolean',
+      description: 'トップページで目立つように表示する',
+      initialValue: false,
+    },
+    {
+      name: 'author',
+      title: '著者',
+      type: 'reference',
+      to: [{type: 'author'}],
+    },
+
+    // === 画像・メディア ===
+    {
       name: 'mainImage',
       title: 'メイン画像',
       type: 'image',
@@ -141,24 +198,6 @@ export default {
       },
     },
     {
-      name: 'ogImage',
-      title: 'OGP画像',
-      type: 'image',
-      description: 'SNSシェア時に表示される画像（1200x630px推奨）',
-      options: {
-        hotspot: false,
-        accept: 'image/png,image/jpeg,image/webp',
-      },
-    },
-    {
-      name: 'tldr',
-      title: 'TL;DR（要約）',
-      type: 'text',
-      rows: 3,
-      description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
-      validation: (Rule: any) => Rule.max(300),
-    },
-    {
       name: 'additionalImages',
       title: '追加画像（シンプル）',
       type: 'array',
@@ -171,6 +210,26 @@ export default {
           },
         },
       ],
+    },
+    {
+      name: 'ogImage',
+      title: 'OGP画像',
+      type: 'image',
+      description: 'SNSシェア時に表示される画像（1200x630px推奨）',
+      options: {
+        hotspot: false,
+        accept: 'image/png,image/jpeg,image/webp',
+      },
+    },
+
+    // === コンテンツ ===
+    {
+      name: 'tldr',
+      title: 'TL;DR（要約）',
+      type: 'text',
+      rows: 3,
+      description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
+      validation: (Rule: any) => Rule.max(300),
     },
     {
       name: 'content',
@@ -262,6 +321,23 @@ export default {
         }
       ]
     },
+
+    // === 関連性・ナビゲーション ===
+    {
+      name: 'relatedArticles',
+      title: '関連記事',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'blogPost'}],
+        },
+      ],
+      description: 'この記事と関連する記事を選択（3-5記事推奨）',
+      validation: (Rule: any) => Rule.max(5).warning('関連記事は最大5記事までを推奨します'),
+    },
+
+    // === レイアウト設定 ===
     {
       name: 'contentOrder',
       title: 'コンテンツ表示順序',
@@ -295,73 +371,8 @@ export default {
       ],
       initialValue: ['featured', 'publishedAt', 'category', 'author', 'mainImage', 'tldr', 'tags', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
     },
-    {
-      name: 'category',
-      title: 'カテゴリー',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'ウェルネス', value: 'wellness'},
-          {title: '食と健康', value: 'food_health'},
-          {title: 'ライフスタイル', value: 'lifestyle'},
-          {title: 'メディテーション', value: 'meditation'},
-          {title: 'ヨガ', value: 'yoga'},
-          {title: 'アロマテラピー', value: 'aromatherapy'},
-          {title: 'スキンケア', value: 'skincare'},
-          {title: '自然', value: 'nature'},
-        ],
-      },
-      validation: (Rule: any) => Rule.required(),
-    },
-    {
-      name: 'tags',
-      title: 'タグ',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {
-        layout: 'tags',
-      },
-    },
-    {
-      name: 'publishedAt',
-      title: '公開日時',
-      type: 'datetime',
-      description: '記事が公開される日時を設定します。未来の日時を設定すると予約投稿になります。',
-      validation: (Rule: any) => Rule.required(),
-      initialValue: () => new Date().toISOString(),
-      options: {
-        dateFormat: 'YYYY年MM月DD日',
-        timeFormat: 'HH:mm',
-        timeStep: 15,
-        calendarTodayLabel: '今日',
-      },
-    },
-    {
-      name: 'featured',
-      title: '注目記事',
-      type: 'boolean',
-      description: 'トップページで目立つように表示する',
-      initialValue: false,
-    },
-    {
-      name: 'author',
-      title: '著者',
-      type: 'reference',
-      to: [{type: 'author'}],
-    },
-    {
-      name: 'relatedArticles',
-      title: '関連記事',
-      type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [{type: 'blogPost'}],
-        },
-      ],
-      description: 'この記事と関連する記事を選択（3-5記事推奨）',
-      validation: (Rule: any) => Rule.max(5).warning('関連記事は最大5記事までを推奨します'),
-    },
+
+    // === SEO設定 ===
     {
       name: 'seo',
       title: 'SEO設定',
