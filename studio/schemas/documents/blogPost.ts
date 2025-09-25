@@ -42,18 +42,21 @@ export default {
           type: 'string',
           options: {
             list: [
+              {title: 'タイトル', value: 'title'},
+              {title: 'スラッグ', value: 'slug'},
               {title: '注目記事バッジ', value: 'featured'},
               {title: '公開日時', value: 'publishedAt'},
               {title: 'カテゴリー', value: 'category'},
               {title: '著者情報', value: 'author'},
               {title: '抜粋', value: 'excerpt'},
-              {title: 'メイン画像', value: 'mainImage'},
-              {title: 'TL;DR（要約）', value: 'tldr'},
-              {title: '目次', value: 'toc'},
               {title: 'タグ', value: 'tags'},
-              {title: '本文', value: 'content'},
+              {title: 'メイン画像', value: 'mainImage'},
               {title: 'ギャラリー画像', value: 'gallery'},
               {title: '追加画像', value: 'additionalImages'},
+              {title: 'OGP画像', value: 'ogImage'},
+              {title: 'TL;DR（要約）', value: 'tldr'},
+              {title: '目次', value: 'toc'},
+              {title: '本文', value: 'content'},
               {title: '重要ポイント', value: 'keyPoint'},
               {title: 'まとめ', value: 'summary'},
               {title: 'FAQ', value: 'faq'},
@@ -63,7 +66,7 @@ export default {
           }
         }
       ],
-      initialValue: ['featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'prevNext', 'related']
+      initialValue: ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
     },
 
     // === 基本情報（必須項目） ===
