@@ -34,6 +34,12 @@ export function VisualEditingProvider({ children }: { children: React.ReactNode 
             }
           },
         },
+        refresh: (payload) => {
+          // ページをリフレッシュ
+          if (payload?.source === 'mutation' && payload?.type === 'visual-editing') {
+            window.location.reload()
+          }
+        },
       })
 
       return () => {

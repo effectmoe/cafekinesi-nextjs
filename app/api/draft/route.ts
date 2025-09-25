@@ -9,16 +9,25 @@ export async function GET(request: NextRequest) {
   const preview = searchParams.get('preview')
   const redirectPath = searchParams.get('redirect')
 
-  // プレビューリクエストの簡単な検証
-  if (preview !== 'true' && !secret) {
+  // Sanity Presentation用のパラメータ
+  const sanitySecret = searchParams.get('sanity-preview-secret')
+  const sanityPerspective = searchParams.get('sanity-preview-perspective')
+  const sanityPathname = searchParams.get('sanity-preview-pathname')
+
+  // プレビューリクエストの検証
+  // Presentation機能からのリクエスト、または通常のプレビューリクエストを許可
+  const isValidPreview = preview === 'true' || secret || sanitySecret
+
+  if (!isValidPreview) {
     return new Response('Invalid preview request', { status: 401 })
   }
 
   const draft = await draftMode()
   draft.enable()
 
-  // redirectパラメータがある場合はそれを使用、なければslugを使用
-  const path = redirectPath || slug || '/'
+  // リダイレクト先の決定
+  // Presentation機能からの場合はsanityPathnameを使用
+  const path = redirectPath || sanityPathname || slug || '/'
   redirect(path)
 }
 
