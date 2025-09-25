@@ -1,6 +1,6 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -12,8 +12,16 @@ export async function GET(request: NextRequest) {
   //   return new Response('Invalid token', { status: 401 })
   // }
 
-  (await draftMode()).enable()
+  const draft = await draftMode()
+  draft.enable()
 
   // Redirect to the path from the fetched post
   redirect(slug || '/')
+}
+
+export async function POST() {
+  const draft = await draftMode()
+  draft.enable()
+
+  return NextResponse.json({ status: 'Draft mode enabled' })
 }

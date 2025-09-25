@@ -18,36 +18,26 @@ export function VisualEditingProvider({ children }: { children: React.ReactNode 
     const previewMode = checkPreviewMode()
     setIsPreviewMode(previewMode)
 
-    // プレビューモード時のメッセージリスナー設定
-    if (previewMode && typeof window !== 'undefined') {
-      // Sanity Studioとの双方向通信を設定
-      const handleMessage = (event: MessageEvent) => {
-        if (event.data?.type === 'presentation/navigate') {
-          const url = event.data.url
-          if (url && url !== window.location.href) {
-            window.history.pushState({}, '', url)
-            window.dispatchEvent(new PopStateEvent('popstate'))
-          }
-        }
-      }
-
-      window.addEventListener('message', handleMessage)
-
-      // Sanity Studioに準備完了を通知
-      window.parent.postMessage(
-        {
-          type: 'presentation/ready',
-          payload: {
-            projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
-            dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-            url: window.location.href
-          }
+    // iframe内でのみVisual Editingを有効化
+    const isInIframe = window !== window.parent
+    if (isInIframe) {
+      const disable = enableVisualEditing({
+        history: {
+          subscribe: (callback) => {
+            const handler = () => callback(location.href)
+            window.addEventListener('popstate', handler)
+            return () => window.removeEventListener('popstate', handler)
+          },
+          update: (update) => {
+            if (update.url !== location.href) {
+              window.history.pushState(null, '', update.url)
+            }
+          },
         },
-        '*'
-      )
+      })
 
       return () => {
-        window.removeEventListener('message', handleMessage)
+        disable()
       }
     }
   }, [])

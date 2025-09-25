@@ -8,6 +8,10 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-01-01',
   useCdn: false, // Server Componentsでは必ずfalse（公式推奨）
+  stega: {
+    enabled: process.env.NODE_ENV === 'development',
+    studioUrl: 'http://localhost:3333',
+  },
 })
 
 // 画像URLビルダー
