@@ -6,7 +6,8 @@ import FAQSection from '@/components/FAQSection'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
-import { client } from '@/lib/sanity.client'
+import { client, publicClient, previewClient } from '@/lib/sanity.client'
+import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
 import type { Metadata } from 'next'
 
@@ -25,7 +26,13 @@ const FAQ_QUERY = groq`*[_type == "faq"] | order(order asc) {
 
 async function getHomepageData() {
   try {
-    const data = await client.fetch(HOMEPAGE_QUERY, {}, {
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
+
+    console.log(`Fetching homepage data, preview: ${isPreview}`)
+
+    const data = await selectedClient.fetch(HOMEPAGE_QUERY, {}, {
       cache: 'no-store',
       next: { revalidate: 0 }
     })
@@ -38,7 +45,11 @@ async function getHomepageData() {
 
 async function getFAQs() {
   try {
-    const data = await client.fetch(FAQ_QUERY, {}, {
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
+
+    const data = await selectedClient.fetch(FAQ_QUERY, {}, {
       cache: 'no-store',
       next: { revalidate: 0 }
     })

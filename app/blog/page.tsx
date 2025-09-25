@@ -1,4 +1,5 @@
-import { client, groq, urlFor } from '@/lib/sanity.client'
+import { client, groq, urlFor, publicClient, previewClient } from '@/lib/sanity.client'
+import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import type { BlogPost } from '@/types/sanity.types'
 
@@ -19,7 +20,15 @@ const POSTS_QUERY = groq`*[_type == "blogPost"] | order(publishedAt desc) {
 }`
 
 async function getPosts() {
-  return client.fetch<BlogPost[]>(POSTS_QUERY)
+  const draft = await draftMode()
+  const isPreview = draft.isEnabled
+
+  // プレビューモード時はpreviewClient、通常時はpublicClientを使用
+  const selectedClient = isPreview ? previewClient : publicClient
+
+  console.log(`Fetching posts, preview: ${isPreview}`)
+
+  return selectedClient.fetch<BlogPost[]>(POSTS_QUERY)
 }
 
 import Header from '@/components/Header'

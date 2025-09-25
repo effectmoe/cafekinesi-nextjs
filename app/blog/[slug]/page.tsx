@@ -1,4 +1,5 @@
-import { client, groq, urlFor } from '@/lib/sanity.client'
+import { client, groq, urlFor, publicClient, previewClient } from '@/lib/sanity.client'
+import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type { BlogPost } from '@/types/sanity.types'
 import { PortableText } from '@portabletext/react'
@@ -38,11 +39,20 @@ const ALL_POSTS_QUERY = groq`*[_type == "blogPost"] {
 }`
 
 async function getPost(slug: string) {
-  return client.fetch<BlogPost>(POST_QUERY, { slug })
+  const draft = await draftMode()
+  const isPreview = draft.isEnabled
+
+  // プレビューモード時はpreviewClient、通常時はpublicClientを使用
+  const selectedClient = isPreview ? previewClient : publicClient
+
+  console.log(`Fetching post: ${slug}, preview: ${isPreview}`)
+
+  return selectedClient.fetch<BlogPost>(POST_QUERY, { slug })
 }
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 
 export default async function BlogPostPage({
   params,
@@ -56,10 +66,14 @@ export default async function BlogPostPage({
     notFound()
   }
 
-  // 関連記事を取得
+  // 関連記事を取得（同じクライアントを使用）
   let relatedPosts: any[] = []
   try {
-    relatedPosts = await client.fetch(
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
+
+    relatedPosts = await selectedClient.fetch(
       `*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc) [0...3] {
         _id,
         title,
@@ -96,6 +110,7 @@ export default async function BlogPostPage({
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <PreviewModeIndicator />
       <Header />
       <article className="flex-grow">
         {/* ヒーローセクション - より洗練されたデザイン */}
