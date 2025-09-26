@@ -1,3 +1,5 @@
+import { schemaOrgExtension } from '../extensions/schemaOrgExtension'
+
 export default {
   name: 'seo',
   type: 'object',
@@ -52,6 +54,13 @@ export default {
       title: '検索エンジンからの除外',
       description: 'チェックすると検索エンジンのインデックスから除外されます',
       initialValue: false
+    },
+    // Schema.org構造化データ設定を追加
+    {
+      name: 'schema',
+      title: 'Schema.org設定',
+      type: 'object',
+      fields: schemaOrgExtension.fields
     }
   ]
 }

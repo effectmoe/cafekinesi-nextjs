@@ -7,6 +7,8 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 import BlogContentRenderer from '@/components/BlogContentRenderer'
+import { generateSchemaOrg, generateBreadcrumbSchema } from '@/lib/schemaOrgGenerator'
+import Script from 'next/script'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -51,7 +53,8 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
     title,
     description,
     keywords,
-    ogImage
+    ogImage,
+    schema
   },
   "isDraft": _id in path("drafts.*")
 }`
@@ -95,7 +98,8 @@ const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0]
     title,
     description,
     keywords,
-    ogImage
+    ogImage,
+    schema
   }
 }`
 
@@ -351,8 +355,33 @@ export default async function BlogPostPage({
     previewEnabled: draft.isEnabled
   }
 
+  // Schema.org JSON-LDを生成
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
+  const siteName = 'Cafe Kinesi'
+  const schemaOrgData = generateSchemaOrg({ post, siteUrl, siteName })
+  const breadcrumbSchema = generateBreadcrumbSchema(post, siteUrl, siteName)
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Schema.org JSON-LD */}
+      {schemaOrgData && (
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schemaOrgData)
+          }}
+        />
+      )}
+      {breadcrumbSchema && (
+        <Script
+          id="breadcrumb-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbSchema)
+          }}
+        />
+      )}
       {/* デバッグ表示 */}
       {process.env.NODE_ENV === 'development' && (
         <div className="fixed bottom-0 left-0 z-50 bg-black text-white text-xs p-2 font-mono">
