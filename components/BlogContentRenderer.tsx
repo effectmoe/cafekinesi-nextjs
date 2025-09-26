@@ -22,7 +22,12 @@ export default function BlogContentRenderer({
   const defaultOrder = ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
 
   // contentOrderが設定されていればそれを使用、なければデフォルト
-  const contentOrder = post.contentOrder && post.contentOrder.length > 0 ? post.contentOrder : defaultOrder
+  // 空文字列のみの配列や無効な値の場合もデフォルトを使用
+  const contentOrder = post.contentOrder &&
+                      post.contentOrder.length > 0 &&
+                      post.contentOrder.some((item: string) => item && item.trim() !== '')
+                      ? post.contentOrder.filter((item: string) => item && item.trim() !== '')
+                      : defaultOrder
 
   // 画像URL生成のヘルパー関数
   function getImageUrl(imageAsset: any, width: number = 800, height: number = 600): string {
