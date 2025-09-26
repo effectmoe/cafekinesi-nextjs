@@ -13,6 +13,7 @@ import { faq } from './faq'
 
 // オブジェクトスキーマ
 import seo from './objects/seo'
+import schemaOrg from './objects/schemaOrg'
 import hero from './objects/hero'
 import cta from './objects/cta'
 import feature from './objects/feature'
@@ -41,6 +42,7 @@ export const schemaTypes = [
 
   // オブジェクト
   seo,
+  schemaOrg,
   hero,
   cta,
   feature,

@@ -54,47 +54,9 @@ export default {
       initialValue: false
     },
     {
-      name: 'schemaEnabled',
-      type: 'boolean',
-      title: '🔍 Schema.org構造化データを有効化',
-      description: '検索エンジン向けの構造化データ（Schema.org）を出力します',
-      initialValue: false
-    },
-    {
-      name: 'schemaType',
-      type: 'string',
-      title: 'Schema.orgコンテンツタイプ',
-      description: 'コンテンツの種類を選択してください',
-      options: {
-        list: [
-          { title: 'BlogPosting（ブログ投稿）', value: 'BlogPosting' },
-          { title: 'Article（標準記事）', value: 'Article' },
-          { title: 'NewsArticle（ニュース記事）', value: 'NewsArticle' },
-          { title: 'HowTo（ハウツー）', value: 'HowTo' },
-          { title: 'Recipe（レシピ）', value: 'Recipe' },
-          { title: 'FAQPage（FAQ）', value: 'FAQPage' }
-        ],
-        layout: 'dropdown'
-      },
-      initialValue: 'BlogPosting',
-      hidden: ({ parent }: any) => !parent?.schemaEnabled
-    },
-    {
-      name: 'schemaCustom',
-      type: 'text',
-      title: 'カスタムJSON-LD',
-      description: 'カスタムJSON-LDを直接入力できます（上級者向け）',
-      rows: 10,
-      hidden: ({ parent }: any) => !parent?.schemaEnabled,
-      validation: (Rule: any) => Rule.custom((value: string) => {
-        if (!value) return true
-        try {
-          JSON.parse(value)
-          return true
-        } catch {
-          return 'JSON形式が無効です'
-        }
-      })
+      name: 'schemaOrg',
+      type: 'schemaOrg',
+      title: 'Schema.org構造化データ'
     }
   ]
 }
