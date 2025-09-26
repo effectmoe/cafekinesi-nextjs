@@ -74,10 +74,25 @@ export default {
       options: {
         list: [
           { title: 'BlogPosting（ブログ投稿）', value: 'BlogPosting' },
-          { title: 'Article（標準記事）', value: 'Article' }
+          { title: 'Article（標準記事）', value: 'Article' },
+          { title: 'NewsArticle（ニュース記事）', value: 'NewsArticle' },
+          { title: 'HowTo（ハウツー）', value: 'HowTo' },
+          { title: 'Recipe（レシピ）', value: 'Recipe' },
+          { title: 'FAQPage（FAQ）', value: 'FAQPage' },
+          { title: 'Review（レビュー）', value: 'Review' },
+          { title: 'Product（製品）', value: 'Product' },
+          { title: 'Event（イベント）', value: 'Event' }
         ]
       },
       initialValue: 'BlogPosting',
+      hidden: ({ parent }) => !parent?.schemaEnabled
+    },
+    {
+      name: 'schemaCustom',
+      type: 'text',
+      title: '🔧 カスタムJSON-LD',
+      description: 'カスタムJSON-LDを直接入力（上級者向け）',
+      rows: 10,
       hidden: ({ parent }) => !parent?.schemaEnabled
     }
   ]
