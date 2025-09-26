@@ -425,35 +425,8 @@ export default {
     {
       name: 'seo',
       title: 'SEO設定',
-      type: 'object',
+      type: 'seo',  // seo.tsオブジェクトを参照
       group: 'seo',
-      fields: [
-        {
-          name: 'title',
-          title: 'SEO Title',
-          type: 'string',
-          description: '検索結果に表示されるタイトル（60文字以内推奨）',
-          validation: (Rule: any) => Rule.max(60).warning('60文字以内を推奨します'),
-        },
-        {
-          name: 'description',
-          title: 'Meta Description',
-          type: 'text',
-          rows: 3,
-          description: '検索結果に表示される説明文（160文字以内推奨）',
-          validation: (Rule: any) => Rule.max(160).warning('160文字以内を推奨します'),
-        },
-        {
-          name: 'keywords',
-          title: 'Keywords',
-          type: 'array',
-          of: [{type: 'string'}],
-          options: {
-            layout: 'tags',
-          },
-          description: 'SEOキーワード',
-        },
-      ],
     },
   ],
   preview: {
