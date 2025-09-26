@@ -27,12 +27,6 @@ export default {
         layout: 'tags'
       }
     },
-    // 🔥 完全に新しいフィールドをここに追加
-    {
-      name: 'BRAND_NEW_TEST',
-      type: 'string',
-      title: '⚡⚡⚡ 全く新しいテストフィールド ⚡⚡⚡'
-    },
     {
       name: 'ogTitle',
       type: 'string',
