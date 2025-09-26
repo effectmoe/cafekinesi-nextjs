@@ -28,6 +28,12 @@ export default {
       }
     },
     {
+      name: 'EMERGENCY_TEST',
+      type: 'string',
+      title: '🔴🔴🔴 緊急テスト - このフィールドが見えますか？ 🔴🔴🔴',
+      description: 'キーワードの直後に表示されるテストフィールドです'
+    },
+    {
       name: 'ogTitle',
       type: 'string',
       title: 'OGタイトル',
@@ -93,6 +99,12 @@ export default {
       description: 'カスタムJSON-LDを直接入力（上級者向け）',
       rows: 8,
       hidden: ({ parent }) => !parent?.schemaEnabled
+    },
+    {
+      name: 'FINAL_TEST_FIELD',
+      type: 'string',
+      title: '🚨🚨🚨 この文字が見えますか？最終確認テスト 🚨🚨🚨',
+      description: 'このフィールドが見えない場合はブラウザキャッシュをクリア(Ctrl+Shift+R)してください'
     }
   ]
 }
