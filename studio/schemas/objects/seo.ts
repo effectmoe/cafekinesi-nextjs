@@ -54,6 +54,12 @@ export default {
       initialValue: false
     },
     {
+      name: 'testField',
+      type: 'string',
+      title: '🔍 テストフィールド（表示確認用）',
+      description: 'この文字が見えればスキーマは正常に読み込まれています'
+    },
+    {
       name: 'schemaOrg',
       type: 'schemaOrg',
       title: 'Schema.org構造化データ'
