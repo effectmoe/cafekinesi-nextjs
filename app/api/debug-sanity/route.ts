@@ -15,11 +15,31 @@ export async function GET(request: Request) {
 
     // 各クライアントでデータを取得
     const queries = {
-      // 通常のクエリ
+      // 通常のクエリ（完全なデータ）
       published: `*[_type == "blogPost" && slug.current == "${slug}"][0] {
         _id,
+        _type,
         title,
         slug,
+        excerpt,
+        tldr,
+        mainImage,
+        gallery,
+        additionalImages,
+        content,
+        keyPoint,
+        summary,
+        faq,
+        category,
+        tags,
+        publishedAt,
+        featured,
+        contentOrder,
+        author-> {
+          name,
+          image,
+          bio
+        },
         "status": "published"
       }`,
 
