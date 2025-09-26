@@ -60,16 +60,17 @@ export default {
       name: 'schema',
       title: 'Schema.org設定',
       type: 'object',
+      description: '構造化データの設定（SEO改善に効果的）',
       options: {
         collapsible: true,
-        collapsed: false
+        collapsed: true
       },
       fields: [
         {
           name: 'enabled',
           title: '構造化データを有効化',
           type: 'boolean',
-          initialValue: true,
+          initialValue: false,
           description: '検索エンジン向けの構造化データ（Schema.org）を出力します'
         },
         {
