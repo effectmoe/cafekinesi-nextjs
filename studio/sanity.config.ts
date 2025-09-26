@@ -156,6 +156,7 @@ export default defineConfig({
     origin: [
       'http://localhost:3000',
       'http://localhost:3333',
+      'http://localhost:3335',
       'http://localhost:5173',
       'http://localhost:8080',
       'http://localhost:8081',
@@ -163,9 +164,15 @@ export default defineConfig({
       'https://cafekinesi-99dc5473.vercel.app',
       'https://cafekinesi-nextjs.vercel.app',
       'https://cafekinesi.sanity.studio',
-      'https://*.vercel.app'
+      'https://*.vercel.app',
+      // ネットワークエラー対策: 追加ドメイン
+      'https://effectmoes-projects.vercel.app',
+      'https://cafekinesi-nextjs-8c0jqpu8y-effectmoes-projects.vercel.app'
     ],
-    credentials: true
+    credentials: true,
+    // ネットワークエラー対策: より寛容な設定
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization']
   },
 
   // API設定
