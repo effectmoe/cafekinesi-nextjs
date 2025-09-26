@@ -7,7 +7,7 @@ interface SchemaOrgGeneratorProps {
 }
 
 export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGeneratorProps): any {
-  // schemaEnabledフィールドを使用
+  // 💥 直接埋め込み版フィールド構造に対応
   if (!post?.seo?.schemaEnabled) {
     return null
   }
