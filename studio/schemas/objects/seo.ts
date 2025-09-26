@@ -60,7 +60,56 @@ export default {
       name: 'schema',
       title: 'Schema.org設定',
       type: 'object',
-      fields: schemaOrgExtension.fields
+      options: {
+        collapsible: true,
+        collapsed: false
+      },
+      fields: [
+        {
+          name: 'enabled',
+          title: '構造化データを有効化',
+          type: 'boolean',
+          initialValue: true,
+          description: '検索エンジン向けの構造化データ（Schema.org）を出力します'
+        },
+        {
+          name: 'type',
+          title: 'コンテンツタイプ',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Article（標準記事）', value: 'Article' },
+              { title: 'BlogPosting（ブログ投稿）', value: 'BlogPosting' },
+              { title: 'NewsArticle（ニュース記事）', value: 'NewsArticle' },
+              { title: 'HowTo（ハウツー）', value: 'HowTo' },
+              { title: 'Recipe（レシピ）', value: 'Recipe' },
+              { title: 'FAQPage（FAQ）', value: 'FAQPage' },
+              { title: 'Review（レビュー）', value: 'Review' },
+              { title: 'Event（イベント）', value: 'Event' },
+              { title: 'Product（商品）', value: 'Product' }
+            ],
+            layout: 'dropdown'
+          },
+          initialValue: 'BlogPosting',
+          description: 'コンテンツの種類を選択してください'
+        },
+        {
+          name: 'customSchema',
+          title: 'カスタムJSON-LD',
+          type: 'text',
+          rows: 10,
+          description: 'カスタムJSON-LDを直接入力できます（上級者向け）',
+          validation: (Rule: any) => Rule.custom((value: string) => {
+            if (!value) return true
+            try {
+              JSON.parse(value)
+              return true
+            } catch {
+              return 'JSON形式が無効です'
+            }
+          })
+        }
+      ]
     }
   ]
 }
