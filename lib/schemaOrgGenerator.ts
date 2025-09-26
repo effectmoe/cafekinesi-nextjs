@@ -7,20 +7,21 @@ interface SchemaOrgGeneratorProps {
 }
 
 export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGeneratorProps): any {
-  if (!post?.seo?.schema?.enabled) {
+  // schemaEnabledフィールドを使用
+  if (!post?.seo?.schemaEnabled) {
     return null
   }
 
   // カスタムJSON-LDが設定されている場合は優先
-  if (post.seo.schema.customSchema) {
+  if (post.seo.schemaCustom) {
     try {
-      return JSON.parse(post.seo.schema.customSchema)
+      return JSON.parse(post.seo.schemaCustom)
     } catch (error) {
       console.error('Invalid custom JSON-LD:', error)
     }
   }
 
-  const schemaType = post.seo.schema.type || 'BlogPosting'
+  const schemaType = post.seo?.schemaType || 'BlogPosting'
   const baseUrl = siteUrl || 'https://cafekinesi.com'
   const postUrl = `${baseUrl}/blog/${post.slug?.current}`
 
