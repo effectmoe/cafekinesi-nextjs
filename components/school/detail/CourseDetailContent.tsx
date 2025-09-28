@@ -20,18 +20,34 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
     // 全セクションの位置を確認
     setTimeout(() => {
+      console.log('\n=== 全セクションの位置情報 ===')
       sections.forEach(section => {
         const element = document.getElementById(section.id)
         if (element) {
           const rect = element.getBoundingClientRect()
-          console.log(`セクション [${section.id}]:`, {
+          console.log(`[${section.id}]:`, {
+            'タグ': element.tagName,
+            'クラス': element.className,
             'offsetTop': element.offsetTop,
-            'offsetParent': element.offsetParent?.tagName,
-            'getBoundingClientRect.top': rect.top,
-            'absolute位置': rect.top + window.scrollY
+            'scrollHeight': element.scrollHeight,
+            'clientHeight': element.clientHeight,
+            '画面からの位置': rect.top,
+            '絶対位置': rect.top + window.scrollY
           })
         }
       })
+
+      // effectsセクションも確認
+      const effectsEl = document.getElementById('effects')
+      if (effectsEl) {
+        const rect = effectsEl.getBoundingClientRect()
+        console.log('[effects]:', {
+          'タグ': effectsEl.tagName,
+          'クラス': effectsEl.className,
+          '絶対位置': rect.top + window.scrollY
+        })
+      }
+      console.log('=== デバッグ終了 ===')
     }, 500)
   }, [sections])
 
@@ -53,20 +69,30 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     console.log(`\n=== クリック: ${section.id} ===`)
                     const element = document.getElementById(section.id)
                     if (element) {
-                      console.log('要素情報（修正版）:', {
+                      const beforeRect = element.getBoundingClientRect()
+                      const beforeScrollY = window.scrollY
+
+                      console.log('クリック前:', {
                         'タグ名': element.tagName,
-                        '現在のスクロール位置': window.scrollY,
-                        'getBoundingClientRect.top': element.getBoundingClientRect().top,
-                        '絶対位置': element.getBoundingClientRect().top + window.scrollY
+                        'クラス': element.className,
+                        '現在のスクロール位置': beforeScrollY,
+                        '要素の画面上の位置': beforeRect.top,
+                        '要素の絶対位置': beforeRect.top + beforeScrollY
                       })
 
-                      // シンプルにscrollIntoViewを使用（scroll-mt-24クラスが効く）
+                      // scrollIntoViewを使用
                       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
+                      // スクロール後の確認
                       setTimeout(() => {
-                        console.log('スクロール後の位置:', window.scrollY)
-                        const newRect = element.getBoundingClientRect()
-                        console.log('スクロール後の要素位置:', newRect.top)
+                        const afterRect = element.getBoundingClientRect()
+                        const afterScrollY = window.scrollY
+                        console.log('スクロール後:', {
+                          'スクロール位置': afterScrollY,
+                          '要素の画面上の位置': afterRect.top,
+                          'スクロール移動量': afterScrollY - beforeScrollY,
+                          '成功': Math.abs(afterRect.top) < 10 ? '○' : '×'
+                        })
                       }, 1000)
                     } else {
                       console.error(`要素が見つかりません: ${section.id}`)
