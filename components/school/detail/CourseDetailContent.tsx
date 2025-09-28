@@ -19,46 +19,33 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          const rect = element.getBoundingClientRect()
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-          const offset = 120
-          const targetPosition = rect.top + scrollTop - offset
-
+          const top = element.offsetTop - 120
           window.scrollTo({
-            top: targetPosition,
+            top: top,
             behavior: 'smooth'
           })
         }
-      }, 500) // 少し長めに待つ
+      }, 100)
     }
   }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    // タイムアウトを使って確実にDOMが描画された後に実行
-    setTimeout(() => {
-      const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId)
 
-      if (element) {
-        // 要素の位置を取得
-        const rect = element.getBoundingClientRect()
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    if (element) {
+      // シンプルに要素の上端から120px上にスクロール
+      const top = element.offsetTop - 120
 
-        // ヘッダーの高さを考慮（固定ヘッダーの場合）
-        const offset = 120
-        const targetPosition = rect.top + scrollTop - offset
+      window.scrollTo({
+        top: top,
+        behavior: 'smooth'
+      })
 
-        // スクロール実行
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        })
-
-        // URLにハッシュを追加（履歴として）
-        window.history.replaceState(null, '', `#${sectionId}`)
-      }
-    }, 0)
+      // URLにハッシュを追加
+      window.location.hash = sectionId
+    }
   }
 
   return (
