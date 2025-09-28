@@ -28,14 +28,24 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
+    console.log('=== DEBUG: Anchor click ===')
+    console.log('Section ID:', sectionId)
+
     const element = document.getElementById(sectionId)
+    console.log('Found element:', element)
 
     if (element) {
+      console.log('Element position:', element.offsetTop)
+      console.log('Scrolling to element...')
+
       // 最もシンプルで確実な方法
       element.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
       // URLにハッシュを追加
       window.location.hash = sectionId
+      console.log('Hash set to:', window.location.hash)
+    } else {
+      console.error('Element not found for ID:', sectionId)
     }
   }
 
