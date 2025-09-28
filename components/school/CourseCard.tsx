@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Course } from '@/lib/types/course'
 import CourseImagePlaceholder from './CourseImagePlaceholder'
 
@@ -102,12 +103,12 @@ export default function CourseCard({ course }: CourseCardProps) {
             <div className="bg-gray-100 p-6 rounded-lg text-center h-full flex flex-col">
               <p className="text-xs text-gray-500 mb-4">詳細情報やお申込みはこちら</p>
               <div className="flex-1 flex flex-col justify-center">
-                <button
-                  className="bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3"
-                  onClick={() => console.log('詳細を見る')}
+                <Link
+                  href={`/school/${course.courseId}`}
+                  className="inline-block bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3 text-center"
                 >
                   詳細を見る
-                </button>
+                </Link>
 
                 <button
                   className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"
@@ -147,12 +148,12 @@ export default function CourseCard({ course }: CourseCardProps) {
               <p className="text-sm text-gray-700 font-medium mb-1">この講座について</p>
               <p className="text-xs text-gray-500 mb-4">詳細情報やお申込みはこちら</p>
 
-              <button
-                className="bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3"
-                onClick={() => console.log('詳細を見る')}
+              <Link
+                href={`/school/${course.courseId}`}
+                className="inline-block bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3 text-center"
               >
                 詳細を見る
-              </button>
+              </Link>
 
               <button
                 className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"

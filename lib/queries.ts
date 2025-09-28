@@ -161,3 +161,118 @@ export const HOMEPAGE_SECTIONS_QUERY = `
     }
   }
 `
+
+// 講座詳細情報を取得
+export const COURSE_DETAIL_QUERY = `
+  *[_type == "course" && courseId == $courseId && isActive == true][0] {
+    _id,
+    courseId,
+    title,
+    subtitle,
+    description,
+    features,
+    image {
+      asset->,
+      alt
+    },
+    backgroundClass,
+    recommendations,
+    effects,
+    order,
+    isActive,
+    price,
+    duration,
+    prerequisites,
+    applicationLink,
+    tableOfContents,
+    sections[] {
+      id,
+      title,
+      content
+    },
+    gallery[] {
+      asset->,
+      alt
+    },
+    instructorInfo {
+      name,
+      bio,
+      image {
+        asset->,
+        alt
+      },
+      profileUrl
+    },
+    relatedCourses[]-> {
+      _id,
+      courseId,
+      title,
+      subtitle,
+      description,
+      image {
+        asset->,
+        alt
+      },
+      backgroundClass,
+      order
+    },
+    seo
+  }
+`
+
+// すべての講座情報を取得（詳細付き）
+export const COURSES_WITH_DETAILS_QUERY = `
+  *[_type == "course" && isActive == true] | order(order asc) {
+    _id,
+    courseId,
+    title,
+    subtitle,
+    description,
+    features,
+    image {
+      asset->,
+      alt
+    },
+    backgroundClass,
+    recommendations,
+    effects,
+    order,
+    isActive,
+    price,
+    duration,
+    prerequisites,
+    applicationLink,
+    tableOfContents,
+    sections[] {
+      id,
+      title,
+      content
+    },
+    gallery[] {
+      asset->,
+      alt
+    },
+    instructorInfo {
+      name,
+      bio,
+      image {
+        asset->,
+        alt
+      },
+      profileUrl
+    },
+    relatedCourses[]-> {
+      _id,
+      courseId,
+      title,
+      subtitle,
+      description,
+      image {
+        asset->,
+        alt
+      },
+      backgroundClass,
+      order
+    }
+  }
+`

@@ -30,6 +30,37 @@ export interface Course {
   applicationLink?: string
 }
 
+// 講座詳細ページ用のセクション定義
+export interface CourseSection {
+  id: string
+  title: string
+  content: string
+}
+
+// 講座詳細ページ用の拡張インターフェース
+export interface CourseDetail extends Course {
+  tableOfContents?: string[]
+  sections?: CourseSection[]
+  gallery?: {
+    asset: {
+      url: string
+    }
+    alt?: string
+  }[]
+  instructorInfo?: {
+    name: string
+    bio: string
+    image?: {
+      asset: {
+        url: string
+      }
+      alt?: string
+    }
+    profileUrl?: string
+  }
+  relatedCourses?: Course[] // 実際の講座オブジェクト
+}
+
 export interface SchoolPageData {
   _id: string
   title: string

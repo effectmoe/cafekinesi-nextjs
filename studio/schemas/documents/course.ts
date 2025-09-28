@@ -161,6 +161,138 @@ export default defineType({
       type: 'url',
       description: '外部の申込フォームがある場合のURL',
     }),
+    // 講座詳細ページ用フィールド
+    defineField({
+      name: 'tableOfContents',
+      title: '目次',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: '詳細ページの目次項目',
+    }),
+    defineField({
+      name: 'sections',
+      title: '詳細セクション',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'section',
+          title: 'セクション',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'id',
+              title: 'セクションID',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'title',
+              title: 'セクションタイトル',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'content',
+              title: 'セクション内容',
+              type: 'text',
+              rows: 5,
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              content: 'content',
+            },
+            prepare(selection) {
+              const { title, content } = selection
+              return {
+                title: title,
+                subtitle: content ? content.substring(0, 100) + '...' : '',
+              }
+            },
+          },
+        }),
+      ],
+      description: '詳細ページで表示するセクション',
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'ギャラリー',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'image',
+          title: '画像',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: '代替テキスト',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+        }),
+      ],
+      description: '詳細ページで表示する追加画像',
+    }),
+    defineField({
+      name: 'instructorInfo',
+      title: 'インストラクター情報',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'name',
+          title: 'インストラクター名',
+          type: 'string',
+        }),
+        defineField({
+          name: 'bio',
+          title: '経歴・紹介',
+          type: 'text',
+          rows: 3,
+        }),
+        defineField({
+          name: 'image',
+          title: 'プロフィール画像',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: '代替テキスト',
+              type: 'string',
+            }),
+          ],
+        }),
+        defineField({
+          name: 'profileUrl',
+          title: 'プロフィールページURL',
+          type: 'url',
+        }),
+      ],
+      description: '詳細ページで表示するインストラクター情報',
+    }),
+    defineField({
+      name: 'relatedCourses',
+      title: '関連講座',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'relatedCourse',
+          title: '関連講座',
+          type: 'reference',
+          to: [{ type: 'course' }],
+        }),
+      ],
+      description: '詳細ページで推奨する関連講座',
+    }),
     defineField({
       name: 'seo',
       title: 'SEO設定',
