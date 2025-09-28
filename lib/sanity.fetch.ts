@@ -27,7 +27,12 @@ export async function sanityFetch<T = any>({
   }
 }
 
-// 画像URL生成ヘルパー（urlForの別名）
-export { urlFor as urlForImage } from './sanity.client'
+// 画像URL生成ヘルパー
+import { urlFor } from './sanity.client'
+
+export function urlForImage(source: any) {
+  if (!source) return null
+  return urlFor(source)
+}
 
 export { groq }
