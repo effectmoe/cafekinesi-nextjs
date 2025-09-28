@@ -1,0 +1,91 @@
+import { defineType, defineField } from 'sanity'
+
+export default defineType({
+  name: 'categoryCard',
+  title: 'カテゴリーカード',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'titleJa',
+      title: '日本語タイトル',
+      type: 'string',
+      validation: Rule => Rule.required().error('日本語タイトルは必須です')
+    }),
+    defineField({
+      name: 'titleEn',
+      title: '英語タイトル',
+      type: 'string',
+      validation: Rule => Rule.required().error('英語タイトルは必須です')
+    }),
+    defineField({
+      name: 'image',
+      title: 'カード画像',
+      type: 'image',
+      options: {
+        hotspot: true
+      },
+      validation: Rule => Rule.required().error('画像は必須です'),
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: '代替テキスト',
+          validation: Rule => Rule.required()
+        }
+      ]
+    }),
+    defineField({
+      name: 'colorScheme',
+      title: 'カラーテーマ',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'ベージュ (album-beige)', value: 'album-beige' },
+          { title: 'ブルーグレー (album-blue-gray)', value: 'album-blue-gray' },
+          { title: 'ライトグレー (album-light-gray)', value: 'album-light-gray' },
+          { title: 'パープル (album-purple)', value: 'album-purple' },
+          { title: 'ティール (album-teal)', value: 'album-teal' }
+        ],
+        layout: 'dropdown'
+      },
+      validation: Rule => Rule.required().error('カラーテーマを選択してください'),
+      description: '既存のCSSクラスと完全一致させてください'
+    }),
+    defineField({
+      name: 'link',
+      title: 'リンク先',
+      type: 'string',
+      validation: Rule => Rule.required(),
+      description: '例: /about, /school, /instructor など'
+    }),
+    defineField({
+      name: 'isActive',
+      title: 'リンクを有効にする',
+      type: 'boolean',
+      initialValue: true,
+      description: 'OFFにするとカードがクリックできなくなります'
+    }),
+    defineField({
+      name: 'order',
+      title: '表示順',
+      type: 'number',
+      validation: Rule => Rule.required().min(1).max(6),
+      description: '1-6の順番を指定'
+    })
+  ],
+  preview: {
+    select: {
+      title: 'titleJa',
+      subtitle: 'titleEn',
+      media: 'image',
+      order: 'order'
+    },
+    prepare(selection) {
+      return {
+        title: `${selection.order}. ${selection.title}`,
+        subtitle: selection.subtitle,
+        media: selection.media
+      }
+    }
+  }
+})

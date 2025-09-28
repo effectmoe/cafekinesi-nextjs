@@ -20,6 +20,8 @@ import hero from './objects/hero'
 import cta from './objects/cta'
 import feature from './objects/feature'
 import testimonial from './objects/testimonial'
+import categoryCard from './objects/categoryCard'
+import socialLink from './objects/socialLink'
 
 // コンポーネントスキーマ
 import customImage from './components/customImage'
@@ -51,6 +53,8 @@ export const schemaTypes = [
   cta,
   feature,
   testimonial,
+  categoryCard,
+  socialLink,
 
   // コンポーネント
   customImage,

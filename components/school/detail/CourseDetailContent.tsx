@@ -35,11 +35,24 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     console.log('Found element:', element)
 
     if (element) {
-      console.log('Element position:', element.offsetTop)
-      console.log('Scrolling to element...')
+      const rect = element.getBoundingClientRect()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
-      // 最もシンプルで確実な方法
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      console.log('Element offsetTop:', element.offsetTop)
+      console.log('Element getBoundingClientRect():', rect)
+      console.log('Current scroll position:', scrollTop)
+      console.log('Calculated position:', rect.top + scrollTop)
+
+      // まず簡単なscrollIntoViewを試す
+      console.log('Trying scrollIntoView...')
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+      // 少し待ってから手動でスクロールも試す
+      setTimeout(() => {
+        const targetY = rect.top + scrollTop - 100
+        console.log('Manual scroll to:', targetY)
+        window.scrollTo({ top: targetY, behavior: 'smooth' })
+      }, 100)
 
       // URLにハッシュを追加
       window.location.hash = sectionId

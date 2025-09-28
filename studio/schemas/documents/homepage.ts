@@ -1,105 +1,99 @@
-export default {
+import { defineType, defineField } from 'sanity'
+
+export default defineType({
   name: 'homepage',
+  title: 'トップページ',
   type: 'document',
-  title: 'ホームページ',
-  __experimental_actions: ['update', 'publish'], // create, deleteを無効化
   fields: [
-    {
+    defineField({
       name: 'title',
-      type: 'string',
       title: 'ページタイトル',
-      initialValue: 'ホームページ',
-      validation: (Rule: any) => Rule.required()
-    },
-    {
-      name: 'hero',
-      type: 'hero',
-      title: 'ヒーローセクション'
-    },
-    {
-      name: 'aboutSection',
-      type: 'object',
-      title: 'アバウトセクション',
-      fields: [
-        {
-          name: 'title',
-          type: 'string',
-          title: 'タイトル'
-        },
-        {
-          name: 'subtitle',
-          type: 'string',
-          title: 'サブタイトル'
-        },
-        {
-          name: 'description',
-          type: 'text',
-          title: '説明文'
-        },
-        {
-          name: 'image',
-          type: 'customImage',
-          title: '画像'
-        }
-      ]
-    },
-    {
-      name: 'servicesSection',
-      type: 'object',
-      title: 'サービスセクション',
-      fields: [
-        {
-          name: 'title',
-          type: 'string',
-          title: 'タイトル'
-        },
-        {
-          name: 'services',
-          type: 'array',
-          title: 'サービス一覧',
-          of: [{ type: 'feature' }]
-        }
-      ]
-    },
-    {
+      type: 'string',
+      validation: Rule => Rule.required(),
+      initialValue: 'カフェキネシ - Cafe Kinesi'
+    }),
+    defineField({
+      name: 'categoryCards',
+      title: 'カテゴリーカード',
+      type: 'array',
+      of: [{ type: 'categoryCard' }],
+      validation: Rule => Rule.required().min(6).max(6).error('6枚のカードを設定してください'),
+      description: 'TOPページに表示する6枚のカテゴリーカード'
+    }),
+    defineField({
       name: 'blogSection',
+      title: 'ブログセクション設定',
       type: 'object',
-      title: 'ブログセクション',
       fields: [
         {
-          name: 'title',
+          name: 'sectionTitle',
+          title: 'セクションタイトル',
           type: 'string',
-          title: 'タイトル'
+          initialValue: 'ブログ'
         },
         {
-          name: 'showLatest',
+          name: 'displayCount',
+          title: '表示件数',
+          type: 'number',
+          initialValue: 9,
+          validation: Rule => Rule.min(3).max(12)
+        },
+        {
+          name: 'showAllButton',
+          title: '「すべての記事を見る」ボタンを表示',
           type: 'boolean',
-          title: '最新記事を表示',
           initialValue: true
         },
         {
-          name: 'postCount',
-          type: 'number',
-          title: '表示件数',
-          initialValue: 9,
-          validation: (Rule: any) => Rule.min(1).max(20)
+          name: 'noPostsMessage',
+          title: '記事がない時のメッセージ',
+          type: 'string',
+          initialValue: '記事がまだありません'
         }
       ]
-    },
-    {
-      name: 'cta',
-      type: 'cta',
-      title: 'Call to Action'
-    },
-    {
-      name: 'seo',
-      type: 'seo',
-      title: 'SEO設定'
-    }
+    }),
+    defineField({
+      name: 'socialLinks',
+      title: 'ソーシャルリンク',
+      type: 'array',
+      of: [{ type: 'socialLink' }],
+      description: '右側に縦表示されるソーシャルリンク'
+    }),
+    defineField({
+      name: 'viewAllButton',
+      title: 'View Allボタン設定',
+      type: 'object',
+      fields: [
+        {
+          name: 'show',
+          title: '表示する',
+          type: 'boolean',
+          initialValue: true
+        },
+        {
+          name: 'text',
+          title: 'ボタンテキスト',
+          type: 'string',
+          initialValue: 'View All →'
+        },
+        {
+          name: 'link',
+          title: 'リンク先',
+          type: 'string',
+          initialValue: '#'
+        }
+      ]
+    })
   ],
   preview: {
     select: {
       title: 'title'
+    },
+    prepare(selection) {
+      return {
+        title: selection.title || 'トップページ',
+        subtitle: 'ホームページ設定'
+      }
     }
   }
-}
+})
