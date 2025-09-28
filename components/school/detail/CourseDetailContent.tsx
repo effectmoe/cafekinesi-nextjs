@@ -14,44 +14,18 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   // ページロード時にハッシュがある場合の処理
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hash) {
-      const hash = window.location.hash.substring(1)
-      // ページロード後に少し待ってからスクロール
+      // 少し待ってから自動スクロール
       setTimeout(() => {
+        const hash = window.location.hash.substring(1)
         const element = document.getElementById(hash)
         if (element) {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
+          const yOffset = -100 // ヘッダー分のオフセット
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
         }
-      }, 500) // ページロード時は少し長めに待機
+      }, 100)
     }
   }, [])
-
-  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault()
-
-    // 確実に要素を探す
-    const element = document.getElementById(sectionId)
-
-    if (element) {
-      // 最も基本的な方法：要素の位置を取得してスクロール
-      const rect = element.getBoundingClientRect()
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const targetY = rect.top + scrollTop - 80 // ヘッダー分のオフセット
-
-      // window.scrollToで確実にスクロール
-      window.scrollTo({
-        top: targetY,
-        behavior: 'smooth'
-      })
-
-      // URLにハッシュを追加
-      window.location.hash = sectionId
-    } else {
-      console.error('要素が見つかりません:', sectionId)
-    }
-  }
 
   return (
     <div className="space-y-8">
@@ -66,7 +40,16 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href={`#${section.id}`}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => handleAnchorClick(e, section.id)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    const element = document.getElementById(section.id)
+                    if (element) {
+                      const yOffset = -100
+                      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+                      window.scrollTo({ top: y, behavior: 'smooth' })
+                      window.location.hash = section.id
+                    }
+                  }}
                 >
                   {section.title}
                 </a>
@@ -79,7 +62,16 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href="#effects"
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => handleAnchorClick(e, 'effects')}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    const element = document.getElementById('effects')
+                    if (element) {
+                      const yOffset = -100
+                      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+                      window.scrollTo({ top: y, behavior: 'smooth' })
+                      window.location.hash = 'effects'
+                    }
+                  }}
                 >
                   受講後の効果
                 </a>
@@ -93,9 +85,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <section key={section.id} id={section.id}>
+            <section key={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 scroll-mt-24">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -118,9 +110,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section id="effects">
+        <section>
           <div className="border-l-4 border-gray-300 pl-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 scroll-mt-24">
               受講後の効果
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2">
