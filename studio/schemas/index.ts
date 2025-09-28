@@ -9,6 +9,8 @@ import shopInfo from './documents/shopInfo'
 import page from './documents/page'
 import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
+import course from './documents/course'
+import schoolPage from './documents/schoolPage'
 import { faq } from './faq'
 
 // オブジェクトスキーマ
@@ -38,6 +40,8 @@ export const schemaTypes = [
   page,
   homepage,
   siteSettings,
+  course,
+  schoolPage,
   faq,
 
   // オブジェクト

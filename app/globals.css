@@ -93,12 +93,22 @@
     background: hsl(var(--hover));
   }
 
-  /* Album card backgrounds */
-  .album-beige { background: hsl(var(--brand-beige)); }
-  .album-blue-gray { background: hsl(var(--brand-blue-gray)); }
-  .album-purple { background: hsl(var(--brand-purple)); }
-  .album-teal { background: hsl(180 20% 85%); } /* Lighter teal for better text contrast */
-  .album-light-gray { background: hsl(var(--brand-light-gray)); }
+  /* Album card backgrounds - TOPページと同じ色 */
+  .album-beige {
+    background: #f5e6d3; /* ソフトベージュ */
+  }
+  .album-blue-gray {
+    background: #a8c0d3; /* ソフトブルーグレー */
+  }
+  .album-purple {
+    background: #c8b3d9; /* ソフトパープル */
+  }
+  .album-teal {
+    background: #b3d9d3; /* ソフトティール */
+  }
+  .album-light-gray {
+    background: #e8e8e8; /* ライトグレー */
+  }
 
   /* Transitions for interactions */
   .album-card {
@@ -152,5 +162,26 @@
   a.block:focus-visible {
     outline: none !important;
     box-shadow: none !important;
+  }
+
+  /* Animation for expanding content */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
   }
 }
