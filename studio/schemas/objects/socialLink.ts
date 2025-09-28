@@ -44,7 +44,7 @@ export default defineType({
       name: 'order',
       title: '表示順',
       type: 'number',
-      validation: Rule => Rule.required().min(1)
+      validation: Rule => Rule.min(1)
     })
   ],
   preview: {
@@ -55,8 +55,9 @@ export default defineType({
       isActive: 'isActive'
     },
     prepare(selection) {
+      const orderPrefix = selection.order ? `${selection.order}. ` : ''
       return {
-        title: `${selection.order}. ${selection.title}`,
+        title: `${orderPrefix}${selection.title}`,
         subtitle: selection.isActive ? selection.subtitle : '(非表示)'
       }
     }

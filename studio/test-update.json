@@ -1,0 +1,33 @@
+{
+  "_id": "drafts.homepage",
+  "_type": "homepage",
+  "socialLinks": [
+    {
+      "_key": "facebook",
+      "_type": "socialLink",
+      "isActive": true,
+      "label": "Facebook",
+      "platform": "facebook",
+      "url": "https://www.facebook.com/cafekinesi",
+      "order": 1
+    },
+    {
+      "_key": "instagram",
+      "_type": "socialLink",
+      "isActive": true,
+      "label": "Instagram",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/cafekinesi",
+      "order": 2
+    },
+    {
+      "_key": "twitter",
+      "_type": "socialLink",
+      "isActive": true,
+      "label": "Twitter",
+      "platform": "twitter",
+      "url": "https://www.twitter.com/cafekinesi",
+      "order": 3
+    }
+  ]
+}

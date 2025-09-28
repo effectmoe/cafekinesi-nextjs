@@ -48,7 +48,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         })
       }
       console.log('=== デバッグ終了 ===')
-    }, 500)
+    }, 2000) // 2秒待機に変更
   }, [sections])
 
   return (
