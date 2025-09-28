@@ -19,61 +19,23 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
-      }, 500)
+      }, 300)
     }
   }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    console.log('=== DEBUG: Anchor click ===')
-    console.log('Section ID:', sectionId)
-
     const element = document.getElementById(sectionId)
-    console.log('Found element:', element)
 
     if (element) {
-      const rect = element.getBoundingClientRect()
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const computedStyle = window.getComputedStyle(element)
-
-      console.log('Element offsetTop:', element.offsetTop)
-      console.log('Element getBoundingClientRect():', rect)
-      console.log('Current scroll position:', scrollTop)
-      console.log('Calculated position:', rect.top + scrollTop)
-      console.log('Element display:', computedStyle.display)
-      console.log('Element visibility:', computedStyle.visibility)
-      console.log('Element opacity:', computedStyle.opacity)
-      console.log('Element offsetParent:', element.offsetParent)
-      console.log('Element parentElement:', element.parentElement)
-
-      // 子要素（実際にコンテンツがある要素）を探す
-      const childWithContent = element.querySelector('h2, .border-l-4')
-      console.log('Child with content:', childWithContent)
-
-      if (childWithContent) {
-        const childRect = childWithContent.getBoundingClientRect()
-        console.log('Child getBoundingClientRect():', childRect)
-
-        if (childRect.height > 0) {
-          console.log('Using child element for scroll...')
-          childWithContent.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        } else {
-          console.log('Child also has no height, trying parent scroll...')
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      } else {
-        console.log('No child found, trying element scroll...')
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
+      // シンプルにscrollIntoViewを実行
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
       // URLにハッシュを追加
       window.location.hash = sectionId
-      console.log('Hash set to:', window.location.hash)
-    } else {
-      console.error('Element not found for ID:', sectionId)
     }
   }
 
@@ -117,12 +79,12 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <section
-              key={section.id}
-              id={section.id}
-            >
+            <section key={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                <h2
+                  id={section.id}
+                  className="text-xl font-semibold mb-4 text-gray-900"
+                >
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -145,8 +107,11 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section id="effects" className="border-l-4 border-gray-300 pl-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900">
+        <section className="border-l-4 border-gray-300 pl-6">
+          <h2
+            id="effects"
+            className="text-xl font-semibold mb-4 text-gray-900"
+          >
             受講後の効果
           </h2>
           <ul className="text-gray-700 leading-relaxed space-y-2">

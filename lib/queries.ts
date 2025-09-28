@@ -76,6 +76,21 @@ export const EVENTS_QUERY = `
   }
 `
 
+// ブログ記事を取得（最新N件、デフォルト9件）
+export const RECENT_POSTS_QUERY = `
+  *[_type == "blogPost"] | order(publishedAt desc)[0...$limit]{
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    publishedAt,
+    "author": author->{
+      name
+    }
+  }
+`
+
 // ブログ記事を取得（最新9件）
 export const BLOG_POSTS_QUERY = `
   *[_type == "blogPost"] | order(publishedAt desc) [0...9] {
@@ -145,7 +160,34 @@ export const BLOG_POST_PREVIEW_QUERY = `
   }
 `
 
-// ホームページのセクション情報を取得
+// ホームページの情報を取得（新形式）
+export const HOMEPAGE_QUERY = `
+  *[_type == "homepage"][0]{
+    _id,
+    _type,
+    title,
+    categoryCards[]{
+      titleJa,
+      titleEn,
+      image,
+      colorScheme,
+      link,
+      isActive,
+      order
+    } | order(order asc),
+    blogSection,
+    socialLinks[]{
+      platform,
+      url,
+      displayText,
+      isActive,
+      order
+    } | order(order asc),
+    viewAllButton
+  }
+`
+
+// ホームページのセクション情報を取得（既存形式 - 後方互換性）
 export const HOMEPAGE_SECTIONS_QUERY = `
   *[_type == "homepage"][0] {
     _id,
