@@ -93,21 +93,21 @@
     background: hsl(var(--hover));
   }
 
-  /* Album card backgrounds - TOPページと同じ色 */
+  /* Album card backgrounds - cafekinesi-99dc5473と同じ色 */
   .album-beige {
-    background: #f5e6d3; /* ソフトベージュ */
+    background: hsl(35 22% 91%); /* HSL値で正確に一致 */
   }
   .album-blue-gray {
-    background: #a8c0d3; /* ソフトブルーグレー */
+    background: hsl(210 20% 70%); /* HSL値で正確に一致 */
   }
   .album-purple {
-    background: #c8b3d9; /* ソフトパープル */
+    background: hsl(260 15% 75%); /* HSL値で正確に一致 */
   }
   .album-teal {
-    background: #b3d9d3; /* ソフトティール */
+    background: hsl(180 20% 85%); /* Lighter teal for better text contrast */
   }
   .album-light-gray {
-    background: #e8e8e8; /* ライトグレー */
+    background: hsl(0 0% 91%); /* HSL値で正確に一致 */
   }
 
   /* Transitions for interactions */
