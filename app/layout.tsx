@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Providers } from "@/components/Providers";
+import VisualEditing from "@/app/components/VisualEditing";
+import { draftMode } from 'next/headers';
 import "./globals.css";
 import "@/styles/accessibility.css";
 
@@ -28,11 +30,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const draft = await draftMode();
+  const isEnabled = draft.isEnabled;
+
   return (
     <html lang="ja">
       <body
@@ -45,6 +50,7 @@ export default function RootLayout({
           <main id="main-content" role="main">
             {children}
           </main>
+          {isEnabled && <VisualEditing />}
         </Providers>
       </body>
     </html>

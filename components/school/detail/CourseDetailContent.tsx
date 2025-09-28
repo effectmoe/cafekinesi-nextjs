@@ -28,6 +28,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
+    // デバッグアラート
+    alert(`クリックされました: ${sectionId}`)
+
     const element = document.getElementById(sectionId)
 
     if (element) {
@@ -36,6 +39,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       // URLにハッシュを追加
       window.location.hash = sectionId
+    } else {
+      alert(`要素が見つかりません: ${sectionId}`)
     }
   }
 

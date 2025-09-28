@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 
 // Webhookシークレットの検証
-const secret = process.env.SANITY_WEBHOOK_SECRET
+const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.SANITY_WEBHOOK_SECRET
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,6 +52,19 @@ export async function POST(request: NextRequest) {
       case 'homepage':
         revalidatePath('/')
         revalidateTag('homepage')
+        break
+
+      case 'post':
+        if (slug?.current) {
+          // 個別記事ページの再検証
+          revalidatePath(`/blog/${slug.current}`)
+          // ブログ一覧ページの再検証
+          revalidatePath('/blog')
+          // ホームページも再検証（最新記事が表示される場合）
+          revalidatePath('/')
+        }
+        // タグベースの再検証
+        revalidateTag('post')
         break
 
       case 'album':
