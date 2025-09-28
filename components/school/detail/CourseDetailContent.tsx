@@ -65,6 +65,32 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </a>
               </li>
             ))}
+            {/* このような方におすすめです */}
+            {course.recommendations && course.recommendations.length > 0 && (
+              <li className="flex items-start">
+                <span className="font-medium mr-2">{sections.length + 1}.</span>
+                <a
+                  href="#recommendations"
+                  className="text-blue-600 hover:underline transition-colors cursor-pointer"
+                  onClick={(e) => handleAnchorClick(e, 'recommendations')}
+                >
+                  このような方におすすめです
+                </a>
+              </li>
+            )}
+            {/* 受講後の効果 */}
+            {course.effects && course.effects.length > 0 && (
+              <li className="flex items-start">
+                <span className="font-medium mr-2">{sections.length + (course.recommendations ? 2 : 1)}.</span>
+                <a
+                  href="#effects"
+                  className="text-blue-600 hover:underline transition-colors cursor-pointer"
+                  onClick={(e) => handleAnchorClick(e, 'effects')}
+                >
+                  受講後の効果
+                </a>
+              </li>
+            )}
           </ol>
         </div>
       )}
