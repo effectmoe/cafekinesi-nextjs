@@ -123,36 +123,36 @@ export default async function HomePage() {
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
-                    <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer`}>
-                      <div className="aspect-square relative mb-6">
+                    <div className={`${card.colorScheme} p-6 rounded-none cursor-pointer`}>
+                      <div className="relative" style={{paddingTop: '100%'}}>
                         <Image
                           alt={`${card.titleJa || ''}`}
                           src={imageSrc}
                           fill
-                          className="object-cover"
+                          className="object-cover absolute inset-0"
                           sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <p className="album-title">{card.titleJa || ''}</p>
-                        <p className="album-title opacity-80">{card.titleEn || ''}</p>
+                      <div className="pt-4 pb-2">
+                        <p className="text-[11px] tracking-[0.08em] font-normal">{card.titleJa || ''}</p>
+                        <p className="text-[11px] tracking-[0.08em] font-normal uppercase">{card.titleEn || ''}</p>
                       </div>
                     </div>
                   </Link>
                 ) : (
-                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
-                    <div className="aspect-square relative mb-6">
+                  <div key={index} className={`${card.colorScheme} p-6 rounded-none`}>
+                    <div className="relative" style={{paddingTop: '100%'}}>
                       <Image
                         alt={`${card.titleJa || ''}`}
                         src={imageSrc}
                         fill
-                        className="object-cover"
+                        className="object-cover absolute inset-0"
                         sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <p className="album-title">{card.titleJa || ''}</p>
-                      <p className="album-title opacity-80">{card.titleEn || ''}</p>
+                    <div className="pt-4 pb-2">
+                      <p className="text-[11px] tracking-[0.08em] font-normal">{card.titleJa || ''}</p>
+                      <p className="text-[11px] tracking-[0.08em] font-normal uppercase">{card.titleEn || ''}</p>
                     </div>
                   </div>
                 )
