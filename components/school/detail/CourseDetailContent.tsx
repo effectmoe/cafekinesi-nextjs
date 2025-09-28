@@ -19,14 +19,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          const yOffset = -100
-          const rect = element.getBoundingClientRect()
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-          const targetY = rect.top + scrollTop + yOffset
-
-          window.scrollTo({
-            top: targetY,
-            behavior: 'smooth'
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
           })
         }
       }, 500) // ページロード時は少し長めに待機
@@ -36,75 +31,19 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    console.log('=== アンカークリック開始 ===')
-    console.log('ターゲットID:', sectionId)
-    console.log('現在のスクロール位置:', window.pageYOffset)
-
     // 少し待ってから実行（レンダリング完了を待つ）
     setTimeout(() => {
       const element = document.getElementById(sectionId)
-      console.log('要素を検索:', element)
 
       if (element) {
-        // デバッグ情報を詳細に出力
-        let rect = element.getBoundingClientRect()
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-
-        console.log('要素の位置情報:')
-        console.log('  - rect.top (ビューポートからの相対位置):', rect.top)
-        console.log('  - rect.height (要素の高さ):', rect.height)
-        console.log('  - scrollTop (現在のスクロール位置):', scrollTop)
-        console.log('  - offsetTop (要素の絶対位置):', element.offsetTop)
-
-        // 要素が非表示の場合、親要素または近い要素を探す
-        let targetElement = element
-        let attempts = 0
-
-        while (rect.height === 0 && attempts < 5) {
-          console.log(`  - 試行 ${attempts + 1}: 要素の高さが0、別の要素を探索`)
-
-          // 親要素を試す
-          if (targetElement.parentElement) {
-            targetElement = targetElement.parentElement
-            rect = targetElement.getBoundingClientRect()
-            console.log(`    親要素を使用:`, targetElement.className, 'height:', rect.height)
-          }
-
-          // それでもダメなら最も近い次の兄弟要素を試す
-          if (rect.height === 0 && element.nextElementSibling) {
-            targetElement = element.nextElementSibling as HTMLElement
-            rect = targetElement.getBoundingClientRect()
-            console.log(`    次の兄弟要素を使用:`, targetElement.className, 'height:', rect.height)
-          }
-
-          attempts++
-        }
-
-        // 最終的な計算
-        const targetY = rect.top + scrollTop - 100
-
-        console.log('最終計算:')
-        console.log('  - 使用する要素:', targetElement.tagName, targetElement.className)
-        console.log('  - rect.top:', rect.top)
-        console.log('  - rect.height:', rect.height)
-        console.log('  - スクロール先:', targetY)
-
-        // スムーススクロール実行
-        window.scrollTo({
-          top: Math.max(0, targetY), // 負の値を防ぐ
-          behavior: 'smooth'
+        // シンプルにscrollIntoViewを使用（section要素なので確実に動作するはず）
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
         })
-
-        // 1秒後に結果を確認
-        setTimeout(() => {
-          console.log('スクロール後の位置:', window.pageYOffset)
-          console.log('=== アンカークリック終了 ===')
-        }, 1000)
 
         // URLにハッシュを追加（履歴管理）
         window.history.pushState(null, '', `#${sectionId}`)
-      } else {
-        console.error('要素が見つかりません:', sectionId)
       }
     }, 100) // 100ms待機
   }
@@ -149,12 +88,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <section key={section.id}>
+            <section key={section.id} id={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2
-                  id={section.id}
-                  className="text-xl font-semibold mb-4 text-gray-900"
-                >
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -177,21 +113,20 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section className="border-l-4 border-gray-300 pl-6">
-          <h2
-            id="effects"
-            className="text-xl font-semibold mb-4 text-gray-900"
-          >
-            受講後の効果
-          </h2>
-          <ul className="text-gray-700 leading-relaxed space-y-2">
-            {course.effects.map((item, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2">•</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+        <section id="effects">
+          <div className="border-l-4 border-gray-300 pl-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+              受講後の効果
+            </h2>
+            <ul className="text-gray-700 leading-relaxed space-y-2">
+              {course.effects.map((item, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="mr-2">•</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 
