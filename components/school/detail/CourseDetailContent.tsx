@@ -22,12 +22,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
               <span className="font-medium mr-2">{index + 1}.</span>
               <a
                 href={`#${section.id}`}
-                className="text-blue-600 hover:underline transition-colors"
+                className="text-blue-600 hover:underline transition-colors cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault()
                   const element = document.getElementById(section.id)
                   if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    const yOffset = -100; // ヘッダーの高さを考慮
+                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+                    window.scrollTo({ top: y, behavior: 'smooth' })
                     setActiveSection(section.id)
                   }
                 }}
@@ -121,11 +123,11 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {course.instructorInfo && (
         <div className="mt-8 p-6 bg-white border rounded">
           <div className="flex items-start gap-4">
-            <img
-              src="/images/common/logo.jpg"
-              alt="カフェキネシ公認インストラクター"
-              className="w-16 h-20 object-cover rounded"
-            />
+            <div
+              className="w-16 h-20 bg-gradient-to-br from-pink-100 to-orange-100 rounded flex items-center justify-center"
+            >
+              <span className="text-2xl">👩‍🏫</span>
+            </div>
             <div className="flex-1">
               <h4 className="font-semibold text-blue-600 mb-2">
                 {course.instructorInfo.name}
