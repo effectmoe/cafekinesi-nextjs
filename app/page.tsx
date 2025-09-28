@@ -124,8 +124,8 @@ export default async function HomePage() {
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
                     <div className={`${card.colorScheme} rounded-none cursor-pointer relative`} style={{paddingTop: '150%'}}>
-                      <div className="absolute inset-0 flex flex-col p-6">
-                        <div className="w-full flex-grow" style={{maxHeight: '70%'}}>
+                      <div className="absolute inset-0 flex flex-col p-3">
+                        <div className="w-full flex-grow" style={{maxHeight: '75%'}}>
                           <div className="w-full h-full relative">
                             <Image
                               alt={`${card.titleJa || ''}`}
@@ -136,7 +136,7 @@ export default async function HomePage() {
                             />
                           </div>
                         </div>
-                        <div className="mt-auto pt-4">
+                        <div className="mt-auto pt-3">
                           <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 leading-normal">{card.titleJa || ''}</p>
                           <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 uppercase leading-normal">{card.titleEn || ''}</p>
                         </div>
@@ -145,8 +145,8 @@ export default async function HomePage() {
                   </Link>
                 ) : (
                   <div key={index} className={`${card.colorScheme} rounded-none relative`} style={{paddingTop: '150%'}}>
-                    <div className="absolute inset-0 flex flex-col p-6">
-                      <div className="w-full flex-grow" style={{maxHeight: '70%'}}>
+                    <div className="absolute inset-0 flex flex-col p-3">
+                      <div className="w-full flex-grow" style={{maxHeight: '75%'}}>
                         <div className="w-full h-full relative">
                           <Image
                             alt={`${card.titleJa || ''}`}
@@ -157,7 +157,7 @@ export default async function HomePage() {
                           />
                         </div>
                       </div>
-                      <div className="mt-auto pt-4">
+                      <div className="mt-auto pt-3">
                         <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 leading-normal">{card.titleJa || ''}</p>
                         <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 uppercase leading-normal">{card.titleEn || ''}</p>
                       </div>
