@@ -66,6 +66,14 @@ export default defineType({
       description: 'OFFにするとカードがクリックできなくなります'
     }),
     defineField({
+      name: 'order',
+      title: '表示順（旧）',
+      type: 'number',
+      validation: Rule => Rule.min(1).max(6),
+      description: '互換性のため残しています',
+      hidden: true
+    }),
+    defineField({
       name: 'displayOrder',
       title: '表示順',
       type: 'number',
