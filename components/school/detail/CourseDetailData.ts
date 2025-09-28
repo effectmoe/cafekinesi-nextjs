@@ -66,7 +66,7 @@ export const peachTouchDetailData: Omit<CourseDetail, '_id'> = {
     },
     {
       id: 'recommended',
-      title: 'ピーチタッチはこのような方におすすめです',
+      title: 'このような方におすすめです',
       content: `・人を幸せにしたい方
 ・家族やお友達のストレスを取り除いてあげたい方
 ・心と身体の健康や癒しに興味のある方

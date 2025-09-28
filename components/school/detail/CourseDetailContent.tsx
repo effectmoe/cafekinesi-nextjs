@@ -65,23 +65,10 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </a>
               </li>
             ))}
-            {/* このような方におすすめです */}
-            {course.recommendations && course.recommendations.length > 0 && (
-              <li className="flex items-start">
-                <span className="font-medium mr-2">{sections.length + 1}.</span>
-                <a
-                  href="#recommendations"
-                  className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => handleAnchorClick(e, 'recommendations')}
-                >
-                  このような方におすすめです
-                </a>
-              </li>
-            )}
-            {/* 受講後の効果 */}
+            {/* 受講後の効果 - recommendationsは既にsectionsに含まれている */}
             {course.effects && course.effects.length > 0 && (
               <li className="flex items-start">
-                <span className="font-medium mr-2">{sections.length + (course.recommendations ? 2 : 1)}.</span>
+                <span className="font-medium mr-2">{sections.length + 1}.</span>
                 <a
                   href="#effects"
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
@@ -123,23 +110,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
             セクションデータがありません。course.sectionsが定義されていない可能性があります。
           </p>
         </div>
-      )}
-
-      {/* おすすめ対象セクション */}
-      {course.recommendations && course.recommendations.length > 0 && (
-        <section id="recommendations" className="border-l-4 border-gray-300 pl-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900">
-            このような方におすすめです
-          </h2>
-          <ul className="text-gray-700 leading-relaxed space-y-2">
-            {course.recommendations.map((item, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2">•</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
       )}
 
       {/* 受講後の効果セクション */}
