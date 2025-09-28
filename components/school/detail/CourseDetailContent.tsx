@@ -47,7 +47,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       if (element) {
         // デバッグ情報を詳細に出力
-        const rect = element.getBoundingClientRect()
+        let rect = element.getBoundingClientRect()
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
         console.log('要素の位置情報:')
@@ -55,23 +55,43 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         console.log('  - rect.height (要素の高さ):', rect.height)
         console.log('  - scrollTop (現在のスクロール位置):', scrollTop)
         console.log('  - offsetTop (要素の絶対位置):', element.offsetTop)
-        console.log('  - offsetParent:', element.offsetParent)
-        console.log('  - parentElement:', element.parentElement)
-        console.log('  - document.body.scrollTop:', document.body.scrollTop)
-        console.log('  - document.documentElement.scrollTop:', document.documentElement.scrollTop)
 
-        // 複数の方法で位置を計算して比較
-        const method1 = rect.top + scrollTop - 100
-        const method2 = element.offsetTop - 100
+        // 要素が非表示の場合、親要素または近い要素を探す
+        let targetElement = element
+        let attempts = 0
 
-        console.log('計算結果:')
-        console.log('  - 方法1 (rect.top + scrollTop - 100):', method1)
-        console.log('  - 方法2 (offsetTop - 100):', method2)
-        console.log('  - 最終ターゲット位置:', method1)
+        while (rect.height === 0 && attempts < 5) {
+          console.log(`  - 試行 ${attempts + 1}: 要素の高さが0、別の要素を探索`)
+
+          // 親要素を試す
+          if (targetElement.parentElement) {
+            targetElement = targetElement.parentElement
+            rect = targetElement.getBoundingClientRect()
+            console.log(`    親要素を使用:`, targetElement.className, 'height:', rect.height)
+          }
+
+          // それでもダメなら最も近い次の兄弟要素を試す
+          if (rect.height === 0 && element.nextElementSibling) {
+            targetElement = element.nextElementSibling as HTMLElement
+            rect = targetElement.getBoundingClientRect()
+            console.log(`    次の兄弟要素を使用:`, targetElement.className, 'height:', rect.height)
+          }
+
+          attempts++
+        }
+
+        // 最終的な計算
+        const targetY = rect.top + scrollTop - 100
+
+        console.log('最終計算:')
+        console.log('  - 使用する要素:', targetElement.tagName, targetElement.className)
+        console.log('  - rect.top:', rect.top)
+        console.log('  - rect.height:', rect.height)
+        console.log('  - スクロール先:', targetY)
 
         // スムーススクロール実行
         window.scrollTo({
-          top: method1,
+          top: Math.max(0, targetY), // 負の値を防ぐ
           behavior: 'smooth'
         })
 
