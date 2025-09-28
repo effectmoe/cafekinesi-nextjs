@@ -1,0 +1,105 @@
+{
+  "_id": "homepage",
+  "_type": "homepage",
+  "title": "Cafe Kinesi",
+  "categoryCards": [
+    {
+      "_key": "card-1",
+      "_type": "categoryCard",
+      "titleJp": "カフェキネシについて",
+      "titleEn": "About Cafe Kinesi",
+      "colorScheme": "album-beige",
+      "link": "/about",
+      "displayOrder": 1,
+      "isActive": true
+    },
+    {
+      "_key": "card-2",
+      "_type": "categoryCard",
+      "titleJp": "スクール",
+      "titleEn": "School",
+      "colorScheme": "album-blue-gray",
+      "link": "/school",
+      "displayOrder": 2,
+      "isActive": true
+    },
+    {
+      "_key": "card-3",
+      "_type": "categoryCard",
+      "titleJp": "インストラクター",
+      "titleEn": "Instructor",
+      "colorScheme": "album-light-gray",
+      "link": "#",
+      "displayOrder": 3,
+      "isActive": true
+    },
+    {
+      "_key": "card-4",
+      "_type": "categoryCard",
+      "titleJp": "ブログ",
+      "titleEn": "Blog",
+      "colorScheme": "album-purple",
+      "link": "/blog",
+      "displayOrder": 4,
+      "isActive": true
+    },
+    {
+      "_key": "card-5",
+      "_type": "categoryCard",
+      "titleJp": "アロマ",
+      "titleEn": "Aroma",
+      "colorScheme": "album-teal",
+      "link": "#",
+      "displayOrder": 5,
+      "isActive": true
+    },
+    {
+      "_key": "card-6",
+      "_type": "categoryCard",
+      "titleJp": "メンバー",
+      "titleEn": "Member",
+      "colorScheme": "album-light-gray",
+      "link": "#",
+      "displayOrder": 6,
+      "isActive": true
+    }
+  ],
+  "blogSection": {
+    "_type": "blogSection",
+    "title": "最新の記事",
+    "sectionTitle": "ブログ",
+    "showLatestPosts": true,
+    "numberOfPosts": 3,
+    "displayCount": 9
+  },
+  "socialLinks": [
+    {
+      "_key": "facebook",
+      "_type": "socialLink",
+      "platform": "facebook",
+      "url": "https://www.facebook.com/cafekinesi",
+      "label": "Facebook",
+      "isActive": true
+    },
+    {
+      "_key": "instagram",
+      "_type": "socialLink",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/cafekinesi",
+      "label": "Instagram",
+      "isActive": true
+    }
+  ],
+  "viewAllButton": {
+    "_type": "viewAllButton",
+    "text": "View All",
+    "link": "/blog",
+    "show": true
+  },
+  "seo": {
+    "_type": "seo",
+    "title": "Cafe Kinesi - 心と体を癒すアロマテラピーカフェ",
+    "description": "アロマテラピーとキネシオロジーが融合した癒しの空間。オーガニック食材を使用したカフェメニューもご用意。",
+    "keywords": "アロマテラピー, キネシオロジー, オーガニックカフェ, 癒し, リラクゼーション"
+  }
+}
