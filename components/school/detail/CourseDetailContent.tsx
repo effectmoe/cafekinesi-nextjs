@@ -37,22 +37,37 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     if (element) {
       const rect = element.getBoundingClientRect()
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const computedStyle = window.getComputedStyle(element)
 
       console.log('Element offsetTop:', element.offsetTop)
       console.log('Element getBoundingClientRect():', rect)
       console.log('Current scroll position:', scrollTop)
       console.log('Calculated position:', rect.top + scrollTop)
+      console.log('Element display:', computedStyle.display)
+      console.log('Element visibility:', computedStyle.visibility)
+      console.log('Element opacity:', computedStyle.opacity)
+      console.log('Element offsetParent:', element.offsetParent)
+      console.log('Element parentElement:', element.parentElement)
 
-      // まず簡単なscrollIntoViewを試す
-      console.log('Trying scrollIntoView...')
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // 子要素（実際にコンテンツがある要素）を探す
+      const childWithContent = element.querySelector('h2, .border-l-4')
+      console.log('Child with content:', childWithContent)
 
-      // 少し待ってから手動でスクロールも試す
-      setTimeout(() => {
-        const targetY = rect.top + scrollTop - 100
-        console.log('Manual scroll to:', targetY)
-        window.scrollTo({ top: targetY, behavior: 'smooth' })
-      }, 100)
+      if (childWithContent) {
+        const childRect = childWithContent.getBoundingClientRect()
+        console.log('Child getBoundingClientRect():', childRect)
+
+        if (childRect.height > 0) {
+          console.log('Using child element for scroll...')
+          childWithContent.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          console.log('Child also has no height, trying parent scroll...')
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      } else {
+        console.log('No child found, trying element scroll...')
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
 
       // URLにハッシュを追加
       window.location.hash = sectionId
