@@ -143,8 +143,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <section key={section.id} id={section.id} className="scroll-mt-24 min-h-[200px]">
-              <div className="border-l-4 border-gray-300 pl-6">
+            <div key={section.id} id={section.id} className="scroll-mt-24 pt-24 -mt-24">
+              <div className="border-l-4 border-gray-300 pl-6 min-h-[200px]">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
@@ -152,7 +152,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   {section.content}
                 </div>
               </div>
-            </section>
+            </div>
           ))}
         </div>
       )}
@@ -168,8 +168,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section id="effects" className="scroll-mt-24 min-h-[200px]">
-          <div className="border-l-4 border-gray-300 pl-6">
+        <div id="effects" className="scroll-mt-24 pt-24 -mt-24">
+          <div className="border-l-4 border-gray-300 pl-6 min-h-[200px]">
             <h2 className="text-xl font-semibold mb-4 text-gray-900">
               受講後の効果
             </h2>
@@ -182,7 +182,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
               ))}
             </ul>
           </div>
-        </section>
+        </div>
       )}
 
       {/* ソーシャルシェアセクション */}
