@@ -123,7 +123,25 @@ export default async function HomePage() {
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
-                    <div className={`${card.colorScheme} rounded-none aspect-square cursor-pointer relative overflow-hidden`}>
+                    <div className={`${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer relative overflow-hidden`}>
+                      <div className="aspect-[4/3] relative mb-4">
+                        <Image
+                          alt={`${card.titleJa || ''}`}
+                          src={imageSrc}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      </div>
+                      <div className="absolute bottom-8 left-8">
+                        <p className="text-[11px] font-normal tracking-[0.15em] mb-1">{card.titleJa || ''}</p>
+                        <p className="text-[11px] font-normal tracking-[0.15em]">{card.titleEn || ''}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <div key={index} className={`${card.colorScheme} p-8 rounded-none aspect-square relative overflow-hidden`}>
+                    <div className="aspect-[4/3] relative mb-4">
                       <Image
                         alt={`${card.titleJa || ''}`}
                         src={imageSrc}
@@ -131,24 +149,10 @@ export default async function HomePage() {
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 33vw"
                       />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/30 to-transparent">
-                        <p className="text-[10px] font-medium tracking-[0.15em] text-white/90 mb-1">{card.titleJa || ''}</p>
-                        <p className="text-[10px] font-medium tracking-[0.15em] text-white">{card.titleEn || ''}</p>
-                      </div>
                     </div>
-                  </Link>
-                ) : (
-                  <div key={index} className={`${card.colorScheme} rounded-none aspect-square relative overflow-hidden`}>
-                    <Image
-                      alt={`${card.titleJa || ''}`}
-                      src={imageSrc}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/30 to-transparent">
-                      <p className="text-[10px] font-medium tracking-[0.15em] text-white/90 mb-1">{card.titleJa || ''}</p>
-                      <p className="text-[10px] font-medium tracking-[0.15em] text-white">{card.titleEn || ''}</p>
+                    <div className="absolute bottom-8 left-8">
+                      <p className="text-[11px] font-normal tracking-[0.15em] mb-1">{card.titleJa || ''}</p>
+                      <p className="text-[11px] font-normal tracking-[0.15em]">{card.titleEn || ''}</p>
                     </div>
                   </div>
                 )
