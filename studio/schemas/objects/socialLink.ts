@@ -57,8 +57,7 @@ export default defineType({
     prepare(selection) {
       return {
         title: `${selection.order}. ${selection.title}`,
-        subtitle: selection.isActive ? selection.subtitle : '(非表示)',
-        media: selection.isActive ? '🔗' : '🔒'
+        subtitle: selection.isActive ? selection.subtitle : '(非表示)'
       }
     }
   }

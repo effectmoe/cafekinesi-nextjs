@@ -1,20 +1,15 @@
-// 💥 デバッグ版: 最小限のschemaOrg設定
-console.log('🔥 schemaOrg.ts loading...')
+import { defineType, defineField } from 'sanity'
 
-const schemaOrgObject = {
+export default defineType({
   name: 'schemaOrg',
   type: 'object',
   title: 'Schema.org設定',
   fields: [
-    {
+    defineField({
       name: 'enabled',
       type: 'boolean',
-      title: '🔍 Schema.org構造化データを有効化',
+      title: 'Schema.org構造化データを有効化',
       initialValue: false
-    }
+    })
   ]
-}
-
-console.log('✅ schemaOrg object created:', schemaOrgObject)
-
-export default schemaOrgObject
+})
