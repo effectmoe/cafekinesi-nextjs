@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { CourseDetail } from '@/lib/types/course'
 
 interface CourseDetailContentProps {
@@ -10,20 +9,6 @@ interface CourseDetailContentProps {
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
-
-  // ページロード時にハッシュがある場合の処理
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash) {
-      // 少し待ってから自動スクロール
-      setTimeout(() => {
-        const hash = window.location.hash.substring(1)
-        const element = document.getElementById(hash)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }, 100)
-    }
-  }, [])
 
   return (
     <div className="space-y-8">
@@ -38,13 +23,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href={`#${section.id}`}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    const element = document.getElementById(section.id)
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                    }
-                  }}
                 >
                   {section.title}
                 </a>
@@ -57,13 +35,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href="#effects"
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    const element = document.getElementById('effects')
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                    }
-                  }}
                 >
                   受講後の効果
                 </a>
@@ -79,7 +50,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
           {sections.map((section) => (
             <section key={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 pt-24 -mt-24">
+                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 scroll-pt-24">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -104,7 +75,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {course.effects && course.effects.length > 0 && (
         <section>
           <div className="border-l-4 border-gray-300 pl-6">
-            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 pt-24 -mt-24">
+            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 scroll-pt-24">
               受講後の効果
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2">
