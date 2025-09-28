@@ -11,6 +11,12 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
 
+  // デバッグ: sectionsの内容を確認
+  useEffect(() => {
+    console.log('Course sections:', sections)
+    console.log('Course data:', course)
+  }, [sections, course])
+
   // ページロード時にハッシュがある場合の処理
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hash) {
@@ -18,9 +24,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          const yOffset = -128 // ヘッダーの高さ分のオフセット
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
       }, 100)
     }
@@ -28,13 +32,21 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
+
+    // デバッグログ
+    console.log('Clicking section:', sectionId)
+
     const element = document.getElementById(sectionId)
+    console.log('Found element:', element)
+
     if (element) {
-      const yOffset = -128 // ヘッダーの高さ分のオフセット
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-      // URLにハッシュを追加（ブラウザの履歴に残す）
+      // シンプルなscrollIntoViewを使用
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+      // URLにハッシュを追加
       window.history.pushState(null, '', `#${sectionId}`)
+    } else {
+      console.error(`Element with id="${sectionId}" not found`)
     }
   }
 
@@ -68,7 +80,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
             <section
               key={section.id}
               id={section.id}
-              className="pt-32 -mt-32" // ネガティブマージンとパディングでオフセット
+              className="scroll-mt-32"
             >
               <div className="border-l-4 border-gray-300 pl-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900">
@@ -83,9 +95,18 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         </div>
       )}
 
+      {/* デバッグ用: sectionsが空の場合の表示 */}
+      {sections.length === 0 && (
+        <div className="p-6 bg-yellow-50 border border-yellow-200 rounded">
+          <p className="text-yellow-800">
+            セクションデータがありません。course.sectionsが定義されていない可能性があります。
+          </p>
+        </div>
+      )}
+
       {/* おすすめ対象セクション */}
       {course.recommendations && course.recommendations.length > 0 && (
-        <section id="recommendations" className="pt-32 -mt-32 border-l-4 border-gray-300 pl-6">
+        <section id="recommendations" className="scroll-mt-32 border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             このような方におすすめです
           </h2>
@@ -102,7 +123,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section id="effects" className="pt-32 -mt-32 border-l-4 border-gray-300 pl-6">
+        <section id="effects" className="scroll-mt-32 border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             受講後の効果
           </h2>
