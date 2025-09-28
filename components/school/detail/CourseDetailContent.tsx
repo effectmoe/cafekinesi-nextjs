@@ -19,31 +19,46 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          // ヘッダーの高さを考慮したスクロール位置を計算
-          const yOffset = -120 // ヘッダーの高さ + 余白
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          const rect = element.getBoundingClientRect()
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+          const offset = 120
+          const targetPosition = rect.top + scrollTop - offset
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          })
         }
-      }, 300)
+      }, 500) // 少し長めに待つ
     }
   }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    const element = document.getElementById(sectionId)
+    // タイムアウトを使って確実にDOMが描画された後に実行
+    setTimeout(() => {
+      const element = document.getElementById(sectionId)
 
-    if (element) {
-      // ヘッダーの高さを考慮した正確なスクロール位置を計算
-      const yOffset = -120 // ヘッダーの高さ + 余白
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      if (element) {
+        // 要素の位置を取得
+        const rect = element.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
-      // スムーススクロールを実行
-      window.scrollTo({ top: y, behavior: 'smooth' })
+        // ヘッダーの高さを考慮（固定ヘッダーの場合）
+        const offset = 120
+        const targetPosition = rect.top + scrollTop - offset
 
-      // URLにハッシュを追加
-      window.history.pushState(null, '', `#${sectionId}`)
-    }
+        // スクロール実行
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        })
+
+        // URLにハッシュを追加（履歴として）
+        window.history.replaceState(null, '', `#${sectionId}`)
+      }
+    }, 0)
   }
 
   return (
