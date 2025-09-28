@@ -60,19 +60,27 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   href={`#${section.id}`}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                   onClick={(e) => {
+                    e.preventDefault()
                     console.log(`クリック: ${section.id}`)
                     const element = document.getElementById(section.id)
                     if (element) {
+                      const rect = element.getBoundingClientRect()
+                      const absoluteTop = rect.top + window.scrollY
                       console.log('要素が見つかりました:', {
                         id: section.id,
-                        offsetTop: element.offsetTop,
-                        scrollY: window.scrollY,
-                        getBoundingClientRect: element.getBoundingClientRect()
+                        rect: rect,
+                        absoluteTop: absoluteTop,
+                        currentScrollY: window.scrollY,
+                        targetScrollY: absoluteTop - 100
+                      })
+                      // シンプルにスクロール
+                      window.scrollTo({
+                        top: absoluteTop - 100,
+                        behavior: 'smooth'
                       })
                     } else {
                       console.error(`要素が見つかりません: ${section.id}`)
                     }
-                    // デフォルトのアンカー動作を使用
                   }}
                 >
                   {section.title}
@@ -86,14 +94,22 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href="#effects"
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
                     console.log('クリック: effects')
                     const element = document.getElementById('effects')
                     if (element) {
+                      const rect = element.getBoundingClientRect()
+                      const absoluteTop = rect.top + window.scrollY
                       console.log('effects要素が見つかりました:', {
-                        offsetTop: element.offsetTop,
-                        scrollY: window.scrollY,
-                        getBoundingClientRect: element.getBoundingClientRect()
+                        rect: rect,
+                        absoluteTop: absoluteTop,
+                        currentScrollY: window.scrollY,
+                        targetScrollY: absoluteTop - 100
+                      })
+                      window.scrollTo({
+                        top: absoluteTop - 100,
+                        behavior: 'smooth'
                       })
                     } else {
                       console.error('effects要素が見つかりません')
@@ -114,7 +130,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
           {sections.map((section) => (
             <section key={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 scroll-pt-24">
+                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -139,7 +155,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {course.effects && course.effects.length > 0 && (
         <section>
           <div className="border-l-4 border-gray-300 pl-6">
-            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 scroll-pt-24">
+            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900">
               受講後の効果
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2">
