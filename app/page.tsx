@@ -123,8 +123,28 @@ export default async function HomePage() {
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
-                    <div className={`${card.colorScheme} p-6 rounded-none cursor-pointer relative`} style={{aspectRatio: '3/4'}}>
-                      <div className="w-full h-[65%] relative mb-4">
+                    <div className={`${card.colorScheme} p-8 rounded-none cursor-pointer relative overflow-hidden`} style={{paddingTop: '133.33%'}}>
+                      <div className="absolute inset-0 p-8">
+                        <div className="w-full h-[70%] relative">
+                          <Image
+                            alt={`${card.titleJa || ''}`}
+                            src={imageSrc}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
+                        <div className="absolute bottom-8 left-8">
+                          <p className="text-[11px] font-normal tracking-[0.15em] text-black/80 leading-relaxed">{card.titleJa || ''}</p>
+                          <p className="text-[11px] font-normal tracking-[0.15em] text-black/80 uppercase">{card.titleEn || ''}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <div key={index} className={`${card.colorScheme} p-8 rounded-none relative overflow-hidden`} style={{paddingTop: '133.33%'}}>
+                    <div className="absolute inset-0 p-8">
+                      <div className="w-full h-[70%] relative">
                         <Image
                           alt={`${card.titleJa || ''}`}
                           src={imageSrc}
@@ -133,26 +153,10 @@ export default async function HomePage() {
                           sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       </div>
-                      <div className="absolute bottom-6 left-6">
-                        <p className="text-[11px] font-normal tracking-[0.15em] mb-1">{card.titleJa || ''}</p>
-                        <p className="text-[11px] font-normal tracking-[0.15em]">{card.titleEn || ''}</p>
+                      <div className="absolute bottom-8 left-8">
+                        <p className="text-[11px] font-normal tracking-[0.15em] text-black/80 leading-relaxed">{card.titleJa || ''}</p>
+                        <p className="text-[11px] font-normal tracking-[0.15em] text-black/80 uppercase">{card.titleEn || ''}</p>
                       </div>
-                    </div>
-                  </Link>
-                ) : (
-                  <div key={index} className={`${card.colorScheme} p-6 rounded-none relative`} style={{aspectRatio: '3/4'}}>
-                    <div className="w-full h-[65%] relative mb-4">
-                      <Image
-                        alt={`${card.titleJa || ''}`}
-                        src={imageSrc}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
-                    </div>
-                    <div className="absolute bottom-6 left-6">
-                      <p className="text-[11px] font-normal tracking-[0.15em] mb-1">{card.titleJa || ''}</p>
-                      <p className="text-[11px] font-normal tracking-[0.15em]">{card.titleEn || ''}</p>
                     </div>
                   </div>
                 )
