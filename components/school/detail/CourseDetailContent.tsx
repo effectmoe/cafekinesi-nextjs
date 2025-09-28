@@ -19,9 +19,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         const hash = window.location.hash.substring(1)
         const element = document.getElementById(hash)
         if (element) {
-          const yOffset = -100 // ヘッダー分のオフセット
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
       }, 100)
     }
@@ -44,10 +42,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     e.preventDefault()
                     const element = document.getElementById(section.id)
                     if (element) {
-                      const yOffset = -100
-                      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-                      window.scrollTo({ top: y, behavior: 'smooth' })
-                      window.location.hash = section.id
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   }}
                 >
@@ -66,10 +61,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     e.preventDefault()
                     const element = document.getElementById('effects')
                     if (element) {
-                      const yOffset = -100
-                      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-                      window.scrollTo({ top: y, behavior: 'smooth' })
-                      window.location.hash = 'effects'
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   }}
                 >
@@ -87,7 +79,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
           {sections.map((section) => (
             <section key={section.id}>
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 scroll-mt-24">
+                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900 pt-24 -mt-24">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -112,7 +104,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {course.effects && course.effects.length > 0 && (
         <section>
           <div className="border-l-4 border-gray-300 pl-6">
-            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 scroll-mt-24">
+            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900 pt-24 -mt-24">
               受講後の効果
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2">
