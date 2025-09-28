@@ -84,6 +84,16 @@ const AlbumGrid = () => {
                 className="aspect-square cursor-pointer"
               />
             </Link>
+          ) : section.id === 2 ? (
+            <Link key={section.id} href="/school" className="block">
+              <AlbumCard
+                image={section.image}
+                title={section.title}
+                artist={section.description}
+                backgroundClass={section.backgroundClass}
+                className="aspect-square cursor-pointer"
+              />
+            </Link>
           ) : (
             <AlbumCard
               key={section.id}
