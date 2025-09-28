@@ -19,13 +19,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          const top = element.offsetTop - 120
-          window.scrollTo({
-            top: top,
-            behavior: 'smooth'
-          })
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
-      }, 100)
+      }, 500)
     }
   }, [])
 
@@ -35,13 +31,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     const element = document.getElementById(sectionId)
 
     if (element) {
-      // シンプルに要素の上端から120px上にスクロール
-      const top = element.offsetTop - 120
-
-      window.scrollTo({
-        top: top,
-        behavior: 'smooth'
-      })
+      // 最もシンプルで確実な方法
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
       // URLにハッシュを追加
       window.location.hash = sectionId
