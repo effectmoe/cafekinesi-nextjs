@@ -27,10 +27,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     e.preventDefault()
                     const element = document.getElementById(section.id)
                     if (element) {
-                      const rect = element.getBoundingClientRect()
+                      // 親のsection要素を取得（より正確な位置）
+                      const sectionElement = element.closest('section')
+                      const targetElement = sectionElement || element
+                      const rect = targetElement.getBoundingClientRect()
                       const absoluteTop = rect.top + window.scrollY
+                      // 常に要素の上端から100px上の位置へスクロール
                       window.scrollTo({
-                        top: absoluteTop - 100,
+                        top: Math.max(0, absoluteTop - 100),
                         behavior: 'smooth'
                       })
                     }
@@ -51,10 +55,12 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     e.preventDefault()
                     const element = document.getElementById('effects')
                     if (element) {
-                      const rect = element.getBoundingClientRect()
+                      const sectionElement = element.closest('section')
+                      const targetElement = sectionElement || element
+                      const rect = targetElement.getBoundingClientRect()
                       const absoluteTop = rect.top + window.scrollY
                       window.scrollTo({
-                        top: absoluteTop - 100,
+                        top: Math.max(0, absoluteTop - 100),
                         behavior: 'smooth'
                       })
                     }
