@@ -109,45 +109,54 @@ export default async function HomePage() {
           {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
           <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {homepage.categoryCards?.map((card, index) => (
-                card.isActive ? (
+              {homepage.categoryCards?.map((card, index) => {
+                // ローカル画像のマッピング
+                const imageMap: { [key: string]: string } = {
+                  'カフェキネシについて': '/images/about.webp',
+                  'スクール': '/images/school.webp',
+                  'インストラクター': '/images/instructor.webp',
+                  'ブログ': '/images/blog.webp',
+                  'アロマ': '/images/aroma.webp',
+                  'メンバー': '/images/member.webp'
+                }
+                const imageSrc = imageMap[card.titleJp] || '/images/placeholder.svg'
+
+                return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
-                    <div className={`${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer`}>
-                      <div className="aspect-square relative mb-6">
-                        {card.image && (
-                          <Image
-                            alt={card.image.alt || `${card.titleJa} by ${card.titleEn}`}
-                            src={urlForImage(card.image)?.url() || ''}
-                            fill
-                            className="object-cover"
-                          />
-                        )}
+                    <div className={`${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer relative overflow-hidden`}>
+                      <div className="aspect-[3/2] relative mb-4">
+                        <Image
+                          alt={`${card.titleJp}`}
+                          src={imageSrc}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="album-title">{card.titleJa}</h3>
-                        <p className="album-title opacity-80">{card.titleEn}</p>
+                      <div className="absolute bottom-8 left-8 right-8 space-y-0">
+                        <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJp}</p>
+                        <p className="text-xs tracking-wider uppercase">{card.titleEn}</p>
                       </div>
                     </div>
                   </Link>
                 ) : (
-                  <div key={index} className={`${card.colorScheme} p-8 rounded-none aspect-square`}>
-                    <div className="aspect-square relative mb-6">
-                      {card.image && (
-                        <Image
-                          alt={card.image.alt || `${card.titleJa} by ${card.titleEn}`}
-                          src={urlForImage(card.image)?.url() || ''}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
+                  <div key={index} className={`${card.colorScheme} p-8 rounded-none aspect-square relative overflow-hidden`}>
+                    <div className="aspect-[3/2] relative mb-4">
+                      <Image
+                        alt={`${card.titleJp}`}
+                        src={imageSrc}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="album-title">{card.titleJa}</h3>
-                      <p className="album-title opacity-80">{card.titleEn}</p>
+                    <div className="absolute bottom-8 left-8 right-8 space-y-0">
+                      <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJp}</p>
+                      <p className="text-xs tracking-wider uppercase">{card.titleEn}</p>
                     </div>
                   </div>
                 )
-              ))}
+              })}
             </div>
 
             {/* View Allボタン - 既存デザイン維持 */}
