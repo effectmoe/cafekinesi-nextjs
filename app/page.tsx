@@ -123,18 +123,20 @@ export default async function HomePage() {
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
-                    <div className={`${card.colorScheme} rounded-none cursor-pointer relative`} style={{paddingTop: '125%'}}>
-                      <div className="absolute inset-0 p-6">
-                        <div className="w-full" style={{paddingTop: '75%', position: 'relative'}}>
-                          <Image
-                            alt={`${card.titleJa || ''}`}
-                            src={imageSrc}
-                            fill
-                            className="object-cover absolute inset-0"
-                            sizes="(max-width: 768px) 100vw, 33vw"
-                          />
+                    <div className={`${card.colorScheme} rounded-none cursor-pointer relative`} style={{paddingTop: '150%'}}>
+                      <div className="absolute inset-0 flex flex-col p-6">
+                        <div className="w-full flex-grow" style={{maxHeight: '70%'}}>
+                          <div className="w-full h-full relative">
+                            <Image
+                              alt={`${card.titleJa || ''}`}
+                              src={imageSrc}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                            />
+                          </div>
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-auto pt-4">
                           <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 leading-normal">{card.titleJa || ''}</p>
                           <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 uppercase leading-normal">{card.titleEn || ''}</p>
                         </div>
@@ -142,18 +144,20 @@ export default async function HomePage() {
                     </div>
                   </Link>
                 ) : (
-                  <div key={index} className={`${card.colorScheme} rounded-none relative`} style={{paddingTop: '125%'}}>
-                    <div className="absolute inset-0 p-6">
-                      <div className="w-full" style={{paddingTop: '75%', position: 'relative'}}>
-                        <Image
-                          alt={`${card.titleJa || ''}`}
-                          src={imageSrc}
-                          fill
-                          className="object-cover absolute inset-0"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
+                  <div key={index} className={`${card.colorScheme} rounded-none relative`} style={{paddingTop: '150%'}}>
+                    <div className="absolute inset-0 flex flex-col p-6">
+                      <div className="w-full flex-grow" style={{maxHeight: '70%'}}>
+                        <div className="w-full h-full relative">
+                          <Image
+                            alt={`${card.titleJa || ''}`}
+                            src={imageSrc}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
                       </div>
-                      <div className="mt-4">
+                      <div className="mt-auto pt-4">
                         <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 leading-normal">{card.titleJa || ''}</p>
                         <p className="text-[10px] font-normal tracking-[0.12em] text-black/70 uppercase leading-normal">{card.titleEn || ''}</p>
                       </div>
