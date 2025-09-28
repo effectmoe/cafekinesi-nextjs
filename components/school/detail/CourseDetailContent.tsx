@@ -17,15 +17,22 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">目次</h2>
         <ol className="space-y-2 text-sm">
-          {course.tableOfContents.map((item, index) => (
-            <li key={index} className="flex items-start">
+          {course.sections.map((section, index) => (
+            <li key={section.id} className="flex items-start">
               <span className="font-medium mr-2">{index + 1}.</span>
               <a
-                href={`#section-${index}`}
+                href={`#${section.id}`}
                 className="text-blue-600 hover:underline transition-colors"
-                onClick={() => setActiveSection(`section-${index}`)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  const element = document.getElementById(section.id)
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    setActiveSection(section.id)
+                  }
+                }}
               >
-                {item}
+                {section.title}
               </a>
             </li>
           ))}
@@ -34,10 +41,10 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 講座セクション */}
       <div className="space-y-8">
-        {course.sections.map((section, index) => (
+        {course.sections.map((section) => (
           <section
             key={section.id}
-            id={`section-${index}`}
+            id={section.id}
             className="scroll-mt-24"
           >
             <div className="border-l-4 border-gray-300 pl-6">

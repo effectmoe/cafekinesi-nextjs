@@ -33,13 +33,6 @@ export const peachTouchDetailData: Omit<CourseDetail, '_id'> = {
   ],
   order: 2,
   isActive: true,
-  tableOfContents: [
-    'ピーチタッチとは',
-    '２時間半の講座で認定のインストラクターになります',
-    'ピーチタッチはこのような方におすすめです',
-    'ピーチタッチインストラクター認定講座について',
-    'インストラクター認定講座の詳細'
-  ],
   sections: [
     {
       id: 'about',
