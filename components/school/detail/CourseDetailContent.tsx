@@ -31,21 +31,26 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    // 少し待ってから実行（レンダリング完了を待つ）
-    setTimeout(() => {
-      const element = document.getElementById(sectionId)
+    // 確実に要素を探す
+    const element = document.getElementById(sectionId)
 
-      if (element) {
-        // シンプルにscrollIntoViewを使用（section要素なので確実に動作するはず）
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        })
+    if (element) {
+      // 最も基本的な方法：要素の位置を取得してスクロール
+      const rect = element.getBoundingClientRect()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const targetY = rect.top + scrollTop - 80 // ヘッダー分のオフセット
 
-        // URLにハッシュを追加（履歴管理）
-        window.history.pushState(null, '', `#${sectionId}`)
-      }
-    }, 100) // 100ms待機
+      // window.scrollToで確実にスクロール
+      window.scrollTo({
+        top: targetY,
+        behavior: 'smooth'
+      })
+
+      // URLにハッシュを追加
+      window.location.hash = sectionId
+    } else {
+      console.error('要素が見つかりません:', sectionId)
+    }
   }
 
   return (
