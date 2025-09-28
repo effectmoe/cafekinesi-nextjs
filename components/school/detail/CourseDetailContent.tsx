@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { CourseDetail } from '@/lib/types/course'
 
 interface CourseDetailContentProps {
@@ -9,6 +10,30 @@ interface CourseDetailContentProps {
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
+
+  // デバッグ：ページロード時の要素確認
+  useEffect(() => {
+    console.log('=== ページロード時のデバッグ ===')
+    console.log('現在のURL:', window.location.href)
+    console.log('現在のハッシュ:', window.location.hash)
+    console.log('初期スクロール位置:', window.scrollY)
+
+    // 全セクションの位置を確認
+    setTimeout(() => {
+      sections.forEach(section => {
+        const element = document.getElementById(section.id)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          console.log(`セクション [${section.id}]:`, {
+            'offsetTop': element.offsetTop,
+            'offsetParent': element.offsetParent?.tagName,
+            'getBoundingClientRect.top': rect.top,
+            'absolute位置': rect.top + window.scrollY
+          })
+        }
+      })
+    }, 500)
+  }, [sections])
 
   return (
     <div className="space-y-8">
@@ -25,18 +50,36 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault()
+                    console.log(`\n=== クリック: ${section.id} ===`)
                     const element = document.getElementById(section.id)
                     if (element) {
-                      // 親のsection要素を取得（より正確な位置）
                       const sectionElement = element.closest('section')
                       const targetElement = sectionElement || element
                       const rect = targetElement.getBoundingClientRect()
-                      const absoluteTop = rect.top + window.scrollY
-                      // 常に要素の上端から100px上の位置へスクロール
+                      const elementRect = element.getBoundingClientRect()
+
+                      console.log('要素情報:', {
+                        'H2要素のrect.top': elementRect.top,
+                        'Section要素のrect.top': sectionElement ? sectionElement.getBoundingClientRect().top : 'なし',
+                        '現在のスクロール位置': window.scrollY,
+                        'rect.top + scrollY': rect.top + window.scrollY,
+                        '目標スクロール位置': Math.max(0, rect.top + window.scrollY - 100)
+                      })
+
+                      const targetScrollY = Math.max(0, rect.top + window.scrollY - 100)
+
                       window.scrollTo({
-                        top: Math.max(0, absoluteTop - 100),
+                        top: targetScrollY,
                         behavior: 'smooth'
                       })
+
+                      // スクロール後の確認
+                      setTimeout(() => {
+                        console.log('スクロール後の位置:', window.scrollY)
+                        console.log('差分:', window.scrollY - targetScrollY)
+                      }, 1000)
+                    } else {
+                      console.error(`要素が見つかりません: ${section.id}`)
                     }
                   }}
                 >
@@ -53,16 +96,32 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault()
+                    console.log('\n=== クリック: effects ===')
                     const element = document.getElementById('effects')
                     if (element) {
                       const sectionElement = element.closest('section')
                       const targetElement = sectionElement || element
                       const rect = targetElement.getBoundingClientRect()
-                      const absoluteTop = rect.top + window.scrollY
+
+                      console.log('effects要素情報:', {
+                        'rect.top': rect.top,
+                        '現在のスクロール位置': window.scrollY,
+                        'rect.top + scrollY': rect.top + window.scrollY,
+                        '目標スクロール位置': Math.max(0, rect.top + window.scrollY - 100)
+                      })
+
+                      const targetScrollY = Math.max(0, rect.top + window.scrollY - 100)
+
                       window.scrollTo({
-                        top: Math.max(0, absoluteTop - 100),
+                        top: targetScrollY,
                         behavior: 'smooth'
                       })
+
+                      setTimeout(() => {
+                        console.log('スクロール後の位置:', window.scrollY)
+                      }, 1000)
+                    } else {
+                      console.error('effects要素が見つかりません')
                     }
                   }}
                 >
