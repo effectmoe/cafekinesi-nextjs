@@ -36,25 +36,55 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
+    console.log('=== アンカークリック開始 ===')
+    console.log('ターゲットID:', sectionId)
+    console.log('現在のスクロール位置:', window.pageYOffset)
+
     // 少し待ってから実行（レンダリング完了を待つ）
     setTimeout(() => {
       const element = document.getElementById(sectionId)
+      console.log('要素を検索:', element)
 
       if (element) {
-        // 方法1: 要素の絶対位置を計算してスクロール
-        const yOffset = -100 // ヘッダーの高さ分のオフセット
+        // デバッグ情報を詳細に出力
         const rect = element.getBoundingClientRect()
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-        const targetY = rect.top + scrollTop + yOffset
+
+        console.log('要素の位置情報:')
+        console.log('  - rect.top (ビューポートからの相対位置):', rect.top)
+        console.log('  - rect.height (要素の高さ):', rect.height)
+        console.log('  - scrollTop (現在のスクロール位置):', scrollTop)
+        console.log('  - offsetTop (要素の絶対位置):', element.offsetTop)
+        console.log('  - offsetParent:', element.offsetParent)
+        console.log('  - parentElement:', element.parentElement)
+        console.log('  - document.body.scrollTop:', document.body.scrollTop)
+        console.log('  - document.documentElement.scrollTop:', document.documentElement.scrollTop)
+
+        // 複数の方法で位置を計算して比較
+        const method1 = rect.top + scrollTop - 100
+        const method2 = element.offsetTop - 100
+
+        console.log('計算結果:')
+        console.log('  - 方法1 (rect.top + scrollTop - 100):', method1)
+        console.log('  - 方法2 (offsetTop - 100):', method2)
+        console.log('  - 最終ターゲット位置:', method1)
 
         // スムーススクロール実行
         window.scrollTo({
-          top: targetY,
+          top: method1,
           behavior: 'smooth'
         })
 
+        // 1秒後に結果を確認
+        setTimeout(() => {
+          console.log('スクロール後の位置:', window.pageYOffset)
+          console.log('=== アンカークリック終了 ===')
+        }, 1000)
+
         // URLにハッシュを追加（履歴管理）
         window.history.pushState(null, '', `#${sectionId}`)
+      } else {
+        console.error('要素が見つかりません:', sectionId)
       }
     }, 100) // 100ms待機
   }
