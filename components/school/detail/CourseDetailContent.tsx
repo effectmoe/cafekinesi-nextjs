@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useEffect } from 'react'
 import { CourseDetail } from '@/lib/types/course'
 
 interface CourseDetailContentProps {
@@ -9,63 +8,84 @@ interface CourseDetailContentProps {
 }
 
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
-  const [activeSection, setActiveSection] = useState<string>("")
+  // sectionsが存在しない場合のフォールバック
+  const sections = course.sections || []
+
+  // ページロード時にハッシュがある場合の処理
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.substring(1)
+      setTimeout(() => {
+        const element = document.getElementById(hash)
+        if (element) {
+          const yOffset = -128 // ヘッダーの高さ分のオフセット
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  }, [])
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault()
+    const element = document.getElementById(sectionId)
+    if (element) {
+      const yOffset = -128 // ヘッダーの高さ分のオフセット
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+      // URLにハッシュを追加（ブラウザの履歴に残す）
+      window.history.pushState(null, '', `#${sectionId}`)
+    }
+  }
 
   return (
     <div className="space-y-8">
       {/* 目次セクション */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">目次</h2>
-        <ol className="space-y-2 text-sm">
-          {course.sections.map((section, index) => (
-            <li key={section.id} className="flex items-start">
-              <span className="font-medium mr-2">{index + 1}.</span>
-              <a
-                href={`#${section.id}`}
-                className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault()
-                  const element = document.getElementById(section.id)
-                  if (element) {
-                    // スムーズスクロール
-                    element.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start'
-                    })
-                    setActiveSection(section.id)
-                  }
-                }}
-              >
-                {section.title}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </div>
+      {sections.length > 0 && (
+        <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">目次</h2>
+          <ol className="space-y-2 text-sm">
+            {sections.map((section, index) => (
+              <li key={section.id} className="flex items-start">
+                <span className="font-medium mr-2">{index + 1}.</span>
+                <a
+                  href={`#${section.id}`}
+                  className="text-blue-600 hover:underline transition-colors cursor-pointer"
+                  onClick={(e) => handleAnchorClick(e, section.id)}
+                >
+                  {section.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* 講座セクション */}
-      <div className="space-y-8">
-        {course.sections.map((section) => (
-          <section
-            key={section.id}
-            id={section.id}
-            className="scroll-mt-32"
-          >
-            <div className="border-l-4 border-gray-300 pl-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                {section.title}
-              </h2>
-              <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {section.content}
+      {sections.length > 0 && (
+        <div className="space-y-12">
+          {sections.map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              className="pt-32 -mt-32" // ネガティブマージンとパディングでオフセット
+            >
+              <div className="border-l-4 border-gray-300 pl-6">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                  {section.title}
+                </h2>
+                <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {section.content}
+                </div>
               </div>
-            </div>
-          </section>
-        ))}
-      </div>
+            </section>
+          ))}
+        </div>
+      )}
 
       {/* おすすめ対象セクション */}
       {course.recommendations && course.recommendations.length > 0 && (
-        <section className="border-l-4 border-gray-300 pl-6">
+        <section id="recommendations" className="pt-32 -mt-32 border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             このような方におすすめです
           </h2>
@@ -82,7 +102,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section className="border-l-4 border-gray-300 pl-6">
+        <section id="effects" className="pt-32 -mt-32 border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             受講後の効果
           </h2>
