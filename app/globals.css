@@ -95,19 +95,19 @@
 
   /* Album card backgrounds - TOPページと同じ色 */
   .album-beige {
-    background: #f5e6d3; /* ソフトベージュ */
+    background: #e8ddd3; /* くすんだベージュ */
   }
   .album-blue-gray {
-    background: #a8c0d3; /* ソフトブルーグレー */
+    background: #b8c4cc; /* くすんだブルーグレー */
   }
   .album-purple {
-    background: #c8b3d9; /* ソフトパープル */
+    background: #cdbdce; /* くすんだパープル */
   }
   .album-teal {
-    background: #b8dcc8; /* ソフトミントグリーン */
+    background: #c4d4cc; /* くすんだミントグリーン */
   }
   .album-light-gray {
-    background: #e8e8e8; /* ライトグレー */
+    background: #e0e0e0; /* くすんだライトグレー */
   }
 
   /* Transitions for interactions */
