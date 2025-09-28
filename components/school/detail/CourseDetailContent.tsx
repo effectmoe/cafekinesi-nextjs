@@ -11,42 +11,38 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
 
-  // デバッグ: sectionsの内容を確認
-  useEffect(() => {
-    console.log('Course sections:', sections)
-    console.log('Course data:', course)
-  }, [sections, course])
-
   // ページロード時にハッシュがある場合の処理
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hash) {
       const hash = window.location.hash.substring(1)
+      // ページロード後に少し待ってからスクロール
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          // ヘッダーの高さを考慮したスクロール位置を計算
+          const yOffset = -120 // ヘッダーの高さ + 余白
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
         }
-      }, 100)
+      }, 300)
     }
   }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    // デバッグログ
-    console.log('Clicking section:', sectionId)
-
     const element = document.getElementById(sectionId)
-    console.log('Found element:', element)
 
     if (element) {
-      // シンプルなscrollIntoViewを使用
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // ヘッダーの高さを考慮した正確なスクロール位置を計算
+      const yOffset = -120 // ヘッダーの高さ + 余白
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+
+      // スムーススクロールを実行
+      window.scrollTo({ top: y, behavior: 'smooth' })
 
       // URLにハッシュを追加
       window.history.pushState(null, '', `#${sectionId}`)
-    } else {
-      console.error(`Element with id="${sectionId}" not found`)
     }
   }
 
@@ -80,7 +76,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
             <section
               key={section.id}
               id={section.id}
-              className="scroll-mt-32"
             >
               <div className="border-l-4 border-gray-300 pl-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900">
@@ -106,7 +101,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* おすすめ対象セクション */}
       {course.recommendations && course.recommendations.length > 0 && (
-        <section id="recommendations" className="scroll-mt-32 border-l-4 border-gray-300 pl-6">
+        <section id="recommendations" className="border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             このような方におすすめです
           </h2>
@@ -123,7 +118,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section id="effects" className="scroll-mt-32 border-l-4 border-gray-300 pl-6">
+        <section id="effects" className="border-l-4 border-gray-300 pl-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             受講後の効果
           </h2>
