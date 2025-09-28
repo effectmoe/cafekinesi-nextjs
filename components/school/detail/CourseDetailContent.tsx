@@ -19,29 +19,44 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       setTimeout(() => {
         const element = document.getElementById(hash)
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const yOffset = -100
+          const rect = element.getBoundingClientRect()
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+          const targetY = rect.top + scrollTop + yOffset
+
+          window.scrollTo({
+            top: targetY,
+            behavior: 'smooth'
+          })
         }
-      }, 300)
+      }, 500) // ページロード時は少し長めに待機
     }
   }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
 
-    // デバッグアラート
-    alert(`クリックされました: ${sectionId}`)
+    // 少し待ってから実行（レンダリング完了を待つ）
+    setTimeout(() => {
+      const element = document.getElementById(sectionId)
 
-    const element = document.getElementById(sectionId)
+      if (element) {
+        // 方法1: 要素の絶対位置を計算してスクロール
+        const yOffset = -100 // ヘッダーの高さ分のオフセット
+        const rect = element.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        const targetY = rect.top + scrollTop + yOffset
 
-    if (element) {
-      // シンプルにscrollIntoViewを実行
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // スムーススクロール実行
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth'
+        })
 
-      // URLにハッシュを追加
-      window.location.hash = sectionId
-    } else {
-      alert(`要素が見つかりません: ${sectionId}`)
-    }
+        // URLにハッシュを追加（履歴管理）
+        window.history.pushState(null, '', `#${sectionId}`)
+      }
+    }, 100) // 100ms待機
   }
 
   return (
