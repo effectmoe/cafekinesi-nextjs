@@ -11,11 +11,11 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Facebook', value: 'Facebook' },
-          { title: 'Instagram', value: 'Instagram' },
-          { title: 'Twitter', value: 'Twitter' },
-          { title: 'YouTube', value: 'YouTube' },
-          { title: 'Bandcamp', value: 'Bandcamp' }
+          { title: 'Facebook', value: 'facebook' },
+          { title: 'Instagram', value: 'instagram' },
+          { title: 'Twitter', value: 'twitter' },
+          { title: 'YouTube', value: 'youtube' },
+          { title: 'Bandcamp', value: 'bandcamp' }
         ]
       },
       validation: Rule => Rule.required()
@@ -29,7 +29,7 @@ export default defineType({
       })
     }),
     defineField({
-      name: 'displayText',
+      name: 'label',
       title: '表示テキスト',
       type: 'string',
       description: '未入力の場合はプラットフォーム名を使用'

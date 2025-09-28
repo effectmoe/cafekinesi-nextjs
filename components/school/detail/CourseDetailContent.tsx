@@ -53,30 +53,20 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     console.log(`\n=== クリック: ${section.id} ===`)
                     const element = document.getElementById(section.id)
                     if (element) {
-                      const sectionElement = element.closest('section')
-                      const targetElement = sectionElement || element
-                      const rect = targetElement.getBoundingClientRect()
-                      const elementRect = element.getBoundingClientRect()
-
-                      console.log('要素情報:', {
-                        'H2要素のrect.top': elementRect.top,
-                        'Section要素のrect.top': sectionElement ? sectionElement.getBoundingClientRect().top : 'なし',
+                      console.log('要素情報（修正版）:', {
+                        'タグ名': element.tagName,
                         '現在のスクロール位置': window.scrollY,
-                        'rect.top + scrollY': rect.top + window.scrollY,
-                        '目標スクロール位置': Math.max(0, rect.top + window.scrollY - 100)
+                        'getBoundingClientRect.top': element.getBoundingClientRect().top,
+                        '絶対位置': element.getBoundingClientRect().top + window.scrollY
                       })
 
-                      const targetScrollY = Math.max(0, rect.top + window.scrollY - 100)
+                      // シンプルにscrollIntoViewを使用（scroll-mt-24クラスが効く）
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
-                      window.scrollTo({
-                        top: targetScrollY,
-                        behavior: 'smooth'
-                      })
-
-                      // スクロール後の確認
                       setTimeout(() => {
                         console.log('スクロール後の位置:', window.scrollY)
-                        console.log('差分:', window.scrollY - targetScrollY)
+                        const newRect = element.getBoundingClientRect()
+                        console.log('スクロール後の要素位置:', newRect.top)
                       }, 1000)
                     } else {
                       console.error(`要素が見つかりません: ${section.id}`)
@@ -99,23 +89,13 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                     console.log('\n=== クリック: effects ===')
                     const element = document.getElementById('effects')
                     if (element) {
-                      const sectionElement = element.closest('section')
-                      const targetElement = sectionElement || element
-                      const rect = targetElement.getBoundingClientRect()
-
-                      console.log('effects要素情報:', {
-                        'rect.top': rect.top,
+                      console.log('effects要素情報（修正版）:', {
+                        'タグ名': element.tagName,
                         '現在のスクロール位置': window.scrollY,
-                        'rect.top + scrollY': rect.top + window.scrollY,
-                        '目標スクロール位置': Math.max(0, rect.top + window.scrollY - 100)
+                        'getBoundingClientRect.top': element.getBoundingClientRect().top
                       })
 
-                      const targetScrollY = Math.max(0, rect.top + window.scrollY - 100)
-
-                      window.scrollTo({
-                        top: targetScrollY,
-                        behavior: 'smooth'
-                      })
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
                       setTimeout(() => {
                         console.log('スクロール後の位置:', window.scrollY)
@@ -137,9 +117,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <section key={section.id}>
+            <section key={section.id} id={section.id} className="scroll-mt-24">
               <div className="border-l-4 border-gray-300 pl-6">
-                <h2 id={section.id} className="text-xl font-semibold mb-4 text-gray-900">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -162,9 +142,9 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <section>
+        <section id="effects" className="scroll-mt-24">
           <div className="border-l-4 border-gray-300 pl-6">
-            <h2 id="effects" className="text-xl font-semibold mb-4 text-gray-900">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
               受講後の効果
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2">
