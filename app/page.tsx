@@ -119,14 +119,14 @@ export default async function HomePage() {
                   'アロマ': '/images/aroma.webp',
                   'メンバー': '/images/member.webp'
                 }
-                const imageSrc = imageMap[card.titleJp] || '/images/placeholder.svg'
+                const imageSrc = imageMap[card.titleJa] || '/images/placeholder.svg'
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
                     <div className={`${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer relative overflow-hidden`}>
                       <div className="aspect-[3/2] relative mb-4">
                         <Image
-                          alt={`${card.titleJp}`}
+                          alt={`${card.titleJa || ''}`}
                           src={imageSrc}
                           fill
                           className="object-cover"
@@ -134,8 +134,8 @@ export default async function HomePage() {
                         />
                       </div>
                       <div className="absolute bottom-8 left-8 right-8 space-y-0">
-                        <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJp}</p>
-                        <p className="text-xs tracking-wider uppercase">{card.titleEn}</p>
+                        <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJa || ''}</p>
+                        <p className="text-xs tracking-wider uppercase">{card.titleEn || ''}</p>
                       </div>
                     </div>
                   </Link>
@@ -143,7 +143,7 @@ export default async function HomePage() {
                   <div key={index} className={`${card.colorScheme} p-8 rounded-none aspect-square relative overflow-hidden`}>
                     <div className="aspect-[3/2] relative mb-4">
                       <Image
-                        alt={`${card.titleJp}`}
+                        alt={`${card.titleJa || ''}`}
                         src={imageSrc}
                         fill
                         className="object-cover"
@@ -151,8 +151,8 @@ export default async function HomePage() {
                       />
                     </div>
                     <div className="absolute bottom-8 left-8 right-8 space-y-0">
-                      <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJp}</p>
-                      <p className="text-xs tracking-wider uppercase">{card.titleEn}</p>
+                      <p className="text-xs tracking-wider uppercase opacity-80">{card.titleJa || ''}</p>
+                      <p className="text-xs tracking-wider uppercase">{card.titleEn || ''}</p>
                     </div>
                   </div>
                 )

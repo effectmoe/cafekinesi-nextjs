@@ -6,7 +6,7 @@
     {
       "_key": "card-1",
       "_type": "categoryCard",
-      "titleJp": "カフェキネシについて",
+      "titleJa": "カフェキネシについて",
       "titleEn": "About Cafe Kinesi",
       "colorScheme": "album-beige",
       "link": "/about",
@@ -16,7 +16,7 @@
     {
       "_key": "card-2",
       "_type": "categoryCard",
-      "titleJp": "スクール",
+      "titleJa": "スクール",
       "titleEn": "School",
       "colorScheme": "album-blue-gray",
       "link": "/school",
@@ -26,7 +26,7 @@
     {
       "_key": "card-3",
       "_type": "categoryCard",
-      "titleJp": "インストラクター",
+      "titleJa": "インストラクター",
       "titleEn": "Instructor",
       "colorScheme": "album-light-gray",
       "link": "#",
@@ -36,7 +36,7 @@
     {
       "_key": "card-4",
       "_type": "categoryCard",
-      "titleJp": "ブログ",
+      "titleJa": "ブログ",
       "titleEn": "Blog",
       "colorScheme": "album-purple",
       "link": "/blog",
@@ -46,7 +46,7 @@
     {
       "_key": "card-5",
       "_type": "categoryCard",
-      "titleJp": "アロマ",
+      "titleJa": "アロマ",
       "titleEn": "Aroma",
       "colorScheme": "album-teal",
       "link": "#",
@@ -56,7 +56,7 @@
     {
       "_key": "card-6",
       "_type": "categoryCard",
-      "titleJp": "メンバー",
+      "titleJa": "メンバー",
       "titleEn": "Member",
       "colorScheme": "album-light-gray",
       "link": "#",
