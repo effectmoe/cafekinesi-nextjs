@@ -66,7 +66,7 @@ export default defineType({
       description: 'OFFにするとカードがクリックできなくなります'
     }),
     defineField({
-      name: 'order',
+      name: 'displayOrder',
       title: '表示順',
       type: 'number',
       validation: Rule => Rule.required().min(1).max(6),
@@ -78,11 +78,11 @@ export default defineType({
       title: 'titleJa',
       subtitle: 'titleEn',
       media: 'image',
-      order: 'order'
+      displayOrder: 'displayOrder'
     },
     prepare(selection) {
       return {
-        title: `${selection.order}. ${selection.title}`,
+        title: `${selection.displayOrder}. ${selection.title}`,
         subtitle: selection.subtitle,
         media: selection.media
       }

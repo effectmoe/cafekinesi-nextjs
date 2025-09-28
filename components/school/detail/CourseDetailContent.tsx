@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { CourseDetail } from '@/lib/types/course'
 
 interface CourseDetailContentProps {
@@ -10,41 +9,6 @@ interface CourseDetailContentProps {
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
-
-  // デバッグ用：ページロード時に要素の状態を確認
-  useEffect(() => {
-    console.log('=== デバッグ開始 ===')
-    console.log('sections:', sections)
-
-    // 各セクションの要素を確認
-    sections.forEach(section => {
-      const element = document.getElementById(section.id)
-      if (element) {
-        console.log(`要素 ${section.id}:`, {
-          存在: true,
-          offsetTop: element.offsetTop,
-          offsetHeight: element.offsetHeight,
-          getBoundingClientRect: element.getBoundingClientRect(),
-          computedStyle: window.getComputedStyle(element).display
-        })
-      } else {
-        console.error(`要素 ${section.id} が見つかりません`)
-      }
-    })
-
-    // effectsセクションも確認
-    const effectsElement = document.getElementById('effects')
-    if (effectsElement) {
-      console.log('effects要素:', {
-        存在: true,
-        offsetTop: effectsElement.offsetTop,
-        offsetHeight: effectsElement.offsetHeight,
-        getBoundingClientRect: effectsElement.getBoundingClientRect()
-      })
-    }
-
-    console.log('=== デバッグ終了 ===')
-  }, [sections])
 
   return (
     <div className="space-y-8">
@@ -61,25 +25,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault()
-                    console.log(`クリック: ${section.id}`)
                     const element = document.getElementById(section.id)
                     if (element) {
                       const rect = element.getBoundingClientRect()
                       const absoluteTop = rect.top + window.scrollY
-                      console.log('要素が見つかりました:', {
-                        id: section.id,
-                        rect: rect,
-                        absoluteTop: absoluteTop,
-                        currentScrollY: window.scrollY,
-                        targetScrollY: absoluteTop - 100
-                      })
-                      // シンプルにスクロール
                       window.scrollTo({
                         top: absoluteTop - 100,
                         behavior: 'smooth'
                       })
-                    } else {
-                      console.error(`要素が見つかりません: ${section.id}`)
                     }
                   }}
                 >
@@ -96,23 +49,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault()
-                    console.log('クリック: effects')
                     const element = document.getElementById('effects')
                     if (element) {
                       const rect = element.getBoundingClientRect()
                       const absoluteTop = rect.top + window.scrollY
-                      console.log('effects要素が見つかりました:', {
-                        rect: rect,
-                        absoluteTop: absoluteTop,
-                        currentScrollY: window.scrollY,
-                        targetScrollY: absoluteTop - 100
-                      })
                       window.scrollTo({
                         top: absoluteTop - 100,
                         behavior: 'smooth'
                       })
-                    } else {
-                      console.error('effects要素が見つかりません')
                     }
                   }}
                 >
