@@ -27,9 +27,11 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                   e.preventDefault()
                   const element = document.getElementById(section.id)
                   if (element) {
-                    const yOffset = -100; // ヘッダーの高さを考慮
-                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-                    window.scrollTo({ top: y, behavior: 'smooth' })
+                    // スムーズスクロール
+                    element.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start'
+                    })
                     setActiveSection(section.id)
                   }
                 }}
@@ -47,7 +49,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
           <section
             key={section.id}
             id={section.id}
-            className="scroll-mt-24"
+            className="scroll-mt-32"
           >
             <div className="border-l-4 border-gray-300 pl-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-900">
