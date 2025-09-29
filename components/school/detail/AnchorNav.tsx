@@ -1,100 +1,95 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function AnchorNav() {
+  const [isReady, setIsReady] = useState(false)
+
   useEffect(() => {
-    // スクロール関数
+    // ページが完全に読み込まれた後に実行
+    const handleLoad = () => {
+      setIsReady(true)
+    }
+
+    if (document.readyState === 'complete') {
+      handleLoad()
+    } else {
+      window.addEventListener('load', handleLoad)
+      return () => window.removeEventListener('load', handleLoad)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isReady) return
+
+    // シンプルなスクロール関数
     const scrollToElement = (id: string) => {
-      // 要素が完全にレンダリングされるまで待つ
-      let attempts = 0
-      const maxAttempts = 20
+      // 複数の方法で要素を探す
+      const methods = [
+        () => document.getElementById(id),
+        () => document.querySelector(`#${id}`),
+        () => document.querySelector(`[id="${id}"]`)
+      ]
 
-      const tryScroll = () => {
-        attempts++
-        const element = document.getElementById(id)
-
-        if (!element) {
-          console.log(`Attempt ${attempts}: Element ${id} not found`)
-
-          // 全てのIDを持つ要素を表示（デバッグ用）
-          if (attempts === 1) {
-            const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
-            console.log('All element IDs on page:', allIds)
-          }
-
-          if (attempts < maxAttempts) {
-            setTimeout(tryScroll, 100)
-          }
-          return
-        }
-
-        // 要素の実際の位置を取得
-        const rect = element.getBoundingClientRect()
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-        const elementTop = rect.top + scrollTop
-
-        console.log(`Attempt ${attempts}: Element ${id} found`, {
-          element: element.tagName,
-          id: element.id,
-          rect: {
-            top: rect.top,
-            height: rect.height,
-            bottom: rect.bottom
-          },
-          scrollTop: scrollTop,
-          elementTop: elementTop,
-          windowHeight: window.innerHeight,
-          computedDisplay: window.getComputedStyle(element).display,
-          computedVisibility: window.getComputedStyle(element).visibility,
-          offsetParent: element.offsetParent?.tagName || 'none',
-          offsetTop: element.offsetTop
-        })
-
-        // 要素の高さが0で表示されていない場合はまだレンダリングされていない可能性がある
-        if (rect.height === 0 && window.getComputedStyle(element).display !== 'none' && attempts < maxAttempts) {
-          console.log(`Element ${id} has height 0, retrying...`)
-          setTimeout(tryScroll, 100)
-          return
-        }
-
-        // 要素の位置が取得できた場合のみスクロール
-        if (elementTop > 0 || rect.top !== 0) {
-          // ヘッダー分のオフセット（80px）を考慮
-          const targetPosition = elementTop - 80
-
-          console.log(`Scrolling to ${id} at position ${targetPosition}`)
-
-          window.scrollTo({
-            top: Math.max(0, targetPosition),
-            behavior: 'smooth'
-          })
-        } else if (attempts < maxAttempts) {
-          // 位置が0の場合はリトライ
-          console.log(`Position is 0, retrying...`)
-          setTimeout(tryScroll, 100)
-        } else {
-          console.error(`Failed to get valid position for ${id} after ${maxAttempts} attempts`)
-          console.error('Final element state:', {
-            element: element,
-            innerHTML: element.innerHTML.substring(0, 100),
-            parentElement: element.parentElement?.tagName,
-            nextSibling: element.nextSibling,
-            previousSibling: element.previousSibling
-          })
-        }
+      let element: HTMLElement | null = null
+      for (const method of methods) {
+        element = method() as HTMLElement
+        if (element) break
       }
 
-      // 初回実行を少し遅らせる（DOMの準備を待つ）
-      setTimeout(tryScroll, 50)
+      if (!element) {
+        console.error(`Element ${id} not found`)
+        return
+      }
+
+      console.log(`Found element ${id}`, {
+        element: element.tagName,
+        id: element.id,
+        offsetTop: element.offsetTop,
+        scrollHeight: element.scrollHeight,
+        clientHeight: element.clientHeight
+      })
+
+      // 複数の方法で位置を取得
+      let targetPosition = 0
+
+      // 方法1: offsetTop を使用
+      if (element.offsetTop > 0) {
+        targetPosition = element.offsetTop - 100
+        console.log(`Using offsetTop: ${targetPosition}`)
+      }
+      // 方法2: getBoundingClientRect を使用
+      else {
+        const rect = element.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        targetPosition = rect.top + scrollTop - 100
+        console.log(`Using getBoundingClientRect: ${targetPosition}`)
+      }
+
+      // スクロール実行
+      if (targetPosition > 0) {
+        window.scrollTo({
+          top: Math.max(0, targetPosition),
+          behavior: 'smooth'
+        })
+        console.log(`Scrolled to position: ${targetPosition}`)
+      } else {
+        // 位置が0の場合、要素を表示可能にしてからスクロール
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // ヘッダー分のオフセット調整
+        setTimeout(() => {
+          window.scrollBy(0, -100)
+        }, 100)
+        console.log('Used scrollIntoView as fallback')
+      }
     }
 
     // ページロード時のハッシュ処理
     const handleInitialHash = () => {
       if (window.location.hash) {
         const id = window.location.hash.substring(1)
-        // ページロード完了後に実行
-        setTimeout(() => scrollToElement(id), 1000)
+        // 少し待ってから実行
+        setTimeout(() => scrollToElement(id), 100)
       }
     }
 
@@ -122,7 +117,7 @@ export default function AnchorNav() {
     return () => {
       document.removeEventListener('click', handleAnchorClick)
     }
-  }, [])
+  }, [isReady])
 
   return null
 }
