@@ -16,6 +16,13 @@ export default function AnchorNav() {
 
         if (!element) {
           console.log(`Attempt ${attempts}: Element ${id} not found`)
+
+          // 全てのIDを持つ要素を表示（デバッグ用）
+          if (attempts === 1) {
+            const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+            console.log('All element IDs on page:', allIds)
+          }
+
           if (attempts < maxAttempts) {
             setTimeout(tryScroll, 100)
           }
@@ -28,17 +35,25 @@ export default function AnchorNav() {
         const elementTop = rect.top + scrollTop
 
         console.log(`Attempt ${attempts}: Element ${id} found`, {
+          element: element.tagName,
+          id: element.id,
           rect: {
             top: rect.top,
-            height: rect.height
+            height: rect.height,
+            bottom: rect.bottom
           },
           scrollTop: scrollTop,
           elementTop: elementTop,
-          windowHeight: window.innerHeight
+          windowHeight: window.innerHeight,
+          computedDisplay: window.getComputedStyle(element).display,
+          computedVisibility: window.getComputedStyle(element).visibility,
+          offsetParent: element.offsetParent?.tagName || 'none',
+          offsetTop: element.offsetTop
         })
 
-        // 要素の高さが0の場合はまだレンダリングされていない可能性がある
-        if (rect.height === 0 && attempts < maxAttempts) {
+        // 要素の高さが0で表示されていない場合はまだレンダリングされていない可能性がある
+        if (rect.height === 0 && window.getComputedStyle(element).display !== 'none' && attempts < maxAttempts) {
+          console.log(`Element ${id} has height 0, retrying...`)
           setTimeout(tryScroll, 100)
           return
         }
@@ -60,6 +75,13 @@ export default function AnchorNav() {
           setTimeout(tryScroll, 100)
         } else {
           console.error(`Failed to get valid position for ${id} after ${maxAttempts} attempts`)
+          console.error('Final element state:', {
+            element: element,
+            innerHTML: element.innerHTML.substring(0, 100),
+            parentElement: element.parentElement?.tagName,
+            nextSibling: element.nextSibling,
+            previousSibling: element.previousSibling
+          })
         }
       }
 
