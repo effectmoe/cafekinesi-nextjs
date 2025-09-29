@@ -109,6 +109,9 @@
   .album-light-gray {
     background: hsl(0 0% 91%); /* HSL値で正確に一致 */
   }
+  .album-pink {
+    background: hsl(340 20% 88%); /* ピンク - 同じトーンで追加 */
+  }
 
   /* Transitions for interactions */
   .album-card {

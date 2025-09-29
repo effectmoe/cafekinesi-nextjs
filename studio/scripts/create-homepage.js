@@ -69,7 +69,7 @@ const homepageData = {
       _type: 'categoryCard',
       titleJp: 'メンバー',
       titleEn: 'Member',
-      colorScheme: 'album-light-gray',
+      colorScheme: 'album-pink',
       link: '#',
       displayOrder: 6,
     },

@@ -102,7 +102,8 @@ export default defineType({
           { title: 'ブルーグレー', value: 'album-blue-gray' },
           { title: 'ライトグレー', value: 'album-light-gray' },
           { title: 'パープル', value: 'album-purple' },
-          { title: 'ティール', value: 'album-teal' }
+          { title: 'ティール', value: 'album-teal' },
+          { title: 'ピンク', value: 'album-pink' }
         ],
         layout: 'radio'
       },
