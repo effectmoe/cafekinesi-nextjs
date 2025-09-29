@@ -110,8 +110,8 @@ export default async function HomePage() {
           <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {homepage.categoryCards?.map((card, index) => {
-                // ローカル画像のマッピング
-                const imageMap: { [key: string]: string } = {
+                // Sanityの画像を使用、ない場合はローカル画像にフォールバック
+                const fallbackImageMap: { [key: string]: string } = {
                   'カフェキネシについて': '/images/about.webp',
                   'スクール': '/images/school.webp',
                   'インストラクター': '/images/instructor.webp',
@@ -119,14 +119,18 @@ export default async function HomePage() {
                   'アロマ': '/images/aroma.webp',
                   'メンバー': '/images/member.webp'
                 }
-                const imageSrc = imageMap[card.titleJa] || '/images/placeholder.svg'
+
+                // Sanityの画像があれば使用、なければフォールバック
+                const imageSrc = card.image
+                  ? urlForImage(card.image)?.url() || fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
+                  : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
                 return card.isActive ? (
                   <Link key={index} className="block" href={card.link}>
                     <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer`}>
                       <div className="aspect-square relative mb-6">
                         <Image
-                          alt={`${card.titleJa || ''}`}
+                          alt={card.image?.alt || card.titleJa || ''}
                           src={imageSrc}
                           fill
                           className="object-cover"
@@ -143,7 +147,7 @@ export default async function HomePage() {
                   <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
                     <div className="aspect-square relative mb-6">
                       <Image
-                        alt={`${card.titleJa || ''}`}
+                        alt={card.image?.alt || card.titleJa || ''}
                         src={imageSrc}
                         fill
                         className="object-cover"
