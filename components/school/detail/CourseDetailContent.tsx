@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { CourseDetail } from '@/lib/types/course'
 
 interface CourseDetailContentProps {
@@ -10,46 +9,6 @@ interface CourseDetailContentProps {
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
-
-  // デバッグ：ページロード時の要素確認
-  useEffect(() => {
-    console.log('=== ページロード時のデバッグ ===')
-    console.log('現在のURL:', window.location.href)
-    console.log('現在のハッシュ:', window.location.hash)
-    console.log('初期スクロール位置:', window.scrollY)
-
-    // 全セクションの位置を確認
-    setTimeout(() => {
-      console.log('\n=== 全セクションの位置情報 ===')
-      sections.forEach(section => {
-        const element = document.getElementById(section.id)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          console.log(`[${section.id}]:`, {
-            'タグ': element.tagName,
-            'クラス': element.className,
-            'offsetTop': element.offsetTop,
-            'scrollHeight': element.scrollHeight,
-            'clientHeight': element.clientHeight,
-            '画面からの位置': rect.top,
-            '絶対位置': rect.top + window.scrollY
-          })
-        }
-      })
-
-      // effectsセクションも確認
-      const effectsEl = document.getElementById('effects')
-      if (effectsEl) {
-        const rect = effectsEl.getBoundingClientRect()
-        console.log('[effects]:', {
-          'タグ': effectsEl.tagName,
-          'クラス': effectsEl.className,
-          '絶対位置': rect.top + window.scrollY
-        })
-      }
-      console.log('=== デバッグ終了 ===')
-    }, 2000) // 2秒待機に変更
-  }, [sections])
 
   return (
     <div className="space-y-8">
@@ -64,40 +23,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href={`#${section.id}`}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    console.log(`\n=== クリック: ${section.id} ===`)
-                    const element = document.getElementById(section.id)
-                    if (element) {
-                      const beforeRect = element.getBoundingClientRect()
-                      const beforeScrollY = window.scrollY
-
-                      console.log('クリック前:', {
-                        'タグ名': element.tagName,
-                        'クラス': element.className,
-                        '現在のスクロール位置': beforeScrollY,
-                        '要素の画面上の位置': beforeRect.top,
-                        '要素の絶対位置': beforeRect.top + beforeScrollY
-                      })
-
-                      // scrollIntoViewを使用
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-
-                      // スクロール後の確認
-                      setTimeout(() => {
-                        const afterRect = element.getBoundingClientRect()
-                        const afterScrollY = window.scrollY
-                        console.log('スクロール後:', {
-                          'スクロール位置': afterScrollY,
-                          '要素の画面上の位置': afterRect.top,
-                          'スクロール移動量': afterScrollY - beforeScrollY,
-                          '成功': Math.abs(afterRect.top) < 10 ? '○' : '×'
-                        })
-                      }, 1000)
-                    } else {
-                      console.error(`要素が見つかりません: ${section.id}`)
-                    }
-                  }}
                 >
                   {section.title}
                 </a>
@@ -110,26 +35,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <a
                   href="#effects"
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    console.log('\n=== クリック: effects ===')
-                    const element = document.getElementById('effects')
-                    if (element) {
-                      console.log('effects要素情報（修正版）:', {
-                        'タグ名': element.tagName,
-                        '現在のスクロール位置': window.scrollY,
-                        'getBoundingClientRect.top': element.getBoundingClientRect().top
-                      })
-
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-
-                      setTimeout(() => {
-                        console.log('スクロール後の位置:', window.scrollY)
-                      }, 1000)
-                    } else {
-                      console.error('effects要素が見つかりません')
-                    }
-                  }}
                 >
                   受講後の効果
                 </a>

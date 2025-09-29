@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import CourseDetailContent from '@/components/school/detail/CourseDetailContent'
 import CourseDetailSidebar from '@/components/school/detail/CourseDetailSidebar'
+import AnchorNav from '@/components/school/detail/AnchorNav'
 import { courseDetailDataMap } from '@/components/school/detail/CourseDetailData'
 import { defaultCoursesData } from '@/components/school/CourseData'
 import { CourseDetail } from '@/lib/types/course'
@@ -170,6 +171,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
         {/* メインコンテンツエリア */}
         <div className="max-w-6xl mx-auto px-6 pb-12">
+          <AnchorNav />
           {/* モバイル専用レイアウト（縦積み） */}
           <div className="lg:hidden">
             <div className="space-y-8">
