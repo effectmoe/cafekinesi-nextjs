@@ -12,11 +12,17 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault()
+    console.log(`Anchor clicked: #${targetId}`)
+
     const element = document.getElementById(targetId)
     if (element) {
+      console.log(`Found element: ${targetId}`)
       const yOffset = -100
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      console.log(`Scrolling to position: ${y}`)
       window.scrollTo({ top: y, behavior: 'smooth' })
+    } else {
+      console.error(`Element not found: ${targetId}`)
     }
   }
 
