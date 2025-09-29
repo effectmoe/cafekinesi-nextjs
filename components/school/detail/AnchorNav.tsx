@@ -10,8 +10,19 @@ export default function AnchorNav() {
 
       if (!element) {
         console.error(`Element with id "${id}" not found`)
+        // すべてのIDを表示
+        const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+        console.log('Available IDs on page:', allIds)
         return
       }
+
+      console.log(`Found element ${id}:`, {
+        element: element.tagName,
+        offsetTop: element.offsetTop,
+        scrollHeight: element.scrollHeight,
+        clientHeight: element.clientHeight,
+        innerHTML: element.innerHTML.substring(0, 100)
+      })
 
       // 要素の位置を直接取得して移動
       element.scrollIntoView({
@@ -22,6 +33,7 @@ export default function AnchorNav() {
       // ヘッダー分のオフセット調整（80px）
       setTimeout(() => {
         const currentScroll = window.pageYOffset || document.documentElement.scrollTop
+        console.log(`Adjusting scroll position from ${currentScroll} to ${currentScroll - 80}`)
         window.scrollTo({
           top: currentScroll - 80,
           behavior: 'smooth'
