@@ -16,7 +16,7 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     baseUrl = 'https://cafekinesi-nextjs.vercel.app',
     previewSecret,
     urlPatterns = {},
-    enabledTypes = ['blogPost', 'page', 'homepage', 'album'],
+    enabledTypes = ['blogPost', 'page', 'homepage', 'album', 'course'],
     previewMode = 'tab'
   } = config
 
@@ -25,7 +25,8 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     blogPost: (doc) => `/blog/${doc.slug?.current || ''}`,
     page: (doc) => doc.slug?.current === 'home' ? '/' : `/${doc.slug?.current || ''}`,
     homepage: () => '/',
-    album: (doc) => `/albums/${doc.slug?.current || ''}`
+    album: (doc) => `/albums/${doc.slug?.current || ''}`,
+    course: (doc) => `/school/${doc.courseId || ''}`
   }
 
   const finalUrlPatterns = { ...defaultUrlPatterns, ...urlPatterns }

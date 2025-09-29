@@ -6,6 +6,33 @@ export default defineType({
   title: '講座',
   type: 'document',
   icon: BookOpen,
+  groups: [
+    {
+      name: 'basic',
+      title: '基本情報',
+      default: true,
+    },
+    {
+      name: 'details',
+      title: '詳細情報',
+    },
+    {
+      name: 'content',
+      title: 'コンテンツ',
+    },
+    {
+      name: 'pricing',
+      title: '料金・時間',
+    },
+    {
+      name: 'media',
+      title: 'メディア',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     defineField({
       name: 'courseId',
@@ -13,6 +40,7 @@ export default defineType({
       type: 'string',
       description: 'URLに使用される識別子（例：kinesi1, peach-touch）',
       validation: (Rule) => Rule.required(),
+      group: 'basic',
     }),
     defineField({
       name: 'title',
@@ -20,6 +48,7 @@ export default defineType({
       type: 'string',
       description: '例：カフェキネシⅠ',
       validation: (Rule) => Rule.required(),
+      group: 'basic',
     }),
     defineField({
       name: 'subtitle',
@@ -27,6 +56,7 @@ export default defineType({
       type: 'string',
       description: '例：基礎セラピー講座',
       validation: (Rule) => Rule.required(),
+      group: 'basic',
     }),
     defineField({
       name: 'description',
@@ -34,6 +64,7 @@ export default defineType({
       type: 'text',
       rows: 3,
       validation: (Rule) => Rule.required(),
+      group: 'basic',
     }),
     defineField({
       name: 'features',
@@ -42,6 +73,7 @@ export default defineType({
       of: [{ type: 'string' }],
       description: '講座の主な特徴をリスト形式で入力',
       validation: (Rule) => Rule.required().min(3),
+      group: 'basic',
     }),
     defineField({
       name: 'image',
@@ -58,6 +90,7 @@ export default defineType({
           validation: (Rule) => Rule.required(),
         }),
       ],
+      group: 'media',
     }),
     defineField({
       name: 'backgroundClass',
@@ -73,6 +106,7 @@ export default defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+      group: 'basic',
     }),
     defineField({
       name: 'recommendations',
@@ -80,6 +114,7 @@ export default defineType({
       type: 'array',
       of: [{ type: 'string' }],
       description: '受講を推奨する対象者',
+      group: 'details',
     }),
     defineField({
       name: 'effects',
@@ -87,6 +122,7 @@ export default defineType({
       type: 'array',
       of: [{ type: 'string' }],
       description: '受講後に期待できる効果',
+      group: 'details',
     }),
     defineField({
       name: 'order',
@@ -94,6 +130,7 @@ export default defineType({
       type: 'number',
       description: '講座の表示順序（小さい番号が上に表示）',
       validation: (Rule) => Rule.required().min(0),
+      group: 'basic',
     }),
     defineField({
       name: 'isActive',
@@ -101,6 +138,7 @@ export default defineType({
       type: 'boolean',
       initialValue: true,
       description: 'チェックを外すと非公開になります',
+      group: 'basic',
     }),
     defineField({
       name: 'price',
@@ -125,6 +163,7 @@ export default defineType({
           description: '例：税込、教材費込み',
         }),
       ],
+      group: 'pricing',
     }),
     defineField({
       name: 'duration',
@@ -148,18 +187,21 @@ export default defineType({
           description: '例：全6回、1回3時間',
         }),
       ],
+      group: 'pricing',
     }),
     defineField({
       name: 'prerequisites',
       title: '受講条件',
       type: 'text',
       description: '受講に必要な前提条件がある場合に記入',
+      group: 'details',
     }),
     defineField({
       name: 'applicationLink',
       title: '申込リンク',
       type: 'url',
       description: '外部の申込フォームがある場合のURL',
+      group: 'details',
     }),
     // 講座詳細ページ用フィールド
     defineField({
@@ -168,6 +210,7 @@ export default defineType({
       type: 'array',
       of: [{ type: 'string' }],
       description: '詳細ページの目次項目',
+      group: 'content',
     }),
     defineField({
       name: 'sections',
@@ -215,6 +258,7 @@ export default defineType({
         }),
       ],
       description: '詳細ページで表示するセクション',
+      group: 'content',
     }),
     defineField({
       name: 'gallery',
@@ -239,6 +283,7 @@ export default defineType({
         }),
       ],
       description: '詳細ページで表示する追加画像',
+      group: 'media',
     }),
     defineField({
       name: 'instructorInfo',
@@ -278,6 +323,7 @@ export default defineType({
         }),
       ],
       description: '詳細ページで表示するインストラクター情報',
+      group: 'details',
     }),
     defineField({
       name: 'relatedCourses',
@@ -292,11 +338,13 @@ export default defineType({
         }),
       ],
       description: '詳細ページで推奨する関連講座',
+      group: 'details',
     }),
     defineField({
       name: 'seo',
       title: 'SEO設定',
       type: 'seo',
+      group: 'seo',
     }),
   ],
   preview: {

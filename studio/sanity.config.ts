@@ -45,7 +45,7 @@ export default defineConfig({
           ? 'https://cafekinesi-nextjs.vercel.app'
           : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
         previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
-        enabledTypes: ['blogPost', 'page', 'homepage', 'album'],
+        enabledTypes: ['blogPost', 'page', 'homepage', 'album', 'course'],
         previewMode: 'tab'
       }),
     ]
@@ -82,6 +82,10 @@ export default defineConfig({
           {
             route: '/albums/:slug',
             filter: '_type == "album" && slug.current == $slug',
+          },
+          {
+            route: '/school/:courseId',
+            filter: '_type == "course" && courseId == $courseId',
           },
         ],
         locations: {
@@ -136,6 +140,20 @@ export default defineConfig({
                 {
                   title: doc?.title || 'Untitled Album',
                   href: doc?.slug ? `/albums/${doc.slug}` : '/albums',
+                },
+              ],
+            }),
+          },
+          course: {
+            select: {
+              title: 'title',
+              courseId: 'courseId',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled Course',
+                  href: doc?.courseId ? `/school/${doc.courseId}` : '/school',
                 },
               ],
             }),
