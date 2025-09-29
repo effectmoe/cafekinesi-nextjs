@@ -48,15 +48,13 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <div key={section.id} className="scroll-mt-20">
-              <div id={section.id} className="border-l-4 border-gray-300 pl-6 min-h-[200px]">
+            <div key={section.id} id={section.id} className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
                   {section.content}
                 </div>
-              </div>
             </div>
           ))}
         </div>
@@ -73,8 +71,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <div className="scroll-mt-20">
-          <div id="effects" className="border-l-4 border-gray-300 pl-6 min-h-[200px]">
+        <div id="effects" className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
             <h2 className="text-xl font-semibold mb-4 text-gray-900">
               受講後の効果
             </h2>
@@ -86,7 +83,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </li>
               ))}
             </ul>
-          </div>
         </div>
       )}
 

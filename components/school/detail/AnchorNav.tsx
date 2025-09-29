@@ -7,35 +7,38 @@ export default function AnchorNav() {
     console.log('AnchorNav mounted')
 
     const handleClick = (e: MouseEvent) => {
-      // href="#xxx"のリンクを探す
       const target = e.target as HTMLElement
       const link = target.closest('a')
 
-      console.log('Click detected:', { target: target.tagName, link: link?.getAttribute('href') })
-
       if (link && link.getAttribute('href')?.startsWith('#')) {
         e.preventDefault()
-        console.log('Anchor link clicked:', link.getAttribute('href'))
 
         const id = link.getAttribute('href')!.slice(1)
-        const element = document.getElementById(id)
+        console.log(`Anchor link clicked: #${id}`)
 
-        if (element) {
-          console.log(`Found element with id="${id}"`)
-          // 要素の位置を取得
-          const rect = element.getBoundingClientRect()
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-          const targetPosition = rect.top + scrollTop - 100
+        // 少し遅延を入れて要素を探す
+        setTimeout(() => {
+          const element = document.getElementById(id)
 
-          console.log(`Scrolling to position: ${targetPosition}`)
-          // ヘッダーの高さ分（100px）オフセット
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          })
-        } else {
-          console.error(`Element with id="${id}" not found`)
-        }
+          if (element) {
+            console.log(`Found element with id="${id}"`)
+
+            // 要素の位置を計算
+            const rect = element.getBoundingClientRect()
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+            const targetPosition = rect.top + scrollTop - 100 // ヘッダー分のオフセット
+
+            console.log(`Element position - top: ${rect.top}, scrollTop: ${scrollTop}, targetPosition: ${targetPosition}`)
+
+            // スムーズスクロール
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            })
+          } else {
+            console.error(`Element with id="${id}" not found`)
+          }
+        }, 0)
       }
     }
 
