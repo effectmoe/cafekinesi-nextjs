@@ -40,39 +40,56 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     e.preventDefault()
     console.log(`Anchor clicked: #${targetId}`)
 
-    // 少し遅延を入れて要素を確実に取得
-    setTimeout(() => {
-      const element = document.getElementById(targetId)
-      if (element) {
+    // Next.jsのレンダリングを待つために複数のフレームを待機
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const element = document.getElementById(targetId)
+        if (!element) {
+          console.error(`Element not found: ${targetId}`)
+          const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+          console.log('Available IDs on page:', allIds)
+          return
+        }
+
         console.log(`Found element: ${targetId}`)
 
-        // 要素の絶対位置を取得
-        const rect = element.getBoundingClientRect()
-        const absoluteTop = window.pageYOffset + rect.top
-        const scrollTo = absoluteTop - 100 // ヘッダーのオフセット
+        // 要素が完全にレンダリングされるまで待つ
+        const checkAndScroll = () => {
+          const rect = element.getBoundingClientRect()
 
-        console.log('Debug info:', {
-          rectTop: rect.top,
-          pageYOffset: window.pageYOffset,
-          absoluteTop: absoluteTop,
-          scrollTo: scrollTo,
-          elementHeight: rect.height
-        })
+          // 要素の高さが0の場合は、まだレンダリングされていない
+          if (rect.height === 0) {
+            console.log('Element has no height yet, waiting...')
+            requestAnimationFrame(checkAndScroll)
+            return
+          }
 
-        window.scrollTo({
-          top: scrollTo,
-          behavior: 'smooth'
-        })
+          // 要素の位置を計算
+          const absoluteTop = window.pageYOffset + rect.top
+          const scrollTo = Math.max(0, absoluteTop - 100) // ヘッダーのオフセット（負の値にならないように）
 
-        // URLにハッシュを追加（ブラウザの履歴に記録）
-        window.history.pushState(null, '', `#${targetId}`)
-      } else {
-        console.error(`Element not found: ${targetId}`)
-        // デバッグ用：ページ上のすべてのIDを表示
-        const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
-        console.log('Available IDs on page:', allIds)
-      }
-    }, 10)
+          console.log('Debug info:', {
+            element: element.tagName,
+            id: element.id,
+            rectTop: rect.top,
+            rectHeight: rect.height,
+            pageYOffset: window.pageYOffset,
+            absoluteTop: absoluteTop,
+            scrollTo: scrollTo
+          })
+
+          window.scrollTo({
+            top: scrollTo,
+            behavior: 'smooth'
+          })
+
+          // URLにハッシュを追加（ブラウザの履歴に記録）
+          window.history.pushState(null, '', `#${targetId}`)
+        }
+
+        checkAndScroll()
+      })
+    })
   }
 
   return (
