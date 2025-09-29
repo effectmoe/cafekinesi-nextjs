@@ -16,7 +16,7 @@ export default function CourseList({ courses, title = '講座一覧' }: CourseLi
         {courses.map((course, index) => (
           <Link
             key={course._id || course.courseId}
-            href={`#${course.courseId}`}
+            href={`/school/${course.courseId}`}
             className="flex items-center space-x-3 p-3 rounded-md hover:bg-[hsl(var(--background))] transition-colors"
           >
             <span className="text-xs text-[hsl(var(--text-muted))] w-6">

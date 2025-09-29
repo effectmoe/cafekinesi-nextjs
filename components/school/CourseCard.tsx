@@ -48,14 +48,16 @@ export default function CourseCard({ course }: CourseCardProps) {
           </div>
 
           {/* 講座タイトル */}
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-            {course.title}
-          </h2>
+          <Link href={`/school/${course.courseId}`} className="inline-block hover:opacity-80 transition-opacity">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {course.title}
+            </h2>
 
-          {/* サブタイトル */}
-          <h3 className="text-sm md:text-base text-gray-700 mb-3">
-            {course.subtitle}
-          </h3>
+            {/* サブタイトル */}
+            <h3 className="text-sm md:text-base text-gray-700 mb-3">
+              {course.subtitle}
+            </h3>
+          </Link>
 
           {/* 説明文 */}
           {course.description && (
