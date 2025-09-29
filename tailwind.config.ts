@@ -6,6 +6,14 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'album-beige',
+    'album-blue-gray',
+    'album-light-gray',
+    'album-purple',
+    'album-teal',
+    'album-pink',
+  ],
   theme: {
     extend: {
       fontFamily: {
