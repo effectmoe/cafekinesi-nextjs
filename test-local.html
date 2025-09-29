@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>アンカーリンクテスト</title>
+</head>
+<body>
+  <script>
+    // ローカルサーバーでテスト
+    fetch('http://localhost:3000/school/peach-touch')
+      .then(res => res.text())
+      .then(html => {
+        console.log('ページが取得できました');
+
+        // HTMLからアンカーリンクを探す
+        const matches = html.match(/href="#[^"]+"/g);
+        if (matches) {
+          console.log('見つかったアンカーリンク:', matches);
+        }
+
+        // IDを持つ要素を探す
+        const idMatches = html.match(/id="[^"]+"/g);
+        if (idMatches) {
+          console.log('見つかったID:', idMatches.slice(0, 10));
+        }
+      })
+      .catch(err => {
+        console.error('エラー:', err);
+        console.log('ブラウザで直接 http://localhost:3000/school/peach-touch を開いてください');
+      });
+  </script>
+
+  <h1>アンカーリンクテスト</h1>
+  <p>ブラウザで http://localhost:3000/school/peach-touch を開いて、コンソールを確認してください。</p>
+  <p>目次のリンクをクリックすると、以下のログが表示されるはずです：</p>
+  <ul>
+    <li>AnchorNav mounted</li>
+    <li>Click detected: ...</li>
+    <li>Anchor link clicked: #xxx</li>
+    <li>Found element with id="xxx"</li>
+    <li>Scrolling to position: xxx</li>
+  </ul>
+</body>
+</html>
