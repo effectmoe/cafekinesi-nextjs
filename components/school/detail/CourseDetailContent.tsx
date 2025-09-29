@@ -10,11 +10,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
 
-  // デバッグ：実際のセクションIDを確認
-  if (typeof window !== 'undefined') {
-    console.log('CourseDetailContent sections:', sections.map(s => ({ id: s.id, title: s.title })))
-  }
-
   return (
     <div className="space-y-8">
       {/* 目次セクション */}
