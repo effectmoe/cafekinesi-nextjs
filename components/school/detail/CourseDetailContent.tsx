@@ -42,37 +42,46 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
     // 少し待ってから処理
     setTimeout(() => {
-      const element = document.getElementById(targetId)
-      if (!element) {
-        console.error(`Element not found: ${targetId}`)
-        const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
-        console.log('Available IDs on page:', allIds)
+      // 同じIDを持つすべての要素を取得
+      const elements = document.querySelectorAll(`#${targetId}`)
+      console.log(`Found ${elements.length} elements with id="${targetId}"`)
+
+      // 表示されている要素を探す
+      let visibleElement: Element | null = null
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect()
+        const style = window.getComputedStyle(el)
+        console.log(`Element check:`, {
+          id: targetId,
+          display: style.display,
+          visibility: style.visibility,
+          height: rect.height,
+          offsetParent: (el as HTMLElement).offsetParent !== null
+        })
+
+        // 要素が表示されているかチェック
+        if (style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            rect.height > 0) {
+          visibleElement = el
+        }
+      })
+
+      if (!visibleElement) {
+        console.error(`No visible element found with id: ${targetId}`)
         return
       }
 
-      console.log(`Found element: ${targetId}`)
-      console.log('Element details:', {
-        tagName: element.tagName,
-        className: element.className,
-        innerHTML: element.innerHTML.substring(0, 100) + '...',
-        offsetHeight: element.offsetHeight,
-        clientHeight: element.clientHeight,
-        scrollHeight: element.scrollHeight,
-        style: window.getComputedStyle(element).display
-      })
+      console.log(`Using visible element: ${targetId}`)
 
-      // 要素自体の位置を取得
-      const rect = element.getBoundingClientRect()
+      // 要素の位置を取得
+      const rect = visibleElement.getBoundingClientRect()
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
       // スクロール位置を計算（ヘッダーの高さを考慮）
       const targetPosition = rect.top + scrollTop - 100
 
-      console.log('Scroll calculation:', {
-        rectTop: rect.top,
-        scrollTop: scrollTop,
-        targetPosition: targetPosition
-      })
+      console.log('Scroll to position:', targetPosition)
 
       // スクロール実行
       window.scrollTo({
