@@ -185,4 +185,9 @@
     scroll-behavior: smooth;
     scroll-padding-top: 6rem; /* ヘッダー分のオフセット */
   }
+
+  /* アンカーリンクの対象要素に固定ヘッダー分のマージンを追加 */
+  [id] {
+    scroll-margin-top: 100px;
+  }
 }

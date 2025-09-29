@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アンカーリンクテスト</title>
+  <style>
+    body { padding: 20px; }
+    .section { height: 800px; border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+    .toc { position: fixed; right: 20px; top: 20px; background: white; border: 1px solid #ddd; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="toc">
+    <h3>目次</h3>
+    <ul>
+      <li><a href="#about">講座について</a></li>
+      <li><a href="#certification">認定について</a></li>
+      <li><a href="#recommended">こんな方におすすめ</a></li>
+      <li><a href="#instructor-course-about">インストラクター認定講座について</a></li>
+      <li><a href="#instructor-details">インストラクター認定講座の詳細</a></li>
+      <li><a href="#effects">受講後の効果</a></li>
+    </ul>
+  </div>
+
+  <div id="about" class="section">
+    <h2>講座について</h2>
+    <p>セクション1の内容</p>
+  </div>
+
+  <div id="certification" class="section">
+    <h2>認定について</h2>
+    <p>セクション2の内容</p>
+  </div>
+
+  <div id="recommended" class="section">
+    <h2>こんな方におすすめ</h2>
+    <p>セクション3の内容</p>
+  </div>
+
+  <div id="instructor-course-about" class="section">
+    <h2>インストラクター認定講座について</h2>
+    <p>セクション4の内容</p>
+  </div>
+
+  <div id="instructor-details" class="section">
+    <h2>インストラクター認定講座の詳細</h2>
+    <p>セクション5の内容</p>
+  </div>
+
+  <div id="effects" class="section">
+    <h2>受講後の効果</h2>
+    <p>セクション6の内容</p>
+  </div>
+
+  <script>
+    // AnchorNavと同じロジック
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      const link = target.closest('a[href^="#"]');
+
+      if (link) {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const id = href.substring(1);
+          console.log(`Anchor clicked: ${id}`);
+
+          setTimeout(() => {
+            const element = document.getElementById(id);
+            if (element) {
+              console.log(`Scrolling to element: ${id}`);
+              const yOffset = -100;
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            } else {
+              console.error(`Element not found: ${id}`);
+            }
+          }, 100);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
