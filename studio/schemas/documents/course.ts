@@ -98,14 +98,13 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'ベージュ (album-beige)', value: 'album-beige' },
-          { title: 'ブルーグレー (album-blue-gray)', value: 'album-blue-gray' },
-          { title: 'ライトグレー (album-light-gray)', value: 'album-light-gray' },
-          { title: 'パープル (album-purple)', value: 'album-purple' },
-          { title: 'ティール (album-teal)', value: 'album-teal' },
-          { title: 'オレンジ (album-orange)', value: 'album-orange' }
+          { title: 'ベージュ', value: 'album-beige' },
+          { title: 'ブルーグレー', value: 'album-blue-gray' },
+          { title: 'ライトグレー', value: 'album-light-gray' },
+          { title: 'パープル', value: 'album-purple' },
+          { title: 'ティール', value: 'album-teal' }
         ],
-        layout: 'dropdown'
+        layout: 'radio'
       },
       validation: (Rule) => Rule.required().error('カラーテーマを選択してください'),
       description: '講座カードの背景色を設定します',
