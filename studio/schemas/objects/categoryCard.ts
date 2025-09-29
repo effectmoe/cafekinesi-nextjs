@@ -44,7 +44,8 @@ export default defineType({
           { title: 'ブルーグレー (album-blue-gray)', value: 'album-blue-gray' },
           { title: 'ライトグレー (album-light-gray)', value: 'album-light-gray' },
           { title: 'パープル (album-purple)', value: 'album-purple' },
-          { title: 'ティール (album-teal)', value: 'album-teal' }
+          { title: 'ティール (album-teal)', value: 'album-teal' },
+          { title: 'オレンジ (album-orange)', value: 'album-orange' }
         ],
         layout: 'dropdown'
       },
