@@ -6,7 +6,7 @@ export interface CategoryCard {
   image: SanityImageObject & {
     alt: string
   }
-  colorScheme: 'album-beige' | 'album-blue-gray' | 'album-light-gray' | 'album-purple' | 'album-teal'
+  colorScheme: 'album-beige' | 'album-blue-gray' | 'album-light-gray' | 'album-purple' | 'album-teal' | 'album-pink'
   link: string
   isActive: boolean
   order: number
