@@ -94,21 +94,20 @@ export default defineType({
     }),
     defineField({
       name: 'backgroundClass',
-      title: '背景色クラス',
+      title: 'カラーテーマ',
       type: 'string',
       options: {
         list: [
-          { title: 'ベージュ', value: 'album-beige' },
-          { title: 'ブルーグレー', value: 'album-blue-gray' },
-          { title: 'パープル', value: 'album-purple' },
-          { title: 'ティール', value: 'album-teal' },
-          { title: 'ライトグレー', value: 'album-light-gray' },
-          { title: 'ピンク〜オレンジ グラデーション', value: 'bg-gradient-to-br from-pink-50 to-orange-50' },
-          { title: 'ブルー〜グリーン グラデーション', value: 'bg-gradient-to-br from-blue-50 to-green-50' },
-          { title: 'イエロー〜ピンク グラデーション', value: 'bg-gradient-to-br from-yellow-50 to-pink-50' },
+          { title: 'ベージュ (album-beige)', value: 'album-beige' },
+          { title: 'ブルーグレー (album-blue-gray)', value: 'album-blue-gray' },
+          { title: 'ライトグレー (album-light-gray)', value: 'album-light-gray' },
+          { title: 'パープル (album-purple)', value: 'album-purple' },
+          { title: 'ティール (album-teal)', value: 'album-teal' }
         ],
+        layout: 'dropdown'
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().error('カラーテーマを選択してください'),
+      description: '講座カードの背景色を設定します',
       group: 'basic',
     }),
     defineField({

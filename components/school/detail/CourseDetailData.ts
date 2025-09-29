@@ -175,7 +175,7 @@ export const peachTouchDetailData: Omit<CourseDetail, '_id'> = {
     },
     alt: 'ピーチタッチ認定インストラクター講座'
   },
-  backgroundClass: 'bg-gradient-to-br from-pink-50 to-orange-50',
+  backgroundClass: 'album-beige',
   recommendations: [
     '人を幸せにしたい方',
     '家族やお友達のストレスを取り除いてあげたい方',
