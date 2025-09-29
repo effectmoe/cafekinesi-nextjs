@@ -40,56 +40,49 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     e.preventDefault()
     console.log(`Anchor clicked: #${targetId}`)
 
-    // Next.jsのレンダリングを待つために複数のフレームを待機
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const element = document.getElementById(targetId)
-        if (!element) {
-          console.error(`Element not found: ${targetId}`)
-          const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
-          console.log('Available IDs on page:', allIds)
-          return
-        }
+    // 少し待ってから処理
+    setTimeout(() => {
+      const element = document.getElementById(targetId)
+      if (!element) {
+        console.error(`Element not found: ${targetId}`)
+        const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+        console.log('Available IDs on page:', allIds)
+        return
+      }
 
-        console.log(`Found element: ${targetId}`)
-
-        // 要素が完全にレンダリングされるまで待つ
-        const checkAndScroll = () => {
-          const rect = element.getBoundingClientRect()
-
-          // 要素の高さが0の場合は、まだレンダリングされていない
-          if (rect.height === 0) {
-            console.log('Element has no height yet, waiting...')
-            requestAnimationFrame(checkAndScroll)
-            return
-          }
-
-          // 要素の位置を計算
-          const absoluteTop = window.pageYOffset + rect.top
-          const scrollTo = Math.max(0, absoluteTop - 100) // ヘッダーのオフセット（負の値にならないように）
-
-          console.log('Debug info:', {
-            element: element.tagName,
-            id: element.id,
-            rectTop: rect.top,
-            rectHeight: rect.height,
-            pageYOffset: window.pageYOffset,
-            absoluteTop: absoluteTop,
-            scrollTo: scrollTo
-          })
-
-          window.scrollTo({
-            top: scrollTo,
-            behavior: 'smooth'
-          })
-
-          // URLにハッシュを追加（ブラウザの履歴に記録）
-          window.history.pushState(null, '', `#${targetId}`)
-        }
-
-        checkAndScroll()
+      console.log(`Found element: ${targetId}`)
+      console.log('Element details:', {
+        tagName: element.tagName,
+        className: element.className,
+        innerHTML: element.innerHTML.substring(0, 100) + '...',
+        offsetHeight: element.offsetHeight,
+        clientHeight: element.clientHeight,
+        scrollHeight: element.scrollHeight,
+        style: window.getComputedStyle(element).display
       })
-    })
+
+      // 要素自体の位置を取得
+      const rect = element.getBoundingClientRect()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+
+      // スクロール位置を計算（ヘッダーの高さを考慮）
+      const targetPosition = rect.top + scrollTop - 100
+
+      console.log('Scroll calculation:', {
+        rectTop: rect.top,
+        scrollTop: scrollTop,
+        targetPosition: targetPosition
+      })
+
+      // スクロール実行
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      })
+
+      // URLにハッシュを追加
+      window.history.pushState(null, '', `#${targetId}`)
+    }, 100)
   }
 
   return (
