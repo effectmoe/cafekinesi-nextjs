@@ -4,26 +4,61 @@ import { useEffect } from 'react'
 
 export default function AnchorNav() {
   useEffect(() => {
-    // 要素の絶対位置を取得する関数
-    const getElementTop = (element: HTMLElement): number => {
-      const rect = element.getBoundingClientRect()
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      return rect.top + scrollTop
+    // 要素までスクロールする関数
+    const scrollToElement = (id: string) => {
+      // 何度か試行して要素を探す
+      let attempts = 0
+      const maxAttempts = 10
+
+      const tryScroll = () => {
+        const element = document.getElementById(id)
+        if (element) {
+          // 要素の位置を複数の方法で取得
+          let top = 0
+
+          // 方法1: offsetTop を累積
+          let currentElement: HTMLElement | null = element
+          while (currentElement) {
+            top += currentElement.offsetTop
+            currentElement = currentElement.offsetParent as HTMLElement
+          }
+
+          // offsetTopが0の場合、getBoundingClientRectを使用
+          if (top === 0) {
+            const rect = element.getBoundingClientRect()
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+            top = rect.top + scrollTop
+          }
+
+          console.log(`Element ${id} found at position: ${top}`)
+
+          if (top > 0) {
+            // 正常な位置が取得できた場合のみスクロール
+            window.scrollTo({
+              top: Math.max(0, top - 100),
+              behavior: 'smooth'
+            })
+            return true
+          }
+        }
+
+        attempts++
+        if (attempts < maxAttempts) {
+          setTimeout(tryScroll, 100)
+        } else {
+          console.error(`Could not find valid position for element: ${id}`)
+        }
+        return false
+      }
+
+      tryScroll()
     }
 
     // ページロード時のハッシュ処理
     const handleInitialHash = () => {
       if (window.location.hash) {
         const id = window.location.hash.substring(1)
-        setTimeout(() => {
-          const element = document.getElementById(id)
-          if (element) {
-            console.log(`Initial hash: ${id}`)
-            const top = getElementTop(element) - 100
-            console.log(`Scrolling to: ${top}`)
-            window.scrollTo({ top, behavior: 'smooth' })
-          }
-        }, 500) // より長く待機
+        setTimeout(() => scrollToElement(id), 500)
       }
     }
 
@@ -36,14 +71,9 @@ export default function AnchorNav() {
         e.preventDefault()
         const id = link.getAttribute('href')?.substring(1)
         if (id) {
-          const element = document.getElementById(id)
-          if (element) {
-            console.log(`Clicked: ${id}`)
-            const top = getElementTop(element) - 100
-            console.log(`Element position: ${getElementTop(element)}, Scrolling to: ${top}`)
-            window.scrollTo({ top, behavior: 'smooth' })
-            window.history.pushState(null, '', `#${id}`)
-          }
+          console.log(`Clicked: ${id}`)
+          scrollToElement(id)
+          window.history.pushState(null, '', `#${id}`)
         }
       }
     }
