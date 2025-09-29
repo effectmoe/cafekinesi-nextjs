@@ -40,22 +40,39 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
     e.preventDefault()
     console.log(`Anchor clicked: #${targetId}`)
 
-    const element = document.getElementById(targetId)
-    if (element) {
-      console.log(`Found element: ${targetId}`)
-      const yOffset = -100
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      console.log(`Scrolling to position: ${y}`)
-      window.scrollTo({ top: y, behavior: 'smooth' })
+    // 少し遅延を入れて要素を確実に取得
+    setTimeout(() => {
+      const element = document.getElementById(targetId)
+      if (element) {
+        console.log(`Found element: ${targetId}`)
 
-      // URLにハッシュを追加（ブラウザの履歴に記録）
-      window.history.pushState(null, '', `#${targetId}`)
-    } else {
-      console.error(`Element not found: ${targetId}`)
-      // デバッグ用：ページ上のすべてのIDを表示
-      const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
-      console.log('Available IDs on page:', allIds)
-    }
+        // 要素の絶対位置を取得
+        const rect = element.getBoundingClientRect()
+        const absoluteTop = window.pageYOffset + rect.top
+        const scrollTo = absoluteTop - 100 // ヘッダーのオフセット
+
+        console.log('Debug info:', {
+          rectTop: rect.top,
+          pageYOffset: window.pageYOffset,
+          absoluteTop: absoluteTop,
+          scrollTo: scrollTo,
+          elementHeight: rect.height
+        })
+
+        window.scrollTo({
+          top: scrollTo,
+          behavior: 'smooth'
+        })
+
+        // URLにハッシュを追加（ブラウザの履歴に記録）
+        window.history.pushState(null, '', `#${targetId}`)
+      } else {
+        console.error(`Element not found: ${targetId}`)
+        // デバッグ用：ページ上のすべてのIDを表示
+        const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+        console.log('Available IDs on page:', allIds)
+      }
+    }, 10)
   }
 
   return (
