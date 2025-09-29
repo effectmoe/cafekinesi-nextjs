@@ -10,6 +10,16 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault()
+    const element = document.getElementById(targetId)
+    if (element) {
+      const yOffset = -100
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* 目次セクション */}
@@ -22,6 +32,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <span className="font-medium mr-2">{index + 1}.</span>
                 <a
                   href={`#${section.id}`}
+                  onClick={(e) => handleAnchorClick(e, section.id)}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                 >
                   {section.title}
@@ -34,6 +45,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 <span className="font-medium mr-2">{sections.length + 1}.</span>
                 <a
                   href="#effects"
+                  onClick={(e) => handleAnchorClick(e, 'effects')}
                   className="text-blue-600 hover:underline transition-colors cursor-pointer"
                 >
                   受講後の効果
