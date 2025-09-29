@@ -43,12 +43,14 @@ export default function CourseCard({ course }: CourseCardProps) {
         {/* コンテンツ */}
         <div className="flex-1 text-center md:text-left">
           {/* レベル表示 */}
-          <div className="inline-block bg-white/80 text-gray-600 px-3 py-0.5 rounded text-xs font-medium mb-3">
-            レベル {course.order || 1}
+          <div className="mb-3">
+            <span className="inline-block bg-white/80 text-gray-600 px-3 py-1 rounded text-xs font-medium">
+              レベル {course.order || 1}
+            </span>
           </div>
 
           {/* 講座タイトル */}
-          <Link href={`/school/${course.courseId}`} className="inline-block hover:opacity-80 transition-opacity">
+          <Link href={`/school/${course.courseId}`} className="block hover:opacity-80 transition-opacity">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
               {course.title}
             </h2>
