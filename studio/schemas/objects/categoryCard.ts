@@ -24,7 +24,7 @@ export default defineType({
       options: {
         hotspot: true
       },
-      validation: Rule => Rule.required().error('画像は必須です'),
+      // 画像は任意フィールドに変更（ホームページで画像をアップロードするまで）
       fields: [
         {
           name: 'alt',
