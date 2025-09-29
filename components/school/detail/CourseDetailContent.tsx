@@ -1,6 +1,7 @@
 'use client'
 
 import { CourseDetail } from '@/lib/types/course'
+import { useEffect } from 'react'
 
 interface CourseDetailContentProps {
   course: CourseDetail
@@ -9,6 +10,31 @@ interface CourseDetailContentProps {
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
+
+  useEffect(() => {
+    console.log('CourseDetailContent mounted, setting up anchor handlers')
+
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      if (hash) {
+        const targetId = hash.substring(1)
+        const element = document.getElementById(targetId)
+        if (element) {
+          const yOffset = -100
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
+        }
+      }
+    }
+
+    // 初期ロード時のハッシュ処理
+    if (window.location.hash) {
+      setTimeout(handleHashChange, 100)
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault()
@@ -21,8 +47,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       console.log(`Scrolling to position: ${y}`)
       window.scrollTo({ top: y, behavior: 'smooth' })
+
+      // URLにハッシュを追加（ブラウザの履歴に記録）
+      window.history.pushState(null, '', `#${targetId}`)
     } else {
       console.error(`Element not found: ${targetId}`)
+      // デバッグ用：ページ上のすべてのIDを表示
+      const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+      console.log('Available IDs on page:', allIds)
     }
   }
 
