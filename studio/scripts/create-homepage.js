@@ -6,9 +6,9 @@ const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, '../../.env.local') })
 
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'k6h9k1p0',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  token: process.env.SANITY_API_WRITE_TOKEN,
+  token: process.env.SANITY_WRITE_TOKEN,
   apiVersion: '2024-01-21',
   useCdn: false,
 })
