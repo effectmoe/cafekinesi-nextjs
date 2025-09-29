@@ -16,29 +16,36 @@ export default function AnchorNav() {
         const id = link.getAttribute('href')!.slice(1)
         console.log(`Anchor link clicked: #${id}`)
 
-        // 少し遅延を入れて要素を探す
-        setTimeout(() => {
-          const element = document.getElementById(id)
+        // レンダリング完了を待つためにrequestAnimationFrameを使用
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const element = document.getElementById(id)
 
-          if (element) {
-            console.log(`Found element with id="${id}"`)
+            if (element) {
+              console.log(`Found element with id="${id}"`)
 
-            // 要素の位置を計算
-            const rect = element.getBoundingClientRect()
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-            const targetPosition = rect.top + scrollTop - 100 // ヘッダー分のオフセット
+              // 要素の実際の位置を取得
+              const yOffset = -100 // ヘッダーの高さ分のオフセット
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
 
-            console.log(`Element position - top: ${rect.top}, scrollTop: ${scrollTop}, targetPosition: ${targetPosition}`)
+              console.log(`Scrolling to element "${id}" at position ${y}`)
+              console.log(`Element rect:`, element.getBoundingClientRect())
+              console.log(`Window pageYOffset: ${window.pageYOffset}`)
 
-            // スムーズスクロール
-            window.scrollTo({
-              top: targetPosition,
-              behavior: 'smooth'
-            })
-          } else {
-            console.error(`Element with id="${id}" not found`)
-          }
-        }, 0)
+              window.scrollTo({
+                top: y,
+                behavior: 'smooth'
+              })
+            } else {
+              console.error(`Element with id="${id}" not found`)
+
+              // IDを持つ要素をすべて表示してデバッグ
+              const allElements = document.querySelectorAll('[id]')
+              const ids = Array.from(allElements).map(el => el.id).filter(id => id)
+              console.log('Available element IDs:', ids)
+            }
+          })
+        })
       }
     }
 
