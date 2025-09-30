@@ -32,6 +32,10 @@ export default defineType({
       name: 'seo',
       title: 'SEO',
     },
+    {
+      name: 'sidebar',
+      title: 'サイドバー設定',
+    },
   ],
   fields: [
     defineField({
@@ -348,6 +352,98 @@ export default defineType({
       title: 'SEO設定',
       type: 'seo',
       group: 'seo',
+    }),
+    // サイドバー設定
+    defineField({
+      name: 'sidebar',
+      title: 'サイドバー設定',
+      type: 'object',
+      group: 'sidebar',
+      fields: [
+        defineField({
+          name: 'showContactButton',
+          title: 'お問い合わせボタンを表示',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'contactButtonText',
+          title: 'お問い合わせボタンテキスト',
+          type: 'string',
+          initialValue: 'お問い合わせ・お申し込み',
+        }),
+        defineField({
+          name: 'contactButtonLink',
+          title: 'お問い合わせボタンリンク',
+          type: 'string',
+          initialValue: '/contact',
+        }),
+        defineField({
+          name: 'customSections',
+          title: 'カスタムセクション',
+          type: 'array',
+          of: [
+            defineField({
+              name: 'customSection',
+              title: 'セクション',
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'title',
+                  title: 'セクションタイトル',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
+                }),
+                defineField({
+                  name: 'items',
+                  title: 'アイテム',
+                  type: 'array',
+                  of: [
+                    defineField({
+                      name: 'item',
+                      title: 'アイテム',
+                      type: 'object',
+                      fields: [
+                        defineField({
+                          name: 'text',
+                          title: 'テキスト',
+                          type: 'string',
+                          validation: (Rule) => Rule.required(),
+                        }),
+                        defineField({
+                          name: 'link',
+                          title: 'リンク',
+                          type: 'string',
+                        }),
+                      ],
+                      preview: {
+                        select: {
+                          title: 'text',
+                          subtitle: 'link',
+                        },
+                      },
+                    }),
+                  ],
+                }),
+              ],
+              preview: {
+                select: {
+                  title: 'title',
+                  items: 'items',
+                },
+                prepare(selection) {
+                  const { title, items } = selection
+                  return {
+                    title: title,
+                    subtitle: items ? `${items.length}個のアイテム` : '0個のアイテム',
+                  }
+                },
+              },
+            }),
+          ],
+          description: 'サイドバーに表示するカスタムセクション（カテゴリー、Facebookなど）',
+        }),
+      ],
     }),
   ],
   preview: {

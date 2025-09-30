@@ -258,6 +258,18 @@ export const COURSE_DETAIL_QUERY = `
       backgroundClass,
       order
     },
+    sidebar {
+      showContactButton,
+      contactButtonText,
+      contactButtonLink,
+      customSections[] {
+        title,
+        items[] {
+          text,
+          link
+        }
+      }
+    },
     seo
   }
 `

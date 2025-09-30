@@ -37,6 +37,24 @@ export interface CourseSection {
   content: string
 }
 
+// サイドバー用の型定義
+export interface SidebarItem {
+  text: string
+  link?: string
+}
+
+export interface SidebarSection {
+  title: string
+  items?: SidebarItem[]
+}
+
+export interface CourseSidebar {
+  showContactButton?: boolean
+  contactButtonText?: string
+  contactButtonLink?: string
+  customSections?: SidebarSection[]
+}
+
 // 講座詳細ページ用の拡張インターフェース
 export interface CourseDetail extends Course {
   tableOfContents?: string[]
@@ -59,6 +77,7 @@ export interface CourseDetail extends Course {
     profileUrl?: string
   }
   relatedCourses?: Course[] // 実際の講座オブジェクト
+  sidebar?: CourseSidebar // サイドバー設定
 }
 
 export interface SchoolPageData {

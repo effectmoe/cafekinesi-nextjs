@@ -8,6 +8,23 @@ interface CourseDetailSidebarProps {
 }
 
 export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps) {
+  // デフォルトの講座メニュー
+  const defaultCourseMenu = [
+    { text: '講座一覧', link: '/school' },
+    { text: 'カフェキネシⅠ', link: '/school/kinesi1' },
+    { text: 'ピーチタッチ', link: '/school/peach-touch' },
+    { text: 'チャクラキネシ', link: '/school/chakra-kinesi' },
+    { text: 'カフェキネシⅣ HELP', link: '/school/help' },
+    { text: 'カフェキネシⅤ TAO', link: '/school/tao' },
+    { text: 'カフェキネシⅥ ハッピーオーラ', link: '/school/happy-aura' },
+  ]
+
+  // Sanityからのサイドバー設定を取得、なければデフォルト
+  const showContactButton = course.sidebar?.showContactButton ?? true
+  const contactButtonText = course.sidebar?.contactButtonText || 'お問い合わせ・お申し込み'
+  const contactButtonLink = course.sidebar?.contactButtonLink || '/contact'
+  const customSections = course.sidebar?.customSections || []
+
   return (
     <div className="space-y-6 lg:sticky lg:top-24">
       {/* 講座メニューセクション */}
@@ -16,63 +33,41 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
           カフェキネシ講座
         </h3>
         <div className="space-y-2 text-sm">
-          <Link
-            href="/school"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            講座一覧
-          </Link>
-          <Link
-            href="/school/kinesi1"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            カフェキネシⅠ
-          </Link>
-          <Link
-            href="/school/peach-touch"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            ピーチタッチ
-          </Link>
-          <Link
-            href="/school/chakra-kinesi"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            チャクラキネシ
-          </Link>
-          <Link
-            href="/school/help"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            カフェキネシⅣ HELP
-          </Link>
-          <Link
-            href="/school/tao"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            カフェキネシⅤ TAO
-          </Link>
-          <Link
-            href="/school/happy-aura"
-            className="block text-blue-600 hover:underline transition-colors"
-          >
-            カフェキネシⅥ ハッピーオーラ
-          </Link>
+          {defaultCourseMenu.map((item, index) => (
+            <Link
+              key={index}
+              href={item.link}
+              className="block text-blue-600 hover:underline transition-colors"
+            >
+              {item.text}
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* カテゴリーセクション */}
-      <div className="bg-gray-50 p-4 rounded mb-6">
-        <h3 className="font-semibold text-sm mb-3">カテゴリー</h3>
-        <div className="space-y-2 text-sm text-blue-600">
-          <div className="hover:underline cursor-pointer">クチカフェ</div>
-          <div className="hover:underline cursor-pointer">チャクラキネシ</div>
-          <div className="hover:underline cursor-pointer">カフェキネシアドバンス</div>
-          <div className="hover:underline cursor-pointer">カフェキネシ</div>
-          <div className="hover:underline cursor-pointer">お知らせ</div>
-          <div className="hover:underline cursor-pointer">動画</div>
+      {/* カスタムセクション（Sanityから） */}
+      {customSections.map((section, index) => (
+        <div key={index} className="bg-gray-50 p-4 rounded mb-6">
+          <h3 className="font-semibold text-sm mb-3">{section.title}</h3>
+          <div className="space-y-2 text-sm text-blue-600">
+            {section.items?.map((item, itemIndex) => (
+              item.link ? (
+                <Link
+                  key={itemIndex}
+                  href={item.link}
+                  className="block hover:underline cursor-pointer"
+                >
+                  {item.text}
+                </Link>
+              ) : (
+                <div key={itemIndex} className="hover:underline cursor-pointer">
+                  {item.text}
+                </div>
+              )
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
 
       {/* Facebookセクション */}
       <div className="bg-gray-50 p-4 rounded mb-6">
@@ -97,10 +92,14 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
         </div>
       </div>
 
-      {/* お問い合わせボタン */}
-      <button className="w-full bg-pink-500 text-white py-3 px-4 rounded hover:bg-pink-600 transition-colors mb-6">
-        お問い合わせ・お申し込み
-      </button>
+      {/* お問い合わせボタン（Sanityから制御） */}
+      {showContactButton && (
+        <Link href={contactButtonLink}>
+          <button className="w-full bg-pink-500 text-white py-3 px-4 rounded hover:bg-pink-600 transition-colors mb-6">
+            {contactButtonText}
+          </button>
+        </Link>
+      )}
 
       {/* カレンダーセクション */}
       <div className="bg-gray-50 p-4 rounded">
