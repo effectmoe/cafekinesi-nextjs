@@ -44,6 +44,7 @@ async function seedAllCourses() {
       )
 
       // Sanity用のデータ形式に変換
+      // 既存データがある場合、backgroundClassは保持（Sanity Studioでの変更を尊重）
       const sanityData = {
         _type: 'course',
         courseId: courseData.courseId,
@@ -51,7 +52,7 @@ async function seedAllCourses() {
         subtitle: courseData.subtitle,
         description: courseData.description,
         features: courseData.features,
-        backgroundClass: courseData.backgroundClass,
+        backgroundClass: existingData?.backgroundClass || courseData.backgroundClass,
         recommendations: courseData.recommendations || [],
         effects: courseData.effects || [],
         order: courseData.order,
