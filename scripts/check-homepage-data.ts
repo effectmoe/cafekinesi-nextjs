@@ -37,6 +37,7 @@ async function checkHomepageData() {
       console.log('    Title (EN):', card.titleEn)
       console.log('    Color Scheme:', card.colorScheme)
       console.log('    Link:', card.link)
+      console.log('    Is Active:', card.isActive !== false ? '✅ Active' : '❌ Inactive')
       console.log('    Display Order:', card.displayOrder)
       console.log('    Has Image:', !!card.image)
     })
