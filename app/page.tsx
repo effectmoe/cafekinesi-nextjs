@@ -127,7 +127,11 @@ export default async function HomePage() {
                   : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
                 return card.isActive !== false ? (
-                  <Link key={index} className="album-link" href={card.link}>
+                  <Link
+                    key={index}
+                    className="album-link"
+                    href={card.titleJa === 'カフェキネシについて' ? '#about-section' : card.link}
+                  >
                     <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
                       <div className="aspect-square relative mb-6 pointer-events-none">
                         <Image
@@ -224,6 +228,231 @@ export default async function HomePage() {
                 </p>
               </div>
             )}
+          </section>
+
+          {/* About Section - カフェキネシについて */}
+          <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
+            {/* Hero Section */}
+            <div className="relative mb-16">
+              <div className="aspect-[2/1] md:aspect-[3/1] overflow-hidden rounded-lg mb-8">
+                <Image
+                  src="/images/hidden-content-hero.webp"
+                  alt="カフェキネシの空間"
+                  width={1200}
+                  height={400}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-center">
+                <h2 className="font-noto-serif text-3xl md:text-4xl font-medium text-[hsl(var(--text-primary))] mb-6">
+                  カフェキネシについて
+                </h2>
+                <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed max-w-3xl mx-auto">
+                  心と身体を整えるキネシオロジーとアロマを使った健康法です。
+                  <br className="hidden md:block" />
+                  誰でもどこでも簡単にできる、新しいセラピーの世界へお越しください。
+                </p>
+              </div>
+            </div>
+
+            {/* Navigation Menu */}
+            <div className="mb-16 bg-white border border-[hsl(var(--border))] rounded-lg p-8">
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-sm font-medium text-[hsl(var(--text-primary))]">目次</span>
+                <span className="text-sm text-[hsl(var(--text-secondary))]">非表示</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  "1. カフェキネシとは",
+                  "2. カフェキネシの歴史",
+                  "3. カフェキネシの特長",
+                  "4. カフェキネシの動画を見る",
+                  "5. カフェキネシの夢",
+                  "6. カフェキネシ講座を受講する",
+                  "7. 公認インストラクターを探す",
+                  "8. アロマを購入する"
+                ].map((item, index) => (
+                  <div key={index} className="text-[hsl(var(--text-secondary))] text-sm hover:text-[hsl(var(--text-primary))] transition-colors cursor-pointer py-1">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* About Section with Image */}
+            <div className="mb-16">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+                <div className="lg:col-span-2">
+                  <Image
+                    src="/images/kinesi-therapy.webp"
+                    alt="キネシオロジーセラピー"
+                    width={600}
+                    height={450}
+                    className="w-full aspect-[4/3] object-cover rounded-lg"
+                  />
+                </div>
+                <div className="lg:col-span-3">
+                  <h2 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-6">
+                    カフェキネシとは
+                  </h2>
+                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed">
+                    <p>
+                      カフェキネシとは「カフェで出来るキネシオロジー」です。<br />
+                      だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法です。
+                    </p>
+                    <p>
+                      誰でもどこでもその場でストレスが取れる、<br />
+                      <span className="font-medium text-[hsl(var(--text-primary))]">キネシアロマ</span>を使った世界最速のキネシセラピーです。
+                    </p>
+                    <p>
+                      世界初、最高に便利で簡単なキネシオロジー。
+                    </p>
+                    <p>
+                      キネシオロジーって何だろうと思われる方はこちらをご覧ください。
+                    </p>
+                    <p>
+                      セラピストでなくても大丈夫。必要なのはあなたの愛とあなたの手。
+                    </p>
+                    <p>
+                      カフェキネシはまだ発表されたばかりのセラピースタイルです。
+                    </p>
+                    <p>
+                      わずか2時間でカフェキネシを使ってセラピーが出来るようになります。<br />
+                      またカフェキネシを教えることが出来るようになります。
+                    </p>
+                    <p>
+                      セラピーをしながら世界へ「カフェキネシ」を伝えませんか？
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            {/* History Section */}
+            <div className="mb-16">
+              <h2 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-8">
+                カフェキネシの歴史
+              </h2>
+              <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed">
+                <p>
+                  キネシオロジーというセラピーを<br />
+                  もっとフェア（公平）に簡単に身近から出来るようにならないか？<br />
+                  シンプルだけど、効果的なものを作れないかな？
+                </p>
+                <p>
+                  そんな事を思って、2010年2月にカフェキネシの取り組みをはじめました。
+                </p>
+                <p>
+                  使いやすさと、数々の臨床を重ねて完成になったのは2011年2月。
+                </p>
+                <p>
+                  どこでも誰でもすぐにセラピストになれるカフェキネシオロジーとアロマの力で、<br />
+                  どんどん身近なストレスを取っていくことが出来ます。
+                </p>
+                <p>
+                  ひとつのストレスの解決まで、約3分。
+                </p>
+                <p>
+                  ストレスって毎日あるけど、毎日セラピー行けないもんね。<br />
+                  友達とカフェでおしゃべりしながら、アロマの香りでストレス取りしましょ♪
+                </p>
+              </div>
+            </div>
+
+            {/* Features Section */}
+            <div className="mb-16">
+              <h2 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-8">
+                カフェキネシの特長
+              </h2>
+              <div className="space-y-6">
+                <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed">
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      1. <span className="text-orange-500">初心者でも2時間弱あればインストラクターになれる！</span>
+                    </h3>
+                    <p>
+                      初心者でも約2時間の講座をうけたらインストラクター登録可能です。<br />
+                      2つのタイプから自分に合うインストラクター登録ができるので負担もかかりません！
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      2. <span className="text-orange-500">適正量調を呼び起こすアロマでストレスやトラウマを取り除く</span>
+                    </h3>
+                    <p>
+                      一つ一つ思いがこめられているアロマは自然の植物のエキスで作成されています。<br />
+                      あなたの適正量をあなたの香りであなたしく生きられるようにサポートします。
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      3. <span className="text-orange-500">必要なのはたった3つ、手とアロマ、そしてあなたの愛</span>
+                    </h3>
+                    <p>
+                      カフェキネシでは、たくさんの物が必要というわけではありません。<br />
+                      手とアロマ、そしてあなたの愛があれば、苦しみや悲しみを吹き飛ばし、<br />
+                      夢や愛を広げるお手伝いができます。
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      4. <span className="text-orange-500">どこでもできるので、お家でサロンができちゃいます。</span>
+                    </h3>
+                    <p>
+                      カフェキネシは複雑なシリーズあり、すべて2時間程度でインストラクターになれます。<br />
+                      公認インストラクターになると、アドバンス版の講座も開催できるようになります。
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      5. <span className="text-orange-500">世界中にインストラクターがいます。</span>
+                    </h3>
+                    <p>
+                      日本国内はもちろん、アメリカ、ヨーロッパ、アジアなど世界中にインストラクターがいます<br />
+                      ので、お近くのインストラクターを探すことができます。
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-[hsl(var(--text-primary))] mb-2">
+                      6. <span className="text-orange-500">国境を越えたセラピー、世界中で通じるセラピーが学べます。</span>
+                    </h3>
+                    <p>
+                      人種、文化、環境、言葉に関係なく、効果のあるセラピーです。<br />
+                      目の前の方々の心を少しでも軽くするお手伝いができます。<br />
+                      世の中のみなさんが平和と愛であふれた日々を過ごせますように。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dream Section */}
+            <div className="mb-16">
+              <h2 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
+                カフェキネシの夢
+              </h2>
+              <div className="text-center space-y-6 text-[hsl(var(--text-secondary))] leading-relaxed max-w-4xl mx-auto">
+                <p className="text-xl font-medium text-[hsl(var(--text-primary))]">
+                  カフェキネシの夢は世界ノーベル平和賞受賞です。
+                </p>
+                <p className="text-lg">
+                  世界一シンプルなキネシオロジーを使って1秒多くの人の苦しみと悲しみを取き去れし、<br />
+                  大きな夢を叶えて幸せになるお手伝いをしていく事です。<br />
+                  そして、カフェで飲みや会話をこえして過ごした時間が<br />
+                  カフェキネシで繋と喜びを分からうち時間にかわっていきます。<br />
+                  そして、カフェで過ぎち３日後の人から幸せと喜びの広がり<br />
+                  嘲争や天災やあらゆの心を少してもなをしくあたる事ができるようになります。<br />
+                  どのカフェでもカフェキネシをしている姿が見える、そんな世界中になった時<br />
+                  自然と平和が地球中に広がっていく事でしょう・・・
+                </p>
+              </div>
+            </div>
           </section>
 
           {/* FAQセクション */}
