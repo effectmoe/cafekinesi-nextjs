@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv'
 import {
   kinesi1DetailData,
   peachTouchDetailData,
-  chakraKinesiDetailData
+  chakraKinesiDetailData,
+  helpDetailData
 } from '../components/school/detail/CourseDetailData'
 
 // 環境変数を読み込み
@@ -21,7 +22,8 @@ const client = createClient({
 const allCourses = [
   kinesi1DetailData,
   peachTouchDetailData,
-  chakraKinesiDetailData
+  chakraKinesiDetailData,
+  helpDetailData
 ]
 
 async function seedAllCourses() {
@@ -114,6 +116,7 @@ async function seedAllCourses() {
     console.log('   - http://localhost:3000/school/kinesi1')
     console.log('   - http://localhost:3000/school/peach-touch')
     console.log('   - http://localhost:3000/school/chakra-kinesi')
+    console.log('   - http://localhost:3000/school/help')
 
     console.log('\n💡 次のステップ:')
     console.log('1. Sanity Studioで画像をアップロード')
