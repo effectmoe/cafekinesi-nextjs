@@ -6,6 +6,21 @@ export default defineType({
   title: 'スクールページ設定',
   type: 'document',
   icon: GraduationCap,
+  groups: [
+    {
+      name: 'content',
+      title: 'コンテンツ',
+      default: true,
+    },
+    {
+      name: 'courses',
+      title: '講座設定',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -13,11 +28,13 @@ export default defineType({
       type: 'string',
       initialValue: 'スクール',
       validation: (Rule) => Rule.required(),
+      group: 'content',
     }),
     defineField({
       name: 'heroSection',
       title: 'ヒーローセクション',
       type: 'object',
+      group: 'content',
       fields: [
         defineField({
           name: 'title',
@@ -39,11 +56,13 @@ export default defineType({
       title: '講座一覧セクションタイトル',
       type: 'string',
       initialValue: '講座一覧',
+      group: 'content',
     }),
     defineField({
       name: 'ctaSection',
       title: 'CTAセクション',
       type: 'object',
+      group: 'content',
       fields: [
         defineField({
           name: 'title',
@@ -107,11 +126,13 @@ export default defineType({
         },
       ],
       description: '特に推薦したい講座を選択（空の場合は全講座を表示順で表示）',
+      group: 'courses',
     }),
     defineField({
       name: 'seo',
       title: 'SEO設定',
       type: 'object',
+      group: 'seo',
       fields: [
         defineField({
           name: 'title',
@@ -148,6 +169,7 @@ export default defineType({
       type: 'boolean',
       initialValue: true,
       description: 'チェックを外すとスクールページが非公開になります',
+      group: 'content',
     }),
   ],
   preview: {
