@@ -126,9 +126,9 @@ export default async function HomePage() {
                   : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
                 return card.isActive ? (
-                  <Link key={index} className="block" href={card.link}>
-                    <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square cursor-pointer`}>
-                      <div className="aspect-square relative mb-6">
+                  <Link key={index} className="album-link" href={card.link}>
+                    <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
+                      <div className="aspect-square relative mb-6 pointer-events-none">
                         <Image
                           alt={card.image?.alt || card.titleJa || ''}
                           src={imageSrc}
@@ -137,14 +137,14 @@ export default async function HomePage() {
                           sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-1 pointer-events-none">
                         <h3 className="album-title">{card.titleJa || ''}</h3>
                         <p className="album-title opacity-80">{card.titleEn || ''}</p>
                       </div>
                     </div>
                   </Link>
                 ) : (
-                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
+                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square opacity-75`}>
                     <div className="aspect-square relative mb-6">
                       <Image
                         alt={card.image?.alt || card.titleJa || ''}
