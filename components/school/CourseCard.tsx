@@ -11,6 +11,14 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
+  // CTAボックスの設定（Sanityから取得、なければデフォルト）
+  const ctaTitle = course.ctaBox?.title || 'この講座について'
+  const ctaSubtitle = course.ctaBox?.subtitle || '詳細情報やお申込みはこちら'
+  const primaryButtonText = course.ctaBox?.primaryButtonText || '詳細を見る'
+  const primaryButtonLink = course.ctaBox?.primaryButtonLink || `/school/${course.courseId}`
+  const secondaryButtonText = course.ctaBox?.secondaryButtonText || '講座詳細・お申込み →'
+  const secondaryButtonLink = course.ctaBox?.secondaryButtonLink || ''
+
   return (
     <div id={course.courseId} className="mb-6 border border-gray-200 overflow-hidden">
       {/* メインカード - 各カードに個別の背景色 */}
@@ -80,7 +88,7 @@ export default function CourseCard({ course }: CourseCardProps) {
             </h4>
           </div>
           <div className="w-72 text-center">
-            <p className="text-sm text-gray-700 font-medium">この講座について</p>
+            <p className="text-sm text-gray-700 font-medium">{ctaTitle}</p>
           </div>
         </div>
 
@@ -105,21 +113,30 @@ export default function CourseCard({ course }: CourseCardProps) {
           {/* 右側：CTAボックス */}
           <div className="w-72 flex-shrink-0">
             <div className="bg-gray-100 p-6 rounded-lg text-center h-full flex flex-col">
-              <p className="text-xs text-gray-500 mb-4">詳細情報やお申込みはこちら</p>
+              <p className="text-xs text-gray-500 mb-4">{ctaSubtitle}</p>
               <div className="flex-1 flex flex-col justify-center">
                 <Link
-                  href={`/school/${course.courseId}`}
+                  href={primaryButtonLink}
                   className="inline-block bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3 text-center"
                 >
-                  詳細を見る
+                  {primaryButtonText}
                 </Link>
 
-                <button
-                  className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"
-                  onClick={() => console.log('講座詳細・お申込み')}
-                >
-                  講座詳細・お申込み →
-                </button>
+                {secondaryButtonLink ? (
+                  <Link
+                    href={secondaryButtonLink}
+                    className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded inline-block"
+                  >
+                    {secondaryButtonText}
+                  </Link>
+                ) : (
+                  <button
+                    className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"
+                    onClick={() => console.log(secondaryButtonText)}
+                  >
+                    {secondaryButtonText}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -149,22 +166,31 @@ export default function CourseCard({ course }: CourseCardProps) {
           {/* CTAボックス */}
           <div className="w-full">
             <div className="bg-gray-100 p-6 rounded-lg text-center">
-              <p className="text-sm text-gray-700 font-medium mb-1">この講座について</p>
-              <p className="text-xs text-gray-500 mb-4">詳細情報やお申込みはこちら</p>
+              <p className="text-sm text-gray-700 font-medium mb-1">{ctaTitle}</p>
+              <p className="text-xs text-gray-500 mb-4">{ctaSubtitle}</p>
 
               <Link
-                href={`/school/${course.courseId}`}
+                href={primaryButtonLink}
                 className="inline-block bg-gray-800 text-white px-6 py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors w-full rounded mb-3 text-center"
               >
-                詳細を見る
+                {primaryButtonText}
               </Link>
 
-              <button
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"
-                onClick={() => console.log('講座詳細・お申込み')}
-              >
-                講座詳細・お申込み →
-              </button>
+              {secondaryButtonLink ? (
+                <Link
+                  href={secondaryButtonLink}
+                  className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded inline-block"
+                >
+                  {secondaryButtonText}
+                </Link>
+              ) : (
+                <button
+                  className="bg-white border border-gray-300 text-gray-700 px-4 py-2 text-xs font-medium hover:bg-gray-50 transition-colors w-full rounded"
+                  onClick={() => console.log(secondaryButtonText)}
+                >
+                  {secondaryButtonText}
+                </button>
+              )}
             </div>
           </div>
         </div>

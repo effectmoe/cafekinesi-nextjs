@@ -1,3 +1,13 @@
+// CTAボックス用の型定義
+export interface CourseCTABox {
+  title?: string
+  subtitle?: string
+  primaryButtonText?: string
+  primaryButtonLink?: string
+  secondaryButtonText?: string
+  secondaryButtonLink?: string
+}
+
 export interface Course {
   _id: string
   courseId: string
@@ -28,6 +38,7 @@ export interface Course {
   }
   prerequisites?: string
   applicationLink?: string
+  ctaBox?: CourseCTABox // CTAボックス設定
 }
 
 // 講座詳細ページ用のセクション定義

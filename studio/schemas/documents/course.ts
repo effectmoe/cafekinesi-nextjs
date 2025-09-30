@@ -36,6 +36,10 @@ export default defineType({
       name: 'sidebar',
       title: 'サイドバー設定',
     },
+    {
+      name: 'cta',
+      title: 'CTA設定',
+    },
   ],
   fields: [
     defineField({
@@ -352,6 +356,52 @@ export default defineType({
       title: 'SEO設定',
       type: 'seo',
       group: 'seo',
+    }),
+    // CTAボックス設定（講座カードの「この講座について」ボックス）
+    defineField({
+      name: 'ctaBox',
+      title: 'CTAボックス設定',
+      type: 'object',
+      group: 'cta',
+      description: '講座一覧ページのカードに表示される「この講座について」ボックスの設定',
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'タイトル',
+          type: 'string',
+          initialValue: 'この講座について',
+        }),
+        defineField({
+          name: 'subtitle',
+          title: 'サブタイトル',
+          type: 'string',
+          initialValue: '詳細情報やお申込みはこちら',
+        }),
+        defineField({
+          name: 'primaryButtonText',
+          title: 'メインボタンテキスト',
+          type: 'string',
+          initialValue: '詳細を見る',
+        }),
+        defineField({
+          name: 'primaryButtonLink',
+          title: 'メインボタンリンク',
+          type: 'string',
+          description: '空欄の場合は /school/{courseId} へリンク',
+        }),
+        defineField({
+          name: 'secondaryButtonText',
+          title: 'サブボタンテキスト',
+          type: 'string',
+          initialValue: '講座詳細・お申込み →',
+        }),
+        defineField({
+          name: 'secondaryButtonLink',
+          title: 'サブボタンリンク',
+          type: 'string',
+          description: '外部申込フォームなどへのリンク',
+        }),
+      ],
     }),
     // サイドバー設定
     defineField({

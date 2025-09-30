@@ -38,7 +38,15 @@ const SCHOOL_PAGE_QUERY = groq`*[_type == "schoolPage"][0] {
     price,
     duration,
     prerequisites,
-    applicationLink
+    applicationLink,
+    ctaBox {
+      title,
+      subtitle,
+      primaryButtonText,
+      primaryButtonLink,
+      secondaryButtonText,
+      secondaryButtonLink
+    }
   },
   seo,
   isActive
@@ -63,7 +71,15 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true] | order(orde
   price,
   duration,
   prerequisites,
-  applicationLink
+  applicationLink,
+  ctaBox {
+    title,
+    subtitle,
+    primaryButtonText,
+    primaryButtonLink,
+    secondaryButtonText,
+    secondaryButtonLink
+  }
 }`
 
 async function getSchoolPageData(): Promise<SchoolPageData | null> {
