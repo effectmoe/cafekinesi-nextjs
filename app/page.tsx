@@ -144,7 +144,7 @@ export default async function HomePage() {
                     </div>
                   </Link>
                 ) : (
-                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square opacity-75`}>
+                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
                     <div className="aspect-square relative mb-6">
                       <Image
                         alt={card.image?.alt || card.titleJa || ''}
