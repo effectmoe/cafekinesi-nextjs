@@ -4,7 +4,8 @@ import {
   kinesi1DetailData,
   peachTouchDetailData,
   chakraKinesiDetailData,
-  helpDetailData
+  helpDetailData,
+  taoDetailData
 } from '../components/school/detail/CourseDetailData'
 
 // 環境変数を読み込み
@@ -23,7 +24,8 @@ const allCourses = [
   kinesi1DetailData,
   peachTouchDetailData,
   chakraKinesiDetailData,
-  helpDetailData
+  helpDetailData,
+  taoDetailData
 ]
 
 async function seedAllCourses() {
@@ -117,6 +119,7 @@ async function seedAllCourses() {
     console.log('   - http://localhost:3000/school/peach-touch')
     console.log('   - http://localhost:3000/school/chakra-kinesi')
     console.log('   - http://localhost:3000/school/help')
+    console.log('   - http://localhost:3000/school/tao')
 
     console.log('\n💡 次のステップ:')
     console.log('1. Sanity Studioで画像をアップロード')
