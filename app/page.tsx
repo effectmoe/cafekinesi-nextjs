@@ -126,7 +126,7 @@ export default async function HomePage() {
                   ? urlForImage(card.image)?.url() || fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
                   : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
-                return card.isActive ? (
+                return card.isActive !== false ? (
                   <Link key={index} className="album-link" href={card.link}>
                     <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
                       <div className="aspect-square relative mb-6 pointer-events-none">
