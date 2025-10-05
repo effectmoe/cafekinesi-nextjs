@@ -169,6 +169,11 @@ export default defineConfig({
     types: schemaTypes,
   },
 
+  document: {
+    // ドキュメントアクションを有効化（削除、複製など）
+    actions: (prev, context) => prev,
+  },
+
 
   cors: {
     origin: [
