@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   ComposableMap,
   Geographies,
@@ -22,6 +22,8 @@ export default function JapanMap({
 }: JapanMapProps) {
   const [tooltipContent, setTooltipContent] = useState('')
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
+  const [isMapHovered, setIsMapHovered] = useState(false)
+  const mapContainerRef = useRef<HTMLDivElement>(null)
 
   const handleMouseEnter = (geo: any, event: React.MouseEvent) => {
     const prefName = geo.properties.nam_ja || geo.properties.name_ja || geo.properties.name
@@ -56,7 +58,12 @@ export default function JapanMap({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div
+      ref={mapContainerRef}
+      className="relative w-full h-full"
+      onMouseEnter={() => setIsMapHovered(true)}
+      onMouseLeave={() => setIsMapHovered(false)}
+    >
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
@@ -77,6 +84,8 @@ export default function JapanMap({
             [800, 600],
           ]}
           filterZoomEvent={(evt) => {
+            // Allow zoom only when map is hovered
+            if (!isMapHovered) return false
             // Allow only wheel/pinch zoom events, disable drag panning
             return evt.type === 'wheel' || evt.type === 'touchstart' || evt.type === 'touchmove'
           }}
