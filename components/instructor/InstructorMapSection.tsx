@@ -21,6 +21,7 @@ interface InstructorMapSectionProps {
 
 export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>('')
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map')
 
   // Separate instructors by location
   const { japanInstructors, overseasInstructors } = useMemo(() => {
@@ -68,6 +69,34 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
     return Object.keys(instructorCounts).sort()
   }, [instructorCounts])
 
+  // Group prefectures by region
+  const prefecturesByRegion = useMemo(() => {
+    const regions = {
+      '北海道': ['北海道'],
+      '東北': ['青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県'],
+      '関東': ['茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県'],
+      '中部': ['新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県'],
+      '近畿': ['三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県'],
+      '中国': ['鳥取県', '島根県', '岡山県', '広島県', '山口県'],
+      '四国': ['徳島県', '香川県', '愛媛県', '高知県'],
+      '九州・沖縄': ['福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'],
+    }
+
+    const result: Record<string, Array<{ name: string; count: number }>> = {}
+
+    Object.entries(regions).forEach(([regionName, prefectures]) => {
+      const prefecturesWithCount = prefectures
+        .filter((pref) => instructorCounts[pref] > 0)
+        .map((pref) => ({ name: pref, count: instructorCounts[pref] }))
+
+      if (prefecturesWithCount.length > 0) {
+        result[regionName] = prefecturesWithCount
+      }
+    })
+
+    return result
+  }, [instructorCounts])
+
   const handlePrefectureClick = (prefectureName: string) => {
     setSelectedPrefecture(prefectureName)
   }
@@ -77,63 +106,105 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
         都道府県から探す
       </h2>
-      <p className="text-center text-gray-600 mb-2">
-        地図から都道府県を選択してください
-      </p>
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 mb-12">
-        <span>💡 地図をクリック・タップで都道府県を選択</span>
-        <span>💡 ピンチやスクロールで拡大・縮小</span>
-        <span>💡 ドラッグで地図を移動</span>
+
+      {/* Tab Navigation */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+          <button
+            onClick={() => setViewMode('map')}
+            className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+              viewMode === 'map'
+                ? 'bg-pink-500 text-white'
+                : 'text-gray-700 hover:text-pink-500'
+            }`}
+          >
+            🗾 日本地図から選ぶ
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+              viewMode === 'list'
+                ? 'bg-pink-500 text-white'
+                : 'text-gray-700 hover:text-pink-500'
+            }`}
+          >
+            📍 都道府県から選ぶ
+          </button>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto">
-        {/* Interactive Japan Map */}
-        <div className="relative w-full bg-white rounded-lg shadow-sm mb-8 p-4">
-          <JapanMap
-            onPrefectureClick={handlePrefectureClick}
-            selectedPrefecture={selectedPrefecture}
-            instructorCounts={instructorCounts}
-          />
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-gray-200 rounded"></div>
-            <span className="text-sm text-gray-600">インストラクターなし</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-pink-300 rounded"></div>
-            <span className="text-sm text-gray-600">インストラクターあり</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-pink-500 rounded"></div>
-            <span className="text-sm text-gray-600">選択中</span>
-          </div>
-        </div>
-
-        {/* Prefectures with Instructors List */}
-        {prefecturesWithInstructors.length > 0 && (
-          <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
-              インストラクターが在籍している都道府県 ({prefecturesWithInstructors.length}件)
-            </h3>
-            <div className="flex flex-wrap justify-center gap-2">
-              {prefecturesWithInstructors.map((prefecture) => (
-                <button
-                  key={prefecture}
-                  onClick={() => setSelectedPrefecture(prefecture)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    selectedPrefecture === prefecture
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:border-pink-500 hover:text-pink-500'
-                  }`}
-                >
-                  {prefecture}
-                  <span className="ml-1 text-xs opacity-75">({instructorCounts[prefecture]})</span>
-                </button>
-              ))}
+        {/* Map View */}
+        {viewMode === 'map' && (
+          <>
+            <p className="text-center text-gray-600 mb-2">
+              地図から都道府県を選択してください
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 mb-8">
+              <span>💡 地図をクリック・タップで都道府県を選択</span>
+              <span>💡 ピンチやスクロールで拡大・縮小</span>
+              <span>💡 ドラッグで地図を移動</span>
             </div>
+
+            {/* Interactive Japan Map */}
+            <div className="relative w-full bg-white rounded-lg shadow-sm mb-8 p-4">
+              <JapanMap
+                onPrefectureClick={handlePrefectureClick}
+                selectedPrefecture={selectedPrefecture}
+                instructorCounts={instructorCounts}
+              />
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                <span className="text-sm text-gray-600">インストラクターなし</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-pink-300 rounded"></div>
+                <span className="text-sm text-gray-600">インストラクターあり</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-pink-500 rounded"></div>
+                <span className="text-sm text-gray-600">選択中</span>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* List View */}
+        {viewMode === 'list' && (
+          <div className="space-y-6">
+            <p className="text-center text-gray-600 mb-8">
+              地域・都道府県を選択してください（インストラクター在籍: {prefecturesWithInstructors.length}都道府県）
+            </p>
+
+            {Object.entries(prefecturesByRegion).map(([region, prefectures]) => (
+              <div key={region} className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                  {region}
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {prefectures.map((pref) => (
+                    <button
+                      key={pref.name}
+                      onClick={() => setSelectedPrefecture(pref.name)}
+                      className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
+                        selectedPrefecture === pref.name
+                          ? 'bg-pink-500 text-white'
+                          : 'bg-gray-50 text-gray-700 hover:bg-pink-50 hover:text-pink-600 border border-gray-200'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span>{pref.name}</span>
+                        <span className="text-xs opacity-75">({pref.count})</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
