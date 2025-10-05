@@ -58,11 +58,14 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
             <div className="flex flex-wrap gap-2 mb-3">
               {instructor.specialties.map((specialty, index) => {
                 const getTagColor = (tag: string) => {
-                  if (tag.includes('カフェキネシ')) return 'bg-yellow-100 text-yellow-800'
-                  if (tag.includes('ピーチタッチ')) return 'bg-pink-100 text-pink-800'
-                  if (tag.includes('チャクラ')) return 'bg-purple-100 text-purple-800'
-                  if (tag.includes('ナビゲーター')) return 'bg-red-100 text-red-800'
-                  if (tag.includes('スタンダード')) return 'bg-green-100 text-green-800'
+                  if (tag.includes('カフェキネシ')) return 'bg-orange-500 text-white'
+                  if (tag.includes('ピーチタッチ')) return 'bg-pink-400 text-white'
+                  if (tag.includes('チャクラ')) return 'bg-purple-400 text-white'
+                  if (tag.includes('ナビゲーター')) return 'bg-green-500 text-white'
+                  if (tag.includes('スタンダード')) return 'bg-cyan-400 text-white'
+                  if (tag.includes('HELP')) return 'bg-indigo-400 text-white'
+                  if (tag.includes('TAO')) return 'bg-teal-600 text-white'
+                  if (tag.includes('星に願いを')) return 'bg-rose-300 text-white'
                   return 'bg-gray-100 text-gray-800'
                 }
 
@@ -137,11 +140,14 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
               {instructor.specialties.map((specialty, index) => {
                 // タグの色を分類
                 const getTagColor = (tag: string) => {
-                  if (tag.includes('カフェキネシ')) return 'bg-yellow-100 text-yellow-800'
-                  if (tag.includes('ピーチタッチ')) return 'bg-pink-100 text-pink-800'
-                  if (tag.includes('チャクラ')) return 'bg-purple-100 text-purple-800'
-                  if (tag.includes('ナビゲーター')) return 'bg-red-100 text-red-800'
-                  if (tag.includes('スタンダード')) return 'bg-green-100 text-green-800'
+                  if (tag.includes('カフェキネシ')) return 'bg-orange-500 text-white'
+                  if (tag.includes('ピーチタッチ')) return 'bg-pink-400 text-white'
+                  if (tag.includes('チャクラ')) return 'bg-purple-400 text-white'
+                  if (tag.includes('ナビゲーター')) return 'bg-green-500 text-white'
+                  if (tag.includes('スタンダード')) return 'bg-cyan-400 text-white'
+                  if (tag.includes('HELP')) return 'bg-indigo-400 text-white'
+                  if (tag.includes('TAO')) return 'bg-teal-600 text-white'
+                  if (tag.includes('星に願いを')) return 'bg-rose-300 text-white'
                   return 'bg-gray-100 text-gray-800'
                 }
 
