@@ -214,48 +214,75 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                   href={instructor.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-400 hover:shadow-lg transition-all duration-200"
+                  className="group block bg-white border-2 border-gray-200 rounded-xl hover:border-blue-400 hover:shadow-lg transition-all duration-200 overflow-hidden"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 flex items-center justify-center bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors overflow-hidden">
-                        {linkPreviews[instructor.website]?.favicon ? (
-                          <img
-                            src={linkPreviews[instructor.website].favicon}
-                            alt="favicon"
-                            className="w-6 h-6 object-contain"
-                            onError={(e) => {
-                              // ファビコン読み込み失敗時はSVGアイコンにフォールバック
-                              e.currentTarget.style.display = 'none'
-                              const parent = e.currentTarget.parentElement
-                              if (parent) {
-                                parent.innerHTML = `
-                                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                                  </svg>
-                                `
-                              }
-                            }}
-                          />
-                        ) : (
-                          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                          </svg>
-                        )}
-                      </div>
-                      <h3 className="ml-3 text-base font-semibold text-gray-900">
-                        {linkPreviews[instructor.website]?.title || 'ウェブサイト'}
-                      </h3>
+                  {/* サムネイル画像 */}
+                  {linkPreviews[instructor.website]?.image && (
+                    <div className="relative w-full h-48 bg-gray-100">
+                      <img
+                        src={linkPreviews[instructor.website].image}
+                        alt={linkPreviews[instructor.website]?.title || 'Website preview'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const parent = e.currentTarget.parentElement
+                          if (parent) {
+                            parent.style.display = 'none'
+                          }
+                        }}
+                      />
                     </div>
-                    <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
+                  )}
+
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center flex-1 min-w-0">
+                        <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                          {linkPreviews[instructor.website]?.favicon ? (
+                            <img
+                              src={linkPreviews[instructor.website].favicon}
+                              alt="favicon"
+                              className="w-5 h-5 object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                                const parent = e.currentTarget.parentElement
+                                if (parent) {
+                                  parent.innerHTML = `
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 919-9" />
+                                    </svg>
+                                  `
+                                }
+                              }}
+                            />
+                          ) : (
+                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 919-9" />
+                            </svg>
+                          )}
+                        </div>
+                        <h3 className="ml-3 text-base font-semibold text-gray-900 truncate">
+                          {linkPreviews[instructor.website]?.title || 'ウェブサイト'}
+                        </h3>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </div>
+
+                    {/* 紹介文 */}
+                    {linkPreviews[instructor.website]?.description && (
+                      <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-2">
+                        {linkPreviews[instructor.website].description}
+                      </p>
+                    )}
+
+                    <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
+                      {new URL(instructor.website).hostname}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600 group-hover:text-blue-600 transition-colors truncate">
-                    {new URL(instructor.website).hostname}
-                  </p>
                 </a>
               )}
+
 
               {/* SNSリンク */}
               {instructor.socialLinks && instructor.socialLinks.map((social, index) => {
@@ -350,9 +377,27 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`group block p-6 bg-white border-2 border-gray-200 rounded-xl ${getBorderHoverColor(social.platform)} hover:shadow-lg transition-all duration-200`}
+                    className={`group block bg-white border-2 border-gray-200 rounded-xl ${getBorderHoverColor(social.platform)} hover:shadow-lg transition-all duration-200 overflow-hidden`}
                   >
-                    <div className="flex items-center justify-between mb-3">
+                    {/* サムネイル画像 */}
+                    {linkPreviews[social.url]?.image && (
+                      <div className="relative w-full h-48 bg-gray-100">
+                        <img
+                          src={linkPreviews[social.url].image}
+                          alt={linkPreviews[social.url]?.title || 'Preview'}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const parent = e.currentTarget.parentElement
+                            if (parent) {
+                              parent.style.display = 'none'
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         <div className={`w-10 h-10 flex items-center justify-center ${getPlatformColor(social.platform)} rounded-lg transition-colors overflow-hidden`}>
                           {social.platform === 'other' && linkPreviews[social.url]?.favicon ? (
@@ -384,9 +429,17 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                     </div>
-                    <p className={`text-sm text-gray-600 ${getTextHoverColor(social.platform)} transition-colors truncate`}>
-                      {new URL(social.url).hostname}
-                    </p>
+                      {/* 紹介文 */}
+                      {linkPreviews[social.url]?.description && (
+                        <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-2">
+                          {linkPreviews[social.url].description}
+                        </p>
+                      )}
+
+                      <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
+                        {new URL(social.url).hostname}
+                      </p>
+                    </div>
                   </a>
                 )
               })}
