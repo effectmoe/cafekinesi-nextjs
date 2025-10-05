@@ -146,7 +146,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">プロフィール</h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {instructor.bio}
+                {instructor.profileDetails || instructor.bio}
               </p>
             </div>
           </div>

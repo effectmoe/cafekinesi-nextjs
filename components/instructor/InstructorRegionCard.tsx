@@ -83,7 +83,7 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
 
           {/* 略歴 */}
           <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">
-            {instructor.bio}
+            {instructor.profileDetails || instructor.bio}
           </p>
 
           {/* 詳細情報ボタン */}
@@ -165,7 +165,7 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
 
           {/* 略歴 */}
           <p className="text-gray-700 text-sm leading-relaxed mb-6 line-clamp-3">
-            {instructor.bio}
+            {instructor.profileDetails || instructor.bio}
           </p>
 
           {/* 詳細情報ボタン */}
