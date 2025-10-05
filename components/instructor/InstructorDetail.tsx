@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { PortableText } from '@portabletext/react'
@@ -9,8 +10,51 @@ interface InstructorDetailProps {
   instructor: Instructor
 }
 
+interface LinkPreview {
+  title: string
+  image: string | null
+  description: string | null
+  url: string
+}
+
 export default function InstructorDetail({ instructor }: InstructorDetailProps) {
   const imageUrl = instructor.image?.asset?.url || '/images/instructor/default.jpg'
+  const [linkPreviews, setLinkPreviews] = useState<{ [url: string]: LinkPreview }>({})
+
+  useEffect(() => {
+    const fetchLinkPreviews = async () => {
+      const urls: string[] = []
+
+      if (instructor.website) urls.push(instructor.website)
+      if (instructor.socialLinks) {
+        instructor.socialLinks.forEach(link => urls.push(link.url))
+      }
+
+      const previews: { [url: string]: LinkPreview } = {}
+
+      await Promise.all(
+        urls.map(async (url) => {
+          try {
+            const response = await fetch(`/api/link-preview?url=${encodeURIComponent(url)}`)
+            const data = await response.json()
+            previews[url] = data
+          } catch (error) {
+            console.error(`Failed to fetch preview for ${url}:`, error)
+            previews[url] = {
+              title: new URL(url).hostname,
+              image: null,
+              description: null,
+              url,
+            }
+          }
+        })
+      )
+
+      setLinkPreviews(previews)
+    }
+
+    fetchLinkPreviews()
+  }, [instructor.website, instructor.socialLinks])
 
   // タグの色設定（パステルカラー）
   const getTagColor = (tag: string) => {
@@ -178,14 +222,16 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                         </svg>
                       </div>
-                      <h3 className="ml-3 text-base font-semibold text-gray-900">ウェブサイト</h3>
+                      <h3 className="ml-3 text-base font-semibold text-gray-900">
+                        {linkPreviews[instructor.website]?.title || 'ウェブサイト'}
+                      </h3>
                     </div>
                     <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </div>
                   <p className="text-sm text-gray-600 group-hover:text-blue-600 transition-colors truncate">
-                    {instructor.website}
+                    {new URL(instructor.website).hostname}
                   </p>
                 </a>
               )}
@@ -290,14 +336,16 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                         <div className={`p-2 ${getPlatformColor(social.platform)} rounded-lg transition-colors`}>
                           {getSocialIcon(social.platform)}
                         </div>
-                        <h3 className="ml-3 text-base font-semibold text-gray-900">{getPlatformName(social.platform)}</h3>
+                        <h3 className="ml-3 text-base font-semibold text-gray-900">
+                          {linkPreviews[social.url]?.title || getPlatformName(social.platform)}
+                        </h3>
                       </div>
                       <svg className={`w-5 h-5 text-gray-400 ${getTextHoverColor(social.platform)} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                     </div>
                     <p className={`text-sm text-gray-600 ${getTextHoverColor(social.platform)} transition-colors truncate`}>
-                      {social.url}
+                      {new URL(social.url).hostname}
                     </p>
                   </a>
                 )
