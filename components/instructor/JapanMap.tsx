@@ -76,6 +76,10 @@ export default function JapanMap({
             [0, 0],
             [800, 600],
           ]}
+          filterZoomEvent={(evt) => {
+            // Allow only wheel/pinch zoom events, disable drag panning
+            return evt.type === 'wheel' || evt.type === 'touchstart' || evt.type === 'touchmove'
+          }}
         >
           <Geographies geography="/data/japan-prefectures.json">
             {({ geographies }) =>
