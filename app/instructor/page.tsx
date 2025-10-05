@@ -10,7 +10,6 @@ import InstructorHeroSection from '@/components/instructor/InstructorHeroSection
 import InstructorAboutSection from '@/components/instructor/InstructorAboutSection'
 import InstructorServicesSection from '@/components/instructor/InstructorServicesSection'
 import InstructorMapSection from '@/components/instructor/InstructorMapSection'
-import InstructorListSection from '@/components/instructor/InstructorListSection'
 
 // Sanityから公開インストラクターを取得
 async function getInstructors(): Promise<Instructor[]> {
@@ -64,9 +63,6 @@ export default async function InstructorPage() {
 
         {/* 都道府県から探す */}
         <InstructorMapSection instructors={instructors} />
-
-        {/* インストラクター一覧 */}
-        <InstructorListSection instructors={instructors} />
       </main>
       <SocialLinks />
       <Footer />
