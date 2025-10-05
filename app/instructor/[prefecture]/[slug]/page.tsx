@@ -35,9 +35,17 @@ async function getInstructor(slug: string): Promise<Instructor | null> {
 export async function generateStaticParams() {
   try {
     const instructors = await publicClient.fetch<Instructor[]>(INSTRUCTORS_QUERY)
-    return instructors.map((instructor) => ({
-      slug: instructor.slug.current,
-    }))
+    return instructors.map((instructor) => {
+      // インストラクターのregionから都道府県スラッグを取得
+      const prefectureSlug = instructor.region
+        ? (Object.entries(SLUG_TO_PREFECTURE).find(([_, name]) => name === instructor.region)?.[0] || 'hokkaido')
+        : 'hokkaido'
+
+      return {
+        prefecture: prefectureSlug,
+        slug: instructor.slug.current,
+      }
+    })
   } catch (error) {
     console.error('Failed to generate static params:', error)
     return []
