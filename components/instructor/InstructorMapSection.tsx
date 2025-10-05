@@ -114,8 +114,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             onClick={() => setViewMode('map')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'map'
-                ? 'bg-brand-purple text-white'
-                : 'text-gray-700 hover:text-brand-purple'
+                ? 'bg-slate-700 text-white'
+                : 'text-gray-700 hover:bg-slate-50 hover:text-slate-800'
             }`}
           >
             🗾 日本地図から選ぶ
@@ -124,8 +124,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             onClick={() => setViewMode('list')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'list'
-                ? 'bg-brand-purple text-white'
-                : 'text-gray-700 hover:text-brand-purple'
+                ? 'bg-slate-700 text-white'
+                : 'text-gray-700 hover:bg-slate-50 hover:text-slate-800'
             }`}
           >
             📍 都道府県から選ぶ
@@ -157,15 +157,15 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             {/* Legend */}
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-gray-200 rounded border border-gray-300"></div>
+                <div className="w-6 h-6 rounded border border-gray-300" style={{ backgroundColor: '#e5e7eb' }}></div>
                 <span className="text-sm text-gray-600">インストラクターなし</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-purple-200 rounded border border-purple-300"></div>
+                <div className="w-6 h-6 rounded border border-slate-400" style={{ backgroundColor: '#cbd5e1' }}></div>
                 <span className="text-sm text-gray-600">インストラクターあり</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brand-purple rounded border border-purple-400"></div>
+                <div className="w-6 h-6 rounded border border-slate-800" style={{ backgroundColor: '#334155' }}></div>
                 <span className="text-sm text-gray-600">選択中</span>
               </div>
             </div>
@@ -239,7 +239,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                   >
                     <h4 className="font-bold text-gray-900 mb-1">{instructor.name}</h4>
                     {instructor.title && (
-                      <p className="text-sm text-brand-purple mb-2">{instructor.title}</p>
+                      <p className="text-sm text-slate-700 mb-2">{instructor.title}</p>
                     )}
                     <p className="text-sm text-gray-600 line-clamp-2">{instructor.bio}</p>
                   </Link>

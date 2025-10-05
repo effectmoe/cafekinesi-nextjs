@@ -44,12 +44,12 @@ export default function JapanMap({
     const prefName = geo.properties.nam_ja || geo.properties.name_ja || geo.properties.name
 
     if (prefName === selectedPrefecture) {
-      return 'hsl(260 15% 75%)' // brand-purple for selected
+      return '#334155' // slate-700 for selected
     }
 
     const count = instructorCounts[prefName] || 0
     if (count > 0) {
-      return 'hsl(260 30% 85%)' // light purple for prefectures with instructors
+      return '#cbd5e1' // slate-300 for prefectures with instructors
     }
 
     return '#e5e7eb' // gray-200 for prefectures without instructors
@@ -94,14 +94,14 @@ export default function JapanMap({
                       outline: 'none',
                     },
                     hover: {
-                      fill: 'hsl(260 20% 70%)', // slightly darker purple on hover
+                      fill: '#64748b', // slate-500 on hover
                       stroke: '#ffffff',
                       strokeWidth: 1,
                       outline: 'none',
                       cursor: 'pointer',
                     },
                     pressed: {
-                      fill: 'hsl(260 15% 75%)', // brand-purple
+                      fill: '#334155', // slate-700 when pressed
                       stroke: '#ffffff',
                       strokeWidth: 1,
                       outline: 'none',
@@ -125,7 +125,7 @@ export default function JapanMap({
         >
           {tooltipContent}
           {instructorCounts[tooltipContent] && (
-            <span className="ml-2 text-purple-300">
+            <span className="ml-2 text-slate-300">
               ({instructorCounts[tooltipContent]}名)
             </span>
           )}
