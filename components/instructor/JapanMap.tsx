@@ -5,7 +5,6 @@ import {
   ComposableMap,
   Geographies,
   Geography,
-  ZoomableGroup,
 } from 'react-simple-maps'
 import { prefectureInfo } from '@/lib/map-data/prefecture-info'
 
@@ -67,42 +66,40 @@ export default function JapanMap({
         height={600}
         className="w-full h-auto"
       >
-        <ZoomableGroup center={[138, 38]} zoom={1}>
-          <Geographies geography="/data/japan-prefectures.json">
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  onMouseEnter={(event) => handleMouseEnter(geo, event)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => handleClick(geo)}
-                  style={{
-                    default: {
-                      fill: getFillColor(geo),
-                      stroke: '#ffffff',
-                      strokeWidth: 0.75,
-                      outline: 'none',
-                    },
-                    hover: {
-                      fill: 'hsl(260 20% 70%)', // slightly darker purple on hover
-                      stroke: '#ffffff',
-                      strokeWidth: 1,
-                      outline: 'none',
-                      cursor: 'pointer',
-                    },
-                    pressed: {
-                      fill: 'hsl(260 15% 75%)', // brand-purple
-                      stroke: '#ffffff',
-                      strokeWidth: 1,
-                      outline: 'none',
-                    },
-                  }}
-                />
-              ))
-            }
-          </Geographies>
-        </ZoomableGroup>
+        <Geographies geography="/data/japan-prefectures.json">
+          {({ geographies }) =>
+            geographies.map((geo) => (
+              <Geography
+                key={geo.rsmKey}
+                geography={geo}
+                onMouseEnter={(event) => handleMouseEnter(geo, event)}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => handleClick(geo)}
+                style={{
+                  default: {
+                    fill: getFillColor(geo),
+                    stroke: '#ffffff',
+                    strokeWidth: 0.75,
+                    outline: 'none',
+                  },
+                  hover: {
+                    fill: 'hsl(260 20% 70%)', // slightly darker purple on hover
+                    stroke: '#ffffff',
+                    strokeWidth: 1,
+                    outline: 'none',
+                    cursor: 'pointer',
+                  },
+                  pressed: {
+                    fill: 'hsl(260 15% 75%)', // brand-purple
+                    stroke: '#ffffff',
+                    strokeWidth: 1,
+                    outline: 'none',
+                  },
+                }}
+              />
+            ))
+          }
+        </Geographies>
       </ComposableMap>
 
       {/* Tooltip */}
