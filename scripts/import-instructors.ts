@@ -31,6 +31,11 @@ const prefecturesWithInstructors = [
 const sampleInstructors = prefecturesWithInstructors.map((region, index) => {
   const isOverseas = region === 'アメリカ' || region === 'ヨーロッパ'
 
+  // ランダムにspecialtiesを割り当て
+  const allSpecialties = ['カフェキネシ', 'ピーチタッチ', 'チャクラキネシ', 'ナビゲーター', 'キネシスタンダード']
+  const numSpecialties = Math.floor(Math.random() * 3) + 2 // 2-4個
+  const specialties = allSpecialties.slice(0, numSpecialties)
+
   return {
     _type: 'instructor',
     name: `${region}のインストラクター`,
@@ -40,6 +45,7 @@ const sampleInstructors = prefecturesWithInstructors.map((region, index) => {
     },
     title: 'カフェキネシ公認インストラクター',
     bio: `${region}で活動しているカフェキネシインストラクターです。キネシオロジーとアロマセラピーを融合した独自のセッションを提供しています。`,
+    specialties: specialties,
     region: region,
     order: index,
     isActive: true,
