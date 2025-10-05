@@ -143,7 +143,6 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 mb-8">
               <span>💡 地図をクリック・タップで都道府県を選択</span>
               <span>💡 ピンチやスクロールで拡大・縮小</span>
-              <span>💡 ドラッグで地図を移動</span>
             </div>
 
             {/* Interactive Japan Map */}
