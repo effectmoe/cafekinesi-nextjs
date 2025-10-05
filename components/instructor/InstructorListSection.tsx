@@ -28,7 +28,7 @@ export default function InstructorListSection({ instructors }: InstructorListSec
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {regionInstructors.map((instructor) => {
-                const imageUrl = instructor.image?.asset?.url || '/images/placeholder-instructor.jpg'
+                const imageUrl = instructor.image?.asset?.url || '/images/instructor/instructor-default.jpg'
                 const imageAlt = instructor.image?.alt || `${instructor.name}のプロフィール画像`
 
                 return (

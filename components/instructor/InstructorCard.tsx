@@ -8,7 +8,7 @@ interface InstructorCardProps {
 }
 
 export default function InstructorCard({ instructor }: InstructorCardProps) {
-  const imageUrl = instructor.image?.asset?.url || '/images/placeholder-instructor.jpg'
+  const imageUrl = instructor.image?.asset?.url || '/images/instructor/instructor-default.jpg'
   const imageAlt = instructor.image?.alt || `${instructor.name}のプロフィール画像`
 
   return (

@@ -6,7 +6,7 @@ export default function InstructorHeroSection() {
       {/* 背景画像 */}
       <div className="absolute inset-0">
         <Image
-          src="/images/instructor/hero-bg.jpg"
+          src="/images/instructor/hero-bg.webp"
           alt="インストラクターセッション風景"
           fill
           className="object-cover"
