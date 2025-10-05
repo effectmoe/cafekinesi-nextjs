@@ -63,18 +63,28 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
     return { america, europe }
   }, [overseasInstructors])
 
+  // Get list of prefectures with instructors (sorted)
+  const prefecturesWithInstructors = useMemo(() => {
+    return Object.keys(instructorCounts).sort()
+  }, [instructorCounts])
+
   const handlePrefectureClick = (prefectureName: string) => {
     setSelectedPrefecture(prefectureName)
   }
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16 md:py-24">
-      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
+      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
         都道府県から探す
       </h2>
-      <p className="text-center text-gray-600 mb-12">
+      <p className="text-center text-gray-600 mb-2">
         地図から都道府県を選択してください
       </p>
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 mb-12">
+        <span>💡 地図をクリック・タップで都道府県を選択</span>
+        <span>💡 ピンチやスクロールで拡大・縮小</span>
+        <span>💡 ドラッグで地図を移動</span>
+      </div>
 
       <div className="max-w-4xl mx-auto">
         {/* Interactive Japan Map */}
@@ -101,6 +111,31 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             <span className="text-sm text-gray-600">選択中</span>
           </div>
         </div>
+
+        {/* Prefectures with Instructors List */}
+        {prefecturesWithInstructors.length > 0 && (
+          <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
+              インストラクターが在籍している都道府県 ({prefecturesWithInstructors.length}件)
+            </h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              {prefecturesWithInstructors.map((prefecture) => (
+                <button
+                  key={prefecture}
+                  onClick={() => setSelectedPrefecture(prefecture)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedPrefecture === prefecture
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:border-pink-500 hover:text-pink-500'
+                  }`}
+                >
+                  {prefecture}
+                  <span className="ml-1 text-xs opacity-75">({instructorCounts[prefecture]})</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Selected Prefecture Info */}
         {selectedPrefecture && (
