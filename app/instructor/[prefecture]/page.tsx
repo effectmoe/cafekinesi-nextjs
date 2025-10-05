@@ -112,8 +112,8 @@ export async function generateMetadata({ params }: PrefecturePageProps): Promise
   }
 }
 
-// ISR設定（30分ごとに再生成）
-export const revalidate = 1800
+// ISR設定（キャッシュなし - デバッグ用）
+export const revalidate = 0
 
 export default async function PrefecturePage({ params }: PrefecturePageProps) {
   const { prefecture } = await params
