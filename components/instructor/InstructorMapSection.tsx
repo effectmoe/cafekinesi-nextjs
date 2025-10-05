@@ -22,22 +22,46 @@ interface InstructorMapSectionProps {
 export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>('')
 
-  // Count instructors per prefecture
+  // Separate instructors by location
+  const { japanInstructors, overseasInstructors } = useMemo(() => {
+    const japan: Instructor[] = []
+    const overseas: Instructor[] = []
+
+    instructors.forEach((instructor) => {
+      // Check if region is overseas (アメリカ or ヨーロッパ)
+      if (instructor.region === 'アメリカ' || instructor.region === 'ヨーロッパ') {
+        overseas.push(instructor)
+      } else {
+        japan.push(instructor)
+      }
+    })
+
+    return { japanInstructors: japan, overseasInstructors: overseas }
+  }, [instructors])
+
+  // Count instructors per prefecture (Japan only)
   const instructorCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    instructors.forEach((instructor) => {
+    japanInstructors.forEach((instructor) => {
       if (instructor.region) {
         counts[instructor.region] = (counts[instructor.region] || 0) + 1
       }
     })
     return counts
-  }, [instructors])
+  }, [japanInstructors])
 
   // Get instructors for selected prefecture
   const selectedInstructors = useMemo(() => {
     if (!selectedPrefecture) return []
-    return instructors.filter((instructor) => instructor.region === selectedPrefecture)
-  }, [instructors, selectedPrefecture])
+    return japanInstructors.filter((instructor) => instructor.region === selectedPrefecture)
+  }, [japanInstructors, selectedPrefecture])
+
+  // Group overseas instructors by region
+  const overseasByRegion = useMemo(() => {
+    const america = overseasInstructors.filter((i) => i.region === 'アメリカ')
+    const europe = overseasInstructors.filter((i) => i.region === 'ヨーロッパ')
+    return { america, europe }
+  }, [overseasInstructors])
 
   const handlePrefectureClick = (prefectureName: string) => {
     setSelectedPrefecture(prefectureName)
@@ -108,6 +132,73 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
           </div>
         )}
       </div>
+
+      {/* Overseas Instructors Section */}
+      {overseasInstructors.length > 0 && (
+        <div className="max-w-4xl mx-auto mt-16">
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
+            海外のインストラクター
+          </h3>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* America */}
+            {overseasByRegion.america.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="text-3xl">🇺🇸</div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900">アメリカ</h4>
+                    <p className="text-sm text-gray-600">{overseasByRegion.america.length}名</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {overseasByRegion.america.map((instructor) => (
+                    <Link
+                      key={instructor._id}
+                      href={`/instructor/${instructor.slug.current}`}
+                      className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+                      {instructor.title && (
+                        <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                      )}
+                      <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Europe */}
+            {overseasByRegion.europe.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="text-3xl">🇪🇺</div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900">ヨーロッパ</h4>
+                    <p className="text-sm text-gray-600">{overseasByRegion.europe.length}名</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {overseasByRegion.europe.map((instructor) => (
+                    <Link
+                      key={instructor._id}
+                      href={`/instructor/${instructor.slug.current}`}
+                      className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+                      {instructor.title && (
+                        <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                      )}
+                      <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   )
 }
