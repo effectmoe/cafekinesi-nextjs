@@ -32,6 +32,28 @@ export async function GET(request: NextRequest) {
     const ogDescriptionMatch = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["'][^>]*>/i)
     const descriptionMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i)
 
+    // ファビコンを抽出
+    const faviconMatch = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["'][^>]*>/i)
+    let favicon = faviconMatch?.[1] || null
+
+    // 相対URLの場合は絶対URLに変換
+    if (favicon && !favicon.startsWith('http')) {
+      const urlObj = new URL(url)
+      if (favicon.startsWith('//')) {
+        favicon = `https:${favicon}`
+      } else if (favicon.startsWith('/')) {
+        favicon = `${urlObj.protocol}//${urlObj.host}${favicon}`
+      } else {
+        favicon = `${urlObj.protocol}//${urlObj.host}/${favicon}`
+      }
+    }
+
+    // ファビコンが見つからない場合はデフォルトのfavicon.icoを試す
+    if (!favicon) {
+      const urlObj = new URL(url)
+      favicon = `${urlObj.protocol}//${urlObj.host}/favicon.ico`
+    }
+
     const title = ogTitleMatch?.[1] || titleMatch?.[1] || new URL(url).hostname
     const image = ogImageMatch?.[1] || null
     const description = ogDescriptionMatch?.[1] || descriptionMatch?.[1] || null
@@ -40,15 +62,18 @@ export async function GET(request: NextRequest) {
       title,
       image,
       description,
+      favicon,
       url,
     })
   } catch (error) {
     console.error('Link preview error:', error)
+    const urlObj = new URL(url)
     return NextResponse.json(
       {
-        title: new URL(url).hostname,
+        title: urlObj.hostname,
         image: null,
         description: null,
+        favicon: `${urlObj.protocol}//${urlObj.host}/favicon.ico`,
         url,
       },
       { status: 200 } // エラーでもフォールバック値を返す
