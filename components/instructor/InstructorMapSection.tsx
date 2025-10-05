@@ -179,31 +179,47 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
               地域・都道府県を選択してください（インストラクター在籍: {prefecturesWithInstructors.length}都道府県）
             </p>
 
-            {Object.entries(prefecturesByRegion).map(([region, prefectures]) => (
-              <div key={region} className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                  {region}
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {prefectures.map((pref) => (
-                    <button
-                      key={pref.name}
-                      onClick={() => setSelectedPrefecture(pref.name)}
-                      className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
-                        selectedPrefecture === pref.name
-                          ? 'bg-pink-500 text-white'
-                          : 'bg-gray-50 text-gray-700 hover:bg-pink-50 hover:text-pink-600 border border-gray-200'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span>{pref.name}</span>
-                        <span className="text-xs opacity-75">({pref.count})</span>
-                      </div>
-                    </button>
-                  ))}
+            {Object.entries(prefecturesByRegion).map(([region, prefectures]) => {
+              // Define region colors based on the reference image
+              const regionColors: Record<string, { bg: string; border: string; text: string; header: string }> = {
+                '北海道': { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-900', header: 'bg-red-100' },
+                '東北': { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-900', header: 'bg-yellow-100' },
+                '関東': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-900', header: 'bg-green-100' },
+                '中部': { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-900', header: 'bg-cyan-100' },
+                '近畿': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900', header: 'bg-blue-100' },
+                '中国': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-900', header: 'bg-orange-100' },
+                '四国': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-900', header: 'bg-purple-100' },
+                '九州・沖縄': { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-900', header: 'bg-gray-200' },
+              }
+
+              const colors = regionColors[region] || regionColors['九州・沖縄']
+
+              return (
+                <div key={region} className={`rounded-lg border ${colors.border} ${colors.bg} p-6`}>
+                  <h3 className={`text-xl font-bold ${colors.text} mb-4 pb-2 border-b-2 ${colors.border} ${colors.header} -m-6 mb-4 p-4 rounded-t-lg`}>
+                    {region}
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {prefectures.map((pref) => (
+                      <button
+                        key={pref.name}
+                        onClick={() => setSelectedPrefecture(pref.name)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
+                          selectedPrefecture === pref.name
+                            ? 'bg-pink-500 text-white'
+                            : `bg-white ${colors.text} hover:bg-pink-50 hover:text-pink-600 border ${colors.border}`
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span>{pref.name}</span>
+                          <span className="text-xs opacity-75">({pref.count})</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
 
