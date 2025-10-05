@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { PortableText } from '@portabletext/react'
 import type { Instructor } from '@/lib/types/instructor'
 
 interface InstructorDetailProps {
@@ -145,9 +146,13 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
             {/* プロフィール */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">プロフィール</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {instructor.profileDetails || instructor.bio}
-              </p>
+              <div className="text-gray-700 leading-relaxed prose prose-sm max-w-none">
+                {instructor.profileDetails ? (
+                  <PortableText value={instructor.profileDetails} />
+                ) : (
+                  <p className="whitespace-pre-line">{instructor.bio}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
