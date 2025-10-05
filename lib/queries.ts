@@ -330,3 +330,92 @@ export const COURSES_WITH_DETAILS_QUERY = `
     }
   }
 `
+
+// インストラクター一覧を取得
+export const INSTRUCTORS_QUERY = `
+  *[_type == "instructor" && isActive == true] | order(order asc) {
+    _id,
+    name,
+    slug,
+    title,
+    image {
+      asset->,
+      alt
+    },
+    bio,
+    region,
+    specialties,
+    order,
+    isActive,
+    featured
+  }
+`
+
+// インストラクター詳細を取得
+export const INSTRUCTOR_DETAIL_QUERY = `
+  *[_type == "instructor" && slug.current == $slug && isActive == true][0] {
+    _id,
+    name,
+    slug,
+    title,
+    image {
+      asset->,
+      alt
+    },
+    bio,
+    profileDetails,
+    region,
+    certifications[] {
+      title,
+      organization,
+      year
+    },
+    experience[] {
+      year,
+      description
+    },
+    teachingCourses[]-> {
+      _id,
+      courseId,
+      title,
+      subtitle,
+      description,
+      image {
+        asset->,
+        alt
+      },
+      backgroundClass,
+      order
+    },
+    specialties,
+    email,
+    phone,
+    website,
+    socialLinks[] {
+      platform,
+      url
+    },
+    order,
+    isActive,
+    featured,
+    seo
+  }
+`
+
+// 注目インストラクターを取得
+export const FEATURED_INSTRUCTORS_QUERY = `
+  *[_type == "instructor" && isActive == true && featured == true] | order(order asc) [0...3] {
+    _id,
+    name,
+    slug,
+    title,
+    image {
+      asset->,
+      alt
+    },
+    bio,
+    region,
+    specialties,
+    order
+  }
+`

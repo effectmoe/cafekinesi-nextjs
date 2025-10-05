@@ -11,6 +11,7 @@ import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
 import course from './documents/course'
 import schoolPage from './documents/schoolPage'
+import instructor from './documents/instructor'
 import { faq } from './faq'
 
 // オブジェクトスキーマ
@@ -44,6 +45,7 @@ export const schemaTypes = [
   siteSettings,
   course,
   schoolPage,
+  instructor,
   faq,
 
   // オブジェクト
