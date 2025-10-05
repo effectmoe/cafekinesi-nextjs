@@ -3,7 +3,9 @@
 import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { Instructor } from '@/lib/types/instructor'
+import { PREFECTURE_TO_SLUG } from '@/lib/prefecture-mappings'
 
 // Dynamically import JapanMap to avoid SSR issues with react-simple-maps
 const JapanMap = dynamic(() => import('./JapanMap'), {
@@ -20,7 +22,7 @@ interface InstructorMapSectionProps {
 }
 
 export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
-  const [selectedPrefecture, setSelectedPrefecture] = useState<string>('')
+  const router = useRouter()
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map')
 
   // Separate instructors by location
@@ -51,11 +53,6 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
     return counts
   }, [japanInstructors])
 
-  // Get instructors for selected prefecture
-  const selectedInstructors = useMemo(() => {
-    if (!selectedPrefecture) return []
-    return japanInstructors.filter((instructor) => instructor.region === selectedPrefecture)
-  }, [japanInstructors, selectedPrefecture])
 
   // Group overseas instructors by region
   const overseasByRegion = useMemo(() => {
@@ -98,7 +95,11 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
   }, [instructorCounts])
 
   const handlePrefectureClick = (prefectureName: string) => {
-    setSelectedPrefecture(prefectureName)
+    // 都道府県別ページに遷移
+    const slug = PREFECTURE_TO_SLUG[prefectureName]
+    if (slug) {
+      router.push(`/instructor/${slug}`)
+    }
   }
 
   return (
@@ -149,7 +150,6 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             <div className="relative w-full bg-white rounded-lg shadow-sm mb-8 p-4">
               <JapanMap
                 onPrefectureClick={handlePrefectureClick}
-                selectedPrefecture={selectedPrefecture}
                 instructorCounts={instructorCounts}
               />
             </div>
@@ -162,11 +162,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded border border-slate-400" style={{ backgroundColor: '#cbd5e1' }}></div>
-                <span className="text-sm text-gray-600">インストラクターあり</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded border border-slate-800" style={{ backgroundColor: '#334155' }}></div>
-                <span className="text-sm text-gray-600">選択中</span>
+                <span className="text-sm text-gray-600">インストラクターあり（クリックで一覧表示）</span>
               </div>
             </div>
           </>
@@ -203,12 +199,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                     {prefectures.map((pref) => (
                       <button
                         key={pref.name}
-                        onClick={() => setSelectedPrefecture(pref.name)}
-                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
-                          selectedPrefecture === pref.name
-                            ? 'bg-slate-700 text-white shadow-md'
-                            : `bg-white ${colors.text} hover:bg-slate-50 hover:text-slate-800 border ${colors.border}`
-                        }`}
+                        onClick={() => handlePrefectureClick(pref.name)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white ${colors.text} hover:bg-slate-50 hover:text-slate-800 border ${colors.border}`}
                       >
                         <div className="flex justify-between items-center">
                           <span>{pref.name}</span>
@@ -223,35 +215,6 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
           </div>
         )}
 
-        {/* Selected Prefecture Info */}
-        {selectedPrefecture && (
-          <div className="mt-8 p-6 bg-slate-50 rounded-lg border border-slate-200">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">
-              {selectedPrefecture}のインストラクター ({selectedInstructors.length}名)
-            </h3>
-            {selectedInstructors.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2">
-                {selectedInstructors.map((instructor) => (
-                  <Link
-                    key={instructor._id}
-                    href={`/instructor/${instructor.slug.current}`}
-                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow border border-slate-200"
-                  >
-                    <h4 className="font-bold text-gray-900 mb-1">{instructor.name}</h4>
-                    {instructor.title && (
-                      <p className="text-sm text-slate-700 mb-2">{instructor.title}</p>
-                    )}
-                    <p className="text-sm text-gray-600 line-clamp-2">{instructor.bio}</p>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600">
-                現在、{selectedPrefecture}にはインストラクターが登録されていません。
-              </p>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Overseas Instructors Section */}

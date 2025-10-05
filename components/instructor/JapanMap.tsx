@@ -11,13 +11,11 @@ import { prefectureInfo } from '@/lib/map-data/prefecture-info'
 
 interface JapanMapProps {
   onPrefectureClick?: (prefectureName: string) => void
-  selectedPrefecture?: string
   instructorCounts?: Record<string, number>
 }
 
 export default function JapanMap({
   onPrefectureClick,
-  selectedPrefecture,
   instructorCounts = {},
 }: JapanMapProps) {
   const [tooltipContent, setTooltipContent] = useState('')
@@ -44,10 +42,6 @@ export default function JapanMap({
 
   const getFillColor = (geo: any) => {
     const prefName = geo.properties.nam_ja || geo.properties.name_ja || geo.properties.name
-
-    if (prefName === selectedPrefecture) {
-      return '#334155' // slate-700 for selected
-    }
 
     const count = instructorCounts[prefName] || 0
     if (count > 0) {

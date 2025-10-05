@@ -1,9 +1,11 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { draftMode } from 'next/headers'
 import { publicClient, previewClient } from '@/lib/sanity.client'
 import { INSTRUCTOR_DETAIL_QUERY, INSTRUCTORS_QUERY } from '@/lib/queries'
 import type { Instructor } from '@/lib/types/instructor'
+import { SLUG_TO_PREFECTURE } from '@/lib/prefecture-mappings'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -45,7 +47,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ prefecture: string; slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
   const instructor = await getInstructor(slug)
@@ -81,9 +83,10 @@ export const revalidate = 1800
 export default async function InstructorDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ prefecture: string; slug: string }>
 }) {
-  const { slug } = await params
+  const { prefecture, slug } = await params
+  const prefectureName = SLUG_TO_PREFECTURE[prefecture]
   const instructor = await getInstructor(slug)
 
   if (!instructor) {
@@ -93,7 +96,30 @@ export default async function InstructorDetailPage({
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="relative">
+      <main className="relative pt-20">
+        {/* パンくずナビゲーション */}
+        <div className="max-w-screen-xl mx-auto px-6 py-4">
+          <nav className="text-sm text-gray-600">
+            <Link href="/" className="hover:text-gray-900">
+              ホーム
+            </Link>
+            <span className="mx-2">&gt;</span>
+            <Link href="/instructor" className="hover:text-gray-900">
+              インストラクター
+            </Link>
+            <span className="mx-2">&gt;</span>
+            {prefectureName && (
+              <>
+                <Link href={`/instructor/${prefecture}`} className="hover:text-gray-900">
+                  {prefectureName}
+                </Link>
+                <span className="mx-2">&gt;</span>
+              </>
+            )}
+            <span className="text-gray-900">{instructor.name}</span>
+          </nav>
+        </div>
+
         <InstructorDetail instructor={instructor} />
       </main>
       <SocialLinks />
