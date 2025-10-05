@@ -180,16 +180,16 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             </p>
 
             {Object.entries(prefecturesByRegion).map(([region, prefectures]) => {
-              // Define region colors using brand colors (subtle and elegant)
+              // Define region colors - subtle neutral tones for consistency
               const regionColors: Record<string, { bg: string; border: string; text: string; header: string }> = {
-                '北海道': { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', header: 'bg-slate-100' },
+                '北海道': { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', header: 'bg-gray-100' },
                 '東北': { bg: 'bg-stone-50', border: 'border-stone-200', text: 'text-stone-700', header: 'bg-stone-100' },
-                '関東': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', header: 'bg-purple-100' },
-                '中部': { bg: 'bg-sky-50', border: 'border-sky-200', text: 'text-sky-700', header: 'bg-sky-100' },
-                '近畿': { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', header: 'bg-indigo-100' },
-                '中国': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', header: 'bg-amber-100' },
-                '四国': { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', header: 'bg-teal-100' },
-                '九州・沖縄': { bg: 'bg-neutral-50', border: 'border-neutral-200', text: 'text-neutral-700', header: 'bg-neutral-100' },
+                '関東': { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', header: 'bg-slate-100' },
+                '中部': { bg: 'bg-zinc-50', border: 'border-zinc-200', text: 'text-zinc-700', header: 'bg-zinc-100' },
+                '近畿': { bg: 'bg-neutral-50', border: 'border-neutral-200', text: 'text-neutral-700', header: 'bg-neutral-100' },
+                '中国': { bg: 'bg-stone-50', border: 'border-stone-200', text: 'text-stone-700', header: 'bg-stone-100' },
+                '四国': { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', header: 'bg-gray-100' },
+                '九州・沖縄': { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', header: 'bg-slate-100' },
               }
 
               const colors = regionColors[region] || regionColors['九州・沖縄']
