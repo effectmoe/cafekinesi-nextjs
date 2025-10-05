@@ -1,21 +1,47 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import type { Instructor } from '@/lib/types/instructor'
 
-export default function InstructorMapSection() {
-  const [selectedRegion, setSelectedRegion] = useState<string>('')
+// Dynamically import JapanMap to avoid SSR issues with react-simple-maps
+const JapanMap = dynamic(() => import('./JapanMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center">
+      <p className="text-gray-400">地図を読み込み中...</p>
+    </div>
+  ),
+})
 
-  // 日本の地域区分
-  const regions = [
-    { id: 'hokkaido', name: '北海道' },
-    { id: 'tohoku', name: '東北' },
-    { id: 'kanto', name: '関東' },
-    { id: 'chubu', name: '中部' },
-    { id: 'kinki', name: '近畿' },
-    { id: 'chugoku', name: '中国' },
-    { id: 'shikoku', name: '四国' },
-    { id: 'kyushu', name: '九州・沖縄' },
-  ]
+interface InstructorMapSectionProps {
+  instructors?: Instructor[]
+}
+
+export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
+  const [selectedPrefecture, setSelectedPrefecture] = useState<string>('')
+
+  // Count instructors per prefecture
+  const instructorCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    instructors.forEach((instructor) => {
+      if (instructor.region) {
+        counts[instructor.region] = (counts[instructor.region] || 0) + 1
+      }
+    })
+    return counts
+  }, [instructors])
+
+  // Get instructors for selected prefecture
+  const selectedInstructors = useMemo(() => {
+    if (!selectedPrefecture) return []
+    return instructors.filter((instructor) => instructor.region === selectedPrefecture)
+  }, [instructors, selectedPrefecture])
+
+  const handlePrefectureClick = (prefectureName: string) => {
+    setSelectedPrefecture(prefectureName)
+  }
 
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16 md:py-24">
@@ -23,54 +49,62 @@ export default function InstructorMapSection() {
         都道府県から探す
       </h2>
       <p className="text-center text-gray-600 mb-12">
-        地図から都道府県を選択
+        地図から都道府県を選択してください
       </p>
 
       <div className="max-w-4xl mx-auto">
-        {/* 日本地図プレースホルダー */}
-        <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-lg mb-8 flex items-center justify-center">
-          {/* SVG日本地図をここに配置 */}
-          <div className="text-gray-400 text-center">
-            <svg
-              className="w-full h-full p-8"
-              viewBox="0 0 800 600"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* シンプルな日本地図のプレースホルダー */}
-              <rect x="200" y="100" width="400" height="400" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" rx="10"/>
-              <text x="400" y="300" textAnchor="middle" fill="#6b7280" fontSize="20">
-                日本地図
-              </text>
-              <text x="400" y="330" textAnchor="middle" fill="#9ca3af" fontSize="14">
-                （インタラクティブマップは今後実装予定）
-              </text>
-            </svg>
+        {/* Interactive Japan Map */}
+        <div className="relative w-full bg-white rounded-lg shadow-sm mb-8 p-4">
+          <JapanMap
+            onPrefectureClick={handlePrefectureClick}
+            selectedPrefecture={selectedPrefecture}
+            instructorCounts={instructorCounts}
+          />
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-gray-200 rounded"></div>
+            <span className="text-sm text-gray-600">インストラクターなし</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-pink-300 rounded"></div>
+            <span className="text-sm text-gray-600">インストラクターあり</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-pink-500 rounded"></div>
+            <span className="text-sm text-gray-600">選択中</span>
           </div>
         </div>
 
-        {/* 地域選択ボタン */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {regions.map((region) => (
-            <button
-              key={region.id}
-              onClick={() => setSelectedRegion(region.id)}
-              className={`py-3 px-4 rounded-lg font-medium transition-colors ${
-                selectedRegion === region.id
-                  ? 'bg-pink-500 text-white'
-                  : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-pink-500 hover:text-pink-500'
-              }`}
-            >
-              {region.name}
-            </button>
-          ))}
-        </div>
-
-        {selectedRegion && (
-          <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-            <p className="text-center text-gray-700">
-              {regions.find(r => r.id === selectedRegion)?.name}地方のインストラクターを表示
-            </p>
+        {/* Selected Prefecture Info */}
+        {selectedPrefecture && (
+          <div className="mt-8 p-6 bg-pink-50 rounded-lg">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              {selectedPrefecture}のインストラクター ({selectedInstructors.length}名)
+            </h3>
+            {selectedInstructors.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {selectedInstructors.map((instructor) => (
+                  <Link
+                    key={instructor._id}
+                    href={`/instructor/${instructor.slug.current}`}
+                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
+                  >
+                    <h4 className="font-bold text-gray-900 mb-1">{instructor.name}</h4>
+                    {instructor.title && (
+                      <p className="text-sm text-blue-600 mb-2">{instructor.title}</p>
+                    )}
+                    <p className="text-sm text-gray-600 line-clamp-2">{instructor.bio}</p>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">
+                現在、{selectedPrefecture}にはインストラクターが登録されていません。
+              </p>
+            )}
           </div>
         )}
       </div>

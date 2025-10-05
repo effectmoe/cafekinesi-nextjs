@@ -63,7 +63,7 @@ export default async function InstructorPage() {
         <InstructorServicesSection />
 
         {/* 都道府県から探す */}
-        <InstructorMapSection />
+        <InstructorMapSection instructors={instructors} />
 
         {/* インストラクター一覧 */}
         <InstructorListSection instructors={instructors} />
