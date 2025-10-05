@@ -114,8 +114,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             onClick={() => setViewMode('map')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'map'
-                ? 'bg-pink-500 text-white'
-                : 'text-gray-700 hover:text-pink-500'
+                ? 'bg-brand-purple text-white'
+                : 'text-gray-700 hover:text-brand-purple'
             }`}
           >
             🗾 日本地図から選ぶ
@@ -124,8 +124,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             onClick={() => setViewMode('list')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'list'
-                ? 'bg-pink-500 text-white'
-                : 'text-gray-700 hover:text-pink-500'
+                ? 'bg-brand-purple text-white'
+                : 'text-gray-700 hover:text-brand-purple'
             }`}
           >
             📍 都道府県から選ぶ
@@ -157,15 +157,15 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             {/* Legend */}
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                <div className="w-6 h-6 bg-gray-200 rounded border border-gray-300"></div>
                 <span className="text-sm text-gray-600">インストラクターなし</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-pink-300 rounded"></div>
+                <div className="w-6 h-6 bg-purple-200 rounded border border-purple-300"></div>
                 <span className="text-sm text-gray-600">インストラクターあり</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-pink-500 rounded"></div>
+                <div className="w-6 h-6 bg-brand-purple rounded border border-purple-400"></div>
                 <span className="text-sm text-gray-600">選択中</span>
               </div>
             </div>
@@ -206,8 +206,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                         onClick={() => setSelectedPrefecture(pref.name)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
                           selectedPrefecture === pref.name
-                            ? 'bg-pink-500 text-white'
-                            : `bg-white ${colors.text} hover:bg-pink-50 hover:text-pink-600 border ${colors.border}`
+                            ? 'bg-brand-purple text-white shadow-md'
+                            : `bg-white ${colors.text} hover:bg-purple-50 hover:text-purple-700 border ${colors.border}`
                         }`}
                       >
                         <div className="flex justify-between items-center">
@@ -225,7 +225,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
 
         {/* Selected Prefecture Info */}
         {selectedPrefecture && (
-          <div className="mt-8 p-6 bg-pink-50 rounded-lg">
+          <div className="mt-8 p-6 bg-purple-50 rounded-lg border border-purple-200">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               {selectedPrefecture}のインストラクター ({selectedInstructors.length}名)
             </h3>
@@ -235,11 +235,11 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                   <Link
                     key={instructor._id}
                     href={`/instructor/${instructor.slug.current}`}
-                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
+                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow border border-purple-100"
                   >
                     <h4 className="font-bold text-gray-900 mb-1">{instructor.name}</h4>
                     {instructor.title && (
-                      <p className="text-sm text-blue-600 mb-2">{instructor.title}</p>
+                      <p className="text-sm text-brand-purple mb-2">{instructor.title}</p>
                     )}
                     <p className="text-sm text-gray-600 line-clamp-2">{instructor.bio}</p>
                   </Link>
