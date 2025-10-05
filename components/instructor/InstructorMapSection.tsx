@@ -180,16 +180,16 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             </p>
 
             {Object.entries(prefecturesByRegion).map(([region, prefectures]) => {
-              // Define region colors based on the reference image
+              // Define region colors using brand colors (subtle and elegant)
               const regionColors: Record<string, { bg: string; border: string; text: string; header: string }> = {
-                '北海道': { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-900', header: 'bg-red-100' },
-                '東北': { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-900', header: 'bg-yellow-100' },
-                '関東': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-900', header: 'bg-green-100' },
-                '中部': { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-900', header: 'bg-cyan-100' },
-                '近畿': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900', header: 'bg-blue-100' },
-                '中国': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-900', header: 'bg-orange-100' },
-                '四国': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-900', header: 'bg-purple-100' },
-                '九州・沖縄': { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-900', header: 'bg-gray-200' },
+                '北海道': { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', header: 'bg-slate-100' },
+                '東北': { bg: 'bg-stone-50', border: 'border-stone-200', text: 'text-stone-700', header: 'bg-stone-100' },
+                '関東': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', header: 'bg-purple-100' },
+                '中部': { bg: 'bg-sky-50', border: 'border-sky-200', text: 'text-sky-700', header: 'bg-sky-100' },
+                '近畿': { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', header: 'bg-indigo-100' },
+                '中国': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', header: 'bg-amber-100' },
+                '四国': { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', header: 'bg-teal-100' },
+                '九州・沖縄': { bg: 'bg-neutral-50', border: 'border-neutral-200', text: 'text-neutral-700', header: 'bg-neutral-100' },
               }
 
               const colors = regionColors[region] || regionColors['九州・沖縄']
@@ -206,8 +206,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                         onClick={() => setSelectedPrefecture(pref.name)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
                           selectedPrefecture === pref.name
-                            ? 'bg-brand-purple text-white shadow-md'
-                            : `bg-white ${colors.text} hover:bg-purple-50 hover:text-purple-700 border ${colors.border}`
+                            ? 'bg-slate-700 text-white shadow-md'
+                            : `bg-white ${colors.text} hover:bg-slate-50 hover:text-slate-800 border ${colors.border}`
                         }`}
                       >
                         <div className="flex justify-between items-center">
@@ -225,8 +225,8 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
 
         {/* Selected Prefecture Info */}
         {selectedPrefecture && (
-          <div className="mt-8 p-6 bg-purple-50 rounded-lg border border-purple-200">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="mt-8 p-6 bg-slate-50 rounded-lg border border-slate-200">
+            <h3 className="text-xl font-bold text-slate-800 mb-4">
               {selectedPrefecture}のインストラクター ({selectedInstructors.length}名)
             </h3>
             {selectedInstructors.length > 0 ? (
@@ -235,7 +235,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                   <Link
                     key={instructor._id}
                     href={`/instructor/${instructor.slug.current}`}
-                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow border border-purple-100"
+                    className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow border border-slate-200"
                   >
                     <h4 className="font-bold text-gray-900 mb-1">{instructor.name}</h4>
                     {instructor.title && (
