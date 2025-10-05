@@ -28,6 +28,38 @@ export async function GET(request: NextRequest) {
     // OG画像を抽出
     const ogImageMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["'][^>]*>/i)
 
+    // フォールバック画像を抽出（OG画像がない場合）
+    let fallbackImage = null
+    if (!ogImageMatch) {
+      // アメブロのヘッダー画像を探す
+      const amebloHeaderMatch = html.match(/<img[^>]*class=["'][^"']*skinHeaderArea[^"']*["'][^>]*src=["']([^"']+)["'][^>]*>/i)
+      if (amebloHeaderMatch) {
+        fallbackImage = amebloHeaderMatch[1]
+      } else {
+        // 本文の最初の画像を探す
+        const firstImgMatch = html.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i)
+        if (firstImgMatch) {
+          const imgSrc = firstImgMatch[1]
+          // データURIや小さいアイコンは除外
+          if (!imgSrc.startsWith('data:') && !imgSrc.includes('icon') && !imgSrc.includes('logo')) {
+            fallbackImage = imgSrc
+          }
+        }
+      }
+
+      // 相対URLを絶対URLに変換
+      if (fallbackImage && !fallbackImage.startsWith('http')) {
+        const urlObj = new URL(url)
+        if (fallbackImage.startsWith('//')) {
+          fallbackImage = `https:${fallbackImage}`
+        } else if (fallbackImage.startsWith('/')) {
+          fallbackImage = `${urlObj.protocol}//${urlObj.host}${fallbackImage}`
+        } else {
+          fallbackImage = `${urlObj.protocol}//${urlObj.host}/${fallbackImage}`
+        }
+      }
+    }
+
     // OG説明を抽出
     const ogDescriptionMatch = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["'][^>]*>/i)
     const descriptionMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i)
@@ -55,7 +87,7 @@ export async function GET(request: NextRequest) {
     }
 
     const title = ogTitleMatch?.[1] || titleMatch?.[1] || new URL(url).hostname
-    const image = ogImageMatch?.[1] || null
+    const image = ogImageMatch?.[1] || fallbackImage || null
     const description = ogDescriptionMatch?.[1] || descriptionMatch?.[1] || null
 
     return NextResponse.json({
