@@ -11,17 +11,17 @@ interface InstructorDetailProps {
 export default function InstructorDetail({ instructor }: InstructorDetailProps) {
   const imageUrl = instructor.image?.asset?.url || '/images/instructor/default.jpg'
 
-  // タグの色設定
+  // タグの色設定（パステルカラー）
   const getTagColor = (tag: string) => {
-    if (tag.includes('カフェキネシ')) return 'bg-yellow-100 text-yellow-800'
-    if (tag.includes('ピーチタッチ')) return 'bg-pink-100 text-pink-800'
-    if (tag.includes('チャクラ')) return 'bg-purple-100 text-purple-800'
-    if (tag.includes('ナビゲーター')) return 'bg-green-100 text-green-800'
-    if (tag.includes('スタンダード')) return 'bg-blue-100 text-blue-800'
-    if (tag.includes('HELP')) return 'bg-indigo-100 text-indigo-800'
-    if (tag.includes('TAO')) return 'bg-teal-100 text-teal-800'
-    if (tag.includes('星に願いを')) return 'bg-rose-100 text-rose-800'
-    return 'bg-gray-100 text-gray-800'
+    if (tag.includes('カフェキネシ')) return 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+    if (tag.includes('ピーチタッチ')) return 'bg-pink-50 text-pink-700 border border-pink-200'
+    if (tag.includes('チャクラ')) return 'bg-purple-50 text-purple-700 border border-purple-200'
+    if (tag.includes('ナビゲーター')) return 'bg-green-50 text-green-700 border border-green-200'
+    if (tag.includes('スタンダード')) return 'bg-blue-50 text-blue-700 border border-blue-200'
+    if (tag.includes('HELP')) return 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+    if (tag.includes('TAO')) return 'bg-teal-50 text-teal-700 border border-teal-200'
+    if (tag.includes('星に願いを')) return 'bg-rose-50 text-rose-700 border border-rose-200'
+    return 'bg-gray-50 text-gray-700 border border-gray-200'
   }
 
   return (

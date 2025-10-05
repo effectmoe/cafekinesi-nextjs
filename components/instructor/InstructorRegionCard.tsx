@@ -58,15 +58,15 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
             <div className="flex flex-wrap gap-2 mb-3">
               {instructor.specialties.map((specialty, index) => {
                 const getTagColor = (tag: string) => {
-                  if (tag.includes('カフェキネシ')) return 'bg-orange-500 text-white'
-                  if (tag.includes('ピーチタッチ')) return 'bg-pink-400 text-white'
-                  if (tag.includes('チャクラ')) return 'bg-purple-400 text-white'
-                  if (tag.includes('ナビゲーター')) return 'bg-green-500 text-white'
-                  if (tag.includes('スタンダード')) return 'bg-cyan-400 text-white'
-                  if (tag.includes('HELP')) return 'bg-indigo-400 text-white'
-                  if (tag.includes('TAO')) return 'bg-teal-600 text-white'
-                  if (tag.includes('星に願いを')) return 'bg-rose-300 text-white'
-                  return 'bg-gray-100 text-gray-800'
+                  if (tag.includes('カフェキネシ')) return 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                  if (tag.includes('ピーチタッチ')) return 'bg-pink-50 text-pink-700 border border-pink-200'
+                  if (tag.includes('チャクラ')) return 'bg-purple-50 text-purple-700 border border-purple-200'
+                  if (tag.includes('ナビゲーター')) return 'bg-green-50 text-green-700 border border-green-200'
+                  if (tag.includes('スタンダード')) return 'bg-blue-50 text-blue-700 border border-blue-200'
+                  if (tag.includes('HELP')) return 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                  if (tag.includes('TAO')) return 'bg-teal-50 text-teal-700 border border-teal-200'
+                  if (tag.includes('星に願いを')) return 'bg-rose-50 text-rose-700 border border-rose-200'
+                  return 'bg-gray-50 text-gray-700 border border-gray-200'
                 }
 
                 return (
@@ -140,15 +140,15 @@ export default function InstructorRegionCard({ instructor, prefecture }: Instruc
               {instructor.specialties.map((specialty, index) => {
                 // タグの色を分類
                 const getTagColor = (tag: string) => {
-                  if (tag.includes('カフェキネシ')) return 'bg-orange-500 text-white'
-                  if (tag.includes('ピーチタッチ')) return 'bg-pink-400 text-white'
-                  if (tag.includes('チャクラ')) return 'bg-purple-400 text-white'
-                  if (tag.includes('ナビゲーター')) return 'bg-green-500 text-white'
-                  if (tag.includes('スタンダード')) return 'bg-cyan-400 text-white'
-                  if (tag.includes('HELP')) return 'bg-indigo-400 text-white'
-                  if (tag.includes('TAO')) return 'bg-teal-600 text-white'
-                  if (tag.includes('星に願いを')) return 'bg-rose-300 text-white'
-                  return 'bg-gray-100 text-gray-800'
+                  if (tag.includes('カフェキネシ')) return 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                  if (tag.includes('ピーチタッチ')) return 'bg-pink-50 text-pink-700 border border-pink-200'
+                  if (tag.includes('チャクラ')) return 'bg-purple-50 text-purple-700 border border-purple-200'
+                  if (tag.includes('ナビゲーター')) return 'bg-green-50 text-green-700 border border-green-200'
+                  if (tag.includes('スタンダード')) return 'bg-blue-50 text-blue-700 border border-blue-200'
+                  if (tag.includes('HELP')) return 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                  if (tag.includes('TAO')) return 'bg-teal-50 text-teal-700 border border-teal-200'
+                  if (tag.includes('星に願いを')) return 'bg-rose-50 text-rose-700 border border-rose-200'
+                  return 'bg-gray-50 text-gray-700 border border-gray-200'
                 }
 
                 return (
