@@ -109,6 +109,14 @@ export default defineType({
           initialValue: '/profile'
         }
       ]
+    }),
+    defineField({
+      name: 'navigationMenu',
+      title: 'ハンバーガーメニュー項目',
+      type: 'array',
+      of: [{ type: 'navigationMenu' }],
+      description: 'ヘッダーのハンバーガーメニューに表示される項目',
+      validation: Rule => Rule.min(1).error('少なくとも1つのメニュー項目を追加してください')
     })
   ],
   preview: {

@@ -26,6 +26,7 @@ import feature from './objects/feature'
 import testimonial from './objects/testimonial'
 import categoryCard from './objects/categoryCard'
 import socialLink from './objects/socialLink'
+import navigationMenu from './objects/navigationMenu'
 
 // コンポーネントスキーマ
 import customImage from './components/customImage'
@@ -63,6 +64,7 @@ export const schemaTypes = [
   testimonial,
   categoryCard,
   socialLink,
+  navigationMenu,
 
   // コンポーネント
   customImage,

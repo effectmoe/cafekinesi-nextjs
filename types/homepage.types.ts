@@ -39,6 +39,13 @@ export interface ProfileButton {
   link: string
 }
 
+export interface NavigationMenuItem {
+  label: string
+  link: string
+  order: number
+  isActive: boolean
+}
+
 export interface Homepage extends SanityDocument {
   _type: 'homepage'
   title: string
@@ -47,6 +54,7 @@ export interface Homepage extends SanityDocument {
   socialLinks: SocialLink[]
   viewAllButton: ViewAllButton
   profileButton?: ProfileButton
+  navigationMenu?: NavigationMenuItem[]
 }
 
 // ブログ記事用の型定義

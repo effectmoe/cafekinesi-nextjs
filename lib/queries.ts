@@ -184,7 +184,13 @@ export const HOMEPAGE_QUERY = `
       order
     } | order(order asc),
     viewAllButton,
-    profileButton
+    profileButton,
+    navigationMenu[]{
+      label,
+      link,
+      order,
+      isActive
+    } | order(order asc)
   }
 `
 

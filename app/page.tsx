@@ -125,9 +125,12 @@ export default async function HomePage() {
     // アクティブなソーシャルリンクのみフィルタリング
     const activeSocialLinks = homepage.socialLinks?.filter(link => link.isActive) || []
 
+    // アクティブなナビゲーションメニュー項目のみフィルタリング
+    const activeNavigationItems = homepage.navigationMenu?.filter(item => item.isActive).sort((a, b) => a.order - b.order) || []
+
     return (
       <div className="min-h-screen bg-white">
-        <Header />
+        <Header navigationItems={activeNavigationItems} />
         <main className="relative">
           {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
           <div className="w-full max-w-screen-xl mx-auto px-6 py-12">

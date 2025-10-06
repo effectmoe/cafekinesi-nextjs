@@ -5,8 +5,29 @@ import { useState } from "react";
 import Link from "next/link";
 const logo = "/logo.jpeg";
 
-const Header = () => {
-  const navItems = ["カフェキネシについて", "スクール", "インストラクター", "ブログ", "アロマ", "メンバー"];
+interface NavigationItem {
+  label: string
+  link: string
+  order: number
+  isActive: boolean
+}
+
+interface HeaderProps {
+  navigationItems?: NavigationItem[]
+}
+
+const Header = ({ navigationItems = [] }: HeaderProps) => {
+  // フォールバック用のデフォルトメニュー
+  const defaultNavItems = [
+    { label: "カフェキネシについて", link: "/#about-section", order: 1, isActive: true },
+    { label: "スクール", link: "/school", order: 2, isActive: true },
+    { label: "インストラクター", link: "/instructor", order: 3, isActive: true },
+    { label: "ブログ", link: "/blog", order: 4, isActive: true },
+    { label: "アロマ", link: "#aroma", order: 5, isActive: true },
+    { label: "メンバー", link: "#", order: 6, isActive: true }
+  ]
+
+  const navItems = navigationItems.length > 0 ? navigationItems : defaultNavItems
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -27,21 +48,22 @@ const Header = () => {
             </Link>
 
             {/* Right side - Icons and Hamburger */}
-            <div className="flex items-center gap-4">
-              <button className="p-1 hover:opacity-70 transition-opacity">
+            <div className="flex items-center gap-2 ml-auto">
+              <button className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
                 <Search size={18} className="text-gray-700" />
               </button>
-              <button className="p-1 hover:opacity-70 transition-opacity">
+              <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
                 <ShoppingCart size={18} className="text-gray-700" />
               </button>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={24} className="text-gray-700" />
+                  <X size={22} className="text-gray-700" />
                 ) : (
-                  <Menu size={24} className="text-gray-700" />
+                  <Menu size={22} className="text-gray-700" />
                 )}
               </button>
             </div>
@@ -52,15 +74,15 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-lg z-40">
             <nav className="px-8 py-6 space-y-4">
-              {navItems.map((item) => (
-                <a
-                  key={item}
-                  href="#"
+              {navItems.map((item, index) => (
+                <Link
+                  key={`${item.label}-${index}`}
+                  href={item.link}
                   className="block nav-text hover:opacity-70 transition-opacity cursor-pointer py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {item}
-                </a>
+                  {item.label}
+                </Link>
               ))}
             </nav>
           </div>
