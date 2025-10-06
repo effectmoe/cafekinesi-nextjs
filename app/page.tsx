@@ -121,6 +121,12 @@ export default async function HomePage() {
 
     // Aboutページデータ取得
     const aboutPage = await getAboutPageData()
+    console.log('[HomePage] About page data:', {
+      exists: !!aboutPage,
+      isActive: aboutPage?.isActive,
+      title: aboutPage?.title,
+      sectionsCount: aboutPage?.sections?.length
+    })
 
     // アクティブなソーシャルリンクのみフィルタリング
     const activeSocialLinks = homepage.socialLinks?.filter(link => link.isActive) || []
@@ -279,7 +285,22 @@ export default async function HomePage() {
 
 
           {/* About Section - カフェキネシについて */}
-          {aboutPage && aboutPage.isActive && <AboutSection aboutData={aboutPage} />}
+          {aboutPage && aboutPage.isActive ? (
+            <AboutSection aboutData={aboutPage} />
+          ) : (
+            <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
+              <div className="text-center py-12">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">カフェキネシについて</h2>
+                <p className="text-gray-600 mb-4">
+                  Aboutページのデータを読み込んでいます...
+                </p>
+                <p className="text-sm text-gray-500">
+                  データ取得状態: {aboutPage ? 'データあり' : 'データなし'} /
+                  有効化: {aboutPage?.isActive ? 'ON' : 'OFF'}
+                </p>
+              </div>
+            </section>
+          )}
 
           {/* FAQセクション */}
           <FAQSection faqs={faqs} />
