@@ -136,9 +136,9 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 <div className="flex justify-center mt-6">
                   <Link
                     href={section.button.link}
-                    className="inline-flex items-center gap-2 text-[hsl(var(--text-primary))] hover:text-[hsl(var(--text-secondary))] transition-colors"
+                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[hsl(var(--text-primary))] text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--text-primary))] hover:text-white transition-all duration-300 rounded"
                   >
-                    <span className="text-base">{section.button.text}</span>
+                    <span className="text-base font-medium">{section.button.text}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
