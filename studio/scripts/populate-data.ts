@@ -201,7 +201,7 @@ async function populateAboutPage() {
             number: 1,
             title: '初心者でも２時間あればインストラクターになれる！',
             description: '初心者でも約２時間の講座をうけたらインストラクター登録可能です。２つのタイプから自分に合うインストラクター登録ができるので負担もかかりません！',
-            bgColor: 'bg-[hsl(var(--brand-teal))]'
+            bgColor: 'bg-[hsl(var(--brand-purple))]'
           },
           {
             _key: 'card2',
@@ -215,14 +215,14 @@ async function populateAboutPage() {
             number: 3,
             title: '必要なのはたった３つ。手とアロマ、そしてあなたの愛',
             description: 'カフェキネシでは、たくさんの物が必要というわけではありません。手とアロマ、そしてあなたの愛があれば、苦しみや悲しみを吹き飛ばし、夢や愛を広げるお手伝いができます。',
-            bgColor: 'bg-[hsl(var(--brand-blue-gray))]'
+            bgColor: 'bg-[hsl(var(--brand-purple))]'
           },
           {
             _key: 'card4',
             number: 4,
             title: 'どこでもできるので、お家でサロンができちゃいます。',
             description: 'カフェキネシは現在５シリーズあり、すべて２時間程度でインストラクターになれます。公認インストラクターになると、アドバンス版の講座も開催できるようになります。',
-            bgColor: 'bg-[hsl(var(--brand-beige))]'
+            bgColor: 'bg-[hsl(var(--brand-purple))]'
           },
           {
             _key: 'card5',
