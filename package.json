@@ -7,7 +7,8 @@
     "prebuild": "node scripts/fetch-sanity-data.js",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "populate-sanity": "npx tsx scripts/populate-sanity-data.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
