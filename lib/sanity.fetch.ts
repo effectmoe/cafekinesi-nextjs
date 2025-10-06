@@ -17,7 +17,7 @@ export async function sanityFetch<T = any>({
 
   try {
     const data = await selectedClient.fetch<T>(query, params, {
-      cache: preview ? 'no-store' : 'force-cache',
+      cache: 'no-store',
       next: { tags }
     } as any)
     return data
