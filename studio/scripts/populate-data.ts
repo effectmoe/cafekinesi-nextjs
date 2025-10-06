@@ -229,16 +229,14 @@ async function populateAboutPage() {
             number: 5,
             title: '世界中にインストラクターがいるので、近くで学べます。',
             description: '日本国内はもちろん、アメリカ、ヨーロッパ、アジアなど世界中にインストラクターがいますので、お近くのインストラクターを探すことができます。',
-            bgColor: 'custom',
-            customBgColor: 'hsl(180, 25%, 35%)'
+            bgColor: 'bg-[hsl(var(--brand-purple))]'
           },
           {
             _key: 'card6',
             number: 6,
             title: '国境を越えたセラピー。世界中で通じるセラピーが学べます。',
             description: 'セラピーの原理は世界中どこでも変わりません。言葉が通じなくても、キネシオロジーは世界共通です。世界中どこでも通じるセラピーを身につけることができます。',
-            bgColor: 'custom',
-            customBgColor: 'hsl(260, 20%, 65%)'
+            bgColor: 'bg-[hsl(var(--brand-purple))]'
           }
         ]
       },
