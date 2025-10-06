@@ -86,8 +86,14 @@ export default async function InstructorPage() {
     <div className="min-h-screen bg-white">
       {/* Draft Mode インジケーター */}
       {isPreview && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black px-4 py-2 text-center font-bold">
-          🔍 プレビューモード - ドラフトの変更を表示中
+        <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black px-4 py-2 text-center font-bold flex items-center justify-center gap-4">
+          <span>🔍 プレビューモード - ドラフトの変更を表示中</span>
+          <a
+            href="/api/draft-disable"
+            className="bg-black text-yellow-400 px-3 py-1 rounded text-sm hover:bg-gray-800 transition-colors"
+          >
+            終了
+          </a>
         </div>
       )}
       <Header />
