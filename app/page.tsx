@@ -117,7 +117,7 @@ export default async function HomePage() {
                   'スクール': '/images/school.webp',
                   'インストラクター': '/images/instructor.webp',
                   'ブログ': '/images/blog.webp',
-                  'アロマ': '/images/aroma.webp',
+                  'アロマ購入': '/images/aroma.webp',
                   'メンバー': '/images/member.webp'
                 }
 
