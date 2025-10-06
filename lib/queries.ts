@@ -419,3 +419,48 @@ export const FEATURED_INSTRUCTORS_QUERY = `
     order
   }
 `
+
+// インストラクターページ設定を取得
+export const INSTRUCTOR_PAGE_QUERY = `
+  *[_type == "instructorPage"][0] {
+    _id,
+    title,
+    heroSection {
+      title,
+      description,
+      backgroundImage {
+        asset->,
+        alt
+      }
+    },
+    aboutSection {
+      title,
+      description,
+      image {
+        asset->,
+        alt
+      }
+    },
+    servicesSection {
+      title,
+      services[] {
+        title,
+        description,
+        icon
+      }
+    },
+    mapSection {
+      title,
+      description
+    },
+    seo {
+      title,
+      description,
+      keywords,
+      ogImage {
+        asset->
+      }
+    },
+    isActive
+  }
+`

@@ -55,15 +55,43 @@ export interface Instructor {
   }
 }
 
+export interface Service {
+  title: string
+  description: string
+  icon?: string
+}
+
 export interface InstructorPageData {
   _id: string
   title: string
-  description?: string
   heroSection?: {
     title: string
     description: string
+    backgroundImage?: {
+      asset: {
+        url: string
+      }
+      alt?: string
+    }
   }
-  instructors?: Instructor[]
+  aboutSection?: {
+    title: string
+    description?: any[] // PortableText
+    image?: {
+      asset: {
+        url: string
+      }
+      alt?: string
+    }
+  }
+  servicesSection?: {
+    title: string
+    services?: Service[]
+  }
+  mapSection?: {
+    title: string
+    description?: string
+  }
   seo?: {
     title: string
     description: string
@@ -74,4 +102,5 @@ export interface InstructorPageData {
       }
     }
   }
+  isActive: boolean
 }

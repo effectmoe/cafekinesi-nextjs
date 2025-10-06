@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { publicClient, previewClient } from '@/lib/sanity.client'
-import { INSTRUCTORS_QUERY } from '@/lib/queries'
-import type { Instructor } from '@/lib/types/instructor'
+import { INSTRUCTORS_QUERY, INSTRUCTOR_PAGE_QUERY } from '@/lib/queries'
+import type { Instructor, InstructorPageData } from '@/lib/types/instructor'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -29,15 +29,36 @@ async function getInstructors(): Promise<Instructor[]> {
   }
 }
 
+// Sanityからインストラクターページ設定を取得
+async function getInstructorPageData(): Promise<InstructorPageData | null> {
+  try {
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
+
+    const data = await selectedClient.fetch(INSTRUCTOR_PAGE_QUERY, {}, {
+      cache: isPreview ? 'no-store' : 'force-cache'
+    } as any)
+
+    return data || null
+  } catch (error) {
+    console.error('Failed to fetch instructor page data:', error)
+    return null
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getInstructorPageData()
+
+  // Sanityからデータがある場合はそれを使用、なければデフォルト値
   return {
-    title: 'インストラクターを探す | Cafe Kinesi',
-    description: 'お近くのカフェキネシインストラクターを見つけましょう。キネシオロジーやセラピーを教える経験豊富な認定インストラクターが全国にいます。',
-    keywords: 'カフェキネシ, インストラクター, 講師, キネシオロジー, セラピー, 認定講師',
+    title: pageData?.seo?.title || 'インストラクターを探す | Cafe Kinesi',
+    description: pageData?.seo?.description || 'お近くのカフェキネシインストラクターを見つけましょう。キネシオロジーやセラピーを教える経験豊富な認定インストラクターが全国にいます。',
+    keywords: pageData?.seo?.keywords || 'カフェキネシ, インストラクター, 講師, キネシオロジー, セラピー, 認定講師',
     openGraph: {
-      title: 'インストラクターを探す | Cafe Kinesi',
-      description: 'お近くのカフェキネシインストラクターを見つけましょう。',
-      images: ['/og-image.jpg'],
+      title: pageData?.seo?.title || 'インストラクターを探す | Cafe Kinesi',
+      description: pageData?.seo?.description || 'お近くのカフェキネシインストラクターを見つけましょう。',
+      images: pageData?.seo?.ogImage ? [pageData.seo.ogImage.asset.url] : ['/og-image.jpg'],
     },
   }
 }
@@ -47,19 +68,20 @@ export const revalidate = 1800
 
 export default async function InstructorPage() {
   const instructors = await getInstructors()
+  const pageData = await getInstructorPageData()
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative">
         {/* ヒーローセクション */}
-        <InstructorHeroSection />
+        <InstructorHeroSection heroSection={pageData?.heroSection} />
 
         {/* カフェキネシインストラクターとは */}
-        <InstructorAboutSection />
+        <InstructorAboutSection aboutSection={pageData?.aboutSection} />
 
         {/* 提供サービス */}
-        <InstructorServicesSection />
+        <InstructorServicesSection servicesSection={pageData?.servicesSection} />
 
         {/* 都道府県から探す */}
         <InstructorMapSection instructors={instructors} />
