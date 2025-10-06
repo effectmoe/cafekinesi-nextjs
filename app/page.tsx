@@ -4,6 +4,7 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import FAQSection from '@/components/FAQSection'
 import AboutSection from '@/components/AboutSection'
+import { AlwaysOpenChatSection } from '@/components/chat/AlwaysOpenChatSection'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
 import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
@@ -11,6 +12,7 @@ import { AboutPage } from '@/lib/types/about'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 const FAQ_QUERY = `*[_type == "faq"] | order(order asc) {
@@ -280,6 +282,20 @@ export default async function HomePage() {
             )}
           </section>
 
+
+          {/* AI Chat Section - 常時オープン型チャット */}
+          <section className="relative bg-gradient-to-b from-amber-100 to-white py-16">
+            <Suspense fallback={
+              <div className="container mx-auto px-4 max-w-5xl text-center">
+                <div className="animate-pulse">
+                  <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4" />
+                  <div className="h-96 bg-gray-100 rounded-3xl" />
+                </div>
+              </div>
+            }>
+              <AlwaysOpenChatSection />
+            </Suspense>
+          </section>
 
           {/* About Section - カフェキネシについて */}
           {aboutPage && aboutPage.isActive ? (
