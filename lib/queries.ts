@@ -173,8 +173,8 @@ export const HOMEPAGE_QUERY = `
       colorScheme,
       link,
       isActive,
-      order
-    } | order(order asc),
+      displayOrder
+    } | order(displayOrder asc),
     blogSection,
     socialLinks[]{
       platform,

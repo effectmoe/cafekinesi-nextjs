@@ -9,7 +9,7 @@ export interface CategoryCard {
   colorScheme: 'album-beige' | 'album-blue-gray' | 'album-light-gray' | 'album-purple' | 'album-teal' | 'album-pink'
   link: string
   isActive: boolean
-  order: number
+  displayOrder: number
 }
 
 export interface BlogSectionConfig {
