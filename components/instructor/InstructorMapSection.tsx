@@ -248,63 +248,57 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
               海外で活動するインストラクターを探す（{overseasInstructors.length}名）
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* America */}
-              {overseasByRegion.america.length > 0 && (
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="text-3xl">🇺🇸</div>
-                    <div>
-                      <h4 className="text-xl font-bold text-gray-900">アメリカ</h4>
-                      <p className="text-sm text-gray-600">{overseasByRegion.america.length}名</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    {overseasByRegion.america.map((instructor) => (
-                      <Link
-                        key={instructor._id}
-                        href={`/instructor/${instructor.slug.current}`}
-                        className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+            {/* America */}
+            {overseasByRegion.america.length > 0 && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <h3 className="text-xl font-bold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200 bg-gray-100 -m-6 mb-4 p-4 rounded-t-lg flex items-center gap-2">
+                  <span className="text-2xl">🇺🇸</span>
+                  アメリカ
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {overseasByRegion.america.map((instructor) => (
+                    <Link
+                      key={instructor._id}
+                      href={`/instructor/${instructor.slug.current}`}
+                      className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-bold">{instructor.name}</span>
                         {instructor.title && (
-                          <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                          <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
                         )}
-                        <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
-                      </Link>
-                    ))}
-                  </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Europe */}
-              {overseasByRegion.europe.length > 0 && (
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="text-3xl">🇪🇺</div>
-                    <div>
-                      <h4 className="text-xl font-bold text-gray-900">ヨーロッパ</h4>
-                      <p className="text-sm text-gray-600">{overseasByRegion.europe.length}名</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    {overseasByRegion.europe.map((instructor) => (
-                      <Link
-                        key={instructor._id}
-                        href={`/instructor/${instructor.slug.current}`}
-                        className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+            {/* Europe */}
+            {overseasByRegion.europe.length > 0 && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+                <h3 className="text-xl font-bold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200 bg-gray-100 -m-6 mb-4 p-4 rounded-t-lg flex items-center gap-2">
+                  <span className="text-2xl">🇪🇺</span>
+                  ヨーロッパ
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {overseasByRegion.europe.map((instructor) => (
+                    <Link
+                      key={instructor._id}
+                      href={`/instructor/${instructor.slug.current}`}
+                      className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-bold">{instructor.name}</span>
                         {instructor.title && (
-                          <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                          <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
                         )}
-                        <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
-                      </Link>
-                    ))}
-                  </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
