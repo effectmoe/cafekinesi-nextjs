@@ -44,18 +44,19 @@ async function populateAboutPage() {
       subtitle: 'だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法'
     },
     tableOfContents: [
-      { text: "1. カフェキネシとは", link: "#what-is-cafekinesi" },
-      { text: "2. カフェキネシの歴史", link: "#history" },
-      { text: "3. カフェキネシの特長", link: "#features" },
-      { text: "4. カフェキネシの動画を見る", link: "#video" },
-      { text: "5. カフェキネシの夢", link: "#dream" },
-      { text: "6. カフェキネシ講座を受講する", link: "#course" },
-      { text: "7. 公認インストラクターを探す", link: "#instructors" },
-      { text: "8. アロマを購入する", link: "#aroma" }
+      { _key: 'toc1', text: "1. カフェキネシとは", link: "#what-is-cafekinesi" },
+      { _key: 'toc2', text: "2. カフェキネシの歴史", link: "#history" },
+      { _key: 'toc3', text: "3. カフェキネシの特長", link: "#features" },
+      { _key: 'toc4', text: "4. カフェキネシの動画を見る", link: "#video" },
+      { _key: 'toc5', text: "5. カフェキネシの夢", link: "#dream" },
+      { _key: 'toc6', text: "6. カフェキネシ講座を受講する", link: "#course" },
+      { _key: 'toc7', text: "7. 公認インストラクターを探す", link: "#instructors" },
+      { _key: 'toc8', text: "8. アロマを購入する", link: "#aroma" }
     ],
     sections: [
       // Section 1: What is Cafe Kinesi
       {
+        _key: 'section1',
         id: 'what-is-cafekinesi',
         title: 'カフェキネシとは',
         layout: 'text-only',
@@ -125,6 +126,7 @@ async function populateAboutPage() {
       },
       // Section 2: History
       {
+        _key: 'section2',
         id: 'history',
         title: 'カフェキネシの歴史',
         layout: 'text-only',
@@ -189,35 +191,41 @@ async function populateAboutPage() {
       },
       // Section 3: Features
       {
+        _key: 'section3',
         id: 'features',
         title: 'カフェキネシの特長',
         layout: 'cards',
         cards: [
           {
+            _key: 'card1',
             number: 1,
             title: '初心者でも２時間あればインストラクターになれる！',
             description: '初心者でも約２時間の講座をうけたらインストラクター登録可能です。２つのタイプから自分に合うインストラクター登録ができるので負担もかかりません！',
             bgColor: 'bg-[hsl(var(--brand-teal))]'
           },
           {
+            _key: 'card2',
             number: 2,
             title: '潜在意識を呼び起こすアロマでストレスやトラウマを取り除く',
             description: '一つ一つ思いがこめられているアロマは自然の植物のエキスで作成されています。あなたの潜在意識が目を覚まし、あなたがあなたらしく生きられるようにサポートします。',
             bgColor: 'bg-[hsl(var(--brand-purple))]'
           },
           {
+            _key: 'card3',
             number: 3,
             title: '必要なのはたった３つ。手とアロマ、そしてあなたの愛',
             description: 'カフェキネシでは、たくさんの物が必要というわけではありません。手とアロマ、そしてあなたの愛があれば、苦しみや悲しみを吹き飛ばし、夢や愛を広げるお手伝いができます。',
             bgColor: 'bg-[hsl(var(--brand-blue-gray))]'
           },
           {
+            _key: 'card4',
             number: 4,
             title: 'どこでもできるので、お家でサロンができちゃいます。',
             description: 'カフェキネシは現在５シリーズあり、すべて２時間程度でインストラクターになれます。公認インストラクターになると、アドバンス版の講座も開催できるようになります。',
             bgColor: 'bg-[hsl(var(--brand-beige))]'
           },
           {
+            _key: 'card5',
             number: 5,
             title: '世界中にインストラクターがいるので、近くで学べます。',
             description: '日本国内はもちろん、アメリカ、ヨーロッパ、アジアなど世界中にインストラクターがいますので、お近くのインストラクターを探すことができます。',
@@ -225,6 +233,7 @@ async function populateAboutPage() {
             customBgColor: 'hsl(180_25%_35%)'
           },
           {
+            _key: 'card6',
             number: 6,
             title: '国境を越えたセラピー。世界中で通じるセラピーが学べます。',
             description: 'セラピーの原理は世界中どこでも変わりません。言葉が通じなくても、キネシオロジーは世界共通です。世界中どこでも通じるセラピーを身につけることができます。',
