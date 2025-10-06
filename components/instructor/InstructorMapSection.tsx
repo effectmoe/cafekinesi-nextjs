@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -24,6 +24,7 @@ interface InstructorMapSectionProps {
 export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map')
+  const contentRef = useRef<HTMLDivElement>(null)
 
   // Separate instructors by location
   const { japanInstructors, overseasInstructors } = useMemo(() => {
@@ -102,6 +103,21 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
     }
   }
 
+  // タブ切り替え時のスムーススクロール
+  const handleViewModeChange = (mode: 'map' | 'list') => {
+    setViewMode(mode)
+
+    // 少し遅延させてDOMが更新された後にスクロール
+    setTimeout(() => {
+      if (contentRef.current) {
+        contentRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    }, 100)
+  }
+
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16 md:py-24">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
@@ -112,7 +128,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
       <div className="flex justify-center mb-8">
         <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
           <button
-            onClick={() => setViewMode('map')}
+            onClick={() => handleViewModeChange('map')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'map'
                 ? 'bg-slate-700 text-white'
@@ -122,7 +138,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
             🗾 日本地図から選ぶ
           </button>
           <button
-            onClick={() => setViewMode('list')}
+            onClick={() => handleViewModeChange('list')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               viewMode === 'list'
                 ? 'bg-slate-700 text-white'
@@ -134,7 +150,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto" ref={contentRef}>
         {/* Map View */}
         {viewMode === 'map' && (
           <>
