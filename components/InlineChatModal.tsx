@@ -253,7 +253,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
   return (
     <>
-      <section className="w-full py-0 px-6 mb-6 bg-[hsl(35,25%,95%)]">
+      <section className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
         <div className="max-w-5xl mx-auto">
           {chatContent(false)}
         </div>
