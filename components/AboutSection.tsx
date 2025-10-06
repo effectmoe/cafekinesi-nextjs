@@ -34,111 +34,94 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
         </p>
       </div>
 
-      {/* Sections */}
-      {aboutData.sections?.map((section: AboutSectionType, index: number) => (
-        <div key={index} className="mb-16" id={section.id}>
-          <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-            {section.title}
-          </h3>
+      {/* Sections - Unified block design with alternating backgrounds */}
+      {aboutData.sections?.map((section: AboutSectionType, index: number) => {
+        // Alternating subtle background colors
+        const isEven = index % 2 === 0
+        const bgColor = isEven ? 'bg-white' : 'bg-[hsl(35,22%,97%)]' // Very subtle beige for alternating sections
 
-          {/* Layout: Image Left */}
-          {section.layout === 'image-left' && (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center mb-8">
-                <div className="lg:col-span-2">
-                  {section.image?.asset && (
-                    <Image
-                      src={urlForImage(section.image)?.width(600).height(450).url() || ''}
-                      alt={section.image.alt || section.title}
-                      width={600}
-                      height={450}
-                      className="w-full aspect-[4/3] object-cover rounded-lg"
-                    />
-                  )}
+        return (
+          <div
+            key={index}
+            className={`${bgColor} -mx-6 px-6 py-12 mb-8 rounded-lg transition-colors`}
+            id={section.id}
+          >
+            <div className="max-w-screen-xl mx-auto">
+              {/* Section Title */}
+              <h3 className="font-noto-serif text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
+                {section.title}
+              </h3>
+
+              {/* Unified Content Block - Image and Text Together */}
+              {section.layout === 'cards' ? (
+                // Special layout for cards (e.g., courses section)
+                <div className="space-y-6">
+                  {section.cards?.map((card, cardIndex) => {
+                    const bgColorClass = card.bgColor === 'custom' && card.customBgColor
+                      ? `bg-[${card.customBgColor}]`
+                      : card.bgColor
+
+                    return (
+                      <div
+                        key={cardIndex}
+                        className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow"
+                      >
+                        <div className="flex items-start space-x-4">
+                          <div className={`w-10 h-10 ${bgColorClass} rounded-full flex items-center justify-center flex-shrink-0 mt-1`}>
+                            <span className={`font-bold ${bgColorClass.includes('beige') ? 'text-[hsl(var(--text-primary))]' : 'text-white'}`}>
+                              {card.number}
+                            </span>
+                          </div>
+                          <div>
+                            <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
+                              {card.title}
+                            </h4>
+                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed whitespace-pre-line">
+                              {card.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-                <div className="lg:col-span-3">
-                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed prose prose-lg max-w-none">
-                    {section.content && <PortableText value={section.content} />}
+              ) : (
+                // Standard layout - Image and text in one unified block
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                  {/* Image */}
+                  {section.image?.asset && (
+                    <div className={`${section.layout === 'image-right' ? 'lg:order-2' : ''}`}>
+                      <Image
+                        src={urlForImage(section.image)?.width(700).height(500).url() || ''}
+                        alt={section.image.alt || section.title}
+                        width={700}
+                        height={500}
+                        className="w-full aspect-[4/3] object-cover rounded-lg shadow-sm"
+                      />
+                    </div>
+                  )}
+
+                  {/* Text Content */}
+                  <div className={`${section.layout === 'image-right' ? 'lg:order-1' : ''} ${!section.image?.asset ? 'lg:col-span-2 max-w-4xl mx-auto' : ''}`}>
+                    <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed prose prose-lg max-w-none">
+                      {section.content && <PortableText value={section.content} />}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
+              {/* Highlight Box */}
               {section.highlightBox?.show && section.highlightBox.content && (
-                <div className="bg-gradient-to-r from-[hsl(var(--brand-beige))] to-white rounded-lg p-8 md:p-10">
+                <div className="mt-8 bg-gradient-to-r from-[hsl(var(--brand-beige))] to-white rounded-lg p-8 md:p-10 shadow-sm">
                   <div className="max-w-3xl mx-auto text-center space-y-4 prose prose-lg max-w-none">
                     <PortableText value={section.highlightBox.content} />
                   </div>
                 </div>
               )}
-            </>
-          )}
-
-          {/* Layout: Image Right */}
-          {section.layout === 'image-right' && (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
-              <div className="lg:col-span-3">
-                <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed prose prose-lg max-w-none">
-                  {section.content && <PortableText value={section.content} />}
-                </div>
-              </div>
-              <div className="lg:col-span-2">
-                {section.image?.asset && (
-                  <Image
-                    src={urlForImage(section.image)?.width(600).height(450).url() || ''}
-                    alt={section.image.alt || section.title}
-                    width={600}
-                    height={450}
-                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                  />
-                )}
-              </div>
             </div>
-          )}
-
-          {/* Layout: Text Only */}
-          {section.layout === 'text-only' && (
-            <div className="max-w-4xl mx-auto">
-              <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed prose prose-lg max-w-none">
-                {section.content && <PortableText value={section.content} />}
-              </div>
-            </div>
-          )}
-
-          {/* Layout: Cards */}
-          {section.layout === 'cards' && section.cards && (
-            <div className="space-y-6">
-              {section.cards.map((card, cardIndex) => {
-                const bgColorClass = card.bgColor === 'custom' && card.customBgColor
-                  ? `bg-[${card.customBgColor}]`
-                  : card.bgColor
-
-                return (
-                  <div
-                    key={cardIndex}
-                    className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className={`w-10 h-10 ${bgColorClass} rounded-full flex items-center justify-center flex-shrink-0 mt-1`}>
-                        <span className={`font-bold ${bgColorClass.includes('beige') ? 'text-[hsl(var(--text-primary))]' : 'text-white'}`}>
-                          {card.number}
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                          {card.title}
-                        </h4>
-                        <p className="text-[hsl(var(--text-secondary))] leading-relaxed whitespace-pre-line">
-                          {card.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      ))}
+          </div>
+        )
+      })}
     </section>
   )
 }
