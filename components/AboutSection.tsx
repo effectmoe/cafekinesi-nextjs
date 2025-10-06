@@ -8,11 +8,23 @@ interface AboutSectionProps {
 }
 
 export default function AboutSection({ aboutData }: AboutSectionProps) {
-  if (!aboutData) return null
+  console.log('[AboutSection] Received data:', {
+    exists: !!aboutData,
+    title: aboutData?.title,
+    sectionsCount: aboutData?.sections?.length,
+    tocCount: aboutData?.tableOfContents?.length
+  })
+
+  if (!aboutData) {
+    console.log('[AboutSection] No data - returning null')
+    return null
+  }
 
   const heroImageUrl = aboutData.heroSection?.image?.asset
     ? urlForImage(aboutData.heroSection.image)?.width(1200).height(400).url()
     : '/images/cafekinesi-hero.jpg'
+
+  console.log('[AboutSection] Rendering with', aboutData.sections?.length, 'sections')
 
   return (
     <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
