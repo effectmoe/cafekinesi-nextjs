@@ -241,6 +241,237 @@ async function populateAboutPage() {
             customBgColor: 'hsl(260_20%_65%)'
           }
         ]
+      },
+      // Section 4: Video
+      {
+        _key: 'section4',
+        id: 'video',
+        title: 'カフェキネシの動画を見る',
+        layout: 'text-only',
+        content: [
+          {
+            _type: 'block',
+            _key: 'video1',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'videospan1', text: 'カフェキネシの実践方法や効果について、動画でわかりやすくご紹介しています。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'video2',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'videospan2', text: '実際のセッション風景や、インストラクターによるデモンストレーションをご覧いただけます。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'video3',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'videospan3', text: '初めての方でも分かりやすく、カフェキネシの魅力をお伝えします。', marks: ['strong'] }
+            ]
+          }
+        ]
+      },
+      // Section 5: Dream
+      {
+        _key: 'section5',
+        id: 'dream',
+        title: 'カフェキネシの夢',
+        layout: 'text-only',
+        content: [
+          {
+            _type: 'block',
+            _key: 'dream1',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'dreamspan1', text: '私たちの夢は、世界中の人々がストレスから解放され、自分らしく生きられる社会を作ることです。', marks: ['strong'] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'dream2',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'dreamspan2', text: 'カフェキネシを通じて、誰もが気軽にセラピーを受けられる、そして提供できる世界を目指しています。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'dream3',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'dreamspan3', text: '専門的な知識がなくても、愛と手とアロマがあれば、誰かを癒すことができる。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'dream4',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'dreamspan4', text: 'そんな優しい世界を、カフェキネシと共に創っていきませんか？', marks: ['strong'] }
+            ]
+          }
+        ],
+        highlightBox: {
+          show: true,
+          content: [
+            {
+              _type: 'block',
+              _key: 'dreamhblock1',
+              style: 'normal',
+              children: [
+                { _type: 'span', _key: 'dreamhspan1', text: 'あなたもカフェキネシファミリーの一員として、世界中に癒しを届ける仲間になりませんか？', marks: ['strong'] }
+              ]
+            }
+          ]
+        }
+      },
+      // Section 6: Course
+      {
+        _key: 'section6',
+        id: 'course',
+        title: 'カフェキネシ講座を受講する',
+        layout: 'text-only',
+        content: [
+          {
+            _type: 'block',
+            _key: 'course1',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'coursespan1', text: 'カフェキネシの講座は、初心者の方でも安心して受講できる内容になっています。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'course2',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'coursespan2', text: '基礎から応用まで、段階的に学べる5つのシリーズをご用意しています。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'course3',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'coursespan3', text: '各講座は約2時間で、すぐに実践できるスキルが身につきます。', marks: ['strong'] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'course4',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'coursespan4', text: '講座修了後は、公認インストラクターとして活動することも可能です。', marks: [] }
+            ]
+          }
+        ]
+      },
+      // Section 7: Instructors
+      {
+        _key: 'section7',
+        id: 'instructors',
+        title: '公認インストラクターを探す',
+        layout: 'text-only',
+        content: [
+          {
+            _type: 'block',
+            _key: 'inst1',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'instspan1', text: '世界中に広がるカフェキネシ公認インストラクターのネットワーク。', marks: ['strong'] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'inst2',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'instspan2', text: '日本国内はもちろん、アメリカ、ヨーロッパ、アジア各地で活躍するインストラクターがいます。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'inst3',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'instspan3', text: 'お近くのインストラクターから、カフェキネシを学んでいただけます。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'inst4',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'instspan4', text: 'インストラクター検索ページから、あなたに合った講師を見つけてください。', marks: [] }
+            ]
+          }
+        ]
+      },
+      // Section 8: Aroma
+      {
+        _key: 'section8',
+        id: 'aroma',
+        title: 'アロマを購入する',
+        layout: 'text-only',
+        content: [
+          {
+            _type: 'block',
+            _key: 'aroma1',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'aromaspan1', text: 'カフェキネシ専用のキネシアロマは、自然の植物エキスから作られています。', marks: ['strong'] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'aroma2',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'aromaspan2', text: 'それぞれのアロマには、潜在意識に働きかける特別な意味と効果が込められています。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'aroma3',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'aromaspan3', text: 'セッションに使用するアロマは、公式オンラインストアからご購入いただけます。', marks: [] }
+            ]
+          },
+          {
+            _type: 'block',
+            _key: 'aroma4',
+            style: 'normal',
+            children: [
+              { _type: 'span', _key: 'aromaspan4', text: '初めての方にも安心してお使いいただけるスターターセットもご用意しています。', marks: [] }
+            ]
+          }
+        ],
+        highlightBox: {
+          show: true,
+          content: [
+            {
+              _type: 'block',
+              _key: 'aromahblock1',
+              style: 'normal',
+              children: [
+                { _type: 'span', _key: 'aromahspan1', text: 'Little Tree公式ストアでは、カフェキネシ専用アロマを取り扱っています。', marks: [] }
+              ]
+            },
+            {
+              _type: 'block',
+              _key: 'aromahblock2',
+              style: 'normal',
+              children: [
+                { _type: 'span', _key: 'aromahspan2', text: 'ぜひオンラインストアをご覧ください。', marks: ['strong'] }
+              ]
+            }
+          ]
+        }
       }
     ],
     isActive: true,
