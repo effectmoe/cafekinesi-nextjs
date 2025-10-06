@@ -37,7 +37,7 @@ export const structure = (S: StructureBuilder) =>
             .schemaType('aboutPage')
             .documentId('aboutPage')
             .views([
-              S.view.form().id('aboutPageEditor'),
+              S.view.form().id('aboutPageEditor').title('編集'),
               S.view.component(PreviewPane).id('aboutPagePreview').title('プレビュー')
             ])
         ),

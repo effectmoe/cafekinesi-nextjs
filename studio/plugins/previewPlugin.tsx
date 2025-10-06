@@ -25,6 +25,7 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     blogPost: (doc) => `/blog/${doc.slug?.current || ''}`,
     page: (doc) => doc.slug?.current === 'home' ? '/' : `/${doc.slug?.current || ''}`,
     homepage: () => '/',
+    aboutPage: () => '/#about-section',
     album: (doc) => `/albums/${doc.slug?.current || ''}`,
     course: (doc) => `/school/${doc.courseId || ''}`,
     schoolPage: () => '/school',
