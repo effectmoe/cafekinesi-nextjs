@@ -27,6 +27,8 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     homepage: () => '/',
     album: (doc) => `/albums/${doc.slug?.current || ''}`,
     course: (doc) => `/school/${doc.courseId || ''}`,
+    schoolPage: () => '/school',
+    instructorPage: () => '/instructor',
     instructor: (doc) => {
       // 都道府県名からスラッグへのマッピング
       const prefectureToSlug: { [key: string]: string } = {

@@ -36,9 +36,19 @@ async function getInstructorPageData(): Promise<InstructorPageData | null> {
     const isPreview = draft.isEnabled
     const selectedClient = isPreview ? previewClient : publicClient
 
+    console.log('[InstructorPage] Draft mode:', isPreview)
+    console.log('[InstructorPage] Using client:', isPreview ? 'previewClient' : 'publicClient')
+
     const data = await selectedClient.fetch(INSTRUCTOR_PAGE_QUERY, {}, {
       cache: isPreview ? 'no-store' : 'force-cache'
     } as any)
+
+    console.log('[InstructorPage] Fetched data:', {
+      hasData: !!data,
+      title: data?.title,
+      heroTitle: data?.heroSection?.title,
+      isDraft: isPreview
+    })
 
     return data || null
   } catch (error) {
@@ -69,9 +79,17 @@ export const revalidate = 1800
 export default async function InstructorPage() {
   const instructors = await getInstructors()
   const pageData = await getInstructorPageData()
+  const draft = await draftMode()
+  const isPreview = draft.isEnabled
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Draft Mode インジケーター */}
+      {isPreview && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black px-4 py-2 text-center font-bold">
+          🔍 プレビューモード - ドラフトの変更を表示中
+        </div>
+      )}
       <Header />
       <main className="relative">
         {/* ヒーローセクション */}

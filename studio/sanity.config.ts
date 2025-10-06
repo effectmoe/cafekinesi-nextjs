@@ -45,7 +45,7 @@ export default defineConfig({
           ? 'https://cafekinesi-nextjs.vercel.app'
           : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
         previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
-        enabledTypes: ['blogPost', 'page', 'homepage', 'album', 'course', 'instructor'],
+        enabledTypes: ['blogPost', 'page', 'homepage', 'album', 'course', 'instructor', 'schoolPage', 'instructorPage'],
         previewMode: 'tab'
       }),
     ]
@@ -70,6 +70,14 @@ export default defineConfig({
           {
             route: '/',
             filter: '_type == "homepage"',
+          },
+          {
+            route: '/school',
+            filter: '_type == "schoolPage"',
+          },
+          {
+            route: '/instructor',
+            filter: '_type == "instructorPage"',
           },
           {
             route: '/:slug',
@@ -231,6 +239,32 @@ export default defineConfig({
                 ],
               }
             },
+          },
+          schoolPage: {
+            select: {
+              title: 'title',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'スクールページ',
+                  href: '/school',
+                },
+              ],
+            }),
+          },
+          instructorPage: {
+            select: {
+              title: 'title',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'インストラクターページ',
+                  href: '/instructor',
+                },
+              ],
+            }),
           },
         },
       },
