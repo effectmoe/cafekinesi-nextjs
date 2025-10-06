@@ -267,7 +267,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
       </section>
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent hideClose className="!max-w-[95vw] w-[95vw] h-[95vh] !max-h-[95vh] p-0 bg-transparent border-0">
+        <DialogContent hideClose className="!max-w-[95vw] w-[95vw] h-[95vh] !max-h-[95vh] p-0 bg-transparent !border-0 shadow-none">
           {chatContent(true)}
         </DialogContent>
       </Dialog>
