@@ -16,6 +16,8 @@ import instructorPage from './documents/instructorPage'
 import profilePage from './documents/profilePage'
 import aboutPage from './documents/aboutPage'
 import { faq } from './faq'
+import faqCard from './documents/faqCard'
+import chatModal from './documents/chatModal'
 
 // オブジェクトスキーマ
 import seo from './objects/seo'
@@ -54,6 +56,8 @@ export const schemaTypes = [
   profilePage,
   aboutPage,
   faq,
+  faqCard,
+  chatModal,
 
   // オブジェクト
   seo,

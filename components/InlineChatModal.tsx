@@ -5,8 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState, useRef, useEffect } from "react";
 import { useChat } from '@/hooks/useChat';
+import { ChatModalSettings } from '@/types/chat.types';
 
-const InlineChatModal = () => {
+interface InlineChatModalProps {
+  settings?: ChatModalSettings
+}
+
+const InlineChatModal = ({ settings }: InlineChatModalProps) => {
+  // デフォルト値（Sanityデータがない場合）
+  const headerTitle = settings?.headerTitle || 'AIチャットアシスタント';
+  const headerSubtitle = settings?.headerSubtitle || '24時間いつでもお答えします';
+  const inputPlaceholder = settings?.inputPlaceholder || 'メッセージを入力...';
+  const footerMessage = settings?.footerMessage || 'セキュア接続・プライバシー保護・会話は保存されません';
+  const welcomeMessage = settings?.welcomeMessage || 'こんにちは！Cafe Kinesiへようこそ☕ カフェについて何でもお尋ねください。';
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
@@ -86,10 +97,10 @@ const InlineChatModal = () => {
           </div>
           <div>
             <h3 className="font-semibold text-text-primary text-sm">
-              AIチャットアシスタント
+              {headerTitle}
             </h3>
             <p className="text-xs text-text-secondary">
-              24時間いつでもお答えします
+              {headerSubtitle}
             </p>
           </div>
         </div>
@@ -216,7 +227,7 @@ const InlineChatModal = () => {
           </Button>
           <input
             type="text"
-            placeholder="メッセージを入力..."
+            placeholder={inputPlaceholder}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -234,7 +245,7 @@ const InlineChatModal = () => {
         </div>
         <p className="text-xs text-center text-text-muted mt-3 flex items-center justify-center gap-2">
           <span className={`inline-block w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-          セキュア接続・プライバシー保護・会話は保存されません
+          {footerMessage}
         </p>
       </div>
     </div>

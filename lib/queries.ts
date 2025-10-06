@@ -586,3 +586,35 @@ export const ABOUT_PAGE_QUERY = `
     isActive
   }
 `
+// FAQ質問カードを取得
+export const FAQ_CARDS_QUERY = `
+  *[_type == "faqCard" && isActive == true] | order(order asc) {
+    _id,
+    title,
+    icon,
+    bgColor,
+    iconColor,
+    order,
+    isActive
+  }
+`
+
+// チャットモーダル設定を取得
+export const CHAT_MODAL_QUERY = `
+  *[_type == "chatModal"][0] {
+    _id,
+    headerTitle,
+    headerSubtitle,
+    inputPlaceholder,
+    footerMessage,
+    welcomeMessage,
+    sampleMessages[] {
+      role,
+      content,
+      time
+    },
+    faqSectionTitle,
+    faqSectionSubtitle,
+    isActive
+  }
+`
