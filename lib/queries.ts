@@ -558,6 +558,19 @@ export const ABOUT_PAGE_QUERY = `
         description,
         bgColor,
         customBgColor
+      },
+      linkCards[] {
+        title,
+        description,
+        link,
+        image {
+          asset-> {
+            _id,
+            url
+          },
+          alt
+        },
+        bgColor
       }
     },
     seo {

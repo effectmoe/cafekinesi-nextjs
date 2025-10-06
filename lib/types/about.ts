@@ -22,10 +22,20 @@ export interface AboutFeatureCard {
   customBgColor?: string
 }
 
+export interface AboutLinkCard {
+  title: string
+  description?: string
+  link: string
+  image?: SanityImageObject & {
+    alt: string
+  }
+  bgColor?: string
+}
+
 export interface AboutSection {
   id: string
   title: string
-  layout: 'image-left' | 'image-right' | 'text-only' | 'cards'
+  layout: 'image-left' | 'image-right' | 'text-only' | 'cards' | 'link-cards'
   image?: SanityImageObject & {
     alt: string
   }
@@ -40,6 +50,7 @@ export interface AboutSection {
     link?: string
   }
   cards?: AboutFeatureCard[]
+  linkCards?: AboutLinkCard[]
 }
 
 export interface AboutPage extends SanityDocument {

@@ -97,7 +97,8 @@ export default defineType({
                   { title: '画像左・テキスト右', value: 'image-left' },
                   { title: '画像右・テキスト左', value: 'image-right' },
                   { title: 'テキストのみ', value: 'text-only' },
-                  { title: 'カード一覧', value: 'cards' }
+                  { title: 'カード一覧', value: 'cards' },
+                  { title: 'リンクカード', value: 'link-cards' }
                 ]
               }
             },
@@ -113,7 +114,7 @@ export default defineType({
                   title: '代替テキスト'
                 }
               ],
-              hidden: ({ parent }) => parent?.layout === 'text-only' || parent?.layout === 'cards'
+              hidden: ({ parent }) => parent?.layout === 'text-only' || parent?.layout === 'cards' || parent?.layout === 'link-cards'
             },
             {
               name: 'content',
@@ -124,7 +125,7 @@ export default defineType({
                   type: 'block'
                 }
               ],
-              hidden: ({ parent }) => parent?.layout === 'cards'
+              hidden: ({ parent }) => parent?.layout === 'cards' || parent?.layout === 'link-cards'
             },
             {
               name: 'highlightBox',
@@ -169,7 +170,7 @@ export default defineType({
                   description: '例: /school または https://example.com'
                 }
               ],
-              hidden: ({ parent }) => parent?.layout === 'cards'
+              hidden: ({ parent }) => parent?.layout === 'cards' || parent?.layout === 'link-cards'
             },
             {
               name: 'cards',
@@ -220,6 +221,72 @@ export default defineType({
                 }
               ],
               hidden: ({ parent }) => parent?.layout !== 'cards'
+            },
+            {
+              name: 'linkCards',
+              title: 'リンクカード',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    {
+                      name: 'title',
+                      title: 'タイトル',
+                      type: 'string',
+                      validation: Rule => Rule.required()
+                    },
+                    {
+                      name: 'description',
+                      title: '説明',
+                      type: 'text',
+                      rows: 2
+                    },
+                    {
+                      name: 'link',
+                      title: 'リンク先URL',
+                      type: 'string',
+                      validation: Rule => Rule.required(),
+                      description: '例: /school または https://example.com'
+                    },
+                    {
+                      name: 'image',
+                      title: '画像（オプション）',
+                      type: 'image',
+                      options: { hotspot: true },
+                      fields: [
+                        {
+                          name: 'alt',
+                          type: 'string',
+                          title: '代替テキスト'
+                        }
+                      ]
+                    },
+                    {
+                      name: 'bgColor',
+                      title: '背景色',
+                      type: 'string',
+                      options: {
+                        list: [
+                          { title: 'ホワイト', value: 'white' },
+                          { title: 'ティール', value: 'teal' },
+                          { title: 'パープル', value: 'purple' },
+                          { title: 'ブルーグレー', value: 'blue-gray' },
+                          { title: 'ベージュ', value: 'beige' }
+                        ]
+                      },
+                      initialValue: 'white'
+                    }
+                  ],
+                  preview: {
+                    select: {
+                      title: 'title',
+                      subtitle: 'link'
+                    }
+                  }
+                }
+              ],
+              hidden: ({ parent }) => parent?.layout !== 'link-cards'
             }
           ],
           preview: {

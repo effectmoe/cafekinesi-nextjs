@@ -43,8 +43,54 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
             {section.title}
           </h3>
 
-          {/* Card Layout */}
-          {section.layout === 'cards' ? (
+          {/* Link Cards Layout */}
+          {section.layout === 'link-cards' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {section.linkCards?.map((card, cardIndex) => {
+                const bgColorMap: Record<string, string> = {
+                  'white': 'bg-white',
+                  'teal': 'bg-[hsl(var(--brand-teal))]',
+                  'purple': 'bg-[hsl(var(--brand-purple))]',
+                  'blue-gray': 'bg-[hsl(var(--brand-blue-gray))]',
+                  'beige': 'bg-[hsl(var(--brand-beige))]'
+                }
+                const bgColor = bgColorMap[card.bgColor || 'white'] || 'bg-white'
+                const isExternal = card.link?.startsWith('http')
+
+                return (
+                  <Link
+                    key={cardIndex}
+                    href={card.link}
+                    target={isExternal ? '_blank' : '_self'}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    className={`${bgColor} border border-[hsl(var(--border))] rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group`}
+                  >
+                    {card.image?.asset && (
+                      <div className="relative w-full aspect-video overflow-hidden">
+                        <Image
+                          src={urlForImage(card.image)?.width(600).height(400).url() || ''}
+                          alt={card.image.alt || card.title}
+                          width={600}
+                          height={400}
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-2 group-hover:text-[hsl(var(--brand-purple))] transition-colors">
+                        {card.title}
+                      </h4>
+                      {card.description && (
+                        <p className="text-[hsl(var(--text-secondary))] text-sm leading-relaxed">
+                          {card.description}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          ) : section.layout === 'cards' ? (
             <div className="space-y-6">
               {section.cards?.map((card, cardIndex) => {
                 // Parse background color for number circle

@@ -1,4 +1,5 @@
 import {StructureBuilder} from 'sanity/structure'
+import {PreviewPane} from '../components/PreviewPane'
 
 export const structure = (S: StructureBuilder) =>
   S.list()
@@ -23,6 +24,22 @@ export const structure = (S: StructureBuilder) =>
           S.document()
             .schemaType('homepage')
             .documentId('homepage')
+        ),
+
+      S.divider(),
+
+      // カフェキネシについて（Aboutページ）シングルトン
+      S.listItem()
+        .title('カフェキネシについて（Aboutページ）')
+        .id('aboutPage')
+        .child(
+          S.document()
+            .schemaType('aboutPage')
+            .documentId('aboutPage')
+            .views([
+              S.view.form(),
+              S.view.component(PreviewPane).title('プレビュー')
+            ])
         ),
 
       S.divider(),
@@ -55,6 +72,7 @@ export const structure = (S: StructureBuilder) =>
         (listItem) => ![
           'siteSettings',
           'homepage',
+          'aboutPage',
           'page',
           'blogPost',
           // オブジェクト・コンポーネントスキーマは非表示
