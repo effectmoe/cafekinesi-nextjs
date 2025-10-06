@@ -464,3 +464,42 @@ export const INSTRUCTOR_PAGE_QUERY = `
     isActive
   }
 `
+
+// プロフィールページ情報を取得
+export const PROFILE_PAGE_QUERY = `
+  *[_type == "profilePage"][0] {
+    _id,
+    title,
+    profileSection {
+      photo {
+        asset-> {
+          _id,
+          url
+        }
+      },
+      name,
+      nameReading,
+      location
+    },
+    historyTitle,
+    historyItems[] | order(order asc) {
+      text,
+      order
+    },
+    activitiesTitle,
+    activitiesDescription,
+    activitiesItems[] | order(order asc) {
+      title,
+      order
+    },
+    seo {
+      title,
+      description,
+      keywords,
+      ogImage {
+        asset->
+      }
+    },
+    isActive
+  }
+`

@@ -13,6 +13,7 @@ import course from './documents/course'
 import schoolPage from './documents/schoolPage'
 import instructor from './documents/instructor'
 import instructorPage from './documents/instructorPage'
+import profilePage from './documents/profilePage'
 import { faq } from './faq'
 
 // オブジェクトスキーマ
@@ -48,6 +49,7 @@ export const schemaTypes = [
   schoolPage,
   instructor,
   instructorPage,
+  profilePage,
   faq,
 
   // オブジェクト
