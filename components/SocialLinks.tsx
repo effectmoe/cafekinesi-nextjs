@@ -1,48 +1,49 @@
-'use client'
+import { Facebook, Instagram, Twitter, Youtube, Music } from "lucide-react";
 
 const SocialLinks = () => {
+  // Album card colors from AlbumGrid (HSL形式で統一)
+  const albumColors = [
+    "hsl(35, 22%, 91%)",    // beige
+    "hsl(210, 20%, 70%)",   // blue-gray
+    "hsl(260, 15%, 75%)",   // purple
+    "hsl(180, 20%, 85%)",   // teal
+    "hsl(0, 0%, 91%)",      // light-gray
+  ];
+
   const socialLinks = [
-    { name: "Facebook", url: "#" },
-    { name: "Instagram", url: "#" },
-    { name: "Twitter", url: "#" },
-    { name: "YouTube", url: "#" },
-    { name: "Bandcamp", url: "#" },
+    { name: "Facebook", url: "#", Icon: Facebook, color: albumColors[0] },
+    { name: "Instagram", url: "#", Icon: Instagram, color: albumColors[1] },
+    { name: "Twitter", url: "#", Icon: Twitter, color: albumColors[2] },
+    { name: "YouTube", url: "#", Icon: Youtube, color: albumColors[3] },
+    { name: "Bandcamp", url: "#", Icon: Music, color: albumColors[4] },
   ];
 
   return (
-    <>
-      {/* Desktop vertical social links */}
-      <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-10 hidden lg:block">
-        <div className="flex flex-col gap-8">
-          {socialLinks.map((link) => (
-            <a 
-              key={link.name}
-              href={link.url}
-              className="social-vertical hover:opacity-70 transition-opacity"
-            >
-              {link.name}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Mobile horizontal social links */}
-      <div className="lg:hidden bg-gray-50 border-t border-gray-200">
-        <div className="max-w-screen-2xl mx-auto px-6 py-4">
-          <div className="flex justify-center gap-6 flex-wrap">
-            {socialLinks.map((link) => (
-              <a 
+    <div className="bg-white border-t border-gray-200">
+      <div className="max-w-screen-2xl mx-auto px-6 py-8">
+        <div className="flex justify-center gap-6 flex-wrap">
+          {socialLinks.map((link) => {
+            const IconComponent = link.Icon;
+            return (
+              <a
                 key={link.name}
                 href={link.url}
-                className="text-xs font-medium tracking-wide uppercase text-gray-600 hover:opacity-70 transition-opacity"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                style={{ backgroundColor: link.color }}
+                aria-label={link.name}
               >
-                {link.name}
+                <IconComponent
+                  className="w-6 h-6 text-white transition-transform duration-300 group-hover:scale-110"
+                  strokeWidth={1.5}
+                />
               </a>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

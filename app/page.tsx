@@ -128,9 +128,6 @@ export default async function HomePage() {
       sectionsCount: aboutPage?.sections?.length
     })
 
-    // アクティブなソーシャルリンクのみフィルタリング
-    const activeSocialLinks = homepage.socialLinks?.filter(link => link.isActive) || []
-
     // アクティブなナビゲーションメニュー項目のみフィルタリング
     const activeNavigationItems = homepage.navigationMenu?.filter(item => item.isActive).sort((a, b) => a.order - b.order) || []
 
@@ -304,42 +301,6 @@ export default async function HomePage() {
 
           {/* FAQセクション */}
           <FAQSection faqs={faqs} />
-
-          {/* ソーシャルリンク - 既存の右側固定デザインを維持 */}
-          <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-10 hidden lg:block">
-            <div className="flex flex-col gap-8">
-              {activeSocialLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  className="social-vertical hover:opacity-70 transition-opacity"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {link.displayText || link.platform}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* モバイル用ソーシャルリンク - 既存デザイン維持 */}
-          <div className="lg:hidden bg-gray-50 border-t border-gray-200">
-            <div className="max-w-screen-2xl mx-auto px-6 py-4">
-              <div className="flex justify-center gap-6 flex-wrap">
-                {activeSocialLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.url}
-                    className="text-xs font-medium tracking-wide uppercase text-gray-600 hover:opacity-70 transition-opacity"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {link.displayText || link.platform}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
         </main>
         <SocialLinks />
         <Footer />
