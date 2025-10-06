@@ -168,12 +168,9 @@ export default async function ProfilePage() {
                 </h2>
                 <div className="space-y-4">
                   {profilePage.historyItems.map((item, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-3 h-3 mt-2 rounded-full bg-gray-400"></div>
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                        {item.text}
-                      </p>
-                    </div>
+                    <p key={index} className="text-gray-700 leading-relaxed whitespace-pre-line">
+                      {item.text}
+                    </p>
                   ))}
                 </div>
               </section>
@@ -188,8 +185,7 @@ export default async function ProfilePage() {
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   {profilePage.activitiesItems.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3 bg-white p-4 rounded-lg">
-                      <div className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-gray-400"></div>
+                    <div key={index} className="bg-white p-4 rounded-lg">
                       <p className="text-gray-700">{item.title}</p>
                     </div>
                   ))}
