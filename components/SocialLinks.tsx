@@ -35,7 +35,7 @@ const SocialLinks = () => {
                 aria-label={link.name}
               >
                 <IconComponent
-                  className="w-6 h-6 text-gray-400 transition-transform duration-300 group-hover:scale-110"
+                  className="w-6 h-6 text-gray-500 transition-transform duration-300 group-hover:scale-110"
                   strokeWidth={1.5}
                 />
               </a>

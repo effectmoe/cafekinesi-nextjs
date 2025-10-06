@@ -547,6 +547,11 @@ export const ABOUT_PAGE_QUERY = `
         show,
         content
       },
+      button {
+        show,
+        text,
+        link
+      },
       cards[] {
         number,
         title,

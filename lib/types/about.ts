@@ -34,6 +34,11 @@ export interface AboutSection {
     show: boolean
     content?: PortableTextBlock[]
   }
+  button?: {
+    show: boolean
+    text?: string
+    link?: string
+  }
   cards?: AboutFeatureCard[]
 }
 

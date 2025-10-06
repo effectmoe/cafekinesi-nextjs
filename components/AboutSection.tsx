@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { PortableText } from '@portabletext/react'
 import { AboutPage, AboutSection as AboutSectionType } from '@/lib/types/about'
 import { urlForImage } from '@/lib/sanity.fetch'
@@ -34,94 +35,121 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
         </p>
       </div>
 
-      {/* Sections - Unified block design with alternating backgrounds */}
-      {aboutData.sections?.map((section: AboutSectionType, index: number) => {
-        // Alternating subtle background colors
-        const isEven = index % 2 === 0
-        const bgColor = isEven ? 'bg-white' : 'bg-[hsl(35,22%,97%)]' // Very subtle beige for alternating sections
+      {/* Sections */}
+      {aboutData.sections?.map((section: AboutSectionType, index: number) => (
+        <div key={index} className="mb-16" id={section.id}>
+          {/* Section Title */}
+          <h3 className="font-noto-serif text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
+            {section.title}
+          </h3>
 
-        return (
-          <div
-            key={index}
-            className={`${bgColor} -mx-6 px-6 py-12 mb-8 rounded-lg transition-colors`}
-            id={section.id}
-          >
-            <div className="max-w-screen-xl mx-auto">
-              {/* Section Title */}
-              <h3 className="font-noto-serif text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                {section.title}
-              </h3>
+          {/* Card Layout */}
+          {section.layout === 'cards' ? (
+            <div className="space-y-6">
+              {section.cards?.map((card, cardIndex) => {
+                // Parse background color for number circle
+                let circleBgColor = 'hsl(var(--brand-teal))'
+                let textColor = 'text-white'
 
-              {/* Unified Content Block - Image and Text Together */}
-              {section.layout === 'cards' ? (
-                // Special layout for cards (e.g., courses section)
-                <div className="space-y-6">
-                  {section.cards?.map((card, cardIndex) => {
-                    const bgColorClass = card.bgColor === 'custom' && card.customBgColor
-                      ? `bg-[${card.customBgColor}]`
-                      : card.bgColor
+                if (card.bgColor === 'custom' && card.customBgColor) {
+                  circleBgColor = card.customBgColor
+                  textColor = 'text-white'
+                } else if (card.bgColor) {
+                  // Extract HSL value from CSS class
+                  const match = card.bgColor.match(/bg-\[hsl\(var\(--brand-(\w+)\)\)\]/)
+                  if (match) {
+                    circleBgColor = `hsl(var(--brand-${match[1]}))`
+                    textColor = match[1] === 'beige' ? 'text-gray-800' : 'text-white'
+                  }
+                }
 
-                    return (
+                return (
+                  <div
+                    key={cardIndex}
+                    className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex items-start space-x-4">
                       <div
-                        key={cardIndex}
-                        className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1`}
+                        style={{ backgroundColor: circleBgColor }}
                       >
-                        <div className="flex items-start space-x-4">
-                          <div className={`w-10 h-10 ${bgColorClass} rounded-full flex items-center justify-center flex-shrink-0 mt-1`}>
-                            <span className={`font-bold ${bgColorClass.includes('beige') ? 'text-[hsl(var(--text-primary))]' : 'text-white'}`}>
-                              {card.number}
-                            </span>
-                          </div>
-                          <div>
-                            <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                              {card.title}
-                            </h4>
-                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed whitespace-pre-line">
-                              {card.description}
-                            </p>
-                          </div>
-                        </div>
+                        <span className={`font-bold ${textColor}`}>
+                          {card.number}
+                        </span>
                       </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                // Standard layout - Image and text in one unified block
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                  {/* Image */}
-                  {section.image?.asset && (
-                    <div className={`${section.layout === 'image-right' ? 'lg:order-2' : ''}`}>
-                      <Image
-                        src={urlForImage(section.image)?.width(700).height(500).url() || ''}
-                        alt={section.image.alt || section.title}
-                        width={700}
-                        height={500}
-                        className="w-full aspect-[4/3] object-cover rounded-lg shadow-sm"
-                      />
+                      <div>
+                        <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
+                          {card.title}
+                        </h4>
+                        <p className="text-[hsl(var(--text-secondary))] leading-relaxed whitespace-pre-line">
+                          {card.description}
+                        </p>
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <>
+              {/* Content with optional image - 2 columns if image, 1 column if no image */}
+              {section.image?.asset ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-8">
+                  {/* Image */}
+                  <div className={`${section.layout === 'image-right' ? 'lg:order-2' : ''}`}>
+                    <Image
+                      src={urlForImage(section.image)?.width(700).height(500).url() || ''}
+                      alt={section.image.alt || section.title}
+                      width={700}
+                      height={500}
+                      className="w-full aspect-[4/3] object-cover rounded-lg"
+                    />
+                  </div>
 
                   {/* Text Content */}
-                  <div className={`${section.layout === 'image-right' ? 'lg:order-1' : ''} ${!section.image?.asset ? 'lg:col-span-2 max-w-4xl mx-auto' : ''}`}>
-                    <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed prose prose-lg max-w-none">
+                  <div className={`${section.layout === 'image-right' ? 'lg:order-1' : ''}`}>
+                    <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base">
                       {section.content && <PortableText value={section.content} />}
                     </div>
+                  </div>
+                </div>
+              ) : (
+                /* Text only - 1 column centered */
+                <div className="max-w-4xl mx-auto mb-8">
+                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base">
+                    {section.content && <PortableText value={section.content} />}
                   </div>
                 </div>
               )}
 
               {/* Highlight Box */}
               {section.highlightBox?.show && section.highlightBox.content && (
-                <div className="mt-8 bg-gradient-to-r from-[hsl(var(--brand-beige))] to-white rounded-lg p-8 md:p-10 shadow-sm">
-                  <div className="max-w-3xl mx-auto text-center space-y-4 prose prose-lg max-w-none">
+                <div className="bg-[hsl(35,22%,95%)] rounded-lg p-8 md:p-10 mb-6">
+                  <div className="max-w-3xl mx-auto text-center space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base">
                     <PortableText value={section.highlightBox.content} />
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        )
-      })}
+
+              {/* Button Link */}
+              {section.button?.show && section.button.text && section.button.link && (
+                <div className="flex justify-center mt-6">
+                  <Link
+                    href={section.button.link}
+                    className="inline-flex items-center gap-2 text-[hsl(var(--text-primary))] hover:text-[hsl(var(--text-secondary))] transition-colors"
+                  >
+                    <span className="text-base">{section.button.text}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ))}
     </section>
   )
 }

@@ -368,7 +368,12 @@ async function populateAboutPage() {
               { _type: 'span', _key: 'coursespan4', text: '講座修了後は、公認インストラクターとして活動することも可能です。', marks: [] }
             ]
           }
-        ]
+        ],
+        button: {
+          show: true,
+          text: '講座一覧を見る',
+          link: '/school'
+        }
       },
       // Section 7: Instructors
       {
@@ -409,7 +414,12 @@ async function populateAboutPage() {
               { _type: 'span', _key: 'instspan4', text: 'インストラクター検索ページから、あなたに合った講師を見つけてください。', marks: [] }
             ]
           }
-        ]
+        ],
+        button: {
+          show: true,
+          text: 'インストラクターを探す',
+          link: '/instructor'
+        }
       },
       // Section 8: Aroma
       {

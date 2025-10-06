@@ -146,6 +146,32 @@ export default defineType({
               ]
             },
             {
+              name: 'button',
+              title: 'リンクボタン',
+              type: 'object',
+              fields: [
+                {
+                  name: 'show',
+                  title: '表示する',
+                  type: 'boolean',
+                  initialValue: false
+                },
+                {
+                  name: 'text',
+                  title: 'ボタンテキスト',
+                  type: 'string',
+                  description: '例: 講座一覧を見る'
+                },
+                {
+                  name: 'link',
+                  title: 'リンク先URL',
+                  type: 'string',
+                  description: '例: /school または https://example.com'
+                }
+              ],
+              hidden: ({ parent }) => parent?.layout === 'cards'
+            },
+            {
               name: 'cards',
               title: 'カード',
               type: 'array',
