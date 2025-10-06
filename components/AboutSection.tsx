@@ -24,7 +24,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
   console.log('[AboutSection] Rendering with', aboutData.sections?.length, 'sections')
 
   return (
-    <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 pt-10 pb-16">
+    <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 pt-6 pb-16">
       {/* Hero Section - Simple title and subtitle only */}
       <div className="relative mb-16 text-center">
         <h2 className="font-noto-serif text-3xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">

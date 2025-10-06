@@ -23,6 +23,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
   const [inputValue, setInputValue] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     sessionId,
@@ -41,11 +42,13 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     }
   }, [sessionId, startSession]);
 
-  // 自動スクロール
+  // 自動スクロール（コンテナ内だけスクロール、ページ全体はスクロールしない）
   useEffect(() => {
     // 少し遅延させて確実にスクロール
     const timer = setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
     }, 100);
     return () => clearTimeout(timer);
   }, [messages]);
@@ -137,7 +140,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
       )}
 
       {/* Chat Messages */}
-      <div className={`p-6 space-y-4 overflow-y-auto bg-gradient-to-b from-white to-[hsl(35,25%,98%)] chat-messages ${isFullscreenView ? 'flex-1' : 'max-h-[400px] min-h-[300px]'}`}>
+      <div ref={chatContainerRef} className={`p-6 space-y-4 overflow-y-auto bg-gradient-to-b from-white to-[hsl(35,25%,98%)] chat-messages ${isFullscreenView ? 'flex-1' : 'max-h-[400px] min-h-[300px]'}`}>
         {messages.map((message, index) => (
           <div
             key={index}
@@ -257,7 +260,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
   return (
     <>
-      <section className="w-full pt-0 pb-3 px-6 bg-[hsl(35,25%,95%)]">
+      <section className="w-full pt-0 pb-6 px-6 bg-[hsl(35,25%,95%)]">
         <div className="max-w-5xl mx-auto">
           {chatContent(false)}
         </div>

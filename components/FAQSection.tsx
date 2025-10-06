@@ -56,7 +56,7 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
   const displaySubtitle = subtitle || '何かお探しですか？AIアシスタントがお答えします';
 
   return (
-    <section className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
+    <section className="w-full pt-6 pb-3 px-6 bg-[hsl(35,25%,95%)]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-medium text-text-primary mb-3 tracking-tight">
