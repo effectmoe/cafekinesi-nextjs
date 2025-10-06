@@ -36,12 +36,30 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
       </div>
 
       {/* Sections */}
-      {aboutData.sections?.map((section: AboutSectionType, index: number) => (
-        <div key={index} className="mb-16" id={section.id}>
-          {/* Section Title */}
-          <h3 className="font-noto-serif text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-            {section.title}
-          </h3>
+      {aboutData.sections?.map((section: AboutSectionType, index: number) => {
+        // Background color mapping
+        const bgColorMap: Record<string, string> = {
+          'none': '',
+          'beige-light': 'bg-[hsl(35,22%,97%)]',
+          'gray-light': 'bg-[hsl(0,0%,97%)]',
+          'teal-light': 'bg-[hsl(180,25%,97%)]',
+          'purple-light': 'bg-[hsl(260,15%,97%)]',
+          'custom': section.customBackgroundColor ? `bg-[${section.customBackgroundColor}]` : ''
+        }
+        const sectionBgColor = bgColorMap[section.backgroundColor || 'none'] || ''
+        const hasBgColor = section.backgroundColor && section.backgroundColor !== 'none'
+
+        return (
+          <div
+            key={index}
+            className={`mb-16 ${sectionBgColor} ${hasBgColor ? 'py-12 -mx-6 px-6 rounded-lg' : ''}`}
+            id={section.id}
+            style={section.backgroundColor === 'custom' && section.customBackgroundColor ? { backgroundColor: section.customBackgroundColor } : undefined}
+          >
+            {/* Section Title */}
+            <h3 className="font-noto-serif text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
+              {section.title}
+            </h3>
 
           {/* Link Cards Layout */}
           {section.layout === 'link-cards' ? (
@@ -194,8 +212,9 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
               )}
             </>
           )}
-        </div>
-      ))}
+          </div>
+        )
+      })}
     </section>
   )
 }

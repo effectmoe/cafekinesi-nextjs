@@ -535,6 +535,8 @@ export const ABOUT_PAGE_QUERY = `
       id,
       title,
       layout,
+      backgroundColor,
+      customBackgroundColor,
       image {
         asset-> {
           _id,

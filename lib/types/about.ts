@@ -36,6 +36,8 @@ export interface AboutSection {
   id: string
   title: string
   layout: 'image-left' | 'image-right' | 'text-only' | 'cards' | 'link-cards'
+  backgroundColor?: string
+  customBackgroundColor?: string
   image?: SanityImageObject & {
     alt: string
   }

@@ -103,6 +103,30 @@ export default defineType({
               }
             },
             {
+              name: 'backgroundColor',
+              title: 'ブロック背景色',
+              type: 'string',
+              options: {
+                list: [
+                  { title: '背景色なし（白）', value: 'none' },
+                  { title: 'ごく薄いベージュ', value: 'beige-light' },
+                  { title: 'ごく薄いグレー', value: 'gray-light' },
+                  { title: 'ごく薄いティール', value: 'teal-light' },
+                  { title: 'ごく薄いパープル', value: 'purple-light' },
+                  { title: 'カスタム', value: 'custom' }
+                ]
+              },
+              initialValue: 'none',
+              description: 'セクションブロック全体の背景色を設定します'
+            },
+            {
+              name: 'customBackgroundColor',
+              title: 'カスタム背景色',
+              type: 'string',
+              description: '例: hsl(35, 22%, 97%) または #f5f5f5',
+              hidden: ({ parent }) => parent?.backgroundColor !== 'custom'
+            },
+            {
               name: 'image',
               title: '画像',
               type: 'image',
