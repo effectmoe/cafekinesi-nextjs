@@ -12,14 +12,19 @@ export function PreviewPane(props: DocumentPaneNode) {
     // 開発環境か本番環境かを判定
     const baseUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000'
-      : 'https://cafekinesi-nextjs.vercel.app'
+      : 'https://cafekinesi.com'
 
     // ドキュメントタイプに応じたパスを生成
     let previewPath = '/'
 
+    // aboutPageの場合はトップページの#about-sectionにリダイレクト
+    if (documentType === 'aboutPage') {
+      previewPath = '/#about-section'
+    }
+
     // IDからドキュメントを取得する必要があるため、
     // 一旦ドラフトモードのAPIエンドポイントに誘導
-    const url = `${baseUrl}/api/draft?preview=true&id=${documentId}&type=${documentType}`
+    const url = `${baseUrl}/api/draft?preview=true&id=${documentId}&type=${documentType}&redirect=${encodeURIComponent(previewPath)}`
 
     window.open(url, '_blank')
   }
