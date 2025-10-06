@@ -36,6 +36,10 @@ export const structure = (S: StructureBuilder) =>
           S.document()
             .schemaType('aboutPage')
             .documentId('aboutPage')
+            .views([
+              S.view.form().id('aboutPageEditor'),
+              S.view.component(PreviewPane).id('aboutPagePreview').title('プレビュー')
+            ])
         ),
 
       S.divider(),
