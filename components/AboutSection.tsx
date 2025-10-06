@@ -20,55 +20,19 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
     return null
   }
 
-  const heroImageUrl = aboutData.heroSection?.image?.asset
-    ? urlForImage(aboutData.heroSection.image)?.width(1200).height(400).url()
-    : '/images/cafekinesi-hero.jpg'
-
   console.log('[AboutSection] Rendering with', aboutData.sections?.length, 'sections')
 
   return (
     <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
-      {/* Hero Section */}
-      <div className="relative mb-16">
-        <div className="aspect-[2/1] md:aspect-[3/1] overflow-hidden rounded-lg mb-8">
-          <Image
-            src={heroImageUrl || '/images/cafekinesi-hero.jpg'}
-            alt={aboutData.heroSection?.image?.alt || 'カフェキネシの世界へようこそ'}
-            width={1200}
-            height={400}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="text-center">
-          <h2 className="font-noto-serif text-3xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">
-            {aboutData.heroSection?.title || 'カフェキネシのページにようこそ'}
-          </h2>
-          <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed max-w-3xl mx-auto">
-            {aboutData.heroSection?.subtitle || 'だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法'}
-          </p>
-        </div>
+      {/* Hero Section - Simple title and subtitle only */}
+      <div className="relative mb-16 text-center">
+        <h2 className="font-noto-serif text-3xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">
+          {aboutData.heroSection?.title || 'カフェキネシのページにようこそ'}
+        </h2>
+        <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed max-w-3xl mx-auto">
+          {aboutData.heroSection?.subtitle || 'だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法'}
+        </p>
       </div>
-
-      {/* Table of Contents */}
-      {aboutData.tableOfContents && aboutData.tableOfContents.length > 0 && (
-        <div className="mb-16 bg-[hsl(var(--brand-light-gray))] rounded-lg p-8">
-          <h3 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-6 text-center">
-            目次
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {aboutData.tableOfContents.map((item, index) => (
-              <a
-                key={index}
-                href={item.link || '#'}
-                className="flex items-center space-x-3 p-3 hover:bg-white/50 rounded transition-colors cursor-pointer"
-              >
-                <span className="w-2 h-2 bg-[hsl(var(--brand-teal))] rounded-full flex-shrink-0"></span>
-                <span className="text-[hsl(var(--text-secondary))] text-sm">{item.text}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Sections */}
       {aboutData.sections?.map((section: AboutSectionType, index: number) => (
