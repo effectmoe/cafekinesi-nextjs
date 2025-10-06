@@ -14,10 +14,22 @@ export interface Session {
   metadata: Record<string, any>;
 }
 
+// グローバルにセッションを保存（Next.js HMR対応）
+const globalForSessions = globalThis as unknown as {
+  sessions: Map<string, Session> | undefined;
+};
+
 export class SessionManager {
-  private static sessions = new Map<string, Session>();
+  private static sessions = globalForSessions.sessions ?? new Map<string, Session>();
   private static readonly MAX_SESSIONS = 100;
   private static readonly SESSION_TIMEOUT = 30 * 60 * 1000; // 30分
+
+  static {
+    // グローバルに保存
+    if (!globalForSessions.sessions) {
+      globalForSessions.sessions = SessionManager.sessions;
+    }
+  }
 
   static createSession(): string {
     // 古いセッションをクリーンアップ
