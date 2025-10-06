@@ -256,20 +256,23 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                   アメリカ
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {overseasByRegion.america.map((instructor) => (
-                    <Link
-                      key={instructor._id}
-                      href={`/instructor/${instructor.slug.current}`}
-                      className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-bold">{instructor.name}</span>
-                        {instructor.title && (
-                          <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                  {overseasByRegion.america.map((instructor) => {
+                    const prefectureSlug = PREFECTURE_TO_SLUG[instructor.region] || 'america'
+                    return (
+                      <Link
+                        key={instructor._id}
+                        href={`/instructor/${prefectureSlug}/${instructor.slug.current}`}
+                        className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-bold">{instructor.name}</span>
+                          {instructor.title && (
+                            <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
+                          )}
+                        </div>
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -282,20 +285,23 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
                   ヨーロッパ
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {overseasByRegion.europe.map((instructor) => (
-                    <Link
-                      key={instructor._id}
-                      href={`/instructor/${instructor.slug.current}`}
-                      className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-bold">{instructor.name}</span>
-                        {instructor.title && (
-                          <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                  {overseasByRegion.europe.map((instructor) => {
+                    const prefectureSlug = PREFECTURE_TO_SLUG[instructor.region] || 'europe'
+                    return (
+                      <Link
+                        key={instructor._id}
+                        href={`/instructor/${prefectureSlug}/${instructor.slug.current}`}
+                        className="px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left bg-white text-gray-700 hover:bg-slate-50 hover:text-slate-800 border border-gray-200"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-bold">{instructor.name}</span>
+                          {instructor.title && (
+                            <span className="text-xs text-gray-500 mt-1">{instructor.title}</span>
+                          )}
+                        </div>
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
             )}

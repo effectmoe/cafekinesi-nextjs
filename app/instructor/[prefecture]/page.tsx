@@ -65,6 +65,9 @@ const PREFECTURE_NAMES: Record<string, string> = {
   'miyazaki': '宮崎県',
   'kagoshima': '鹿児島県',
   'okinawa': '沖縄県',
+  // 海外
+  'america': 'アメリカ',
+  'europe': 'ヨーロッパ',
 }
 
 // Sanityから都道府県別インストラクターを取得

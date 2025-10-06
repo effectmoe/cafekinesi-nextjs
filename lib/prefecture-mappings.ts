@@ -47,6 +47,9 @@ export const PREFECTURE_TO_SLUG: Record<string, string> = {
   '宮崎県': 'miyazaki',
   '鹿児島県': 'kagoshima',
   '沖縄県': 'okinawa',
+  // 海外
+  'アメリカ': 'america',
+  'ヨーロッパ': 'europe',
 }
 
 // URLスラッグ → 都道府県名のマッピング（逆引き用）
