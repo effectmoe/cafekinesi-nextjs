@@ -43,7 +43,11 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
   // 自動スクロール
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // 少し遅延させて確実にスクロール
+    const timer = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages]);
 
   // エラー表示
@@ -253,14 +257,14 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
   return (
     <>
-      <section className="w-full pt-0 pb-6 px-6 bg-[hsl(35,25%,95%)]">
+      <section className="w-full pt-0 pb-3 px-6 bg-[hsl(35,25%,95%)]">
         <div className="max-w-5xl mx-auto">
           {chatContent(false)}
         </div>
       </section>
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0 bg-transparent border-0">
+        <DialogContent hideClose className="!max-w-[95vw] w-[95vw] h-[95vh] !max-h-[95vh] p-0 bg-transparent border-0">
           {chatContent(true)}
         </DialogContent>
       </Dialog>
