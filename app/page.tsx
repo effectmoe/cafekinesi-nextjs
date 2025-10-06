@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import FAQSection from '@/components/FAQSection'
 import AboutSection from '@/components/AboutSection'
-import { AlwaysOpenChatSection } from '@/components/chat/AlwaysOpenChatSection'
+import InlineChatModal from '@/components/InlineChatModal'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
 import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
@@ -14,30 +14,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-
-const FAQ_QUERY = `*[_type == "faq"] | order(order asc) {
-  _id,
-  question,
-  answer,
-  category
-}`
-
-async function getFAQs() {
-  try {
-    const draft = await draftMode()
-    const isPreview = draft.isEnabled
-
-    const data = await sanityFetch({
-      query: FAQ_QUERY,
-      preview: isPreview,
-      tags: ['faq']
-    })
-    return data
-  } catch (error) {
-    console.error('Failed to fetch FAQs:', error)
-    return []
-  }
-}
 
 async function getAboutPageData(): Promise<AboutPage | null> {
   try {
@@ -117,9 +93,6 @@ export default async function HomePage() {
       preview: isPreview,
       tags: ['post'],
     })
-
-    // FAQs取得
-    const faqs = await getFAQs()
 
     // Aboutページデータ取得
     const aboutPage = await getAboutPageData()
@@ -230,6 +203,41 @@ export default async function HomePage() {
             )}
           </div>
 
+          {/* FAQセクション - 新デザイン */}
+          <FAQSection />
+
+          {/* AI Chat Section - インラインチャットモーダル */}
+          <Suspense fallback={
+            <div className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
+              <div className="max-w-5xl mx-auto">
+                <div className="animate-pulse">
+                  <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4" />
+                  <div className="h-96 bg-gray-100 rounded-3xl" />
+                </div>
+              </div>
+            </div>
+          }>
+            <InlineChatModal />
+          </Suspense>
+
+          {/* About Section - カフェキネシについて */}
+          {aboutPage && aboutPage.isActive ? (
+            <AboutSection aboutData={aboutPage} />
+          ) : (
+            <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
+              <div className="text-center py-12">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">カフェキネシについて</h2>
+                <p className="text-gray-600 mb-4">
+                  Aboutページのデータを読み込んでいます...
+                </p>
+                <p className="text-sm text-gray-500">
+                  データ取得状態: {aboutPage ? 'データあり' : 'データなし'} /
+                  有効化: {aboutPage?.isActive ? 'ON' : 'OFF'}
+                </p>
+              </div>
+            </section>
+          )}
+
           {/* ブログセクション - 既存のデザインを完全維持 */}
           <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
             <div className="text-center mb-12">
@@ -281,42 +289,6 @@ export default async function HomePage() {
               </div>
             )}
           </section>
-
-
-          {/* AI Chat Section - 常時オープン型チャット */}
-          <section className="relative bg-gradient-to-b from-amber-100 to-white py-16">
-            <Suspense fallback={
-              <div className="container mx-auto px-4 max-w-5xl text-center">
-                <div className="animate-pulse">
-                  <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4" />
-                  <div className="h-96 bg-gray-100 rounded-3xl" />
-                </div>
-              </div>
-            }>
-              <AlwaysOpenChatSection />
-            </Suspense>
-          </section>
-
-          {/* About Section - カフェキネシについて */}
-          {aboutPage && aboutPage.isActive ? (
-            <AboutSection aboutData={aboutPage} />
-          ) : (
-            <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
-              <div className="text-center py-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">カフェキネシについて</h2>
-                <p className="text-gray-600 mb-4">
-                  Aboutページのデータを読み込んでいます...
-                </p>
-                <p className="text-sm text-gray-500">
-                  データ取得状態: {aboutPage ? 'データあり' : 'データなし'} /
-                  有効化: {aboutPage?.isActive ? 'ON' : 'OFF'}
-                </p>
-              </div>
-            </section>
-          )}
-
-          {/* FAQセクション */}
-          <FAQSection faqs={faqs} />
         </main>
         <SocialLinks />
         <Footer />
