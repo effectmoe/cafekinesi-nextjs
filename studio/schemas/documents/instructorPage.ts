@@ -171,7 +171,7 @@ export default defineType({
     // マップセクション設定
     defineField({
       name: 'mapSection',
-      title: '都道府県マップセクション',
+      title: 'インストラクター検索セクション',
       type: 'object',
       group: 'content',
       fields: [
@@ -179,7 +179,7 @@ export default defineType({
           name: 'title',
           title: 'セクションタイトル',
           type: 'string',
-          initialValue: '都道府県から探す',
+          initialValue: 'インストラクターを探す',
         }),
         defineField({
           name: 'description',

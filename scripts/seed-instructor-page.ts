@@ -75,7 +75,7 @@ const instructorPageData = {
     ]
   },
   mapSection: {
-    title: '都道府県から探す',
+    title: 'インストラクターを探す',
     description: '全国各地にカフェキネシインストラクターがいます。お住まいの地域を選択してください。'
   },
   seo: {

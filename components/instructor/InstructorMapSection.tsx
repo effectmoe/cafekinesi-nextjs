@@ -23,7 +23,7 @@ interface InstructorMapSectionProps {
 
 export default function InstructorMapSection({ instructors = [] }: InstructorMapSectionProps) {
   const router = useRouter()
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('map')
+  const [viewMode, setViewMode] = useState<'map' | 'list' | 'overseas'>('map')
   const contentRef = useRef<HTMLDivElement>(null)
 
   // Separate instructors by location
@@ -104,7 +104,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
   }
 
   // タブ切り替え時のスムーススクロール
-  const handleViewModeChange = (mode: 'map' | 'list') => {
+  const handleViewModeChange = (mode: 'map' | 'list' | 'overseas') => {
     setViewMode(mode)
 
     // 少し遅延させてDOMが更新された後にスクロール
@@ -121,7 +121,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
   return (
     <section className="w-full max-w-screen-xl mx-auto px-6 py-16 md:py-24">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
-        都道府県から探す
+        インストラクターを探す
       </h2>
 
       {/* Tab Navigation */}
@@ -147,6 +147,16 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
           >
             📍 都道府県から選ぶ
           </button>
+          <button
+            onClick={() => handleViewModeChange('overseas')}
+            className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+              viewMode === 'overseas'
+                ? 'bg-slate-700 text-white'
+                : 'text-gray-700 hover:bg-slate-50 hover:text-slate-800'
+            }`}
+          >
+            🌏 海外から選ぶ
+          </button>
         </div>
       </div>
 
@@ -155,7 +165,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
         {viewMode === 'map' && (
           <>
             <p className="text-center text-gray-600 mb-2">
-              地図から都道府県を選択してください
+              日本地図から都道府県を選択してください
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 mb-8">
               <span>💡 地図をクリック・タップで都道府県を選択</span>
@@ -188,7 +198,7 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
         {viewMode === 'list' && (
           <div className="space-y-6">
             <p className="text-center text-gray-600 mb-8">
-              地域・都道府県を選択してください（インストラクター在籍: {prefecturesWithInstructors.length}都道府県）
+              都道府県を選択してインストラクターを探す（インストラクター在籍: {prefecturesWithInstructors.length}都道府県）
             </p>
 
             {Object.entries(prefecturesByRegion).map(([region, prefectures]) => {
@@ -231,74 +241,74 @@ export default function InstructorMapSection({ instructors = [] }: InstructorMap
           </div>
         )}
 
-      </div>
+        {/* Overseas View */}
+        {viewMode === 'overseas' && (
+          <div className="space-y-6">
+            <p className="text-center text-gray-600 mb-8">
+              海外で活動するインストラクターを探す（{overseasInstructors.length}名）
+            </p>
 
-      {/* Overseas Instructors Section */}
-      {overseasInstructors.length > 0 && (
-        <div className="max-w-4xl mx-auto mt-16">
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
-            海外のインストラクター
-          </h3>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* America */}
-            {overseasByRegion.america.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="text-3xl">🇺🇸</div>
-                  <div>
-                    <h4 className="text-xl font-bold text-gray-900">アメリカ</h4>
-                    <p className="text-sm text-gray-600">{overseasByRegion.america.length}名</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* America */}
+              {overseasByRegion.america.length > 0 && (
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-3xl">🇺🇸</div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-900">アメリカ</h4>
+                      <p className="text-sm text-gray-600">{overseasByRegion.america.length}名</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {overseasByRegion.america.map((instructor) => (
+                      <Link
+                        key={instructor._id}
+                        href={`/instructor/${instructor.slug.current}`}
+                        className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+                        {instructor.title && (
+                          <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                        )}
+                        <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
+                      </Link>
+                    ))}
                   </div>
                 </div>
-                <div className="space-y-3">
-                  {overseasByRegion.america.map((instructor) => (
-                    <Link
-                      key={instructor._id}
-                      href={`/instructor/${instructor.slug.current}`}
-                      className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
-                      {instructor.title && (
-                        <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
-                      )}
-                      <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Europe */}
-            {overseasByRegion.europe.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="text-3xl">🇪🇺</div>
-                  <div>
-                    <h4 className="text-xl font-bold text-gray-900">ヨーロッパ</h4>
-                    <p className="text-sm text-gray-600">{overseasByRegion.europe.length}名</p>
+              {/* Europe */}
+              {overseasByRegion.europe.length > 0 && (
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-3xl">🇪🇺</div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-900">ヨーロッパ</h4>
+                      <p className="text-sm text-gray-600">{overseasByRegion.europe.length}名</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {overseasByRegion.europe.map((instructor) => (
+                      <Link
+                        key={instructor._id}
+                        href={`/instructor/${instructor.slug.current}`}
+                        className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
+                        {instructor.title && (
+                          <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
+                        )}
+                        <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
+                      </Link>
+                    ))}
                   </div>
                 </div>
-                <div className="space-y-3">
-                  {overseasByRegion.europe.map((instructor) => (
-                    <Link
-                      key={instructor._id}
-                      href={`/instructor/${instructor.slug.current}`}
-                      className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <h5 className="font-bold text-gray-900 mb-1">{instructor.name}</h5>
-                      {instructor.title && (
-                        <p className="text-xs text-blue-600 mb-1">{instructor.title}</p>
-                      )}
-                      <p className="text-xs text-gray-600 line-clamp-2">{instructor.bio}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
     </section>
   )
 }
