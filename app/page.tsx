@@ -126,28 +126,50 @@ export default async function HomePage() {
                   ? urlForImage(card.image)?.url() || fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
                   : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
-                return card.isActive !== false ? (
-                  <Link
-                    key={index}
-                    className="album-link"
-                    href={card.titleJa === 'カフェキネシについて' ? '#about-section' : card.link}
-                  >
-                    <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
-                      <div className="aspect-square relative mb-6 pointer-events-none">
-                        <Image
-                          alt={card.image?.alt || card.titleJa || ''}
-                          src={imageSrc}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      </div>
-                      <div className="space-y-1 pointer-events-none">
-                        <h3 className="album-title">{card.titleJa || ''}</h3>
-                        <p className="album-title opacity-80">{card.titleEn || ''}</p>
-                      </div>
+                // リンク先を決定
+                const linkHref = card.titleJa === 'カフェキネシについて' ? '#about-section' : card.link
+
+                // 外部リンクかどうかを判定
+                const isExternalLink = linkHref?.startsWith('http://') || linkHref?.startsWith('https://')
+
+                const cardContent = (
+                  <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
+                    <div className="aspect-square relative mb-6 pointer-events-none">
+                      <Image
+                        alt={card.image?.alt || card.titleJa || ''}
+                        src={imageSrc}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
                     </div>
-                  </Link>
+                    <div className="space-y-1 pointer-events-none">
+                      <h3 className="album-title">{card.titleJa || ''}</h3>
+                      <p className="album-title opacity-80">{card.titleEn || ''}</p>
+                    </div>
+                  </div>
+                )
+
+                return card.isActive !== false ? (
+                  isExternalLink ? (
+                    <a
+                      key={index}
+                      className="album-link"
+                      href={linkHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {cardContent}
+                    </a>
+                  ) : (
+                    <Link
+                      key={index}
+                      className="album-link"
+                      href={linkHref || '#'}
+                    >
+                      {cardContent}
+                    </Link>
+                  )
                 ) : (
                   <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
                     <div className="aspect-square relative mb-6">
