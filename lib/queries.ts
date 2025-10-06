@@ -183,7 +183,8 @@ export const HOMEPAGE_QUERY = `
       isActive,
       order
     } | order(order asc),
-    viewAllButton
+    viewAllButton,
+    profileButton
   }
 `
 
@@ -491,6 +492,62 @@ export const PROFILE_PAGE_QUERY = `
     activitiesItems[] | order(order asc) {
       title,
       order
+    },
+    seo {
+      title,
+      description,
+      keywords,
+      ogImage {
+        asset->
+      }
+    },
+    isActive
+  }
+`
+
+// About（カフェキネシについて）ページ情報を取得
+export const ABOUT_PAGE_QUERY = `
+  *[_type == "aboutPage"][0] {
+    _id,
+    title,
+    heroSection {
+      image {
+        asset-> {
+          _id,
+          url
+        },
+        alt
+      },
+      title,
+      subtitle
+    },
+    tableOfContents[] {
+      text,
+      link
+    },
+    sections[] {
+      id,
+      title,
+      layout,
+      image {
+        asset-> {
+          _id,
+          url
+        },
+        alt
+      },
+      content,
+      highlightBox {
+        show,
+        content
+      },
+      cards[] {
+        number,
+        title,
+        description,
+        bgColor,
+        customBgColor
+      }
     },
     seo {
       title,

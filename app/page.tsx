@@ -3,9 +3,11 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import FAQSection from '@/components/FAQSection'
+import AboutSection from '@/components/AboutSection'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
-import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY } from '@/lib/queries'
+import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
+import { AboutPage } from '@/lib/types/about'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -32,6 +34,23 @@ async function getFAQs() {
   } catch (error) {
     console.error('Failed to fetch FAQs:', error)
     return []
+  }
+}
+
+async function getAboutPageData(): Promise<AboutPage | null> {
+  try {
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+
+    const data = await sanityFetch<AboutPage>({
+      query: ABOUT_PAGE_QUERY,
+      preview: isPreview,
+      tags: ['aboutPage']
+    })
+    return data
+  } catch (error) {
+    console.error('Failed to fetch About page data:', error)
+    return null
   }
 }
 
@@ -99,6 +118,9 @@ export default async function HomePage() {
 
     // FAQs取得
     const faqs = await getFAQs()
+
+    // Aboutページデータ取得
+    const aboutPage = await getAboutPageData()
 
     // アクティブなソーシャルリンクのみフィルタリング
     const activeSocialLinks = homepage.socialLinks?.filter(link => link.isActive) || []
@@ -252,423 +274,9 @@ export default async function HomePage() {
             )}
           </section>
 
+
           {/* About Section - カフェキネシについて */}
-          <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
-            {/* Hero Section */}
-            <div className="relative mb-16">
-              <div className="aspect-[2/1] md:aspect-[3/1] overflow-hidden rounded-lg mb-8">
-                <Image
-                  src="/images/cafekinesi-hero.jpg"
-                  alt="カフェキネシの世界へようこそ"
-                  width={1200}
-                  height={400}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="text-center">
-                <h2 className="font-noto-serif text-3xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">
-                  カフェキネシのページにようこそ
-                </h2>
-                <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed max-w-3xl mx-auto">
-                  だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法
-                </p>
-              </div>
-            </div>
-
-            {/* Table of Contents */}
-            <div className="mb-16 bg-[hsl(var(--brand-light-gray))] rounded-lg p-8">
-              <h3 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-6 text-center">
-                目次
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-                {[
-                  "1. カフェキネシとは",
-                  "2. カフェキネシの歴史",
-                  "3. カフェキネシの特長",
-                  "4. カフェキネシの動画を見る",
-                  "5. カフェキネシの夢",
-                  "6. カフェキネシ講座を受講する",
-                  "7. 公認インストラクターを探す",
-                  "8. アロマを購入する"
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-3 p-3 hover:bg-white/50 rounded transition-colors cursor-pointer"
-                  >
-                    <span className="w-2 h-2 bg-[hsl(var(--brand-teal))] rounded-full flex-shrink-0"></span>
-                    <span className="text-[hsl(var(--text-secondary))] text-sm">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Section 1: What is Cafe Kinesi */}
-            <div className="mb-16" id="what-is-cafekinesi">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシとは
-              </h3>
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center mb-8">
-                <div className="lg:col-span-2">
-                  <Image
-                    src="/images/cafekinesi-therapy-session.jpg"
-                    alt="カフェキネシセラピー"
-                    width={600}
-                    height={450}
-                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                  />
-                </div>
-                <div className="lg:col-span-3">
-                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed">
-                    <p className="text-xl font-medium text-[hsl(var(--text-primary))]">
-                      カフェキネシとは「カフェで出来るキネシオロジー」です。
-                    </p>
-                    <p className="text-lg">
-                      だれでもどこでも簡単にできるキネシオロジーとアロマを使った健康法です。
-                    </p>
-                    <p>
-                      誰でもどこでもその場でストレスが取れる、
-                      <span className="font-noto-serif font-medium text-[hsl(var(--text-primary))]">キネシアロマ</span>
-                      を使った世界最速のキネシセラピーです。
-                    </p>
-                    <p>
-                      世界初、最高に便利で簡単なキネシオロジー。
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-[hsl(var(--brand-beige))] to-white rounded-lg p-8 md:p-10">
-                <div className="max-w-3xl mx-auto text-center space-y-4">
-                  <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
-                    セラピストでなくても大丈夫。必要なのはあなたの愛とあなたの手。
-                  </p>
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    カフェキネシはまだ発表されたばかりのセラピースタイルです。
-                    わずか2時間でカフェキネシを使ってセラピーが出来るようになります。
-                    またカフェキネシを教えることが出来るようになります。
-                  </p>
-                  <p className="text-lg font-medium text-[hsl(var(--text-primary))]">
-                    セラピーをしながら世界へ「カフェキネシ」を伝えませんか？
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 2: History */}
-            <div className="mb-16" id="history">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシの歴史
-              </h3>
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
-                <div className="lg:col-span-3">
-                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed">
-                    <p>
-                      キネシオロジーというセラピーを
-                      もっとフェア（公平）に簡単に楽しみながら出来るようにならないかな？
-                    </p>
-                    <p>
-                      シンプルだけど、効果があるようなものを作れないかな？
-                    </p>
-                    <p>
-                      そんな事を思って、<strong className="text-[hsl(var(--text-primary))]">2010年2月</strong>にカフェキネシの取り組みをはじめました。
-                    </p>
-                    <p>
-                      使いやすさと、数々の臨床を重ねて発表になったのは2011年2月。
-                    </p>
-                    <p>
-                      どこでも誰でもすぐにセラピストになれるカフェキネシオロジーとアロマの力で、
-                      どんどん身近なストレスを取っていくことが出来ます。
-                    </p>
-                    <p className="text-lg font-medium text-[hsl(var(--text-primary))]">
-                      ひとつのストレスの解決まで、約3分。
-                    </p>
-                    <p>
-                      ストレスって毎日あるけど、毎日セラピー行けないものね。
-                      友達とカフェでおしゃべりしながら、アロマの香りでストレス取りしましょ♪
-                    </p>
-                  </div>
-                </div>
-                <div className="lg:col-span-2">
-                  <Image
-                    src="/images/cafekinesi-littletree-sign.jpg"
-                    alt="リトルトリー"
-                    width={600}
-                    height={450}
-                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 3: Features */}
-            <div className="mb-16" id="features">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシの特長
-              </h3>
-              <div className="space-y-6">
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(var(--brand-teal))] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold">1</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        初心者でも２時間あればインストラクターになれる！
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        初心者でも約２時間の講座をうけたらインストラクター登録可能です。
-                        ２つのタイプから自分に合うインストラクター登録ができるので負担もかかりません！
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(var(--brand-purple))] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold">2</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        潜在意識を呼び起こすアロマでストレスやトラウマを取り除く
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        一つ一つ思いがこめられているアロマは自然の植物のエキスで作成されています。
-                        あなたの潜在意識が目を覚まし、あなたがあなたらしく生きられるようにサポートします。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(var(--brand-blue-gray))] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold">3</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        必要なのはたった３つ。手とアロマ、そしてあなたの愛
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        カフェキネシでは、たくさんの物が必要というわけではありません。
-                        手とアロマ、そしてあなたの愛があれば、苦しみや悲しみを吹き飛ばし、
-                        夢や愛を広げるお手伝いができます。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(var(--brand-beige))] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-[hsl(var(--text-primary))] font-bold">4</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        どこでもできるので、お家でサロンができちゃいます。
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        カフェキネシは現在５シリーズあり、すべて２時間程度でインストラクターになれます。
-                        公認インストラクターになると、アドバンス版の講座も開催できるようになります。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(180_25%_35%)] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold">5</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        世界中にインストラクターがいるので、近くで学べます。
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        日本国内はもちろん、アメリカ、ヨーロッパ、アジアなど世界中にインストラクターがいますので、
-                        お近くのインストラクターを探すことができます。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-6 md:p-8 hover:shadow-lg transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[hsl(260_20%_65%)] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold">6</span>
-                    </div>
-                    <div>
-                      <h4 className="font-noto-serif text-xl font-medium text-[hsl(var(--text-primary))] mb-3">
-                        国境を越えたセラピー。世界中で通じるセラピーが学べます。
-                      </h4>
-                      <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                        人種、文化、環境、言葉に関係なく、効果のあるセラピーです。
-                        目の前の方々の心を少しでも軽くするお手伝いができます。
-                        世の中のみなさんが平和と愛であふれた日々を過ごせますように。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 4: Video */}
-            <div className="mb-16" id="video">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシの動画を見る
-              </h3>
-              <div className="bg-gradient-to-r from-[hsl(var(--brand-light-gray))] to-white rounded-lg p-8 md:p-12">
-                <div className="max-w-3xl mx-auto text-center space-y-6">
-                  <Image
-                    src="/images/cafekinesi-cafe-scene.jpg"
-                    alt="カフェキネシの動画"
-                    width={900}
-                    height={506}
-                    className="w-full aspect-video object-cover rounded-lg mb-6"
-                  />
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    カフェキネシの実演をご覧いただけます。
-                  </p>
-                  <button className="view-all-button">
-                    YouTube チャンネルを見る →
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 5: Dream */}
-            <div className="mb-16" id="dream">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシの夢
-              </h3>
-              <div className="bg-gradient-to-br from-[hsl(var(--brand-beige))] via-[hsl(var(--brand-light-gray))] to-[hsl(var(--brand-purple))] rounded-lg p-8 md:p-12">
-                <div className="max-w-4xl mx-auto space-y-6 text-[hsl(var(--text-primary))] leading-relaxed">
-                  <p className="text-xl font-medium text-center">
-                    カフェキネシの夢は世界ノーベル平和賞受賞です
-                  </p>
-                  <p className="text-center">
-                    世界一シンプルなキネシオロジーを使ってより多くの人の苦しみと悲しみを吹き飛ばし、
-                    大きな夢をかなえて幸せになるお手伝いをしていくことです。
-                  </p>
-                  <p>
-                    今までカフェで悩みや愚痴をこぼして過ごした時間がカフェキネシで夢と喜びを
-                    分かち合う時間に変わっていきます。
-                  </p>
-                  <p>
-                    そしてカフェで語り合う目の前の人から平和と喜びが広がり、
-                    戦争や天災で苦しむ方々の心を少しでも軽くしてあげる事が出来るようになります。
-                  </p>
-                  <p className="text-lg font-medium text-center">
-                    どのカフェでもカフェキネシをしている姿が見える、そんな世の中になった時
-                    自然と平和が地球に広がっていく事でしょう・・・
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 6: Take Course */}
-            <div className="mb-16" id="course">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                カフェキネシ講座を受講する
-              </h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div>
-                  <Image
-                    src="/images/cafekinesi-instructor.jpg"
-                    alt="カフェキネシ講座"
-                    width={600}
-                    height={450}
-                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                  />
-                </div>
-                <div className="space-y-4">
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    カフェキネシの講座はお近くにお住まいのインストラクターから受講できます。
-                  </p>
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    カフェキネシシリーズのどれでも受講された方のことを「カフェキネシラバーズ」と呼んでいます。
-                  </p>
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    ２時間半の講座を受講し、インストラクター登録をすると、ご自身で講座を開くこともできます。
-                  </p>
-                  <div className="pt-4">
-                    <Link href="/school">
-                      <button className="view-all-button w-full md:w-auto">
-                        講座一覧を見る →
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 7: Find Instructor */}
-            <div className="mb-16" id="instructor">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                公認インストラクターを探す
-              </h3>
-              <div className="bg-[hsl(var(--brand-light-gray))] rounded-lg p-8 md:p-12 text-center">
-                <p className="text-[hsl(var(--text-secondary))] leading-relaxed mb-6">
-                  お近くの地域のインストラクターをご紹介します。
-                </p>
-                <p className="text-[hsl(var(--text-secondary))] leading-relaxed mb-8">
-                  カフェキネシ、ピーチタッチ、チャクラキネシ、キネシオロジースタンダード、
-                  ナビゲーションセミナーを教えているキネシオロジーインストラクターの一覧です。
-                </p>
-                <button className="view-all-button">
-                  インストラクター一覧を見る →
-                </button>
-              </div>
-            </div>
-
-            {/* Section 8: Buy Aroma */}
-            <div className="mb-16" id="aroma">
-              <h3 className="font-noto-serif text-3xl font-medium text-[hsl(var(--text-primary))] mb-8 text-center">
-                アロマを購入する
-              </h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    カフェキネシに使うアロマを購入したいかたはこちらからどうぞ。
-                  </p>
-                  <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
-                    リトルトリーストアでは、あなたの心と身体のバランスを整え、
-                    幸せにしてくれるアロマやハーブティーを取り揃えています。
-                  </p>
-                  <div className="pt-4">
-                    <button className="view-all-button w-full md:w-auto">
-                      オンラインストアへ →
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <Image
-                    src="/images/cafekinesi-aroma-bottles.jpg"
-                    alt="アロマボトル"
-                    width={600}
-                    height={600}
-                    className="w-full aspect-square object-cover rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Call to Action */}
-            <div className="text-center bg-gradient-to-r from-[hsl(var(--brand-beige))] via-white to-[hsl(var(--brand-light-gray))] rounded-lg p-8 md:p-12">
-              <h3 className="font-noto-serif text-2xl font-medium text-[hsl(var(--text-primary))] mb-4">
-                カフェキネシの世界へようこそ
-              </h3>
-              <p className="text-[hsl(var(--text-secondary))] mb-6 leading-relaxed max-w-2xl mx-auto">
-                誰でもどこでも簡単にできるキネシオロジーとアロマを使った健康法で、
-                心と身体を整える新しいセラピーを体験してみませんか？
-              </p>
-              <Link href="/school">
-                <button className="view-all-button">
-                  講座を見る →
-                </button>
-              </Link>
-            </div>
-          </section>
+          {aboutPage && aboutPage.isActive && <AboutSection aboutData={aboutPage} />}
 
           {/* FAQセクション */}
           <FAQSection faqs={faqs} />

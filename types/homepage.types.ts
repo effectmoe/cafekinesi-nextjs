@@ -33,6 +33,12 @@ export interface ViewAllButton {
   link: string
 }
 
+export interface ProfileButton {
+  show: boolean
+  text: string
+  link: string
+}
+
 export interface Homepage extends SanityDocument {
   _type: 'homepage'
   title: string
@@ -40,6 +46,7 @@ export interface Homepage extends SanityDocument {
   blogSection: BlogSectionConfig
   socialLinks: SocialLink[]
   viewAllButton: ViewAllButton
+  profileButton?: ProfileButton
 }
 
 // ブログ記事用の型定義

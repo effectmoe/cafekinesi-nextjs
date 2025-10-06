@@ -83,6 +83,32 @@ export default defineType({
           initialValue: '#'
         }
       ]
+    }),
+    defineField({
+      name: 'profileButton',
+      title: '代表者プロフィールボタン設定',
+      type: 'object',
+      fields: [
+        {
+          name: 'show',
+          title: '表示する',
+          type: 'boolean',
+          initialValue: true,
+          description: '「カフェキネシの夢」と「カフェキネシ講座を受講する」の間に表示されます'
+        },
+        {
+          name: 'text',
+          title: 'ボタンテキスト',
+          type: 'string',
+          initialValue: '代表者プロフィール'
+        },
+        {
+          name: 'link',
+          title: 'リンク先',
+          type: 'string',
+          initialValue: '/profile'
+        }
+      ]
     })
   ],
   preview: {
