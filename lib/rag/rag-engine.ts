@@ -15,11 +15,23 @@ export class RAGEngine {
   async generateAugmentedResponse(query: string, config: any) {
     console.log('🤖 RAG応答生成中...');
 
+    // インストラクター関連の質問を検出
+    const isInstructorQuery = this.isInstructorRelatedQuery(query);
+
     // 1. ベクトル検索
-    const searchResults = await this.vectorStore.hybridSearch(query, {
-      topK: config.vectorSearch?.topK || 20,
-      threshold: config.vectorSearch?.threshold || 0.15
-    });
+    let searchResults;
+    if (isInstructorQuery) {
+      console.log('👩‍🏫 インストラクター専用検索を実行...');
+      searchResults = await this.vectorStore.searchInstructors(query, {
+        topK: 50,  // インストラクター検索では多めに取得
+        threshold: 0.05  // より低い閾値で幅広く取得
+      });
+    } else {
+      searchResults = await this.vectorStore.hybridSearch(query, {
+        topK: config.vectorSearch?.topK || 20,
+        threshold: config.vectorSearch?.threshold || 0.15
+      });
+    }
 
     // 2. Web検索（有効な場合）
     let webResults: any[] = [];
@@ -123,6 +135,21 @@ ${query}
     ];
 
     return sources;
+  }
+
+  // インストラクター関連の質問かどうか判定
+  private isInstructorRelatedQuery(query: string): boolean {
+    const instructorKeywords = [
+      'インストラクター', '講師', '先生', 'インストラクタ',
+      '教える', '指導', 'どんな人', '誰', 'だれ',
+      '他に', 'ほか', '別の', 'その他',
+      'AKO', 'LuLu', 'Harmonia', 'Wisteria', 'HSK', '煌めき'
+    ];
+
+    const lowerQuery = query.toLowerCase();
+    return instructorKeywords.some(keyword =>
+      lowerQuery.includes(keyword.toLowerCase())
+    );
   }
 
   // 信頼度計算

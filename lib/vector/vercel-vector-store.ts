@@ -71,6 +71,49 @@ export class VercelVectorStore {
     console.log('✅ ドキュメント追加完了');
   }
 
+  // インストラクター専用検索
+  async searchInstructors(query: string, options = {}) {
+    const { topK = 50, threshold = 0.05 } = options as any;
+    console.log(`🔍 インストラクター専用検索: "${query}"`);
+
+    // 埋め込み生成
+    const output = await this.embedder(query, {
+      pooling: 'mean',
+      normalize: true
+    });
+    const embedding = Array.from(output.data);
+
+    // インストラクターデータのみを検索
+    const results = await sql`
+      SELECT
+        content,
+        metadata,
+        source,
+        1 - (embedding <=> ${JSON.stringify(embedding)}::vector) as similarity
+      FROM embeddings
+      WHERE
+        (metadata::text LIKE '%instructor%' OR source LIKE '%instructor%')
+        AND 1 - (embedding <=> ${JSON.stringify(embedding)}::vector) > ${threshold}
+      ORDER BY similarity DESC
+      LIMIT ${topK}
+    `;
+
+    console.log(`✅ ${results.rows.length}件のインストラクターデータを取得`);
+
+    // インストラクターごとにグループ化して重複を除去
+    const instructorMap = new Map();
+    results.rows.forEach(row => {
+      const metadata = row.metadata as any;
+      const instructorId = metadata?.id || metadata?.name || row.source;
+
+      if (!instructorMap.has(instructorId) || row.similarity > instructorMap.get(instructorId).similarity) {
+        instructorMap.set(instructorId, row);
+      }
+    });
+
+    return Array.from(instructorMap.values());
+  }
+
   // ハイブリッド検索
   async hybridSearch(query: string, options = {}) {
     const { topK = 20, threshold = 0.15 } = options as any;
