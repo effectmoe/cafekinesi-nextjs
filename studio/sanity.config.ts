@@ -2,6 +2,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
+import {assist} from '@sanity/assist'
 import contentModelGraph from 'sanity-plugin-content-model-graph'
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
@@ -47,6 +48,12 @@ export default defineConfig({
         previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
         enabledTypes: ['blogPost', 'page', 'homepage', 'aboutPage', 'album', 'course', 'instructor', 'schoolPage', 'instructorPage'],
         previewMode: 'tab'
+      }),
+      assist({
+        // AI Assist機能の設定
+        // - 画像のalt textの自動生成
+        // - キーワードの提案
+        // - コンテンツの最適化支援
       }),
     ]
 
