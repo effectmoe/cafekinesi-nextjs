@@ -17,7 +17,7 @@ export class RAGEngine {
 
     // 1. ベクトル検索
     const searchResults = await this.vectorStore.hybridSearch(query, {
-      topK: config.vectorSearch?.topK || 10,
+      topK: config.vectorSearch?.topK || 20,
       threshold: config.vectorSearch?.threshold || 0.15
     });
 

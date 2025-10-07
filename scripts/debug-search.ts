@@ -25,8 +25,8 @@ async function debugSearch() {
     try {
       // 直接ベクター検索
       const results = await vectorStore.hybridSearch(query, {
-        topK: 10,
-        threshold: 0.2
+        topK: 20,
+        threshold: 0.15
       });
 
       console.log(`📊 検索結果数: ${results.length}\n`);
