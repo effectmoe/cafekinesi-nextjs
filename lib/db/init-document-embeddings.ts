@@ -12,7 +12,7 @@ export async function initDocumentEmbeddingsTable() {
     await sql`CREATE EXTENSION IF NOT EXISTS vector;`
     console.log('✅ pgvector extension enabled')
 
-    // 2. ベクトル埋め込みテーブル作成（OpenAI ada-002用: 1536次元）
+    // 2. ベクトル埋め込みテーブル作成（multilingual-e5-small用: 384次元）
     await sql`
       CREATE TABLE IF NOT EXISTS document_embeddings (
         id TEXT PRIMARY KEY,
@@ -20,13 +20,13 @@ export async function initDocumentEmbeddingsTable() {
         title TEXT NOT NULL,
         content TEXT NOT NULL,
         url TEXT,
-        embedding vector(1536),
+        embedding vector(384),
         metadata JSONB DEFAULT '{}',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `
-    console.log('✅ document_embeddings table created (1536 dimensions for OpenAI)')
+    console.log('✅ document_embeddings table created (384 dimensions for multilingual-e5-small)')
 
     // 3. ベクトル類似度検索用インデックス作成（HNSW）
     await sql`
@@ -37,13 +37,13 @@ export async function initDocumentEmbeddingsTable() {
     `
     console.log('✅ HNSW index created for vector similarity search')
 
-    // 4. 全文検索用インデックス作成（日本語対応）
+    // 4. 全文検索用インデックス作成（simple辞書使用）
     await sql`
       CREATE INDEX IF NOT EXISTS document_content_search_idx
       ON document_embeddings
-      USING GIN (to_tsvector('japanese', content));
+      USING GIN (to_tsvector('simple', content));
     `
-    console.log('✅ Full-text search index created (Japanese support)')
+    console.log('✅ Full-text search index created (simple dictionary)')
 
     // 5. メタデータ検索用インデックス
     await sql`
@@ -60,19 +60,32 @@ export async function initDocumentEmbeddingsTable() {
     `
     console.log('✅ Type index created')
 
-    // 7. 更新日時トリガー作成
-    await sql`
-      CREATE OR REPLACE FUNCTION update_document_embeddings_timestamp()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        NEW.updated_at = CURRENT_TIMESTAMP;
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-    `
+    // 7. 更新日時トリガー作成（関数）
+    try {
+      await sql`
+        CREATE OR REPLACE FUNCTION update_document_embeddings_timestamp()
+        RETURNS TRIGGER AS $$
+        BEGIN
+          NEW.updated_at = CURRENT_TIMESTAMP;
+          RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+      `
+      console.log('✅ Timestamp function created')
+    } catch (error: any) {
+      if (!error.message?.includes('already exists')) {
+        console.warn('⚠️  Timestamp function creation warning:', error.message)
+      }
+    }
+
+    // 8. トリガー作成
+    try {
+      await sql`DROP TRIGGER IF EXISTS document_embeddings_timestamp_trigger ON document_embeddings;`
+    } catch (error) {
+      // Ignore if trigger doesn't exist
+    }
 
     await sql`
-      DROP TRIGGER IF EXISTS document_embeddings_timestamp_trigger ON document_embeddings;
       CREATE TRIGGER document_embeddings_timestamp_trigger
       BEFORE UPDATE ON document_embeddings
       FOR EACH ROW
