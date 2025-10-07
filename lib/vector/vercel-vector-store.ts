@@ -73,7 +73,7 @@ export class VercelVectorStore {
 
   // ハイブリッド検索
   async hybridSearch(query: string, options = {}) {
-    const { topK = 5, threshold = 0.7 } = options as any;
+    const { topK = 5, threshold = 0.3 } = options as any;
 
     // クエリ埋め込み生成
     const output = await this.embedder(query, {
