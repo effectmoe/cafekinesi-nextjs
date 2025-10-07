@@ -3,6 +3,7 @@ import { AIProviderFactory } from '@/lib/ai/factory';
 import { SessionManager } from '@/lib/chat/session-manager';
 import { RateLimiter } from '@/lib/chat/rate-limiter';
 import { publicClient } from '@/lib/sanity.client';
+import { RAGEngine } from '@/lib/rag/rag-engine';
 
 // レート制限インスタンス
 const rateLimiter = new RateLimiter();
@@ -92,16 +93,34 @@ export async function POST(request: NextRequest) {
     console.log('[Chat API] Fetching cafe info...');
     const cafeInfo = await fetchCafeInfo();
 
+    // RAGエンジンを初期化して検索
+    console.log('[Chat API] Initializing RAG engine...');
+    const ragEngine = new RAGEngine();
+    await ragEngine.initialize();
+
+    // ベクトル検索でコンテキストを取得
+    console.log('[Chat API] Performing RAG search...');
+    const ragData = await ragEngine.generateAugmentedResponse(message, {
+      vectorSearch: {
+        topK: 20,
+        threshold: 0.15
+      }
+    });
+
+    console.log(`[Chat API] RAG search completed. Found ${ragData.searchResults?.length || 0} results`);
+
     // AIプロバイダーを選択
     console.log('[Chat API] Creating AI provider...');
     const aiProvider = AIProviderFactory.create();
     console.log(`[Chat API] Using AI Provider: ${aiProvider.name}`);
 
-    // コンテキストを構築
+    // コンテキストを構築（RAG結果を含む）
     const context = {
       messages: session.messages,
       cafeInfo,
-      sessionId
+      sessionId,
+      ragContext: ragData.prompt,
+      searchResults: ragData.searchResults
     };
 
     // AI応答生成

@@ -7,6 +7,8 @@ export interface MessageContext {
   messages: Message[];
   cafeInfo?: any;
   sessionId: string;
+  ragContext?: string;
+  searchResults?: any[];
 }
 
 export interface Message {
