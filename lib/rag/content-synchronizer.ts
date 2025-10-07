@@ -108,10 +108,12 @@ export class ContentSynchronizer {
 
       case 'instructor':
         return `インストラクター: ${item.name || ''}
-          専門分野: ${item.specialization || ''}
-          経歴: ${item.biography || ''}
+          専門分野: ${item.specialties?.join(', ') || ''}
+          経歴: ${item.bio || ''}
           地域: ${item.region || ''}
-          資格: ${item.certifications || ''}`;
+          詳細: ${item.profileDetails || ''}
+          ウェブサイト: ${item.website || ''}
+          メール: ${item.email || ''}`;
 
       case 'faq':
         return `FAQ: ${item.question || ''}

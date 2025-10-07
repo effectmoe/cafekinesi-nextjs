@@ -38,7 +38,7 @@ export default {
           title: '類似度閾値',
           type: 'number',
           validation: (Rule: any) => Rule.min(0).max(1),
-          initialValue: 0.75
+          initialValue: 0.3
         },
         {
           name: 'chunkSize',
