@@ -1,37 +1,46 @@
-import { VercelVectorStore } from '@/lib/vector/vercel-vector-store';
+import { vectorSearch, hybridSearch } from '@/lib/db/document-vector-operations';
 
 export class RAGEngine {
-  private vectorStore: VercelVectorStore;
-
-  constructor() {
-    this.vectorStore = new VercelVectorStore();
-  }
-
   async initialize() {
-    await this.vectorStore.initialize();
+    // document_embeddingsテーブルは常に利用可能
+    console.log('✅ RAG Engine initialized (using document_embeddings)');
   }
 
   // RAG応答生成
   async generateAugmentedResponse(query: string, config: any) {
-    console.log('🤖 RAG応答生成中...');
+    console.log('🤖 RAG応答生成中... (document_embeddings)');
 
     // インストラクター関連の質問を検出
     const isInstructorQuery = this.isInstructorRelatedQuery(query);
 
-    // 1. ベクトル検索
+    // 1. ベクトル検索（新しいdocument_embeddingsテーブルを使用）
     let searchResults;
     if (isInstructorQuery) {
       console.log('👩‍🏫 インストラクター専用検索を実行...');
-      searchResults = await this.vectorStore.searchInstructors(query, {
-        topK: 50,  // インストラクター検索では多めに取得
-        threshold: 0.05  // より低い閾値で幅広く取得
+      searchResults = await vectorSearch(query, {
+        topK: 50,
+        threshold: 0.05,
+        type: 'instructor'
       });
     } else {
-      searchResults = await this.vectorStore.hybridSearch(query, {
+      // ハイブリッド検索を使用
+      searchResults = await hybridSearch(query, {
         topK: config.vectorSearch?.topK || 20,
         threshold: config.vectorSearch?.threshold || 0.15
       });
     }
+
+    // 結果を旧形式に変換（互換性のため）
+    const formattedResults = searchResults.map((result: any) => ({
+      content: result.content,
+      metadata: {
+        ...result.metadata,
+        type: result.type,
+        name: result.title,
+        location: result.metadata?.prefecture || result.url,
+      },
+      similarity: result.similarity || result.vector_score || result.combined_score
+    }))
 
     // 2. Web検索（有効な場合）
     let webResults: any[] = [];
@@ -40,7 +49,7 @@ export class RAGEngine {
     }
 
     // 3. コンテキスト構築
-    const context = this.buildContext(searchResults, webResults, config);
+    const context = this.buildContext(formattedResults, webResults, config);
 
     // 4. プロンプト構築
     const augmentedPrompt = `
@@ -61,9 +70,9 @@ ${query}
 
     return {
       prompt: augmentedPrompt,
-      sources: this.extractSources(searchResults, webResults),
-      confidence: this.calculateConfidence(searchResults),
-      searchResults: searchResults,
+      sources: this.extractSources(formattedResults, webResults),
+      confidence: this.calculateConfidence(formattedResults),
+      searchResults: formattedResults,
       webResults: webResults
     };
   }
