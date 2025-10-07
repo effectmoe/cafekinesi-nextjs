@@ -19,6 +19,12 @@ import { faq } from './faq'
 import faqCard from './documents/faqCard'
 import chatModal from './documents/chatModal'
 
+// AI/RAGスキーマ
+import chatConfiguration from './chat/chatConfiguration'
+import aiGuardrails from './ai/aiGuardrails'
+import aiProviderSettings from './ai/aiProviderSettings'
+import ragConfiguration from './rag/ragConfiguration'
+
 // オブジェクトスキーマ
 import seo from './objects/seo'
 import schemaOrg from './objects/schemaOrg'
@@ -58,6 +64,12 @@ export const schemaTypes = [
   faq,
   faqCard,
   chatModal,
+
+  // AI/RAG設定
+  chatConfiguration,
+  aiGuardrails,
+  aiProviderSettings,
+  ragConfiguration,
 
   // オブジェクト
   seo,

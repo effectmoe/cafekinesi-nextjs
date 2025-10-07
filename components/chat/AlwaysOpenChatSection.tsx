@@ -3,6 +3,11 @@
 import { useRef, useEffect, useState } from 'react';
 import { Sparkles, MessageCircle, Loader2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
+import {
+  useChatConfiguration,
+  useAIGuardrails,
+  useRAGConfiguration
+} from '@/hooks/useSanityConfig';
 import { QuickQuestionButtons } from './QuickQuestionButtons';
 import { ChatMessages } from './ChatMessages';
 import { ChatInput } from './ChatInput';
@@ -14,6 +19,11 @@ function cn(...classes: (string | boolean | undefined)[]) {
 export function AlwaysOpenChatSection() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Sanity設定フック
+  const { config: chatConfig, loading: chatConfigLoading } = useChatConfiguration();
+  const { guardrails, loading: guardrailsLoading } = useAIGuardrails();
+  const { ragConfig, loading: ragConfigLoading } = useRAGConfiguration();
 
   const {
     sessionId,
@@ -55,7 +65,9 @@ export function AlwaysOpenChatSection() {
       <div className="text-center mb-10 animate-fade-in">
         <div className="inline-flex items-center gap-2 px-6 py-2 bg-amber-500 text-white rounded-full mb-4">
           <Sparkles className="w-4 h-4 animate-pulse" />
-          <span className="text-sm font-medium">AI チャットで簡単検索</span>
+          <span className="text-sm font-medium">
+            {chatConfig?.config?.chatUI?.title || 'AI チャットで簡単検索'}
+          </span>
           <Sparkles className="w-4 h-4 animate-pulse" />
         </div>
 
@@ -63,7 +75,7 @@ export function AlwaysOpenChatSection() {
           Cafe Kinesi へようこそ
         </h2>
         <p className="text-gray-600 text-lg italic">
-          何かお探しですか？AIアシスタントがお答えします
+          {chatConfig?.config?.chatUI?.welcomeMessage || '何かお探しですか？AIアシスタントがお答えします'}
         </p>
       </div>
 
@@ -90,18 +102,34 @@ export function AlwaysOpenChatSection() {
         "transition-all duration-300"
       )}>
         {/* チャットヘッダー */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white">
+        <div
+          className="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white"
+          style={{
+            background: chatConfig?.config?.chatUI?.primaryColor
+              ? `linear-gradient(to right, ${chatConfig.config.chatUI.primaryColor}, ${chatConfig.config.chatUI.primaryColor}dd)`
+              : undefined
+          }}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-lg backdrop-blur">
                 <MessageCircle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">AIチャットアシスタント</h3>
+                <h3 className="font-semibold text-lg">
+                  {chatConfig?.config?.chatUI?.title || 'AIチャットアシスタント'}
+                </h3>
                 <p className="text-xs opacity-90">24時間いつでもお答えします</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* RAG設定状態表示 */}
+              {ragConfig && (
+                <div className="text-xs opacity-90 mr-2">
+                  RAG: {ragConfig.vectorSearch?.enabled ? 'ON' : 'OFF'} |
+                  Web: {ragConfig.webSearch?.enabled ? 'ON' : 'OFF'}
+                </div>
+              )}
               {sessionId ? (
                 <>
                   <span className="inline-flex h-3 w-3 rounded-full bg-green-400 animate-pulse" />

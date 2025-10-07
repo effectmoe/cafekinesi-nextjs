@@ -4,6 +4,12 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  // RAG関連メタデータ（オプション）
+  sources?: any[];
+  confidence?: number;
+  provider?: string;
+  searchResults?: number;
+  webResults?: number;
 }
 
 export interface Session {

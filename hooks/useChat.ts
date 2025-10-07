@@ -72,7 +72,7 @@ export function useChat(): UseChatReturn {
     setError(null);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chat/rag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -89,11 +89,16 @@ export function useChat(): UseChatReturn {
 
       const data = await response.json();
 
-      // AI応答を追加
+      // AI応答を追加（RAG機能付きメタデータも含む）
       const assistantMessage: Message = {
         role: 'assistant',
         content: data.response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        sources: data.sources,
+        confidence: data.confidence,
+        provider: data.provider,
+        searchResults: data.searchResults,
+        webResults: data.webResults
       };
 
       setMessages(prev => [...prev, assistantMessage]);

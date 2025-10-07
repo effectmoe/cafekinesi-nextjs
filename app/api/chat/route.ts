@@ -46,9 +46,15 @@ async function fetchCafeInfo() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, sessionId } = await request.json();
+    console.log('[Chat API] === Request Start ===');
+
+    const body = await request.json();
+    console.log('[Chat API] Request body:', JSON.stringify(body, null, 2));
+
+    const { message, sessionId } = body;
 
     if (!sessionId || !message) {
+      console.log('[Chat API] Missing sessionId or message');
       return NextResponse.json(
         { error: 'セッションIDとメッセージが必要です' },
         { status: 400 }
@@ -57,6 +63,7 @@ export async function POST(request: NextRequest) {
 
     // レート制限チェック
     if (!rateLimiter.isAllowed(sessionId, 30)) {
+      console.log('[Chat API] Rate limit exceeded for session:', sessionId);
       return NextResponse.json(
         { error: 'リクエストが多すぎます。しばらく待ってから再度お試しください。' },
         { status: 429 }
@@ -66,11 +73,14 @@ export async function POST(request: NextRequest) {
     // セッション取得
     const session = SessionManager.getSession(sessionId);
     if (!session) {
+      console.log('[Chat API] Session not found:', sessionId);
       return NextResponse.json(
         { error: 'セッションが見つかりません' },
         { status: 404 }
       );
     }
+
+    console.log('[Chat API] Session found, message count:', session.messages.length);
 
     // ユーザーメッセージを追加
     SessionManager.addMessage(sessionId, {
@@ -79,9 +89,11 @@ export async function POST(request: NextRequest) {
     });
 
     // カフェ情報を取得
+    console.log('[Chat API] Fetching cafe info...');
     const cafeInfo = await fetchCafeInfo();
 
     // AIプロバイダーを選択
+    console.log('[Chat API] Creating AI provider...');
     const aiProvider = AIProviderFactory.create();
     console.log(`[Chat API] Using AI Provider: ${aiProvider.name}`);
 
@@ -93,7 +105,9 @@ export async function POST(request: NextRequest) {
     };
 
     // AI応答生成
+    console.log('[Chat API] Generating AI response...');
     const response = await aiProvider.generateResponse(message, context);
+    console.log('[Chat API] AI response generated, length:', response.length);
 
     // 応答を履歴に追加
     SessionManager.addMessage(sessionId, {
@@ -101,6 +115,7 @@ export async function POST(request: NextRequest) {
       content: response
     });
 
+    console.log('[Chat API] === Request Success ===');
     return NextResponse.json({
       response,
       provider: aiProvider.name,
@@ -108,7 +123,11 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Chat API] Error:', error);
+    console.error('[Chat API] === ERROR ===');
+    console.error('[Chat API] Error type:', error instanceof Error ? 'Error' : typeof error);
+    console.error('[Chat API] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('[Chat API] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+
     return NextResponse.json(
       {
         error: 'エラーが発生しました',
