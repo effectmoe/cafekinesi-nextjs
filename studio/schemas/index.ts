@@ -2,6 +2,7 @@
 import person from './ai-first/person'
 import service from './ai-first/service'
 import organization from './ai-first/organization'
+import aiContent from './ai-first/aiContent'
 
 // ドキュメントスキーマ
 import blogPost from './documents/blogPost'
@@ -54,6 +55,7 @@ export const schemaTypes = [
   person,
   service,
   organization,
+  aiContent,
 
   // ドキュメント
   blogPost,

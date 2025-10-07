@@ -132,6 +132,7 @@ export class VercelVectorStore {
           id,
           content,
           metadata,
+          source,
           1 - (embedding <=> ${JSON.stringify(queryEmbedding)}::vector) as vector_score
         FROM embeddings
         WHERE 1 - (embedding <=> ${JSON.stringify(queryEmbedding)}::vector) > ${threshold}
@@ -148,6 +149,7 @@ export class VercelVectorStore {
       SELECT
         v.content,
         v.metadata,
+        v.source,
         v.vector_score,
         COALESCE(t.text_score, 0) as text_score,
         (v.vector_score * 0.7 + COALESCE(t.text_score, 0) * 0.3) as combined_score

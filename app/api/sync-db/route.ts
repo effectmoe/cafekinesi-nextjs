@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parseBody } from 'next-sanity/webhook';
 import { publicClient } from '@/lib/sanity.client';
 import { VercelVectorStore } from '@/lib/vector/vercel-vector-store';
+import { AIFirstAutoConverter } from '@/lib/ai-first/auto-converter';
 
 // Webhookシークレットの検証
 const secret = process.env.SANITY_WEBHOOK_SECRET;
@@ -249,60 +250,159 @@ ${activitiesText ? `主な活動内容: ${activitiesText}` : ''}
       });
     }
 
-    // その他のタイプの更新も必要に応じて処理
-    if (['course', 'blogPost', 'page'].includes(_type)) {
-      console.log(`[Sync DB] ${_type} update detected, syncing...`);
+    // Course更新の場合 - AI-First自動変換
+    if (_type === 'course') {
+      console.log('[Sync DB] Course update detected, converting to AI-First Service...');
 
-      // 該当するドキュメントを取得して同期
+      const autoConverter = new AIFirstAutoConverter();
+      const service = await autoConverter.convertCourseToService(_id);
+
+      if (service) {
+        // 作成されたServiceをベクトルデータベースに同期
+        const vectorStore = new VercelVectorStore();
+        await vectorStore.initialize();
+
+        const keywordsText = service.aiSearchKeywords?.join(', ') || '';
+        const benefitsText = service.benefits?.join(', ') || '';
+        const faqText = service.aiFAQ?.map((faq: any) => `Q: ${faq.question}\nA: ${faq.answer}`).join('\n\n') || '';
+
+        const priceText = service.pricing?.price
+          ? `${service.pricing.price}${service.pricing.currency || 'JPY'}${service.pricing.unit ? '/' + service.pricing.unit : ''}`
+          : '料金はお問い合わせください';
+
+        const durationText = service.duration
+          ? `${service.duration.hours || 0}時間${service.duration.minutes || 0}分${service.duration.sessions ? ` (${service.duration.sessions}回)` : ''}`
+          : '';
+
+        const content = `
+【${service.serviceType}】${service.name}
+
+◆ サービス基本情報
+サービス名: ${service.name}
+種別: ${service.serviceType}
+カテゴリー: ${service.category || ''}
+
+◆ AIクイック回答
+${service.aiQuickAnswer || ''}
+
+◆ 詳細情報
+対象者: ${service.targetAudience || ''}
+得られる効果: ${benefitsText}
+料金: ${priceText}
+${service.pricing?.notes ? `料金補足: ${service.pricing.notes}` : ''}
+所要時間: ${durationText}
+
+◆ スケジュール・開催情報
+${service.schedule?.frequency ? `開催頻度: ${service.schedule.frequency}` : ''}
+${service.schedule?.location ? `開催場所: ${service.schedule.location}` : ''}
+${service.schedule?.isOnline ? 'オンライン対応: あり' : ''}
+
+◆ よくある質問
+${faqText}
+
+◆ AI検索キーワード
+${keywordsText}
+
+【重要】「どんな講座がある？」「料金は？」「コースについて教えて」などの質問には、このサービス情報を使って回答してください。
+人気度: ${service.popularity}/100
+`.trim();
+
+        const document = {
+          content,
+          metadata: {
+            id: service._id,
+            type: 'service',
+            name: service.name,
+            serviceType: service.serviceType,
+            category: service.category,
+            price: service.pricing?.price,
+            currency: service.pricing?.currency || 'JPY',
+            aiKeywords: service.aiSearchKeywords,
+            popularity: service.popularity || 50,
+            updatedAt: new Date().toISOString()
+          },
+          source: 'auto-converted-course'
+        };
+
+        await vectorStore.addDocuments([document]);
+
+        console.log(`[Sync DB] ✅ Course auto-converted to Service and synced: ${service.name}`);
+
+        return NextResponse.json({
+          success: true,
+          type: _type,
+          id: _id,
+          autoConverted: true,
+          serviceId: service._id,
+          serviceName: service.name,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
+    // BlogPost更新の場合 - AI最適化コンテンツ作成
+    if (_type === 'blogPost') {
+      console.log('[Sync DB] Blog post update detected, creating AI-optimized content...');
+
+      const autoConverter = new AIFirstAutoConverter();
+      await autoConverter.convertBlogPostToAIContent(_id);
+
+      // 既存の処理も実行（ベクトルデータベース同期）
       const document = await publicClient.fetch(
-        `*[_type == $type && _id == $id][0]`,
-        { type: _type, id: _id }
+        `*[_type == "blogPost" && _id == $id][0]`,
+        { id: _id }
       );
 
       if (document) {
         const vectorStore = new VercelVectorStore();
         await vectorStore.initialize();
 
-        // ドキュメントの内容に応じてテキスト作成
-        let content = '';
-        const metadata: any = {
-          id: document._id,
-          type: document._type,
-          updatedAt: document._updatedAt
-        };
-
-        switch (_type) {
-          case 'course':
-            content = `
-コース名: ${document.title}
-説明: ${document.description || ''}
-料金: ${document.price || ''}
-期間: ${document.duration || ''}
-`.trim();
-            metadata.title = document.title;
-            break;
-
-          case 'blogPost':
-            content = `
+        const content = `
 タイトル: ${document.title}
 内容: ${document.content || document.body || ''}
 カテゴリ: ${document.category || ''}
 `.trim();
-            metadata.title = document.title;
-            metadata.slug = document.slug?.current;
-            break;
-
-          default:
-            content = JSON.stringify(document);
-        }
 
         await vectorStore.addDocuments([{
           content,
-          metadata,
-          source: `sanity-webhook-${_type}`
+          metadata: {
+            id: document._id,
+            type: 'blogPost',
+            title: document.title,
+            slug: document.slug?.current,
+            updatedAt: document._updatedAt
+          },
+          source: 'sanity-webhook-blogPost'
         }]);
 
-        console.log(`[Sync DB] ✅ ${_type} synced to database`);
+        console.log(`[Sync DB] ✅ Blog post synced to database: ${document.title}`);
+      }
+    }
+
+    // その他のタイプ（page等）の処理
+    if (_type === 'page') {
+      console.log(`[Sync DB] Page update detected, syncing...`);
+
+      const document = await publicClient.fetch(
+        `*[_type == "page" && _id == $id][0]`,
+        { id: _id }
+      );
+
+      if (document) {
+        const vectorStore = new VercelVectorStore();
+        await vectorStore.initialize();
+
+        await vectorStore.addDocuments([{
+          content: JSON.stringify(document),
+          metadata: {
+            id: document._id,
+            type: 'page',
+            updatedAt: document._updatedAt
+          },
+          source: 'sanity-webhook-page'
+        }]);
+
+        console.log(`[Sync DB] ✅ Page synced to database`);
       }
     }
 
