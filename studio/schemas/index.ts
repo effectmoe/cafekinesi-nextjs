@@ -15,6 +15,7 @@ import instructor from './documents/instructor'
 import instructorPage from './documents/instructorPage'
 import profilePage from './documents/profilePage'
 import aboutPage from './documents/aboutPage'
+import representative from './representative'
 import { faq } from './faq'
 import faqCard from './documents/faqCard'
 import chatModal from './documents/chatModal'
@@ -61,6 +62,7 @@ export const schemaTypes = [
   instructorPage,
   profilePage,
   aboutPage,
+  representative,
   faq,
   faqCard,
   chatModal,

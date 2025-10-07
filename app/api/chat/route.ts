@@ -52,7 +52,6 @@ async function fetchCafeInfo() {
 function isInstructorQuery(message: string): boolean {
   const keywords = [
     'インストラクター', '講師', '先生', '教える',
-    '誰', 'だれ', 'どんな人', '他に', 'ほか',
     'AKO', 'LuLu', 'Harmony', '煌めき'
   ];
 
@@ -60,6 +59,22 @@ function isInstructorQuery(message: string): boolean {
   return keywords.some(keyword =>
     lowerMessage.includes(keyword.toLowerCase())
   );
+}
+
+// 代表者関連の質問かどうか判定
+function isRepresentativeQuery(message: string): boolean {
+  const keywords = [
+    '代表', '創業者', '創始者', '設立者', 'founder',
+    '星', 'ユカリ', 'ゆかり', 'yukari',
+    'プロフィール', 'profile', '経歴',
+    'どんな人', '誰', 'だれ', 'どなた'
+  ];
+
+  const lowerMessage = message.toLowerCase();
+  // 代表者の文脈でのみ反応
+  return keywords.some(keyword =>
+    lowerMessage.includes(keyword.toLowerCase())
+  ) && !isInstructorQuery(message);
 }
 
 export async function POST(request: NextRequest) {
