@@ -1,0 +1,11 @@
+{"_id": "faqCard-1", "_type": "faqCard", "title": "営業時間を教えて", "icon": "Clock", "bgColor": "bg-[hsl(35,22%,91%)]", "iconColor": "text-[hsl(35,45%,45%)]", "order": 0, "isActive": true}
+{"_id": "faqCard-2", "_type": "faqCard", "title": "アクセス方法は？", "icon": "Navigation", "bgColor": "bg-[hsl(210,20%,88%)]", "iconColor": "text-[hsl(35,45%,45%)]", "order": 1, "isActive": true}
+{"_id": "faqCard-3", "_type": "faqCard", "title": "おすすめメニュー", "icon": "Coffee", "bgColor": "bg-[hsl(260,15%,88%)]", "iconColor": "text-[hsl(35,45%,45%)]", "order": 2, "isActive": true}
+{"_id": "faqCard-4", "_type": "faqCard", "title": "予約について", "icon": "CalendarCheck", "bgColor": "bg-[hsl(0,0%,91%)]", "iconColor": "text-[hsl(35,45%,45%)]", "order": 3, "isActive": true}
+{"_id": "faq-1", "_type": "faq", "question": "営業時間を教えてください", "answer": "カフェの営業時間は、平日は午前10時から午後8時まで、土日祝日は午前9時から午後9時までです。定休日は毎週火曜日となっております。", "category": "営業情報"}
+{"_id": "faq-2", "_type": "faq", "question": "アクセス方法は？", "answer": "最寄り駅から徒歩5分です。JR線をご利用の場合は北口から出て、商店街を通り抜けた先にございます。お車の場合は、近隣のコインパーキングをご利用ください。", "category": "アクセス"}
+{"_id": "faq-3", "_type": "faq", "question": "おすすめメニューを教えてください", "answer": "当店のおすすめは自家製のチーズケーキとオリジナルブレンドコーヒーです。季節限定のメニューもございますので、ぜひお試しください。", "category": "メニュー"}
+{"_id": "faq-4", "_type": "faq", "question": "予約はできますか？", "answer": "はい、お電話またはウェブサイトからご予約を承っております。団体様のご予約も可能です。詳細はお問い合わせください。", "category": "予約"}
+{"_id": "faq-5", "_type": "faq", "question": "Wi-Fiは利用できますか？", "answer": "無料Wi-Fiをご用意しております。パスワードは店内に掲示しておりますので、スタッフにお尋ねください。", "category": "設備"}
+{"_id": "faq-6", "_type": "faq", "question": "ペットは入店できますか？", "answer": "テラス席のみペット同伴可能です。店内への入店はご遠慮いただいております。", "category": "利用規約"}
+{"_id": "chatModal-main", "_type": "chatModal", "title": "Cafe Kinesi へようこそ", "subtitle": "何かお探しですか？AIアシスタントがお答えします", "welcomeMessage": "こんにちは！Cafe Kinesiへようこそ。何かお手伝いできることはありますか？", "placeholder": "メッセージを入力...", "quickSuggestions": ["営業時間を教えて", "アクセス方法は？", "おすすめメニューは？", "予約はできる？"], "headerTitle": "Cafe Kinesi AIアシスタント", "headerSubtitle": "何でもお気軽にお尋ねください", "isActive": true}
