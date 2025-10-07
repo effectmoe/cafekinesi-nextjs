@@ -45,29 +45,8 @@ async function fetchCafeInfo() {
   }
 }
 
-// Sanityから最新のインストラクター情報を直接取得
-async function fetchInstructors() {
-  try {
-    console.log('[Chat API] Fetching instructors from Sanity...');
-    const instructors = await publicClient.fetch(`
-      *[_type == "instructor"] {
-        _id,
-        name,
-        location,
-        specialties,
-        experience,
-        description,
-        slug
-      }
-    `);
-
-    console.log(`[Chat API] Found ${instructors.length} instructors in Sanity`);
-    return instructors;
-  } catch (error) {
-    console.error('[Chat API] Failed to fetch instructors:', error);
-    return [];
-  }
-}
+// [削除] Sanityからの直接取得は不要になりました
+// 全てのデータはデータベース（RAGエンジン）から取得します
 
 // インストラクター関連の質問かどうか判定
 function isInstructorQuery(message: string): boolean {
@@ -138,52 +117,42 @@ export async function POST(request: NextRequest) {
       sessionId
     };
 
-    // インストラクター関連の質問の場合は、Sanityから最新情報を取得
-    if (isInstructorQuery(message)) {
-      console.log('[Chat API] Instructor query detected, fetching from Sanity...');
-      const instructors = await fetchInstructors();
+    // 全ての質問に対してRAGエンジン（データベース）を使用
+    console.log('[Chat API] Using RAG engine to fetch from database...');
+    const ragEngine = new RAGEngine();
+    await ragEngine.initialize();
 
-      if (instructors.length > 0) {
-        // インストラクター情報を整形してコンテキストに追加
-        const instructorContext = instructors.map((inst: any) =>
-          `インストラクター: ${inst.name || 'Unknown'}
-専門分野: ${inst.specialties?.join(', ') || '情報なし'}
-活動地域: ${inst.location || '情報なし'}
-経歴: ${inst.experience || '情報なし'}
-紹介: ${inst.description || ''}
-`
-        ).join('\n---\n');
+    // インストラクター関連の質問は専用の検索設定を使用
+    const searchConfig = isInstructorQuery(message)
+      ? {
+          vectorSearch: {
+            topK: 50,      // インストラクターは多めに取得
+            threshold: 0.05 // より低い閾値で幅広く取得
+          }
+        }
+      : {
+          vectorSearch: {
+            topK: 20,
+            threshold: 0.15
+          }
+        };
 
-        context.ragContext = `
-Cafe Kinesiには以下のインストラクターが在籍しています：
+    const ragData = await ragEngine.generateAugmentedResponse(message, searchConfig);
 
-${instructorContext}
+    console.log(`[Chat API] RAG search completed. Found ${ragData.searchResults?.length || 0} results`);
 
-質問: ${message}
-
-上記のインストラクター情報を基に、質問に対して具体的で親切な回答をしてください。
-インストラクターの名前、専門分野、活動地域などを含めて詳しく紹介してください。
-`;
-        context.searchResults = instructors;
-        console.log(`[Chat API] Added ${instructors.length} instructors to context`);
-      }
-    } else {
-      // インストラクター以外の質問の場合はRAGエンジンを使用
-      console.log('[Chat API] Non-instructor query, using RAG engine...');
-      const ragEngine = new RAGEngine();
-      await ragEngine.initialize();
-
-      const ragData = await ragEngine.generateAugmentedResponse(message, {
-        vectorSearch: {
-          topK: 20,
-          threshold: 0.15
+    // インストラクター質問の場合は詳細ログ出力
+    if (isInstructorQuery(message) && ragData.searchResults?.length > 0) {
+      console.log('[Chat API] Instructor data retrieved from database:');
+      ragData.searchResults.forEach((result: any, idx: number) => {
+        if (result.metadata?.type === 'instructor') {
+          console.log(`  ${idx + 1}. ${result.metadata.name} (${result.metadata.location})`);
         }
       });
-
-      console.log(`[Chat API] RAG search completed. Found ${ragData.searchResults?.length || 0} results`);
-      context.ragContext = ragData.prompt;
-      context.searchResults = ragData.searchResults;
     }
+
+    context.ragContext = ragData.prompt;
+    context.searchResults = ragData.searchResults;
 
     // AIプロバイダーを選択
     console.log('[Chat API] Creating AI provider...');
