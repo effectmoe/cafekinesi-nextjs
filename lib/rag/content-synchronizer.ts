@@ -38,20 +38,28 @@ export class ContentSynchronizer {
         const items = await publicClient.fetch(contentType.query);
 
         if (items && items.length > 0) {
-          const documents = items.map((item: any) => ({
-            content: this.formatContent(item, contentType.type),
-            metadata: {
-              id: item._id,
-              type: contentType.type,
-              title: item.title || item.name || item.question,
-              slug: item.slug?.current,
-              updatedAt: item._updatedAt
-            },
-            source: 'sanity'
-          }));
+          // 空のコンテンツをフィルタリング
+          const validDocuments = items
+            .filter((item: any) => this.isValidContent(item, contentType.type))
+            .map((item: any) => ({
+              content: this.formatContent(item, contentType.type),
+              metadata: {
+                id: item._id,
+                type: contentType.type,
+                title: item.title || item.name || item.question,
+                slug: item.slug?.current,
+                updatedAt: item._updatedAt
+              },
+              source: 'sanity'
+            }))
+            .filter((doc: any) => doc.content && doc.content.trim().length > 50); // 内容が十分あることを確認
 
-          await this.vectorStore.addDocuments(documents);
-          console.log(`✅ ${contentType.type}: ${documents.length}件追加`);
+          if (validDocuments.length > 0) {
+            await this.vectorStore.addDocuments(validDocuments);
+            console.log(`✅ ${contentType.type}: ${validDocuments.length}件追加（${items.length - validDocuments.length}件スキップ）`);
+          } else {
+            console.log(`⚠️ ${contentType.type}: 有効なデータなし（${items.length}件すべてスキップ）`);
+          }
         } else {
           console.log(`⚠️ ${contentType.type}: データなし`);
         }
@@ -162,5 +170,54 @@ export class ContentSynchronizer {
           .join('') || '';
       })
       .join('\n');
+  }
+
+  // コンテンツの有効性チェック（空データのフィルタリング）
+  private isValidContent(item: any, type: string): boolean {
+    if (!item) return false;
+
+    switch (type) {
+      case 'instructor':
+        // インストラクターは最低限名前と、専門分野か経歴のどちらかが必要
+        const hasName = item.name && item.name.trim().length > 0;
+        const hasSpecialties = item.specialties && item.specialties.length > 0 &&
+                              item.specialties.some((s: string) => s && s.trim().length > 0);
+        const hasBio = item.bio && item.bio.trim().length > 10;
+        const hasProfileDetails = item.profileDetails && item.profileDetails.trim().length > 10;
+
+        // 名前があり、かつ何らかの詳細情報がある場合のみ有効
+        return hasName && (hasSpecialties || hasBio || hasProfileDetails);
+
+      case 'faq':
+        // FAQは質問と回答の両方が必要
+        return item.question && item.question.trim().length > 0 &&
+               item.answer && item.answer.trim().length > 0;
+
+      case 'menuItem':
+        // メニューアイテムは名前と価格が必要
+        return item.name && item.name.trim().length > 0 &&
+               item.price !== undefined && item.price !== null;
+
+      case 'blogPost':
+      case 'news':
+      case 'event':
+        // これらはタイトルと何らかの内容が必要
+        return item.title && item.title.trim().length > 0 &&
+               (item.content || item.description || item.excerpt);
+
+      case 'course':
+        // コースはタイトルと説明が必要
+        return item.title && item.title.trim().length > 0 &&
+               item.description && item.description.trim().length > 0;
+
+      case 'shopInfo':
+        // ショップ情報は名前が必要
+        return item.name && item.name.trim().length > 0;
+
+      default:
+        // その他のコンテンツタイプは、タイトルか名前があれば有効
+        return (item.title && item.title.trim().length > 0) ||
+               (item.name && item.name.trim().length > 0);
+    }
   }
 }

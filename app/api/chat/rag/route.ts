@@ -5,7 +5,7 @@ import { AIProviderFactory } from '@/lib/ai/factory';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, sessionId } = await request.json();
+    const { message, sessionId, debug } = await request.json();
 
     if (!message || !sessionId) {
       return NextResponse.json(
@@ -65,14 +65,31 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ AI応答生成完了');
 
-    return NextResponse.json({
+    const responseData: any = {
       response,
       sources: augmentedData.sources,
       confidence: augmentedData.confidence,
       provider: providerSettings?.provider || 'deepseek',
       searchResults: augmentedData.searchResults?.length || 0,
       webResults: augmentedData.webResults?.length || 0
-    });
+    };
+
+    // デバッグ情報を追加
+    if (debug) {
+      responseData.debug = {
+        searchResultsCount: augmentedData.searchResults?.length || 0,
+        confidence: augmentedData.confidence,
+        searchResults: augmentedData.searchResults,
+        context: augmentedData.prompt,
+        topResults: augmentedData.searchResults?.slice(0, 3).map((r: any) => ({
+          score: r.combined_score || r.vector_score,
+          title: r.metadata?.title || r.metadata?.type || 'Unknown',
+          content: r.content.substring(0, 200)
+        }))
+      };
+    }
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error('❌ RAG API Error:', error);

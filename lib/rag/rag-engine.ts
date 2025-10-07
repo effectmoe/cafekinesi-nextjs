@@ -17,8 +17,8 @@ export class RAGEngine {
 
     // 1. ベクトル検索
     const searchResults = await this.vectorStore.hybridSearch(query, {
-      topK: config.vectorSearch?.topK || 5,
-      threshold: config.vectorSearch?.threshold || 0.3
+      topK: config.vectorSearch?.topK || 10,
+      threshold: config.vectorSearch?.threshold || 0.2
     });
 
     // 2. Web検索（有効な場合）
@@ -40,7 +40,11 @@ ${context}
 【質問】
 ${query}
 
-正確で親切な回答をお願いします。コンテキストに情報がない場合は、「申し訳ございませんが、その情報は見つかりませんでした」と回答してください。
+【回答指針】
+- コンテキストに含まれる情報を最大限活用して、具体的で有益な回答をしてください
+- インストラクター情報がある場合は、名前、専門分野、地域、経歴などを詳しく紹介してください
+- 部分的な情報でも積極的に提供し、ユーザーに価値のある回答を心がけてください
+- 親切で温かい口調で、Cafe Kinesiのアシスタントとしてお答えください
     `;
 
     return {
