@@ -1,3 +1,8 @@
+// AI-Firstスキーマ（最優先）
+import person from './ai-first/person'
+import service from './ai-first/service'
+import organization from './ai-first/organization'
+
 // ドキュメントスキーマ
 import blogPost from './documents/blogPost'
 import author from './documents/author'
@@ -45,6 +50,11 @@ import socialEmbed from './components/socialEmbed'
 import codeBlock from './components/codeBlock'
 
 export const schemaTypes = [
+  // AI-First エンティティ（最優先）
+  person,
+  service,
+  organization,
+
   // ドキュメント
   blogPost,
   author,
