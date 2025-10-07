@@ -8,11 +8,6 @@ export default defineType({
   icon: User,
   groups: [
     {
-      name: 'ai',
-      title: 'AI最適化',
-      default: false,
-    },
-    {
       name: 'basic',
       title: '基本情報',
       default: true,
@@ -39,33 +34,6 @@ export default defineType({
     },
   ],
   fields: [
-    // ========== AI最適化フィールド ==========
-    defineField({
-      name: 'aiSearchKeywords',
-      title: 'AI検索キーワード',
-      description: 'AIチャットで検索されるキーワード（例：「インストラクター名」「専門分野」）',
-      type: 'array',
-      of: [{ type: 'string' }],
-      group: 'ai',
-    }),
-    defineField({
-      name: 'aiQuickAnswer',
-      title: 'AIクイック回答',
-      description: 'このインストラクターについて聞かれたときのAI回答（100文字以内）',
-      type: 'text',
-      group: 'ai',
-      validation: (Rule) => Rule.max(100),
-    }),
-    defineField({
-      name: 'conversationalQueries',
-      title: '想定される質問',
-      description: 'AIチャットで聞かれそうな質問（「どんな先生？」「専門は？」など）',
-      type: 'array',
-      of: [{ type: 'string' }],
-      group: 'ai',
-    }),
-
-    // ========== 既存フィールド ==========
     defineField({
       name: 'name',
       title: '名前',
@@ -405,56 +373,6 @@ export default defineType({
       title: 'SEO設定',
       type: 'seo',
       group: 'seo',
-    }),
-
-    // ========== Schema.org自動生成フィールド（読み取り専用） ==========
-    defineField({
-      name: 'structuredData',
-      title: '構造化データ（自動生成）',
-      type: 'object',
-      group: 'seo',
-      readOnly: true,
-      description: 'Webhook経由で自動生成されるSchema.org JSON-LD',
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
-      fields: [
-        defineField({
-          name: 'schemaOrgType',
-          title: 'Schema.orgタイプ',
-          type: 'string',
-          readOnly: true,
-        }),
-        defineField({
-          name: 'jsonLd',
-          title: 'JSON-LD',
-          type: 'text',
-          rows: 10,
-          readOnly: true,
-        }),
-        defineField({
-          name: 'generatedAt',
-          title: '生成日時',
-          type: 'datetime',
-          readOnly: true,
-        }),
-      ],
-    }),
-
-    // ========== AI埋め込み用コンテンツ（自動生成） ==========
-    defineField({
-      name: 'aiEmbeddingContent',
-      title: 'AI埋め込み用コンテンツ（自動生成）',
-      type: 'text',
-      group: 'ai',
-      rows: 5,
-      readOnly: true,
-      description: 'ベクトルDBに保存されるテキスト（自動生成）',
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
     }),
   ],
   preview: {

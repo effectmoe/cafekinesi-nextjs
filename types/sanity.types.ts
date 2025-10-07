@@ -215,6 +215,56 @@ export interface Author extends SanityDocument {
   image?: SanityImage;
 }
 
+// ============================================
+// LLMO最適化用の追加型定義
+// ============================================
+
+// セマンティックメタデータ（AI用）
+export interface SemanticMetadata {
+  entityType?: string;
+  conversationalQueries?: string[];
+  topicClusters?: string[];
+  intentType?: 'informational' | 'transactional' | 'navigational' | 'commercial';
+  targetKeywords?: string[];
+}
+
+// 構造化データ（Schema.org JSON-LD）
+export interface StructuredData {
+  schemaOrgType: string;
+  jsonLd: string;
+  generatedAt: string;
+}
+
+// AI埋め込みコンテンツ
+export interface AIEmbeddingContent {
+  content: string;
+  generatedAt: string;
+  model?: string;
+}
+
+// ベクトルDBメタデータ
+export interface VectorMetadata {
+  id: string;
+  type: string;
+  title: string;
+  url: string;
+  semantic_type?: string;
+  topics: string[];
+  queries: string[];
+  last_updated: string;
+}
+
+// ハイブリッド検索結果
+export interface HybridSearchResult {
+  id: string;
+  totalScore: number;
+  vectorScore?: number;
+  keywordScore?: number;
+  vectorRank?: number;
+  keywordRank?: number;
+  data: any;
+}
+
 // Helper types for queries
 export type PageQueryResult = Page | null;
 export type HomepageQueryResult = Homepage | null;
