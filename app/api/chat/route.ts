@@ -45,6 +45,44 @@ async function fetchCafeInfo() {
   }
 }
 
+// Sanityから最新のインストラクター情報を直接取得
+async function fetchInstructors() {
+  try {
+    console.log('[Chat API] Fetching instructors from Sanity...');
+    const instructors = await publicClient.fetch(`
+      *[_type == "instructor"] {
+        _id,
+        name,
+        location,
+        specialties,
+        experience,
+        description,
+        slug
+      }
+    `);
+
+    console.log(`[Chat API] Found ${instructors.length} instructors in Sanity`);
+    return instructors;
+  } catch (error) {
+    console.error('[Chat API] Failed to fetch instructors:', error);
+    return [];
+  }
+}
+
+// インストラクター関連の質問かどうか判定
+function isInstructorQuery(message: string): boolean {
+  const keywords = [
+    'インストラクター', '講師', '先生', '教える',
+    '誰', 'だれ', 'どんな人', '他に', 'ほか',
+    'AKO', 'LuLu', 'Harmony', '煌めき'
+  ];
+
+  const lowerMessage = message.toLowerCase();
+  return keywords.some(keyword =>
+    lowerMessage.includes(keyword.toLowerCase())
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('[Chat API] === Request Start ===');
@@ -93,35 +131,64 @@ export async function POST(request: NextRequest) {
     console.log('[Chat API] Fetching cafe info...');
     const cafeInfo = await fetchCafeInfo();
 
-    // RAGエンジンを初期化して検索
-    console.log('[Chat API] Initializing RAG engine...');
-    const ragEngine = new RAGEngine();
-    await ragEngine.initialize();
+    // コンテキストを構築
+    let context: any = {
+      messages: session.messages,
+      cafeInfo,
+      sessionId
+    };
 
-    // ベクトル検索でコンテキストを取得
-    console.log('[Chat API] Performing RAG search...');
-    const ragData = await ragEngine.generateAugmentedResponse(message, {
-      vectorSearch: {
-        topK: 20,
-        threshold: 0.15
+    // インストラクター関連の質問の場合は、Sanityから最新情報を取得
+    if (isInstructorQuery(message)) {
+      console.log('[Chat API] Instructor query detected, fetching from Sanity...');
+      const instructors = await fetchInstructors();
+
+      if (instructors.length > 0) {
+        // インストラクター情報を整形してコンテキストに追加
+        const instructorContext = instructors.map((inst: any) =>
+          `インストラクター: ${inst.name || 'Unknown'}
+専門分野: ${inst.specialties?.join(', ') || '情報なし'}
+活動地域: ${inst.location || '情報なし'}
+経歴: ${inst.experience || '情報なし'}
+紹介: ${inst.description || ''}
+`
+        ).join('\n---\n');
+
+        context.ragContext = `
+Cafe Kinesiには以下のインストラクターが在籍しています：
+
+${instructorContext}
+
+質問: ${message}
+
+上記のインストラクター情報を基に、質問に対して具体的で親切な回答をしてください。
+インストラクターの名前、専門分野、活動地域などを含めて詳しく紹介してください。
+`;
+        context.searchResults = instructors;
+        console.log(`[Chat API] Added ${instructors.length} instructors to context`);
       }
-    });
+    } else {
+      // インストラクター以外の質問の場合はRAGエンジンを使用
+      console.log('[Chat API] Non-instructor query, using RAG engine...');
+      const ragEngine = new RAGEngine();
+      await ragEngine.initialize();
 
-    console.log(`[Chat API] RAG search completed. Found ${ragData.searchResults?.length || 0} results`);
+      const ragData = await ragEngine.generateAugmentedResponse(message, {
+        vectorSearch: {
+          topK: 20,
+          threshold: 0.15
+        }
+      });
+
+      console.log(`[Chat API] RAG search completed. Found ${ragData.searchResults?.length || 0} results`);
+      context.ragContext = ragData.prompt;
+      context.searchResults = ragData.searchResults;
+    }
 
     // AIプロバイダーを選択
     console.log('[Chat API] Creating AI provider...');
     const aiProvider = AIProviderFactory.create();
     console.log(`[Chat API] Using AI Provider: ${aiProvider.name}`);
-
-    // コンテキストを構築（RAG結果を含む）
-    const context = {
-      messages: session.messages,
-      cafeInfo,
-      sessionId,
-      ragContext: ragData.prompt,
-      searchResults: ragData.searchResults
-    };
 
     // AI応答生成
     console.log('[Chat API] Generating AI response...');
