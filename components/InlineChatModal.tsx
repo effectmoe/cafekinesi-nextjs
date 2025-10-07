@@ -112,7 +112,8 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {!isFullscreenView && (
+          {/* 拡大ボタン（通常時）と閉じるボタン（フルスクリーン時）の切り替え */}
+          {!isFullscreenView ? (
             <Button
               variant="ghost"
               size="icon"
@@ -121,6 +122,16 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
               onClick={() => setIsFullscreen(true)}
             >
               <Maximize2 className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-red-50"
+              title="全画面を閉じる"
+              onClick={() => setIsFullscreen(false)}
+            >
+              <X className="h-4 w-4" />
             </Button>
           )}
           <div className="flex items-center gap-2">
