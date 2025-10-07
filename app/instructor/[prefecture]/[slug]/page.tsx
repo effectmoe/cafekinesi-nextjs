@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Script from 'next/script'
 import { draftMode } from 'next/headers'
 import { publicClient, previewClient } from '@/lib/sanity.client'
 import { INSTRUCTOR_DETAIL_QUERY, INSTRUCTORS_QUERY } from '@/lib/queries'
@@ -10,6 +11,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import InstructorDetail from '@/components/instructor/InstructorDetail'
+import { SchemaOrgGenerator } from '@/lib/schema-generator'
 
 async function getInstructor(slug: string): Promise<Instructor | null> {
   try {
@@ -101,8 +103,30 @@ export default async function InstructorDetailPage({
     notFound()
   }
 
+  // Schema.org JSON-LD生成
+  const schemaGenerator = new SchemaOrgGenerator({
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi.com',
+    siteName: 'Cafe Kinesi',
+    organizationName: 'Cafe Kinesi',
+  })
+
+  const schemaData = schemaGenerator.generate({
+    _type: 'instructor',
+    ...instructor,
+    prefecture: instructor.region || prefectureName,
+  })
+
   return (
     <div className="min-h-screen bg-white">
+      {/* Schema.org JSON-LD */}
+      <Script
+        id="schema-instructor"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData, null, 2)
+        }}
+      />
+
       <Header />
       <main className="relative pt-20">
         {/* パンくずナビゲーション */}

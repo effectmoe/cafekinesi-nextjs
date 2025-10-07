@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Script from 'next/script'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -13,6 +14,7 @@ import { client, publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
 import { COURSE_DETAIL_QUERY } from '@/lib/queries'
+import { SchemaOrgGenerator } from '@/lib/schema-generator'
 
 interface PageProps {
   params: Promise<{ courseId: string }>
@@ -132,8 +134,31 @@ export default async function CourseDetailPage({ params }: PageProps) {
     notFound()
   }
 
+  // Schema.org JSON-LD生成
+  const schemaGenerator = new SchemaOrgGenerator({
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi.com',
+    siteName: 'Cafe Kinesi',
+    organizationName: 'Cafe Kinesi',
+  })
+
+  const schemaData = schemaGenerator.generate({
+    _type: 'course',
+    ...course,
+    slug: { current: courseId },
+    courseId,
+  })
+
   return (
     <div className="min-h-screen bg-white">
+      {/* Schema.org JSON-LD */}
+      <Script
+        id="schema-course"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData, null, 2)
+        }}
+      />
+
       <Header />
       <main className="pt-20">
         {/* パンくずナビゲーション */}
