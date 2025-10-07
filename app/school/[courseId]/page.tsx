@@ -14,7 +14,7 @@ import { client, publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
 import { COURSE_DETAIL_QUERY } from '@/lib/queries'
-import { SchemaOrgGenerator } from '@/lib/schema-generator'
+import { SchemaOrgGenerator } from '@/lib/schemaOrgGenerator'
 
 interface PageProps {
   params: Promise<{ courseId: string }>

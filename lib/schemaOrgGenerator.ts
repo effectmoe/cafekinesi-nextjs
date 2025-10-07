@@ -327,3 +327,97 @@ export function generateBreadcrumbSchema(post: any, siteUrl: string, siteName: s
     ]
   }
 }
+
+// SchemaOrgGeneratorクラス（コース・インストラクター対応）
+interface SchemaOrgConfig {
+  siteUrl: string
+  siteName: string
+  organizationName: string
+}
+
+export class SchemaOrgGenerator {
+  private config: SchemaOrgConfig
+
+  constructor(config: SchemaOrgConfig) {
+    this.config = config
+  }
+
+  generate(data: any): any {
+    const { _type } = data
+
+    switch (_type) {
+      case 'course':
+        return this.generateCourseSchema(data)
+      case 'instructor':
+        return this.generatePersonSchema(data)
+      default:
+        return null
+    }
+  }
+
+  private generateCourseSchema(course: any): any {
+    const courseUrl = `${this.config.siteUrl}/school/${course.courseId || course.slug?.current}`
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      name: course.title,
+      description: course.description || course.aiQuickAnswer,
+      provider: {
+        '@type': 'Organization',
+        name: this.config.organizationName,
+        url: this.config.siteUrl,
+      },
+      url: courseUrl,
+      ...(course.image?.asset?.url && {
+        image: course.image.asset.url,
+      }),
+      ...(course.price && {
+        offers: {
+          '@type': 'Offer',
+          price: course.price,
+          priceCurrency: 'JPY',
+        },
+      }),
+      ...(course.duration && {
+        timeRequired: course.duration,
+      }),
+      ...(course.aiSearchKeywords && {
+        keywords: course.aiSearchKeywords.join(', '),
+      }),
+    }
+  }
+
+  private generatePersonSchema(instructor: any): any {
+    const prefectureSlug = instructor.region
+      ? instructor.region.toLowerCase().replace(/[県府都]/g, '')
+      : 'unknown'
+    const instructorUrl = `${this.config.siteUrl}/instructor/${prefectureSlug}/${instructor.slug?.current}`
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: instructor.name,
+      ...(instructor.bio && {
+        description: instructor.bio,
+      }),
+      ...(instructor.image?.asset?.url && {
+        image: instructor.image.asset.url,
+      }),
+      ...(instructor.region && {
+        address: {
+          '@type': 'PostalAddress',
+          addressRegion: instructor.region,
+          addressCountry: 'JP',
+        },
+      }),
+      ...(instructor.specialties && instructor.specialties.length > 0 && {
+        knowsAbout: instructor.specialties,
+      }),
+      url: instructorUrl,
+      ...(instructor.contactInfo?.website && {
+        sameAs: [instructor.contactInfo.website],
+      }),
+    }
+  }
+}

@@ -11,7 +11,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import InstructorDetail from '@/components/instructor/InstructorDetail'
-import { SchemaOrgGenerator } from '@/lib/schema-generator'
+import { SchemaOrgGenerator } from '@/lib/schemaOrgGenerator'
 
 async function getInstructor(slug: string): Promise<Instructor | null> {
   try {
