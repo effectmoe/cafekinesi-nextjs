@@ -172,30 +172,6 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         </div>
       )}
 
-      {/* ソーシャルシェアセクション */}
-      <div className="mt-12 p-6 bg-gray-50 rounded">
-        <h3 className="text-lg font-semibold mb-4 text-center">
-          よろしければシェアお願いします
-        </h3>
-        <div className="flex flex-wrap gap-2 justify-center">
-          <button className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors rounded">
-            Twitter
-          </button>
-          <button className="bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 transition-colors rounded">
-            Facebook
-          </button>
-          <button className="bg-red-600 text-white px-4 py-2 text-sm font-medium hover:bg-red-700 transition-colors rounded">
-            Pin it
-          </button>
-          <button className="bg-green-500 text-white px-4 py-2 text-sm font-medium hover:bg-green-600 transition-colors rounded">
-            LINE
-          </button>
-          <button className="bg-yellow-600 text-white px-4 py-2 text-sm font-medium hover:bg-yellow-700 transition-colors rounded">
-            Copy
-          </button>
-        </div>
-      </div>
-
       {/* インストラクターリンクセクション */}
       {course.instructorInfo && (
         <div className="mt-8 p-6 bg-white border rounded">
