@@ -10,12 +10,21 @@ export class RAGEngine {
   async generateAugmentedResponse(query: string, config: any) {
     console.log('🤖 RAG応答生成中... (document_embeddings)');
 
+    // 集計質問を検出（「何個」「何人」「全部で」など）
+    const isAggregationQuery = this.isAggregationQuery(query);
+
     // インストラクター関連の質問を検出
     const isInstructorQuery = this.isInstructorRelatedQuery(query);
 
-    // 1. ベクトル検索（新しいdocument_embeddingsテーブルを使用）
+    // 1. データ取得
     let searchResults;
-    if (isInstructorQuery) {
+
+    if (isAggregationQuery) {
+      // 集計質問の場合はAI Knowledge APIから全件取得
+      console.log('🔢 集計質問を検出: AI Knowledge APIから全件取得...');
+      searchResults = await this.fetchFromKnowledgeAPI(query);
+    } else if (isInstructorQuery) {
+      // インストラクター質問の場合は専用設定
       console.log('👩‍🏫 インストラクター専用検索を実行...');
       searchResults = await vectorSearch(query, {
         topK: 50,
@@ -23,7 +32,7 @@ export class RAGEngine {
         type: 'instructor'
       });
     } else {
-      // ハイブリッド検索を使用
+      // 通常質問はハイブリッド検索を使用
       searchResults = await hybridSearch(query, {
         topK: config.vectorSearch?.topK || 20,
         threshold: config.vectorSearch?.threshold || 0.15
@@ -161,6 +170,78 @@ ${query}
     );
   }
 
+  // 集計質問かどうか判定
+  private isAggregationQuery(query: string): boolean {
+    const aggregationKeywords = [
+      '全部で', 'すべて', '全て', '合計', 'トータル',
+      '何個', '何件', '何人', '何名', 'いくつ', 'どのくらい',
+      '数', 'カウント', 'count', '一覧', 'リスト', 'list'
+    ];
+
+    const lowerQuery = query.toLowerCase();
+    return aggregationKeywords.some(keyword =>
+      lowerQuery.includes(keyword.toLowerCase())
+    );
+  }
+
+  // AI Knowledge APIからデータ取得
+  private async fetchFromKnowledgeAPI(query: string): Promise<any[]> {
+    try {
+      // 質問内容から取得するタイプを判定
+      let type = 'all';
+      if (query.includes('講座') || query.includes('コース') || query.includes('course')) {
+        type = 'course';
+      } else if (this.isInstructorRelatedQuery(query)) {
+        type = 'instructor';
+      } else if (query.includes('ブログ') || query.includes('記事') || query.includes('blog')) {
+        type = 'blog';
+      }
+
+      console.log(`📡 AI Knowledge API呼び出し: type=${type}, limit=100`);
+
+      // 内部APIエンドポイントを呼び出し
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+      const response = await fetch(`${baseUrl}/api/ai-knowledge?type=${type}&limit=100`);
+
+      if (!response.ok) {
+        console.error('AI Knowledge API error:', response.statusText);
+        return [];
+      }
+
+      const data = await response.json();
+      console.log(`✅ AI Knowledge API: ${data.data.length}件取得`);
+
+      // RAGエンジンの形式に変換
+      return data.data.map((item: any) => ({
+        content: this.formatItemContent(item),
+        type: item._type,
+        title: item.title || item.name,
+        url: item.url,
+        metadata: item,
+        similarity: 1.0, // API経由なので完全一致扱い
+        vector_score: 1.0,
+        combined_score: 1.0
+      }));
+    } catch (error) {
+      console.error('AI Knowledge API fetch error:', error);
+      return [];
+    }
+  }
+
+  // アイテムの内容をフォーマット
+  private formatItemContent(item: any): string {
+    switch (item._type) {
+      case 'course':
+        return `【講座】${item.title}\n${item.subtitle || ''}\n${item.description || ''}\nURL: ${item.url}`;
+      case 'instructor':
+        return `【インストラクター】${item.name}\n地域: ${item.region || '不明'}\n専門: ${item.specialties?.join(', ') || ''}\n${item.bio || ''}\nURL: ${item.url}`;
+      case 'blogPost':
+        return `【ブログ】${item.title}\n${item.excerpt || ''}\nカテゴリ: ${item.category || ''}\nURL: ${item.url}`;
+      default:
+        return `${item.title || item.name}\n${item.description || item.excerpt || item.bio || ''}`;
+    }
+  }
+
   // 信頼度計算
   private calculateConfidence(results: any[]): number {
     if (results.length === 0) return 0;
@@ -173,14 +254,15 @@ ${query}
 
   // 統計情報取得
   async getStats() {
-    return await this.vectorStore.getStats();
+    console.log('📊 統計情報取得は現在サポートされていません');
+    return { message: 'document_embeddings table is in use' };
   }
 
   // 検索テスト用メソッド
   async testSearch(query: string) {
     console.log(`🔍 検索テスト: "${query}"`);
 
-    const results = await this.vectorStore.hybridSearch(query, {
+    const results = await hybridSearch(query, {
       topK: 3,
       threshold: 0.5
     });
