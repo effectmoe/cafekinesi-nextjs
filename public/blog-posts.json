@@ -2,7 +2,7 @@
   {
     "_id": "breathing-stress-relief",
     "category": "wellness",
-    "excerpt": "深呼吸は最もシンプルで効果的なストレス解消法です。正しい呼吸法を身につけることで、心身のバランスを整えましょう。",
+    "excerpt": "深呼吸は最もシンプルで効果的なストレス解消法です。正しい呼吸法を身につけることで、心身のバランスを整えましょう！",
     "featured": true,
     "mainImage": {
       "_type": "image",
@@ -16,7 +16,7 @@
       "_type": "slug",
       "current": "breathing-methoddailynosutoresuwoshitayo"
     },
-    "title": "呼吸法で日常のストレスを解放したよ！"
+    "title": "呼吸法で日常のストレスを解放したよ"
   },
   {
     "_id": "post-9",
