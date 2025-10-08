@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 import { createClient } from '@sanity/client'
 import { upsertDocumentEmbedding, deleteDocumentEmbedding } from '@/lib/db/document-vector-operations'
+import { extractTextFromFile, chunkText } from '@/lib/utils/file-extractor'
 
 // Webhookシークレットの検証
 const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.SANITY_WEBHOOK_SECRET
@@ -561,6 +562,115 @@ export async function POST(request: NextRequest) {
 
         revalidatePath('/')
         revalidateTag('faqCard')
+
+        break
+      }
+
+      case 'knowledgeBase': {
+        // ナレッジベースの詳細情報を取得
+        const knowledge = await client.fetch(`
+          *[_type == "knowledgeBase" && _id == $id][0] {
+            _id,
+            title,
+            description,
+            file,
+            category,
+            tags,
+            isActive,
+            priority
+          }
+        `, { id: _id })
+
+        if (!knowledge) {
+          console.warn(`[Webhook] Knowledge base not found: ${_id}`)
+          break
+        }
+
+        if (knowledge.isActive === false) {
+          // 非アクティブなナレッジベースは削除
+          await deleteDocumentEmbedding(_id)
+          console.log(`[Webhook] Deleted inactive knowledge base: ${_id}`)
+        } else if (knowledge.file?.asset?._ref) {
+          try {
+            // Sanity CDNからファイルをダウンロード
+            const assetId = knowledge.file.asset._ref
+            const [, id, extension] = assetId.match(/^file-([a-f0-9]+)-(\w+)$/) || []
+
+            if (!id || !extension) {
+              throw new Error('Invalid asset reference format')
+            }
+
+            const fileUrl = `https://cdn.sanity.io/files/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${id}.${extension}`
+
+            console.log(`[Webhook] Downloading file from: ${fileUrl}`)
+
+            const fileResponse = await fetch(fileUrl)
+            if (!fileResponse.ok) {
+              throw new Error(`Failed to download file: ${fileResponse.status}`)
+            }
+
+            const arrayBuffer = await fileResponse.arrayBuffer()
+            const buffer = Buffer.from(arrayBuffer)
+
+            // ファイルからテキストを抽出
+            const filename = knowledge.file.asset.originalFilename || `document.${extension}`
+            const extracted = await extractTextFromFile(buffer, filename)
+
+            if (extracted.error) {
+              throw new Error(`Text extraction failed: ${extracted.error}`)
+            }
+
+            console.log(`[Webhook] Extracted ${extracted.text.length} characters from ${filename}`)
+
+            // テキストをチャンクに分割
+            const chunks = chunkText(extracted.text, 1000, 200)
+            console.log(`[Webhook] Split into ${chunks.length} chunks`)
+
+            // 各チャンクをベクトルDBに保存
+            for (let i = 0; i < chunks.length; i++) {
+              const chunkId = `${_id}-chunk-${i}`
+              const chunkTitle = chunks.length > 1
+                ? `${knowledge.title} (${i + 1}/${chunks.length})`
+                : knowledge.title
+
+              await upsertDocumentEmbedding(
+                chunkId,
+                'knowledgeBase',
+                chunkTitle,
+                chunks[i],
+                '', // ナレッジベースはURLを持たない
+                {
+                  sourceId: _id,
+                  chunkIndex: i,
+                  totalChunks: chunks.length,
+                  category: knowledge.category,
+                  tags: knowledge.tags || [],
+                  priority: knowledge.priority || 5,
+                  fileType: extracted.fileType,
+                  fileSize: extracted.fileSize
+                }
+              )
+            }
+
+            // 元のドキュメントのextractedTextフィールドを更新
+            await client
+              .patch(_id)
+              .set({
+                extractedText: extracted.text.substring(0, 5000), // 最初の5000文字のみ保存
+                fileType: extracted.fileType,
+                fileSize: extracted.fileSize,
+                lastProcessed: new Date().toISOString()
+              })
+              .commit()
+
+            console.log(`[Webhook] Synced knowledge base to vector DB: ${knowledge.title} (${chunks.length} chunks)`)
+          } catch (error) {
+            console.error(`[Webhook] Knowledge base processing error:`, error)
+            throw error
+          }
+        }
+
+        revalidateTag('knowledgeBase')
 
         break
       }

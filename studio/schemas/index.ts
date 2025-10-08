@@ -31,6 +31,7 @@ import chatConfiguration from './chat/chatConfiguration'
 import aiGuardrails from './ai/aiGuardrails'
 import aiProviderSettings from './ai/aiProviderSettings'
 import ragConfiguration from './rag/ragConfiguration'
+import { knowledgeBase } from './rag/knowledgeBase'
 
 // オブジェクトスキーマ
 import seo from './objects/seo'
@@ -84,6 +85,7 @@ export const schemaTypes = [
   aiGuardrails,
   aiProviderSettings,
   ragConfiguration,
+  knowledgeBase,
 
   // オブジェクト
   seo,
