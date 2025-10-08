@@ -1,5 +1,3 @@
-import pdfParse from 'pdf-parse';
-
 export type FileType = 'pdf' | 'markdown' | 'text' | 'unknown';
 
 export interface ExtractedFile {
@@ -33,6 +31,8 @@ export function detectFileType(filename: string, mimeType?: string): FileType {
  */
 export async function extractPdfText(buffer: Buffer): Promise<string> {
   try {
+    // pdf-parseを動的にimport（Node.js環境でのみ実行）
+    const pdfParse = (await import('pdf-parse')).default;
     const data = await pdfParse(buffer);
     return data.text.trim();
   } catch (error) {

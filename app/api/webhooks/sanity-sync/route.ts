@@ -5,6 +5,9 @@ import { createClient } from '@sanity/client'
 import { upsertDocumentEmbedding, deleteDocumentEmbedding } from '@/lib/db/document-vector-operations'
 import { extractTextFromFile, chunkText } from '@/lib/utils/file-extractor'
 
+// Node.jsランタイムを使用（pdf-parse はNode.js専用）
+export const runtime = 'nodejs'
+
 // Webhookシークレットの検証
 const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.SANITY_WEBHOOK_SECRET
 
