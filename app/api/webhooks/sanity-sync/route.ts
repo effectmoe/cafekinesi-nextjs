@@ -60,15 +60,7 @@ function instructorToEmbeddingContent(instructor: any): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // Webhookシークレットの検証
-    const signature = request.headers.get('sanity-webhook-signature')
-    if (!signature) {
-      return NextResponse.json(
-        { error: 'Missing signature' },
-        { status: 401 }
-      )
-    }
-
+    // Webhookシークレットの検証（parseBodyが自動で署名を検証）
     const body = await parseBody(request, secret)
 
     if (!body) {
