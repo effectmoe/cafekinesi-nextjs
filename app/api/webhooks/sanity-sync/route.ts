@@ -202,7 +202,9 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Webhook DEBUG] Raw body:`, JSON.stringify(body, null, 2))
 
-    const { _type, _id, slug } = body as any
+    // parseBodyの戻り値は { body: {...}, isValidSignature: true } の形式
+    const data = (body as any).body || body
+    const { _type, _id, slug } = data as any
 
     console.log(`[Webhook] Received: ${_type} - ${_id}`)
     console.log(`[Webhook DEBUG] Body keys:`, Object.keys(body))
