@@ -17,6 +17,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // pdf-parseはサーバーサイド（Node.js）でのみ使用
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        'pdf-parse': 'commonjs pdf-parse',
+        'pdfjs-dist': 'commonjs pdfjs-dist',
+      });
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
