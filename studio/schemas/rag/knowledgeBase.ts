@@ -42,6 +42,10 @@ export const knowledgeBase = defineType({
           {title: '📝 ポリシー・規約', value: 'policy'},
           {title: '🔧 トラブルシューティング', value: 'troubleshooting'},
           {title: '📊 レポート・分析', value: 'report'},
+          {title: '💰 料金情報', value: 'pricing'},
+          {title: '📍 店舗・アクセス情報', value: 'location'},
+          {title: '👥 スタッフ情報', value: 'staff'},
+          {title: '🎓 講座情報', value: 'course'},
           {title: '🏷️ その他', value: 'other'}
         ]
       },
