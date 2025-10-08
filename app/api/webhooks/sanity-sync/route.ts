@@ -94,9 +94,8 @@ function blogPostToEmbeddingContent(post: any): string {
     const contentText = portableTextToPlainText(post.content)
     if (contentText) parts.push(`本文: ${contentText}`)
   }
-  if (post.keyPoint && Array.isArray(post.keyPoint)) {
-    const keyPoints = post.keyPoint.join(', ')
-    parts.push(`重要ポイント: ${keyPoints}`)
+  if (post.keyPoint && post.keyPoint.content) {
+    parts.push(`重要ポイント: ${post.keyPoint.content}`)
   }
   if (post.summary) parts.push(`まとめ: ${post.summary}`)
   if (post.faq && Array.isArray(post.faq)) {
