@@ -322,6 +322,8 @@ export async function POST(request: NextRequest) {
       }
 
       case 'blogPost': {
+        console.log(`[Webhook DEBUG] blogPost case triggered for ID: ${_id}`)
+
         // ブログ記事の詳細情報を取得
         const post = await client.fetch(`
           *[_type == "blogPost" && _id == $id][0] {
@@ -341,16 +343,22 @@ export async function POST(request: NextRequest) {
           }
         `, { id: _id })
 
+        console.log(`[Webhook DEBUG] Fetched post:`, JSON.stringify(post, null, 2))
+
         if (!post) {
           console.warn(`[Webhook] Blog post not found: ${_id}`)
           break
         }
+
+        console.log(`[Webhook DEBUG] isActive value:`, post.isActive)
 
         if (post.isActive === false) {
           await deleteDocumentEmbedding(_id)
           console.log(`[Webhook] Deleted inactive blog post: ${_id}`)
         } else {
           const content = blogPostToEmbeddingContent(post)
+          console.log(`[Webhook DEBUG] Generated content length: ${content.length} chars`)
+
           const url = `/blog/${post.slug?.current || _id}`
 
           await upsertDocumentEmbedding(
