@@ -793,6 +793,101 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    if (type === 'knowledgeBase') {
+      const knowledge = await client.fetch(`
+        *[_type == "knowledgeBase" && _id == $id][0] {
+          _id, title, description, file, category, tags, isActive, priority
+        }
+      `, { id })
+
+      if (!knowledge) {
+        return NextResponse.json({ error: 'Knowledge base document not found' }, { status: 404 })
+      }
+
+      if (!knowledge.isActive) {
+        await deleteDocumentEmbedding(id)
+        return NextResponse.json({
+          success: true,
+          type: 'knowledgeBase',
+          title: knowledge.title,
+          action: 'deleted',
+          timestamp: new Date().toISOString(),
+          message: 'Knowledge base document deactivated and embeddings deleted'
+        })
+      }
+
+      if (!knowledge.file?.asset?._ref) {
+        return NextResponse.json({ error: 'No file attached' }, { status: 400 })
+      }
+
+      // ファイルのダウンロード
+      const assetId = knowledge.file.asset._ref
+      const match = assetId.match(/^file-([a-f0-9]+)-(\w+)$/)
+      if (!match) {
+        return NextResponse.json({ error: 'Invalid file asset reference' }, { status: 400 })
+      }
+
+      const [, fileId, extension] = match
+      const fileUrl = `https://cdn.sanity.io/files/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${fileId}.${extension}`
+
+      const fileResponse = await fetch(fileUrl)
+      if (!fileResponse.ok) {
+        return NextResponse.json({ error: 'Failed to download file' }, { status: 500 })
+      }
+
+      const arrayBuffer = await fileResponse.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+
+      // テキスト抽出
+      const filename = knowledge.file.asset.originalFilename || `document.${extension}`
+      const extracted = await extractTextFromFile(buffer, filename)
+
+      if (extracted.error) {
+        return NextResponse.json({ error: extracted.error }, { status: 500 })
+      }
+
+      // チャンク分割
+      const chunks = chunkText(extracted.text, 1000, 200)
+
+      // 各チャンクをベクトルDBに保存
+      for (let i = 0; i < chunks.length; i++) {
+        const chunkId = `${id}-chunk-${i}`
+        await upsertDocumentEmbedding(
+          chunkId,
+          'knowledgeBase',
+          `${knowledge.title} (${i + 1}/${chunks.length})`,
+          chunks[i],
+          '',
+          {
+            sourceId: id,
+            chunkIndex: i,
+            totalChunks: chunks.length,
+            category: knowledge.category,
+            priority: knowledge.priority || 5,
+            fileType: extracted.fileType
+          }
+        )
+      }
+
+      // Sanityドキュメントに処理結果を保存
+      await client.patch(id).set({
+        extractedText: extracted.text.substring(0, 5000),
+        fileType: extracted.fileType,
+        fileSize: extracted.fileSize,
+        lastProcessed: new Date().toISOString()
+      }).commit()
+
+      return NextResponse.json({
+        success: true,
+        type: 'knowledgeBase',
+        title: knowledge.title,
+        fileType: extracted.fileType,
+        chunks: chunks.length,
+        timestamp: new Date().toISOString(),
+        message: 'Knowledge base document processed successfully'
+      })
+    }
+
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
 
   } catch (error) {
