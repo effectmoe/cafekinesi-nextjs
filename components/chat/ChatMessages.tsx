@@ -12,7 +12,7 @@ interface ChatMessagesProps {
 
 export function ChatMessages({ messages, isLoading, messagesEndRef }: ChatMessagesProps) {
   return (
-    <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-amber-50/30">
+    <div className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-amber-50/30">
       {messages.length === 0 ? (
         <div className="text-center text-gray-500 py-12">
           <Bot className="w-16 h-16 mx-auto mb-4 text-amber-500 opacity-50" />

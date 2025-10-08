@@ -97,7 +97,7 @@ export function AlwaysOpenChatSection() {
         "bg-white rounded-3xl shadow-2xl",
         "border-3 border-amber-200",
         "overflow-hidden",
-        "min-h-[500px]",
+        "min-h-[650px]",
         "relative",
         "transition-all duration-300"
       )}>
