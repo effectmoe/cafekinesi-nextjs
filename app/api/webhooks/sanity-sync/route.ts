@@ -200,9 +200,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log(`[Webhook DEBUG] Raw body:`, JSON.stringify(body, null, 2))
+
     const { _type, _id, slug } = body as any
 
     console.log(`[Webhook] Received: ${_type} - ${_id}`)
+    console.log(`[Webhook DEBUG] Body keys:`, Object.keys(body))
 
     // タイプに応じて処理
     switch (_type) {
