@@ -58,6 +58,137 @@ function instructorToEmbeddingContent(instructor: any): string {
   return parts.join('\n')
 }
 
+/**
+ * Portable TextをプレーンテキストOに変換
+ */
+function portableTextToPlainText(blocks: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ''
+
+  return blocks
+    .map(block => {
+      if (block._type === 'block' && block.children) {
+        return block.children
+          .map((child: any) => child.text || '')
+          .join('')
+      }
+      return ''
+    })
+    .filter(Boolean)
+    .join('\n')
+}
+
+/**
+ * ブログ記事をembedding用テキストに変換
+ */
+function blogPostToEmbeddingContent(post: any): string {
+  const parts: string[] = []
+
+  if (post.title) parts.push(`タイトル: ${post.title}`)
+  if (post.category) parts.push(`カテゴリ: ${post.category}`)
+  if (post.excerpt) parts.push(`抜粋: ${post.excerpt}`)
+  if (post.tldr) parts.push(`要約: ${post.tldr}`)
+  if (post.tags && post.tags.length > 0) {
+    parts.push(`タグ: ${post.tags.join(', ')}`)
+  }
+  if (post.content) {
+    const contentText = portableTextToPlainText(post.content)
+    if (contentText) parts.push(`本文: ${contentText}`)
+  }
+  if (post.keyPoint && Array.isArray(post.keyPoint)) {
+    const keyPoints = post.keyPoint.join(', ')
+    parts.push(`重要ポイント: ${keyPoints}`)
+  }
+  if (post.summary) parts.push(`まとめ: ${post.summary}`)
+  if (post.faq && Array.isArray(post.faq)) {
+    const faqText = post.faq
+      .map((item: any) => `Q: ${item.question}\nA: ${item.answer}`)
+      .join('\n')
+    if (faqText) parts.push(`FAQ:\n${faqText}`)
+  }
+
+  return parts.join('\n')
+}
+
+/**
+ * ページをembedding用テキストに変換
+ */
+function pageToEmbeddingContent(page: any): string {
+  const parts: string[] = []
+
+  if (page.title) parts.push(`ページタイトル: ${page.title}`)
+
+  // pageBuilderの各セクションからテキスト抽出
+  if (page.pageBuilder && Array.isArray(page.pageBuilder)) {
+    page.pageBuilder.forEach((section: any) => {
+      if (section.heading) parts.push(section.heading)
+      if (section.text) parts.push(section.text)
+      if (section.description) parts.push(section.description)
+      if (section.content) {
+        const contentText = portableTextToPlainText(section.content)
+        if (contentText) parts.push(contentText)
+      }
+    })
+  }
+
+  return parts.join('\n')
+}
+
+/**
+ * イベントをembedding用テキストに変換
+ */
+function eventToEmbeddingContent(event: any): string {
+  const parts: string[] = []
+
+  if (event.title) parts.push(`イベント名: ${event.title}`)
+  if (event.location) parts.push(`開催場所: ${event.location}`)
+  if (event.startDate) {
+    const startDate = new Date(event.startDate).toLocaleDateString('ja-JP')
+    parts.push(`開始日: ${startDate}`)
+  }
+  if (event.endDate) {
+    const endDate = new Date(event.endDate).toLocaleDateString('ja-JP')
+    parts.push(`終了日: ${endDate}`)
+  }
+  if (event.description) {
+    const descText = portableTextToPlainText(event.description)
+    if (descText) parts.push(`説明: ${descText}`)
+  }
+
+  return parts.join('\n')
+}
+
+/**
+ * お知らせをembedding用テキストに変換
+ */
+function newsToEmbeddingContent(news: any): string {
+  const parts: string[] = []
+
+  if (news.title) parts.push(`タイトル: ${news.title}`)
+  if (news.category) parts.push(`カテゴリ: ${news.category}`)
+  if (news.publishedAt) {
+    const pubDate = new Date(news.publishedAt).toLocaleDateString('ja-JP')
+    parts.push(`公開日: ${pubDate}`)
+  }
+  if (news.content) {
+    const contentText = portableTextToPlainText(news.content)
+    if (contentText) parts.push(`内容: ${contentText}`)
+  }
+
+  return parts.join('\n')
+}
+
+/**
+ * FAQカードをembedding用テキストに変換
+ */
+function faqCardToEmbeddingContent(faqCard: any): string {
+  const parts: string[] = []
+
+  if (faqCard.title) parts.push(`質問: ${faqCard.title}`)
+  // FAQカードは質問のみで回答は含まれていないが、タイトルだけでも検索可能にする
+
+  return parts.join('\n')
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Webhookシークレットの検証（parseBodyが自動で署名を検証）
@@ -187,6 +318,247 @@ export async function POST(request: NextRequest) {
           revalidatePath('/')
         }
         revalidateTag('instructor')
+
+        break
+      }
+
+      case 'blogPost': {
+        // ブログ記事の詳細情報を取得
+        const post = await client.fetch(`
+          *[_type == "blogPost" && _id == $id][0] {
+            _id,
+            slug,
+            title,
+            excerpt,
+            tldr,
+            summary,
+            category,
+            tags,
+            content,
+            keyPoint,
+            faq,
+            publishedAt,
+            isActive
+          }
+        `, { id: _id })
+
+        if (!post) {
+          console.warn(`[Webhook] Blog post not found: ${_id}`)
+          break
+        }
+
+        if (post.isActive === false) {
+          await deleteDocumentEmbedding(_id)
+          console.log(`[Webhook] Deleted inactive blog post: ${_id}`)
+        } else {
+          const content = blogPostToEmbeddingContent(post)
+          const url = `/blog/${post.slug?.current || _id}`
+
+          await upsertDocumentEmbedding(
+            _id,
+            'blogPost',
+            post.title,
+            content,
+            url,
+            {
+              category: post.category,
+              tags: post.tags || [],
+              publishedAt: post.publishedAt
+            }
+          )
+
+          console.log(`[Webhook] Synced blog post to vector DB: ${post.title}`)
+        }
+
+        if (slug?.current) {
+          revalidatePath(`/blog/${slug.current}`)
+          revalidatePath('/blog')
+          revalidatePath('/')
+        }
+        revalidateTag('blogPost')
+
+        break
+      }
+
+      case 'page': {
+        // ページの詳細情報を取得
+        const page = await client.fetch(`
+          *[_type == "page" && _id == $id][0] {
+            _id,
+            slug,
+            title,
+            pageBuilder
+          }
+        `, { id: _id })
+
+        if (!page) {
+          console.warn(`[Webhook] Page not found: ${_id}`)
+          break
+        }
+
+        const content = pageToEmbeddingContent(page)
+        const url = `/${page.slug?.current || _id}`
+
+        await upsertDocumentEmbedding(
+          _id,
+          'page',
+          page.title,
+          content,
+          url,
+          {}
+        )
+
+        console.log(`[Webhook] Synced page to vector DB: ${page.title}`)
+
+        if (slug?.current) {
+          revalidatePath(`/${slug.current}`)
+          revalidatePath('/')
+        }
+        revalidateTag('page')
+
+        break
+      }
+
+      case 'event': {
+        // イベントの詳細情報を取得
+        const event = await client.fetch(`
+          *[_type == "event" && _id == $id][0] {
+            _id,
+            slug,
+            title,
+            description,
+            startDate,
+            endDate,
+            location,
+            isActive
+          }
+        `, { id: _id })
+
+        if (!event) {
+          console.warn(`[Webhook] Event not found: ${_id}`)
+          break
+        }
+
+        if (event.isActive === false) {
+          await deleteDocumentEmbedding(_id)
+          console.log(`[Webhook] Deleted inactive event: ${_id}`)
+        } else {
+          const content = eventToEmbeddingContent(event)
+          const url = `/event/${event.slug?.current || _id}`
+
+          await upsertDocumentEmbedding(
+            _id,
+            'event',
+            event.title,
+            content,
+            url,
+            {
+              startDate: event.startDate,
+              endDate: event.endDate,
+              location: event.location
+            }
+          )
+
+          console.log(`[Webhook] Synced event to vector DB: ${event.title}`)
+        }
+
+        if (slug?.current) {
+          revalidatePath(`/event/${slug.current}`)
+          revalidatePath('/event')
+          revalidatePath('/')
+        }
+        revalidateTag('event')
+
+        break
+      }
+
+      case 'news': {
+        // お知らせの詳細情報を取得
+        const news = await client.fetch(`
+          *[_type == "news" && _id == $id][0] {
+            _id,
+            slug,
+            title,
+            content,
+            category,
+            publishedAt,
+            isActive
+          }
+        `, { id: _id })
+
+        if (!news) {
+          console.warn(`[Webhook] News not found: ${_id}`)
+          break
+        }
+
+        if (news.isActive === false) {
+          await deleteDocumentEmbedding(_id)
+          console.log(`[Webhook] Deleted inactive news: ${_id}`)
+        } else {
+          const content = newsToEmbeddingContent(news)
+          const url = `/news/${news.slug?.current || _id}`
+
+          await upsertDocumentEmbedding(
+            _id,
+            'news',
+            news.title,
+            content,
+            url,
+            {
+              category: news.category,
+              publishedAt: news.publishedAt
+            }
+          )
+
+          console.log(`[Webhook] Synced news to vector DB: ${news.title}`)
+        }
+
+        if (slug?.current) {
+          revalidatePath(`/news/${slug.current}`)
+          revalidatePath('/news')
+          revalidatePath('/')
+        }
+        revalidateTag('news')
+
+        break
+      }
+
+      case 'faqCard': {
+        // FAQカードの詳細情報を取得
+        const faqCard = await client.fetch(`
+          *[_type == "faqCard" && _id == $id][0] {
+            _id,
+            title,
+            isActive
+          }
+        `, { id: _id })
+
+        if (!faqCard) {
+          console.warn(`[Webhook] FAQ card not found: ${_id}`)
+          break
+        }
+
+        if (faqCard.isActive === false) {
+          await deleteDocumentEmbedding(_id)
+          console.log(`[Webhook] Deleted inactive FAQ card: ${_id}`)
+        } else {
+          const content = faqCardToEmbeddingContent(faqCard)
+          const url = '/' // FAQカードは特定のURLを持たない
+
+          await upsertDocumentEmbedding(
+            _id,
+            'faqCard',
+            faqCard.title,
+            content,
+            url,
+            {}
+          )
+
+          console.log(`[Webhook] Synced FAQ card to vector DB: ${faqCard.title}`)
+        }
+
+        revalidatePath('/')
+        revalidateTag('faqCard')
 
         break
       }
