@@ -303,7 +303,14 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
         {/* 音声エラー表示 */}
         {voiceError && (
           <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
-            {voiceError === 'not-allowed' && 'マイクの使用が許可されていません'}
+            {voiceError === 'not-allowed' && (
+              <div>
+                <p className="font-semibold mb-1">マイクの使用が許可されていません</p>
+                <p className="text-xs mb-2">
+                  ブラウザのアドレスバー左側の🔒または🛈アイコンをタップ →「サイトの設定」→「マイク」を「許可」に変更してください
+                </p>
+              </div>
+            )}
             {voiceError === 'no-speech' && '音声が検出されませんでした'}
             {voiceError === 'network' && 'ネットワークエラーが発生しました'}
             {voiceError === 'not-supported' && 'お使いのブラウザは音声入力に対応していません'}
@@ -342,81 +349,130 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             </Button>
           </div>
         )}
-        <div className="flex items-center gap-3">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-12 w-12 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
-            title="画像を添付"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
-          >
-            <ImageIcon className="h-5 w-5" />
-          </Button>
+        <div className="space-y-2">
+          {/* 上段：ツールボタン（モバイル） */}
+          <div className="flex items-center gap-2 md:hidden">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
+              title="画像を添付"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+            >
+              <ImageIcon className="h-4 w-4" />
+            </Button>
 
-          {/* 音声入力ボタン */}
-          {isSupported && (
-            <div className="relative group">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-12 w-12 rounded-xl transition-all duration-200 ${
-                  isRecording
-                    ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
+            {/* 音声入力ボタン（モバイル） */}
+            {isSupported && (
+              <div className="relative group">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-10 w-10 rounded-xl transition-all duration-200 ${
+                    isRecording
+                      ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
+                  }`}
+                  title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isLoading}
+                >
+                  {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                </Button>
+              </div>
+            )}
+
+            <span className="text-xs text-gray-500 flex-1">
+              {isRecording ? '録音中...' : isSupported ? '音声入力可能' : ''}
+            </span>
+          </div>
+
+          {/* 下段：入力フィールドと送信ボタン */}
+          <div className="flex items-center gap-2">
+            {/* デスクトップ用ボタン */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden md:block"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:flex h-12 w-12 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
+              title="画像を添付"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+            >
+              <ImageIcon className="h-5 w-5" />
+            </Button>
+
+            {/* 音声入力ボタン（デスクトップ） */}
+            {isSupported && (
+              <div className="hidden md:block relative group">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-12 w-12 rounded-xl transition-all duration-200 ${
+                    isRecording
+                      ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
+                  }`}
+                  title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isLoading}
+                >
+                  {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                </Button>
+                {/* ツールチップ */}
+                {!isRecording && (
+                  <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    Ctrl+M / Cmd+M
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder={inputPlaceholder}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading || !sessionId}
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(35,30%,75%)] text-sm text-text-primary placeholder:text-text-muted disabled:opacity-50 transition-all ${
+                  isRecording ? 'bg-red-50 border-red-300' : 'bg-[hsl(35,25%,97%)] border-border/50'
                 }`}
-                title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={isLoading}
-              >
-                {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-              </Button>
-              {/* ツールチップ */}
-              {!isRecording && (
-                <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                  Ctrl+M / Cmd+M
+              />
+              {/* 録音中インジケーター（デスクトップのみ） */}
+              {isRecording && (
+                <div className="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 items-center gap-1">
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-75"></span>
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-150"></span>
                 </div>
               )}
             </div>
-          )}
 
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder={inputPlaceholder}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              disabled={isLoading || !sessionId}
-              className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(35,30%,75%)] text-sm text-text-primary placeholder:text-text-muted disabled:opacity-50 transition-all ${
-                isRecording ? 'bg-red-50 border-red-300' : 'bg-[hsl(35,25%,97%)] border-border/50'
-              }`}
-            />
-            {/* 録音中インジケーター */}
-            {isRecording && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-75"></span>
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-150"></span>
-              </div>
-            )}
+            <Button
+              size="icon"
+              className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[hsl(260,30%,75%)] to-[hsl(260,30%,65%)] hover:from-[hsl(260,30%,70%)] hover:to-[hsl(260,30%,60%)] shadow-md hover:shadow-lg transition-all duration-300 flex-shrink-0"
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim() || isLoading || !sessionId}
+            >
+              <Send className="h-5 w-5 text-white" />
+            </Button>
           </div>
-
-          <Button
-            size="icon"
-            className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[hsl(260,30%,75%)] to-[hsl(260,30%,65%)] hover:from-[hsl(260,30%,70%)] hover:to-[hsl(260,30%,60%)] shadow-md hover:shadow-lg transition-all duration-300"
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim() || isLoading || !sessionId}
-          >
-            <Send className="h-5 w-5 text-white" />
-          </Button>
         </div>
         <div className="mt-3 space-y-1">
           <p className="text-xs text-center text-text-muted flex items-center justify-center gap-2">
