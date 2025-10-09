@@ -50,6 +50,15 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
 
     for (const logId of logIds) {
       try {
+        // エクスポート済みフラグをチェック
+        const exportedFlag = await kv.get(`exported_to_notion:${logId}`) as string | null;
+
+        if (exportedFlag === 'true') {
+          console.log(`Skipping already exported log: ${logId}`);
+          results.skipped++;
+          continue;
+        }
+
         // ログデータを取得
         const logDataStr = await kv.get(`log:${logId}`) as string | null;
 
@@ -84,23 +93,11 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
         const queryData = await queryResponse.json();
 
         if (queryData.results && queryData.results.length > 0) {
-          // 既存レコードをアーカイブ
-          for (const page of queryData.results) {
-            await fetch(`https://api.notion.com/v1/pages/${page.id}`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${notionToken}`,
-                'Notion-Version': '2022-06-28',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                properties: {
-                  'ステータス': { select: { name: 'アーカイブ' } }
-                }
-              })
-            });
-          }
-          console.log(`Archived duplicate log: ${logId}`);
+          // 既存レコードがある場合はスキップ（エクスポート済みフラグを設定）
+          await kv.setex(`exported_to_notion:${logId}`, 604800, 'true');
+          console.log(`Skipping duplicate log (already exists in Notion): ${logId}`);
+          results.skipped++;
+          continue;
         }
 
         // 新規作成 - Notion REST APIを直接使用
@@ -131,6 +128,9 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
           const errorData = await createResponse.json();
           throw new Error(`Notion API error: ${JSON.stringify(errorData)}`);
         }
+
+        // エクスポート済みフラグを設定（7日間保持）
+        await kv.setex(`exported_to_notion:${logId}`, 604800, 'true');
 
         results.success++;
         console.log(`Exported log: ${logId}`);
