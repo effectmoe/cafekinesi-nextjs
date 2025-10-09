@@ -3,11 +3,10 @@
 import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useChat } from '@/hooks/useChat';
 import { ChatModalSettings } from '@/types/chat.types';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
-import { detectVoiceCommand, VoiceCommandType, getCommandAction } from '@/lib/voice/commands';
 import { isWebView, getWebViewWarning } from '@/lib/voice/webview-detector';
 
 interface InlineChatModalProps {
@@ -24,7 +23,6 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
-  const [commandFeedback, setCommandFeedback] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -39,41 +37,6 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     clearError
   } = useChat();
 
-  // コマンド実行ハンドラー
-  const handleVoiceCommand = useCallback((command: VoiceCommandType) => {
-    console.log('[InlineChatModal] Voice command detected:', command);
-    const action = getCommandAction(command);
-
-    switch (command) {
-      case 'send':
-        if (inputValue.trim()) {
-          setCommandFeedback(action);
-          setTimeout(() => {
-            handleSendMessage();
-            setCommandFeedback(null);
-          }, 500);
-        }
-        break;
-
-      case 'clear':
-        setInputValue('');
-        setCommandFeedback(action);
-        setTimeout(() => setCommandFeedback(null), 1500);
-        break;
-
-      case 'cancel':
-        stopRecording();
-        setCommandFeedback(action);
-        setTimeout(() => setCommandFeedback(null), 1500);
-        break;
-
-      case 'help':
-        setCommandFeedback('利用可能なコマンド: 「送信」「クリア」「キャンセル」');
-        setTimeout(() => setCommandFeedback(null), 3000);
-        break;
-    }
-  }, [inputValue]);
-
   // 音声入力フック
   const {
     isRecording,
@@ -85,15 +48,11 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     clearError: clearVoiceError,
   } = useVoiceInput({
     onResult: (text) => {
-      const command = detectVoiceCommand(text);
-      if (command) {
-        handleVoiceCommand(command);
-      } else {
-        setInputValue((prev) => {
-          const newText = prev ? `${prev} ${text}` : text;
-          return newText.slice(0, 500);
-        });
-      }
+      // 音声入力結果を入力フィールドに追加
+      setInputValue((prev) => {
+        const newText = prev ? `${prev} ${text}` : text;
+        return newText.slice(0, 500);
+      });
     },
     onError: (error) => {
       console.error('Voice input error:', error);
@@ -294,13 +253,6 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
       {/* Input Area */}
       <div className="p-4 bg-white border-t border-border/30">
-        {/* コマンドフィードバック表示 */}
-        {commandFeedback && (
-          <div className="mb-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700 font-medium animate-pulse">
-            ✓ {commandFeedback}
-          </div>
-        )}
-
         {/* 音声エラー表示 */}
         {voiceError && (
           <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
@@ -488,23 +440,11 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             </Button>
           </div>
         </div>
-        <div className="mt-3 space-y-1">
+        <div className="mt-3">
           <p className="text-xs text-center text-text-muted flex items-center justify-center gap-2">
             <span className={`inline-block w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></span>
             {footerMessage}
           </p>
-          {isSupported && !isRecording && !inputValue && (
-            <div className="text-xs text-center text-gray-400 space-y-1">
-              <p className="italic">
-                💡 音声で操作できます：「送信」でメッセージ送信、「クリア」で入力削除
-              </p>
-              {isWebView() && (
-                <p className="text-[10px] text-red-500">
-                  ※ ブラウザで開いてください（Chrome/Safari推奨）
-                </p>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>

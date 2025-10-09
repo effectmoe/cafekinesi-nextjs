@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { Send, Mic, MicOff } from 'lucide-react';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
-import { detectVoiceCommand, VoiceCommandType, getCommandAction } from '@/lib/voice/commands';
 import { isWebView, getWebViewWarning } from '@/lib/voice/webview-detector';
 
 interface ChatInputProps {
@@ -14,49 +13,6 @@ interface ChatInputProps {
 
 export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps) {
   const [input, setInput] = useState('');
-  const [commandFeedback, setCommandFeedback] = useState<string | null>(null);
-
-  // コマンド実行ハンドラー
-  const handleVoiceCommand = useCallback((command: VoiceCommandType) => {
-    console.log('[ChatInput] Voice command detected:', command);
-    const action = getCommandAction(command);
-
-    switch (command) {
-      case 'send':
-        // メッセージ送信
-        if (input.trim()) {
-          setCommandFeedback(action);
-          setTimeout(() => {
-            const form = document.querySelector('form');
-            if (form) {
-              form.requestSubmit();
-            }
-            setCommandFeedback(null);
-          }, 500);
-        }
-        break;
-
-      case 'clear':
-        // 入力クリア
-        setInput('');
-        setCommandFeedback(action);
-        setTimeout(() => setCommandFeedback(null), 1500);
-        break;
-
-      case 'cancel':
-        // 音声入力キャンセル
-        stopRecording();
-        setCommandFeedback(action);
-        setTimeout(() => setCommandFeedback(null), 1500);
-        break;
-
-      case 'help':
-        // ヘルプ表示
-        setCommandFeedback('利用可能なコマンド: 「送信」「クリア」「キャンセル」');
-        setTimeout(() => setCommandFeedback(null), 3000);
-        break;
-    }
-  }, [input, stopRecording]);
 
   // 音声入力フック
   const {
@@ -69,19 +25,11 @@ export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps
     clearError,
   } = useVoiceInput({
     onResult: (text) => {
-      // 音声コマンド検出
-      const command = detectVoiceCommand(text);
-
-      if (command) {
-        // コマンド実行
-        handleVoiceCommand(command);
-      } else {
-        // 通常のテキストとして入力フィールドに追加
-        setInput((prev) => {
-          const newText = prev ? `${prev} ${text}` : text;
-          return newText.slice(0, 500); // 最大文字数制限
-        });
-      }
+      // 音声入力結果を入力フィールドに追加
+      setInput((prev) => {
+        const newText = prev ? `${prev} ${text}` : text;
+        return newText.slice(0, 500); // 最大文字数制限
+      });
     },
     onError: (error) => {
       console.error('Voice input error:', error);
@@ -121,13 +69,6 @@ export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps
 
   return (
     <form onSubmit={handleSubmit} className="border-t border-amber-200 bg-white p-4">
-      {/* コマンドフィードバック表示 */}
-      {commandFeedback && (
-        <div className="mb-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700 font-medium animate-pulse">
-          ✓ {commandFeedback}
-        </div>
-      )}
-
       {/* エラー表示 */}
       {voiceError && (
         <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
@@ -233,26 +174,14 @@ export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps
         </button>
       </div>
 
-      {/* 文字数カウンターとヘルプテキスト */}
-      <div className="flex items-center justify-between mt-2">
-        {input.length > 0 && (
+      {/* 文字数カウンター */}
+      {input.length > 0 && (
+        <div className="flex items-center justify-between mt-2">
           <p className="text-xs text-gray-500">
             {input.length}/500文字
           </p>
-        )}
-        {isSupported && !isRecording && input.length === 0 && (
-          <div className="text-xs text-gray-400 space-y-1">
-            <p className="italic">
-              💡 音声で操作できます：「送信」でメッセージ送信、「クリア」で入力削除
-            </p>
-            {isWebView() && (
-              <p className="text-[10px] text-red-500">
-                ※ ブラウザで開いてください（Chrome/Safari推奨）
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </form>
   );
 }
