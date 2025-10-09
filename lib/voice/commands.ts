@@ -128,18 +128,25 @@ export const VOICE_COMMANDS: Record<VoiceCommandType, VoiceCommand> = {
  * @returns {VoiceCommandType | null} 検出されたコマンドタイプ、なければnull
  */
 export function detectVoiceCommand(text: string): VoiceCommandType | null {
-  const trimmedText = text.trim();
+  // 空白と句読点を除去して正規化
+  const normalizedText = text
+    .trim()
+    .replace(/[。、！？\s]+$/g, '') // 末尾の句読点と空白を除去
+    .replace(/^[。、！？\s]+/g, ''); // 先頭の句読点と空白を除去
+
+  console.log('[Voice Command] Input text:', text, '→ Normalized:', normalizedText);
 
   // 各コマンドのパターンをチェック
   for (const [commandType, command] of Object.entries(VOICE_COMMANDS)) {
     for (const pattern of command.patterns) {
-      if (pattern.test(trimmedText)) {
-        console.log('[Voice Command] Detected:', commandType, 'from text:', trimmedText);
+      if (pattern.test(normalizedText)) {
+        console.log('[Voice Command] ✅ Detected:', commandType);
         return commandType as VoiceCommandType;
       }
     }
   }
 
+  console.log('[Voice Command] ❌ No command detected');
   return null;
 }
 
