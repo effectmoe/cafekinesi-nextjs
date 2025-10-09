@@ -26,7 +26,7 @@ export interface ExportResult {
 export async function exportLogsToNotion(date: string): Promise<ExportResult> {
   // Notion Clientを動的にインポート（CommonJS/ESM互換性）
   const { Client } = await import('@notionhq/client');
-  const notion = new Client({
+  const notion = new (Client as any)({
     auth: process.env.NOTION_API_TOKEN
   });
 
