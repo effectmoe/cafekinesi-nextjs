@@ -102,17 +102,15 @@ export default defineType({
       name: 'faqSectionTitle',
       title: 'FAQセクションタイトル',
       type: 'string',
-      description: 'FAQセクションの見出し',
-      initialValue: 'Cafe Kinesi へようこそ',
-      validation: Rule => Rule.required()
+      description: 'FAQセクションの見出し（空白の場合は非表示）',
+      initialValue: 'Cafe Kinesi へようこそ'
     }),
     defineField({
       name: 'faqSectionSubtitle',
       title: 'FAQセクションサブタイトル',
       type: 'string',
-      description: 'FAQセクションの説明文',
-      initialValue: '何かお探しですか？AIアシスタントがお答えします',
-      validation: Rule => Rule.required()
+      description: 'FAQセクションの説明文（空白の場合は非表示）',
+      initialValue: '何かお探しですか？AIアシスタントがお答えします'
     }),
     defineField({
       name: 'isActive',

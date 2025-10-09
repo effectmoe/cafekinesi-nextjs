@@ -52,20 +52,30 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
   ];
 
   const displayFaqs = faqs && faqs.length > 0 ? faqs : defaultFaqs;
-  const displayTitle = title || 'Cafe Kinesi へようこそ';
-  const displaySubtitle = subtitle || '何かお探しですか？AIアシスタントがお答えします';
+
+  // タイトルとサブタイトルが空白かどうかをチェック
+  const hasTitle = title && title.trim().length > 0;
+  const hasSubtitle = subtitle && subtitle.trim().length > 0;
+  const hasAnyText = hasTitle || hasSubtitle;
 
   return (
     <section className="w-full pt-6 pb-3 px-6 bg-[hsl(35,25%,95%)]">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-medium text-text-primary mb-3 tracking-tight">
-            {displayTitle}
-          </h2>
-          <p className="text-text-secondary text-base">
-            {displaySubtitle}
-          </p>
-        </div>
+        {/* タイトルまたはサブタイトルがある場合のみテキストセクションを表示 */}
+        {hasAnyText && (
+          <div className="text-center mb-8">
+            {hasTitle && (
+              <h2 className="text-3xl md:text-4xl font-medium text-text-primary mb-3 tracking-tight">
+                {title}
+              </h2>
+            )}
+            {hasSubtitle && (
+              <p className="text-text-secondary text-base">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
           {displayFaqs.map((faq) => {
             // Lucideアイコンを動的に取得
