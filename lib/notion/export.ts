@@ -60,6 +60,9 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
 
         const logData: ChatLog = JSON.parse(logDataStr);
 
+        // 日付と時刻を組み合わせてISO 8601形式に
+        const dateTime = `${logData.date}T${logData.time}`;
+
         // 重複チェック（日付+時刻で判定）- Notion REST APIを直接使用
         const queryResponse = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
           method: 'POST',
@@ -71,9 +74,8 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
           body: JSON.stringify({
             filter: {
               and: [
-                { property: '対象日付', date: { equals: logData.date } },
-                { property: '時刻', title: { equals: logData.time } },
-                { property: 'クエリ', rich_text: { equals: logData.query } }
+                { property: '時刻', date: { equals: dateTime } },
+                { property: 'クエリ', title: { equals: logData.query } }
               ]
             }
           })
@@ -113,8 +115,8 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
             parent: { database_id: databaseId },
             properties: {
               '対象日付': { date: { start: logData.date } },
-              '時刻': { title: [{ text: { content: logData.time } }] },
-              'クエリ': { rich_text: [{ text: { content: logData.query.substring(0, 2000) } }] },
+              '時刻': { date: { start: dateTime } },
+              'クエリ': { title: [{ text: { content: logData.query.substring(0, 100) } }] },
               '返答': { rich_text: [{ text: { content: logData.response.substring(0, 2000) } }] },
               '処理時間': { number: logData.processingTime || 0 },
               'IPアドレス': { rich_text: logData.clientIp ? [{ text: { content: logData.clientIp } }] : [] },
