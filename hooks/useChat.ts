@@ -28,6 +28,10 @@ export function useChat(options?: UseChatOptions): UseChatReturn {
   const startSession = useCallback(async () => {
     try {
       setError(null);
+
+      // 🔄 新しいセッション開始前に、必ず古いメッセージをクリア
+      setMessages([]);
+
       const response = await fetch('/api/chat/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,6 +45,8 @@ export function useChat(options?: UseChatOptions): UseChatReturn {
       const data = await response.json();
       setSessionId(data.sessionId);
 
+      console.log('✅ New session started:', data.sessionId);
+
       // 初期メッセージ
       setMessages([{
         role: 'assistant',
@@ -51,7 +57,7 @@ export function useChat(options?: UseChatOptions): UseChatReturn {
       console.error('Failed to start session:', err);
       setError('セッションの開始に失敗しました。リロードしてお試しください。');
     }
-  }, []);
+  }, [welcomeMsg]);
 
   // メッセージ送信
   const sendMessage = useCallback(async (content: string) => {

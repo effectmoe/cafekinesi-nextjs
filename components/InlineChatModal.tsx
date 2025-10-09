@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff, Mail } from "lucide-react";
+import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff, Mail, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState, useRef, useEffect } from "react";
@@ -209,6 +209,23 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {/* 新しい会話ボタン */}
+          {messages.length > 1 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-green-50"
+              title="新しい会話を開始"
+              onClick={() => {
+                if (window.confirm('現在の会話を終了して新しい会話を開始しますか？')) {
+                  startSession();
+                }
+              }}
+              disabled={isLoading}
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          )}
           {/* メール送信ボタン */}
           {messages.length > 1 && (
             <Button

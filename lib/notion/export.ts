@@ -266,15 +266,22 @@ export async function exportConversationToNotion(
     const date = now.toISOString().split('T')[0];
     const dateTime = now.toISOString();
 
-    // 会話全体を結合（クエリと返答）
+    // 📝 会話全体を結合（クエリと返答）
+    // フロントエンドから送られたメッセージをそのまま使用
+    // （チャットモーダルに表示されている内容のみ）
     let combinedQuery = '';
     let combinedResponse = '';
 
-    conversation.messages.forEach((msg, index) => {
+    let questionCount = 0;
+    let answerCount = 0;
+
+    conversation.messages.forEach((msg) => {
       if (msg.role === 'user') {
-        combinedQuery += `【質問${Math.floor(index / 2) + 1}】\n${msg.content}\n\n`;
-      } else {
-        combinedResponse += `【回答${Math.floor(index / 2) + 1}】\n${msg.content}\n\n`;
+        questionCount++;
+        combinedQuery += `【質問${questionCount}】\n${msg.content}\n\n`;
+      } else if (msg.role === 'assistant') {
+        answerCount++;
+        combinedResponse += `【回答${answerCount}】\n${msg.content}\n\n`;
       }
     });
 
