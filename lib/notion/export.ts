@@ -24,13 +24,12 @@ export interface ExportResult {
  * Vercel KVからログを取得してNotionにエクスポート
  */
 export async function exportLogsToNotion(date: string): Promise<ExportResult> {
-  // Notion Clientを動的にインポート（CommonJS/ESM互換性）
-  const { Client } = await import('@notionhq/client');
-  const notion = new (Client as any)({
-    auth: process.env.NOTION_API_TOKEN
-  });
-
+  const notionToken = process.env.NOTION_API_TOKEN;
   const databaseId = process.env.NOTION_DATABASE_ID;
+
+  if (!notionToken) {
+    throw new Error('NOTION_API_TOKEN is not set');
+  }
 
   if (!databaseId) {
     throw new Error('NOTION_DATABASE_ID is not set');
@@ -61,75 +60,75 @@ export async function exportLogsToNotion(date: string): Promise<ExportResult> {
 
         const logData: ChatLog = JSON.parse(logDataStr);
 
-        // 重複チェック（日付+時刻で判定）
-        const existing = await notion.databases.query({
-          database_id: databaseId,
-          filter: {
-            and: [
-              {
-                property: '対象日付',
-                date: { equals: logData.date }
-              },
-              {
-                property: '時刻',
-                title: { equals: logData.time }
-              },
-              {
-                property: 'クエリ',
-                rich_text: { equals: logData.query }
-              }
-            ]
-          }
+        // 重複チェック（日付+時刻で判定）- Notion REST APIを直接使用
+        const queryResponse = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${notionToken}`,
+            'Notion-Version': '2022-06-28',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filter: {
+              and: [
+                { property: '対象日付', date: { equals: logData.date } },
+                { property: '時刻', title: { equals: logData.time } },
+                { property: 'クエリ', rich_text: { equals: logData.query } }
+              ]
+            }
+          })
         });
 
-        if (existing.results.length > 0) {
+        const queryData = await queryResponse.json();
+
+        if (queryData.results && queryData.results.length > 0) {
           // 既存レコードをアーカイブ
-          for (const page of existing.results) {
-            await notion.pages.update({
-              page_id: page.id,
-              properties: {
-                'ステータス': {
-                  select: { name: 'アーカイブ' }
+          for (const page of queryData.results) {
+            await fetch(`https://api.notion.com/v1/pages/${page.id}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${notionToken}`,
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                properties: {
+                  'ステータス': { select: { name: 'アーカイブ' } }
                 }
-              }
+              })
             });
           }
           console.log(`Archived duplicate log: ${logId}`);
         }
 
-        // 新規作成
-        await notion.pages.create({
-          parent: { database_id: databaseId },
-          properties: {
-            '対象日付': {
-              date: { start: logData.date }
-            },
-            '時刻': {
-              title: [{ text: { content: logData.time } }]
-            },
-            'クエリ': {
-              rich_text: [{ text: { content: logData.query.substring(0, 2000) } }]
-            },
-            '返答': {
-              rich_text: [{ text: { content: logData.response.substring(0, 2000) } }]
-            },
-            '処理時間': {
-              number: logData.processingTime || 0
-            },
-            'IPアドレス': {
-              rich_text: logData.clientIp ? [{ text: { content: logData.clientIp } }] : []
-            },
-            '場所': {
-              rich_text: logData.location ? [{ text: { content: logData.location } }] : []
-            },
-            'メール': {
-              email: logData.userEmail || null
-            },
-            'ステータス': {
-              select: { name: '完了' }
+        // 新規作成 - Notion REST APIを直接使用
+        const createResponse = await fetch('https://api.notion.com/v1/pages', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${notionToken}`,
+            'Notion-Version': '2022-06-28',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            parent: { database_id: databaseId },
+            properties: {
+              '対象日付': { date: { start: logData.date } },
+              '時刻': { title: [{ text: { content: logData.time } }] },
+              'クエリ': { rich_text: [{ text: { content: logData.query.substring(0, 2000) } }] },
+              '返答': { rich_text: [{ text: { content: logData.response.substring(0, 2000) } }] },
+              '処理時間': { number: logData.processingTime || 0 },
+              'IPアドレス': { rich_text: logData.clientIp ? [{ text: { content: logData.clientIp } }] : [] },
+              '場所': { rich_text: logData.location ? [{ text: { content: logData.location } }] : [] },
+              'メール': { email: logData.userEmail || null },
+              'ステータス': { select: { name: '完了' } }
             }
-          }
+          })
         });
+
+        if (!createResponse.ok) {
+          const errorData = await createResponse.json();
+          throw new Error(`Notion API error: ${JSON.stringify(errorData)}`);
+        }
 
         results.success++;
         console.log(`Exported log: ${logId}`);
