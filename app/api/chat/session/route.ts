@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/chat/session-manager';
 
+// Node.js runtimeを使用（ioredisはNode.js専用）
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

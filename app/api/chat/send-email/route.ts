@@ -5,6 +5,9 @@ import { SessionManager, Message } from '@/lib/chat/session-manager';
 import { generateEmailHTML, generatePlainText } from '@/lib/email/template';
 import { updateLogsWithEmail } from '@/lib/notion/export';
 
+// Node.js runtimeを使用（nodemailerはEdge Runtimeでは動作しない）
+export const runtime = 'nodejs';
+
 /**
  * メール送信API
  * POST /api/chat/send-email

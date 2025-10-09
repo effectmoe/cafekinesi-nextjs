@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { exportLogsToNotion } from '@/lib/notion/export';
 
+// Node.js runtimeを使用（Notion APIとioredisはNode.js専用）
+export const runtime = 'nodejs';
+
 /**
  * NotionエクスポートAPI
  * GET /api/notion/export-logs?date=2025-10-09

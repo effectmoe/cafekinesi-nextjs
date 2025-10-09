@@ -4,6 +4,9 @@ import { publicClient } from '@/lib/sanity.client';
 import { AIProviderFactory } from '@/lib/ai/factory';
 import { createChatLog } from '@/lib/notion/export';
 
+// Node.js runtimeを使用（ioredisはNode.js専用）
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
 
