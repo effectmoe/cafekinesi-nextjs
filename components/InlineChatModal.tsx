@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff } from "lucide-react";
+import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState, useRef, useEffect } from "react";
@@ -8,6 +8,7 @@ import { useChat } from '@/hooks/useChat';
 import { ChatModalSettings } from '@/types/chat.types';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { isWebView, getWebViewWarning } from '@/lib/voice/webview-detector';
+import { EmailModal } from '@/components/EmailModal';
 
 interface InlineChatModalProps {
   settings?: ChatModalSettings
@@ -23,6 +24,9 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -139,6 +143,54 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     }
   };
 
+  const handleSendEmail = async (email: string) => {
+    setEmailError(null);
+    setEmailSuccess(false);
+
+    try {
+      const response = await fetch('/api/chat/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          sessionId,
+          messages
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'メール送信に失敗しました');
+      }
+
+      setEmailSuccess(true);
+      setTimeout(() => setEmailSuccess(false), 5000);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'メール送信に失敗しました';
+      setEmailError(errorMessage);
+      setTimeout(() => setEmailError(null), 5000);
+      throw error;
+    }
+  };
+
+  // Email success/error auto-clear
+  useEffect(() => {
+    if (emailSuccess) {
+      const timer = setTimeout(() => setEmailSuccess(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailSuccess]);
+
+  useEffect(() => {
+    if (emailError) {
+      const timer = setTimeout(() => setEmailError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailError]);
+
   const chatContent = (isFullscreenView: boolean) => (
     <div className={`relative bg-white border-2 border-[hsl(35,30%,85%)] rounded-3xl shadow-xl overflow-hidden ${isFullscreenView ? 'h-full flex flex-col' : ''}`}>
       {/* Header */}
@@ -157,6 +209,19 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {/* メール送信ボタン */}
+          {messages.length > 1 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50"
+              title="会話を保存"
+              onClick={() => setShowEmailModal(true)}
+              disabled={!sessionId}
+            >
+              <Mail className="h-4 w-4" />
+            </Button>
+          )}
           {/* 拡大ボタン（通常時）と閉じるボタン（フルスクリーン時）の切り替え */}
           {!isFullscreenView ? (
             <Button
@@ -192,6 +257,20 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
       {error && (
         <div className="px-6 py-2 bg-red-50 border-b border-red-200">
           <p className="text-xs text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Email Success */}
+      {emailSuccess && (
+        <div className="px-6 py-2 bg-green-50 border-b border-green-200">
+          <p className="text-xs text-green-700">✅ メールを送信しました</p>
+        </div>
+      )}
+
+      {/* Email Error */}
+      {emailError && (
+        <div className="px-6 py-2 bg-red-50 border-b border-red-200">
+          <p className="text-xs text-red-600">❌ {emailError}</p>
         </div>
       )}
 
@@ -463,6 +542,13 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           {chatContent(true)}
         </DialogContent>
       </Dialog>
+
+      <EmailModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onSend={handleSendEmail}
+        messageCount={messages.length}
+      />
     </>
   );
 };

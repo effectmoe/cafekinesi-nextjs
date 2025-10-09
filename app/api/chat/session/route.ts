@@ -7,8 +7,13 @@ export async function POST(request: NextRequest) {
     const { action, sessionId } = body;
 
     if (action === 'start') {
+      // クライアントIPを取得
+      const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+                       request.headers.get('x-real-ip') ||
+                       'unknown';
+
       // 新しいセッションを作成
-      const newSessionId = SessionManager.createSession();
+      const newSessionId = await SessionManager.createSession(clientIp);
 
       return NextResponse.json({
         sessionId: newSessionId,
@@ -18,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'end' && sessionId) {
       // セッションを終了
-      SessionManager.deleteSession(sessionId);
+      await SessionManager.deleteSession(sessionId);
 
       return NextResponse.json({
         message: 'Session ended successfully'
@@ -27,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'status' && sessionId) {
       // セッションの状態を確認
-      const session = SessionManager.getSession(sessionId);
+      const session = await SessionManager.getSession(sessionId);
 
       if (!session) {
         return NextResponse.json(
@@ -40,7 +45,8 @@ export async function POST(request: NextRequest) {
         sessionId: session.id,
         messageCount: session.messages.length,
         startedAt: session.startedAt,
-        lastActivityAt: session.lastActivityAt
+        lastActivityAt: session.lastActivityAt,
+        userEmail: session.userEmail
       });
     }
 
@@ -64,7 +70,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // セッション統計情報
-    const sessionCount = SessionManager.getSessionCount();
+    const sessionCount = await SessionManager.getSessionCount();
 
     return NextResponse.json({
       activeSessions: sessionCount,

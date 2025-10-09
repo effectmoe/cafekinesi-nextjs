@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { RAGEngine } from '@/lib/rag/rag-engine';
 import { publicClient } from '@/lib/sanity.client';
 import { AIProviderFactory } from '@/lib/ai/factory';
+import { createChatLog } from '@/lib/notion/export';
 
 export async function POST(request: NextRequest) {
+  const startTime = performance.now();
+
   try {
     const { message, sessionId, debug } = await request.json();
 
@@ -15,6 +18,11 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🤖 RAG Chat API - Session: ${sessionId}, Message: ${message.substring(0, 50)}...`);
+
+    // クライアントIPを取得
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+                     request.headers.get('x-real-ip') ||
+                     'unknown';
 
     // Sanityから設定取得
     const [ragConfig, guardrails, providerSettings] = await Promise.all([
@@ -64,6 +72,18 @@ export async function POST(request: NextRequest) {
     );
 
     console.log('✅ AI応答生成完了');
+
+    // 処理時間を計算
+    const processingTime = (performance.now() - startTime) / 1000; // 秒
+
+    // チャットログを作成（Vercel KVに保存）
+    await createChatLog(
+      sessionId,
+      message,
+      response,
+      processingTime,
+      clientIp
+    );
 
     const responseData: any = {
       response,
