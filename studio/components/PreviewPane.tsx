@@ -22,6 +22,16 @@ export function PreviewPane(props: DocumentPaneNode) {
       previewPath = '/#about-section'
     }
 
+    // chatModalの場合はホームページ（チャットモーダルが表示される）
+    if (documentType === 'chatModal') {
+      previewPath = '/'
+    }
+
+    // siteSettingsの場合はホームページ
+    if (documentType === 'siteSettings') {
+      previewPath = '/'
+    }
+
     // IDからドキュメントを取得する必要があるため、
     // 一旦ドラフトモードのAPIエンドポイントに誘導
     const url = `${baseUrl}/api/draft?preview=true&id=${documentId}&type=${documentType}&redirect=${encodeURIComponent(previewPath)}`

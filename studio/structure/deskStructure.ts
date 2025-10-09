@@ -14,6 +14,10 @@ export const structure = (S: StructureBuilder) =>
           S.document()
             .schemaType('siteSettings')
             .documentId('siteSettings')
+            .views([
+              S.view.form().id('siteSettingsEditor').title('編集'),
+              S.view.component(PreviewPane).id('siteSettingsPreview').title('プレビュー')
+            ])
         ),
 
       // ホームページ（シングルトン）
@@ -50,6 +54,10 @@ export const structure = (S: StructureBuilder) =>
           S.document()
             .schemaType('chatModal')
             .documentId('chatModal-main')
+            .views([
+              S.view.form().id('chatModalEditor').title('編集'),
+              S.view.component(PreviewPane).id('chatModalPreview').title('プレビュー')
+            ])
         ),
 
       S.divider(),
