@@ -16,7 +16,7 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     baseUrl = 'https://cafekinesi-nextjs.vercel.app',
     previewSecret,
     urlPatterns = {},
-    enabledTypes = ['blogPost', 'page', 'homepage', 'album', 'course'],
+    enabledTypes = ['blogPost', 'page', 'homepage', 'album', 'course', 'chatModal', 'siteSettings'],
     previewMode = 'tab'
   } = config
 
@@ -30,6 +30,8 @@ export const previewPlugin = definePlugin<PreviewPluginConfig>((config = {}) => 
     course: (doc) => `/school/${doc.courseId || ''}`,
     schoolPage: () => '/school',
     instructorPage: () => '/instructor',
+    chatModal: () => '/',
+    siteSettings: () => '/',
     instructor: (doc) => {
       // 都道府県名からスラッグへのマッピング
       const prefectureToSlug: { [key: string]: string } = {

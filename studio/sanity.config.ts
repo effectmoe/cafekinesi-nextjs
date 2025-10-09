@@ -46,7 +46,7 @@ export default defineConfig({
           ? 'https://cafekinesi-nextjs.vercel.app'
           : process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000',
         previewSecret: process.env.SANITY_STUDIO_PREVIEW_SECRET,
-        enabledTypes: ['blogPost', 'page', 'homepage', 'aboutPage', 'album', 'course', 'instructor', 'schoolPage', 'instructorPage'],
+        enabledTypes: ['blogPost', 'page', 'homepage', 'aboutPage', 'album', 'course', 'instructor', 'schoolPage', 'instructorPage', 'chatModal', 'siteSettings'],
         previewMode: 'tab'
       }),
       assist({
