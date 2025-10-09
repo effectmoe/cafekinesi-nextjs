@@ -63,7 +63,7 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
       <div className="max-w-5xl mx-auto">
         {/* タイトルまたはサブタイトルがある場合のみテキストセクションを表示 */}
         {hasAnyText && (
-          <div className="text-center py-16 mb-8">
+          <div className="text-center py-12 mb-12">
             {hasTitle && (
               <h2 className="text-3xl md:text-4xl font-medium text-text-primary mb-3 tracking-tight">
                 {title}
@@ -76,7 +76,7 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-12">
           {displayFaqs.map((faq) => {
             // Lucideアイコンを動的に取得
             const IconComponent = (LucideIcons as any)[faq.icon] || LucideIcons.HelpCircle;
