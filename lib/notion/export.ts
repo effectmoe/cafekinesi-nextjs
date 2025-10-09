@@ -20,6 +20,17 @@ export interface ExportResult {
   errorDetails: string[];
 }
 
+export interface ConversationLog {
+  sessionId: string;
+  email: string;
+  messages: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp?: string;
+  }>;
+  clientIp: string | null;
+}
+
 /**
  * Vercel KVからログを取得してNotionにエクスポート
  */
@@ -234,5 +245,122 @@ export async function updateLogsWithEmail(
   } catch (error) {
     console.error('Failed to update logs with email:', error);
     return 0;
+  }
+}
+
+/**
+ * 会話全体を1レコードとしてNotionにエクスポート（メール送信時）
+ */
+export async function exportConversationToNotion(
+  conversation: ConversationLog
+): Promise<{ success: boolean; error?: string }> {
+  const notionToken = process.env.NOTION_API_TOKEN;
+  const databaseId = process.env.NOTION_DATABASE_ID;
+
+  if (!notionToken || !databaseId) {
+    throw new Error('NOTION_API_TOKEN or NOTION_DATABASE_ID is not set');
+  }
+
+  try {
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const dateTime = now.toISOString();
+
+    // 会話全体を結合（クエリと返答）
+    let combinedQuery = '';
+    let combinedResponse = '';
+
+    conversation.messages.forEach((msg, index) => {
+      if (msg.role === 'user') {
+        combinedQuery += `【質問${Math.floor(index / 2) + 1}】\n${msg.content}\n\n`;
+      } else {
+        combinedResponse += `【回答${Math.floor(index / 2) + 1}】\n${msg.content}\n\n`;
+      }
+    });
+
+    // セッションIDベースの重複チェック
+    const queryResponse = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${notionToken}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        filter: {
+          and: [
+            { property: 'メール', email: { equals: conversation.email } },
+            { property: '対象日付', date: { equals: date } }
+          ]
+        }
+      })
+    });
+
+    const queryData = await queryResponse.json();
+
+    // 既存レコードがある場合は更新
+    if (queryData.results && queryData.results.length > 0) {
+      const existingPage = queryData.results[0];
+
+      await fetch(`https://api.notion.com/v1/pages/${existingPage.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${notionToken}`,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          properties: {
+            '時刻': { date: { start: dateTime } },
+            'クエリ': { title: [{ text: { content: combinedQuery.substring(0, 100) } }] },
+            '返答': { rich_text: [{ text: { content: combinedResponse.substring(0, 2000) } }] },
+            'IPアドレス': { rich_text: conversation.clientIp ? [{ text: { content: conversation.clientIp } }] : [] },
+            'ステータス': { select: { name: '完了' } }
+          }
+        })
+      });
+
+      console.log(`Updated existing conversation in Notion for session: ${conversation.sessionId}`);
+      return { success: true };
+    }
+
+    // 新規作成
+    const createResponse = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${notionToken}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        parent: { database_id: databaseId },
+        properties: {
+          '対象日付': { date: { start: date } },
+          '時刻': { date: { start: dateTime } },
+          'クエリ': { title: [{ text: { content: combinedQuery.substring(0, 100) } }] },
+          '返答': { rich_text: [{ text: { content: combinedResponse.substring(0, 2000) } }] },
+          '処理時間': { number: 0 },
+          'IPアドレス': { rich_text: conversation.clientIp ? [{ text: { content: conversation.clientIp } }] : [] },
+          '場所': { rich_text: [] },
+          'メール': { email: conversation.email },
+          'ステータス': { select: { name: '完了' } }
+        }
+      })
+    });
+
+    if (!createResponse.ok) {
+      const errorData = await createResponse.json();
+      throw new Error(`Notion API error: ${JSON.stringify(errorData)}`);
+    }
+
+    console.log(`Exported conversation to Notion for session: ${conversation.sessionId}`);
+    return { success: true };
+
+  } catch (error) {
+    console.error('Failed to export conversation to Notion:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
   }
 }

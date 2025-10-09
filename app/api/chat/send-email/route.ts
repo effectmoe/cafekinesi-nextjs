@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { kv } from '@/lib/kv';
 import { SessionManager, Message } from '@/lib/chat/session-manager';
 import { generateEmailHTML, generatePlainText } from '@/lib/email/template';
-import { updateLogsWithEmail, exportLogsToNotion } from '@/lib/notion/export';
+import { updateLogsWithEmail, exportConversationToNotion } from '@/lib/notion/export';
 
 // Node.js runtimeを使用（nodemailerはEdge Runtimeでは動作しない）
 export const runtime = 'nodejs';
@@ -102,18 +102,26 @@ export async function POST(request: NextRequest) {
     await kv.incr(rateLimitKey);
     await kv.expire(rateLimitKey, 3600); // 1時間
 
-    // 🆕 メール送信成功後、即座にNotionにエクスポート
+    // 🆕 メール送信成功後、会話全体を即座にNotionにエクスポート
     try {
-      const today = new Date().toISOString().split('T')[0];
-      console.log(`📤 Exporting today's logs (${today}) to Notion...`);
+      console.log(`📤 Exporting conversation to Notion for session: ${sessionId}`);
 
-      const exportResult = await exportLogsToNotion(today);
-
-      console.log('✅ Notion export completed:', {
-        success: exportResult.success,
-        skipped: exportResult.skipped,
-        errors: exportResult.errors
+      const exportResult = await exportConversationToNotion({
+        sessionId,
+        email,
+        messages: messages.map((msg: Message) => ({
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp
+        })),
+        clientIp
       });
+
+      if (exportResult.success) {
+        console.log('✅ Conversation exported to Notion successfully');
+      } else {
+        console.error('⚠️ Notion export failed:', exportResult.error);
+      }
     } catch (notionError) {
       // Notionエクスポートエラーはメール送信結果に影響させない
       console.error('⚠️ Notion export failed (non-critical):', notionError);
