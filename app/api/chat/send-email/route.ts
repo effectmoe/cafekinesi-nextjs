@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { kv } from '@/lib/kv';
 import { SessionManager, Message } from '@/lib/chat/session-manager';
 import { generateEmailHTML, generatePlainText } from '@/lib/email/template';
@@ -14,6 +13,9 @@ export const runtime = 'nodejs';
  */
 export async function POST(request: NextRequest) {
   try {
+    // nodemailerを動的にインポート（CommonJS/ESMの互換性問題を回避）
+    const nodemailer = (await import('nodemailer')).default;
+
     const { email, sessionId, messages } = await request.json();
 
     // バリデーション
