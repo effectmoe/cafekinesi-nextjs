@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client';
-import { kv } from '@vercel/kv';
+import { kv } from '@/lib/kv';
 
 export interface ChatLog {
   id: string;
