@@ -76,7 +76,7 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
           {displayFaqs.map((faq) => {
             // Lucideアイコンを動的に取得
             const IconComponent = (LucideIcons as any)[faq.icon] || LucideIcons.HelpCircle;
