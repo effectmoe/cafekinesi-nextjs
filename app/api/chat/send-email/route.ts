@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { kv } from '@/lib/kv';
 import { SessionManager, Message } from '@/lib/chat/session-manager';
 import { generateEmailHTML, generatePlainText } from '@/lib/email/template';
-import { updateLogsWithEmail } from '@/lib/notion/export';
+import { updateLogsWithEmail, exportLogsToNotion } from '@/lib/notion/export';
 
 // Node.js runtimeを使用（nodemailerはEdge Runtimeでは動作しない）
 export const runtime = 'nodejs';
@@ -101,6 +101,23 @@ export async function POST(request: NextRequest) {
     // レート制限カウンターを更新
     await kv.incr(rateLimitKey);
     await kv.expire(rateLimitKey, 3600); // 1時間
+
+    // 🆕 メール送信成功後、即座にNotionにエクスポート
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      console.log(`📤 Exporting today's logs (${today}) to Notion...`);
+
+      const exportResult = await exportLogsToNotion(today);
+
+      console.log('✅ Notion export completed:', {
+        success: exportResult.success,
+        skipped: exportResult.skipped,
+        errors: exportResult.errors
+      });
+    } catch (notionError) {
+      // Notionエクスポートエラーはメール送信結果に影響させない
+      console.error('⚠️ Notion export failed (non-critical):', notionError);
+    }
 
     return NextResponse.json({
       success: true,
