@@ -1,11 +1,13 @@
 'use client';
 
-import { Sparkles, Send, Image as ImageIcon, Maximize2, X } from "lucide-react";
+import { Sparkles, Send, Image as ImageIcon, Maximize2, X, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useChat } from '@/hooks/useChat';
 import { ChatModalSettings } from '@/types/chat.types';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { detectVoiceCommand, VoiceCommandType, getCommandAction } from '@/lib/voice/commands';
 
 interface InlineChatModalProps {
   settings?: ChatModalSettings
@@ -21,6 +23,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
+  const [commandFeedback, setCommandFeedback] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -35,12 +38,94 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     clearError
   } = useChat();
 
+  // コマンド実行ハンドラー
+  const handleVoiceCommand = useCallback((command: VoiceCommandType) => {
+    console.log('[InlineChatModal] Voice command detected:', command);
+    const action = getCommandAction(command);
+
+    switch (command) {
+      case 'send':
+        if (inputValue.trim()) {
+          setCommandFeedback(action);
+          setTimeout(() => {
+            handleSendMessage();
+            setCommandFeedback(null);
+          }, 500);
+        }
+        break;
+
+      case 'clear':
+        setInputValue('');
+        setCommandFeedback(action);
+        setTimeout(() => setCommandFeedback(null), 1500);
+        break;
+
+      case 'cancel':
+        stopRecording();
+        setCommandFeedback(action);
+        setTimeout(() => setCommandFeedback(null), 1500);
+        break;
+
+      case 'help':
+        setCommandFeedback('利用可能なコマンド: 「送信」「クリア」「キャンセル」');
+        setTimeout(() => setCommandFeedback(null), 3000);
+        break;
+    }
+  }, [inputValue]);
+
+  // 音声入力フック
+  const {
+    isRecording,
+    isSupported,
+    interimTranscript,
+    error: voiceError,
+    startRecording,
+    stopRecording,
+    clearError: clearVoiceError,
+  } = useVoiceInput({
+    onResult: (text) => {
+      const command = detectVoiceCommand(text);
+      if (command) {
+        handleVoiceCommand(command);
+      } else {
+        setInputValue((prev) => {
+          const newText = prev ? `${prev} ${text}` : text;
+          return newText.slice(0, 500);
+        });
+      }
+    },
+    onError: (error) => {
+      console.error('Voice input error:', error);
+    },
+    autoCorrect: true,
+    autoPunctuation: true,
+  });
+
   // セッション初期化
   useEffect(() => {
     if (!sessionId) {
       startSession();
     }
   }, [sessionId, startSession]);
+
+  // キーボードショートカット（Ctrl+M）
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+        e.preventDefault();
+        if (isSupported && !isLoading) {
+          if (isRecording) {
+            stopRecording();
+          } else {
+            startRecording();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRecording, isSupported, isLoading, startRecording, stopRecording]);
 
   // 自動スクロール（コンテナ内だけスクロール、ページ全体はスクロールしない）
   useEffect(() => {
@@ -208,6 +293,38 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
 
       {/* Input Area */}
       <div className="p-4 bg-white border-t border-border/30">
+        {/* コマンドフィードバック表示 */}
+        {commandFeedback && (
+          <div className="mb-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700 font-medium animate-pulse">
+            ✓ {commandFeedback}
+          </div>
+        )}
+
+        {/* 音声エラー表示 */}
+        {voiceError && (
+          <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
+            {voiceError === 'not-allowed' && 'マイクの使用が許可されていません'}
+            {voiceError === 'no-speech' && '音声が検出されませんでした'}
+            {voiceError === 'network' && 'ネットワークエラーが発生しました'}
+            {voiceError === 'not-supported' && 'お使いのブラウザは音声入力に対応していません'}
+            {!['not-allowed', 'no-speech', 'network', 'not-supported'].includes(voiceError) && '音声入力でエラーが発生しました'}
+            <button
+              type="button"
+              onClick={clearVoiceError}
+              className="ml-2 underline hover:no-underline"
+            >
+              閉じる
+            </button>
+          </div>
+        )}
+
+        {/* 音声認識中の途中結果表示 */}
+        {isRecording && interimTranscript && (
+          <div className="mb-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700 italic">
+            認識中: {interimTranscript}...
+          </div>
+        )}
+
         {selectedImage && (
           <div className="mb-3 relative inline-block">
             <img
@@ -243,15 +360,55 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           >
             <ImageIcon className="h-5 w-5" />
           </Button>
-          <input
-            type="text"
-            placeholder={inputPlaceholder}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading || !sessionId}
-            className="flex-1 px-4 py-3 bg-[hsl(35,25%,97%)] border border-border/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(35,30%,75%)] text-sm text-text-primary placeholder:text-text-muted disabled:opacity-50"
-          />
+
+          {/* 音声入力ボタン */}
+          {isSupported && (
+            <div className="relative group">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-12 w-12 rounded-xl transition-all duration-200 ${
+                  isRecording
+                    ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
+                }`}
+                title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={isLoading}
+              >
+                {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+              </Button>
+              {/* ツールチップ */}
+              {!isRecording && (
+                <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ctrl+M / Cmd+M
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder={inputPlaceholder}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading || !sessionId}
+              className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(35,30%,75%)] text-sm text-text-primary placeholder:text-text-muted disabled:opacity-50 transition-all ${
+                isRecording ? 'bg-red-50 border-red-300' : 'bg-[hsl(35,25%,97%)] border-border/50'
+              }`}
+            />
+            {/* 録音中インジケーター */}
+            {isRecording && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-75"></span>
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-150"></span>
+              </div>
+            )}
+          </div>
+
           <Button
             size="icon"
             className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[hsl(260,30%,75%)] to-[hsl(260,30%,65%)] hover:from-[hsl(260,30%,70%)] hover:to-[hsl(260,30%,60%)] shadow-md hover:shadow-lg transition-all duration-300"
@@ -261,10 +418,17 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             <Send className="h-5 w-5 text-white" />
           </Button>
         </div>
-        <p className="text-xs text-center text-text-muted mt-3 flex items-center justify-center gap-2">
-          <span className={`inline-block w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-          {footerMessage}
-        </p>
+        <div className="mt-3 space-y-1">
+          <p className="text-xs text-center text-text-muted flex items-center justify-center gap-2">
+            <span className={`inline-block w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+            {footerMessage}
+          </p>
+          {isSupported && !isRecording && !inputValue && (
+            <p className="text-xs text-center text-gray-400 italic">
+              💡 音声コマンド: 「送信」「クリア」「キャンセル」「ヘルプ」
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
