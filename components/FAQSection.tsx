@@ -59,7 +59,7 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
   const hasAnyText = hasTitle || hasSubtitle;
 
   return (
-    <section className="w-full pt-0 pb-12 px-6 bg-[hsl(35,25%,95%)]">
+    <section className="w-full pt-12 pb-12 px-6 bg-[hsl(35,25%,95%)]">
       <div className="max-w-5xl mx-auto">
         {/* タイトルまたはサブタイトルがある場合のみテキストセクションを表示 */}
         {hasAnyText && (
