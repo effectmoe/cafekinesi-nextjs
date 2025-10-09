@@ -14,7 +14,8 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   try {
     // nodemailerを動的にインポート（CommonJS/ESMの互換性問題を回避）
-    const nodemailer = (await import('nodemailer')).default;
+    const nodemailerModule = await import('nodemailer');
+    const nodemailer = nodemailerModule.default || nodemailerModule;
 
     const { email, sessionId, messages } = await request.json();
 
