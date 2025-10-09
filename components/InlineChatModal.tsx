@@ -309,11 +309,21 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
                 <p className="text-xs mb-2">
                   ブラウザのアドレスバー左側の🔒または🛈アイコンをタップ →「サイトの設定」→「マイク」を「許可」に変更してください
                 </p>
+                <p className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
+                  ⚠️ マイクはブラウザ（Chrome/Safari推奨）でご利用いただけます。LINEなどのSNSアプリ内ブラウザではご利用いただけません。
+                </p>
               </div>
             )}
             {voiceError === 'no-speech' && '音声が検出されませんでした'}
             {voiceError === 'network' && 'ネットワークエラーが発生しました'}
-            {voiceError === 'not-supported' && 'お使いのブラウザは音声入力に対応していません'}
+            {voiceError === 'not-supported' && (
+              <div>
+                <p className="font-semibold mb-1">お使いのブラウザは音声入力に対応していません</p>
+                <p className="text-xs">
+                  Chrome、Edge、Safariなどの最新ブラウザをご利用ください。LINEなどのSNSアプリ内ブラウザではご利用いただけません。
+                </p>
+              </div>
+            )}
             {!['not-allowed', 'no-speech', 'network', 'not-supported'].includes(voiceError) && '音声入力でエラーが発生しました'}
             <button
               type="button"
@@ -480,9 +490,14 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             {footerMessage}
           </p>
           {isSupported && !isRecording && !inputValue && (
-            <p className="text-xs text-center text-gray-400 italic">
-              💡 音声コマンド: 「送信」「クリア」「キャンセル」「ヘルプ」
-            </p>
+            <div className="text-xs text-center text-gray-400 space-y-1">
+              <p className="italic">
+                💡 音声コマンド: 「送信」「クリア」「キャンセル」「ヘルプ」
+              </p>
+              <p className="text-[10px]">
+                ※ Chrome/Safari推奨。LINEなどのSNSアプリ内ブラウザ非対応
+              </p>
+            </div>
           )}
         </div>
       </div>
