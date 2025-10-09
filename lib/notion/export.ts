@@ -1,4 +1,3 @@
-import { Client } from '@notionhq/client';
 import { kv } from '@/lib/kv';
 
 export interface ChatLog {
@@ -25,6 +24,8 @@ export interface ExportResult {
  * Vercel KVからログを取得してNotionにエクスポート
  */
 export async function exportLogsToNotion(date: string): Promise<ExportResult> {
+  // Notion Clientを動的にインポート（CommonJS/ESM互換性）
+  const { Client } = await import('@notionhq/client');
   const notion = new Client({
     auth: process.env.NOTION_API_TOKEN
   });
