@@ -49,7 +49,7 @@ export const structure = (S: StructureBuilder) =>
         .child(
           S.document()
             .schemaType('chatModal')
-            .documentId('chatModal')
+            .documentId('chatModal-main')
         ),
 
       S.divider(),
