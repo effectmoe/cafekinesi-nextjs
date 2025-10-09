@@ -8,6 +8,7 @@ import { useChat } from '@/hooks/useChat';
 import { ChatModalSettings } from '@/types/chat.types';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { detectVoiceCommand, VoiceCommandType, getCommandAction } from '@/lib/voice/commands';
+import { isWebView, getWebViewWarning } from '@/lib/voice/webview-detector';
 
 interface InlineChatModalProps {
   settings?: ChatModalSettings
@@ -309,9 +310,11 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
                 <p className="text-xs mb-2">
                   ブラウザのアドレスバー左側の🔒または🛈アイコンをタップ →「サイトの設定」→「マイク」を「許可」に変更してください
                 </p>
-                <p className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
-                  ⚠️ マイクはブラウザ（Chrome/Safari推奨）でご利用いただけます。LINEなどのSNSアプリ内ブラウザではご利用いただけません。
-                </p>
+                {isWebView() && (
+                  <p className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
+                    ⚠️ {getWebViewWarning()}
+                  </p>
+                )}
               </div>
             )}
             {voiceError === 'no-speech' && '音声が検出されませんでした'}
@@ -320,7 +323,8 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
               <div>
                 <p className="font-semibold mb-1">お使いのブラウザは音声入力に対応していません</p>
                 <p className="text-xs">
-                  Chrome、Edge、Safariなどの最新ブラウザをご利用ください。LINEなどのSNSアプリ内ブラウザではご利用いただけません。
+                  Chrome、Edge、Safariなどの最新ブラウザをご利用ください。
+                  {isWebView() && 'LINEなどのSNSアプリ内ブラウザではご利用いただけません。'}
                 </p>
               </div>
             )}
@@ -492,11 +496,13 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
           {isSupported && !isRecording && !inputValue && (
             <div className="text-xs text-center text-gray-400 space-y-1">
               <p className="italic">
-                💡 音声コマンド: 「送信」「クリア」「キャンセル」「ヘルプ」
+                💡 音声で操作できます：「送信」でメッセージ送信、「クリア」で入力削除
               </p>
-              <p className="text-[10px]">
-                ※ Chrome/Safari推奨。LINEなどのSNSアプリ内ブラウザ非対応
-              </p>
+              {isWebView() && (
+                <p className="text-[10px] text-red-500">
+                  ※ ブラウザで開いてください（Chrome/Safari推奨）
+                </p>
+              )}
             </div>
           )}
         </div>
