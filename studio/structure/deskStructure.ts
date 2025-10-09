@@ -42,6 +42,16 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
+      // チャットモーダル設定（シングルトン）
+      S.listItem()
+        .title('チャットモーダル設定')
+        .id('chatModal')
+        .child(
+          S.document()
+            .schemaType('chatModal')
+            .documentId('chatModal')
+        ),
+
       S.divider(),
 
       // ページ
@@ -73,6 +83,7 @@ export const structure = (S: StructureBuilder) =>
           'siteSettings',
           'homepage',
           'aboutPage',
+          'chatModal',
           'page',
           'blogPost',
           // オブジェクト・コンポーネントスキーマは非表示
