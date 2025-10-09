@@ -12,7 +12,12 @@ export interface UseChatReturn {
   clearMessages: () => void;
 }
 
-export function useChat(): UseChatReturn {
+export interface UseChatOptions {
+  welcomeMessage?: string;
+}
+
+export function useChat(options?: UseChatOptions): UseChatReturn {
+  const welcomeMsg = options?.welcomeMessage || 'こんにちは！Cafe Kinesiへようこそ☕ カフェについて何でもお尋ねください。';
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +44,7 @@ export function useChat(): UseChatReturn {
       // 初期メッセージ
       setMessages([{
         role: 'assistant',
-        content: 'こんにちは！Cafe Kinesiへようこそ☕ カフェについて何でもお尋ねください。',
+        content: welcomeMsg,
         timestamp: new Date()
       }]);
     } catch (err) {

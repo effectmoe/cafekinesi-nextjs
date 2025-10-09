@@ -35,7 +35,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     startSession,
     sendMessage,
     clearError
-  } = useChat();
+  } = useChat({ welcomeMessage });
 
   // 音声入力フック
   const {
