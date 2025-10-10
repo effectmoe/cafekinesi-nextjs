@@ -427,8 +427,9 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
           </div>
         )}
 
+        {/* 画像プレビュー（非表示） */}
         {selectedImage && (
-          <div className="mb-3 relative inline-block">
+          <div className="mb-3 relative inline-block hidden">
             <img
               src={selectedImage}
               alt="Selected"
@@ -454,10 +455,11 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               onChange={handleImageUpload}
               className="hidden"
             />
+            {/* ファイル選択ボタン（非表示） */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
+              className="h-10 w-10 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl hidden"
               title="画像を添付"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
@@ -492,18 +494,19 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
 
           {/* 下段：入力フィールドと送信ボタン */}
           <div className="flex items-center gap-2">
-            {/* デスクトップ用ボタン */}
+            {/* デスクトップ用インプット */}
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="hidden md:block"
+              className="hidden"
             />
+            {/* ファイル選択ボタン（デスクトップ・非表示） */}
             <Button
               variant="ghost"
               size="icon"
-              className="hidden md:flex h-12 w-12 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
+              className="hidden h-12 w-12 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
               title="画像を添付"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
