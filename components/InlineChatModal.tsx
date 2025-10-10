@@ -463,9 +463,9 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
           style={{ display: 'none' }}
         />
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {/* 上段：ツールボタン（モバイル） */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1 md:hidden">
             {/* 音声入力ボタン（モバイル） */}
             {isSupported && (
               <div className="relative group">
