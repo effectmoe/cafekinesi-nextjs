@@ -62,7 +62,17 @@ export function AlwaysOpenChatSection() {
 
   // 質問カードクリック時のハンドラー（スムーズスクロール + 自動送信）
   const handleQuestionClick = async (question: string) => {
+    console.log('🔵 質問カードクリック:', question);
+    console.log('🔵 セッションID:', sessionId);
+    console.log('🔵 ローディング状態:', isLoading);
+
+    if (!sessionId) {
+      console.error('❌ セッションIDが取得できていません');
+      return;
+    }
+
     // 1. チャットエリアまでスムーズスクロール
+    console.log('🔵 スクロール開始');
     chatSectionRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
@@ -72,7 +82,13 @@ export function AlwaysOpenChatSection() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // 3. 質問を自動送信
-    await sendMessage(question);
+    console.log('🔵 質問送信開始:', question);
+    try {
+      await sendMessage(question);
+      console.log('✅ 質問送信成功');
+    } catch (error) {
+      console.error('❌ 質問送信失敗:', error);
+    }
   };
 
   return (

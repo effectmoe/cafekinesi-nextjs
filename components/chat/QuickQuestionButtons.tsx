@@ -35,8 +35,16 @@ export function QuickQuestionButtons({ onQuestionClick, isLoading }: QuickQuesti
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
 
   const handleClick = async (question: string, index: number) => {
+    console.log('🟢 QuickQuestionButton クリック:', { question, index });
     setClickedIndex(index);
-    await onQuestionClick(question);
+
+    try {
+      await onQuestionClick(question);
+      console.log('🟢 onQuestionClick 完了');
+    } catch (error) {
+      console.error('🔴 onQuestionClick エラー:', error);
+    }
+
     // アニメーション完了後にリセット
     setTimeout(() => setClickedIndex(null), 1000);
   };

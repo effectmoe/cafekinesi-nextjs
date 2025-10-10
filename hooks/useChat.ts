@@ -61,7 +61,12 @@ export function useChat(options?: UseChatOptions): UseChatReturn {
 
   // メッセージ送信
   const sendMessage = useCallback(async (content: string) => {
-    if (!sessionId || !content.trim() || isLoading) return;
+    console.log('📤 sendMessage 呼び出し:', { content, sessionId, isLoading });
+
+    if (!sessionId || !content.trim() || isLoading) {
+      console.warn('⚠️ sendMessage 中止:', { sessionId, contentTrimmed: content.trim(), isLoading });
+      return;
+    }
 
     // 前のリクエストをキャンセル
     if (abortControllerRef.current) {
