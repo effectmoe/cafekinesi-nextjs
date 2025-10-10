@@ -27,6 +27,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailSuccess, setEmailSuccess] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [shouldAnimateMailIcon, setShouldAnimateMailIcon] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -191,6 +192,14 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     }
   }, [emailError]);
 
+  // メールアイコンのアニメーション制御（初回表示時のみ）
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldAnimateMailIcon(false);
+    }, 2000); // 2秒後にアニメーション停止
+    return () => clearTimeout(timer);
+  }, []);
+
   const chatContent = (isFullscreenView: boolean) => (
     <div className={`relative bg-white border-2 border-[hsl(35,30%,85%)] rounded-3xl shadow-xl overflow-hidden ${isFullscreenView ? 'h-full flex flex-col' : ''}`}>
       {/* Header */}
@@ -231,7 +240,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50"
+              className={`h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce' : ''}`}
               title="会話を保存"
               onClick={() => setShowEmailModal(true)}
               disabled={!sessionId}
