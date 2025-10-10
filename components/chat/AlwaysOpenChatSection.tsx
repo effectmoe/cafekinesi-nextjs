@@ -18,6 +18,7 @@ function cn(...classes: (string | boolean | undefined)[]) {
 
 export function AlwaysOpenChatSection() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatSectionRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Sanity設定フック
@@ -59,6 +60,21 @@ export function AlwaysOpenChatSection() {
     }
   }, [error, clearError]);
 
+  // 質問カードクリック時のハンドラー（スムーズスクロール + 自動送信）
+  const handleQuestionClick = async (question: string) => {
+    // 1. チャットエリアまでスムーズスクロール
+    chatSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+    // 2. スクロールアニメーション完了を待つ（500ms）
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // 3. 質問を自動送信
+    await sendMessage(question);
+  };
+
   return (
     <div className="container mx-auto px-4 max-w-5xl relative z-10">
       {/* アイキャッチヘッダー */}
@@ -88,12 +104,14 @@ export function AlwaysOpenChatSection() {
 
       {/* よくある質問ボタン */}
       <QuickQuestionButtons
-        onQuestionClick={sendMessage}
+        onQuestionClick={handleQuestionClick}
         isLoading={isLoading}
       />
 
       {/* メインチャットインターフェース（常時オープン） */}
-      <div className={cn(
+      <div
+        ref={chatSectionRef}
+        className={cn(
         "bg-white rounded-3xl shadow-2xl",
         "border-3 border-amber-200",
         "overflow-hidden",

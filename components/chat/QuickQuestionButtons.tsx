@@ -1,6 +1,7 @@
 'use client';
 
 import { Coffee, Clock, MapPin, Calendar } from 'lucide-react';
+import { useState } from 'react';
 
 interface QuickQuestionButtonsProps {
   onQuestionClick: (question: string) => Promise<void>;
@@ -31,16 +32,27 @@ const quickQuestions = [
 ];
 
 export function QuickQuestionButtons({ onQuestionClick, isLoading }: QuickQuestionButtonsProps) {
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null);
+
+  const handleClick = async (question: string, index: number) => {
+    setClickedIndex(index);
+    await onQuestionClick(question);
+    // アニメーション完了後にリセット
+    setTimeout(() => setClickedIndex(null), 1000);
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-      {quickQuestions.map((item) => (
+      {quickQuestions.map((item, index) => (
         <button
           key={item.text}
-          onClick={() => onQuestionClick(item.question)}
+          onClick={() => handleClick(item.question, index)}
           disabled={isLoading}
-          className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
-          <div className="p-2 bg-amber-100 rounded-lg group-hover:bg-amber-200 transition-colors">
+          <div className={`p-2 bg-amber-100 rounded-lg group-hover:bg-amber-200 transition-all duration-300 ${
+            clickedIndex === index ? 'bg-amber-300 scale-110 animate-pulse' : ''
+          }`}>
             <item.icon className="w-6 h-6 text-amber-600" />
           </div>
           <span className="text-sm font-medium text-gray-700">{item.text}</span>
