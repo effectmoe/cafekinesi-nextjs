@@ -227,7 +227,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
   const chatContent = (isFullscreenView: boolean) => (
     <div className={`relative bg-white border-2 border-[hsl(35,30%,85%)] rounded-3xl shadow-xl overflow-hidden ${isFullscreenView ? 'h-full flex flex-col' : ''}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b border-border/30">
+      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-3 md:px-6 py-2.5 md:py-4 flex items-center justify-between border-b border-border/30">
         <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
@@ -241,12 +241,12 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+        <div className="flex items-center gap-0.5 md:gap-1 flex-shrink-0">
           {/* 新しい会話ボタン（常に表示） */}
           <Button
             variant="ghost"
             size="icon"
-            className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
+            className={`h-7 w-7 md:h-8 md:w-8 p-0 transition-all duration-200 ${
               messages.length > 1
                 ? 'text-text-primary hover:text-text-primary hover:bg-green-50'
                 : 'text-gray-400 hover:text-gray-400 cursor-not-allowed opacity-60'
@@ -265,7 +265,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
           <Button
             variant="ghost"
             size="icon"
-            className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
+            className={`h-7 w-7 md:h-8 md:w-8 p-0 transition-all duration-200 ${
               messages.length > 1
                 ? 'text-text-primary hover:text-text-primary hover:bg-blue-50'
                 : 'text-gray-400 hover:text-gray-400 cursor-not-allowed opacity-60'
@@ -281,7 +281,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary"
+              className="h-7 w-7 md:h-8 md:w-8 p-0 text-text-secondary hover:text-text-primary"
               title="全画面表示"
               onClick={() => setIsFullscreen(true)}
             >
@@ -291,7 +291,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-red-50"
+              className="h-7 w-7 md:h-8 md:w-8 p-0 text-text-secondary hover:text-text-primary hover:bg-red-50"
               title="全画面を閉じる"
               onClick={() => setIsFullscreen(false)}
             >
@@ -299,7 +299,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             </Button>
           )}
           {/* オンライン表示（常に表示） */}
-          <div className="flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
+          <div className="flex items-center gap-1 md:gap-1.5 ml-0">
             <div className={`w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></div>
             <span className="text-xs text-text-secondary whitespace-nowrap hidden sm:inline">
               {sessionId ? 'オンライン' : '接続中...'}
@@ -309,12 +309,12 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
       </div>
 
       {/* ログ保存案内（常に表示） */}
-      <div className="px-4 md:px-6 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-        <div className="flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+      <div className="px-3 md:px-6 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+        <div className="flex items-start gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-gray-700">ログ保存も可能です！</p>
-            <p className="text-xs text-gray-600 mt-0.5">
+            <p className="text-xs font-medium text-gray-700 leading-tight">ログ保存も可能です！</p>
+            <p className="text-xs text-gray-600 mt-0.5 leading-tight">
               メールアドレスご登録でチャットログを自動送信致します
             </p>
           </div>
