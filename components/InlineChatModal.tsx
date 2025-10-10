@@ -484,9 +484,9 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               </Button>
             )}
 
-            {isRecording && (
-              <span className="text-xs text-gray-500 flex-1">録音中...</span>
-            )}
+            <span className="text-xs text-gray-500 flex-1">
+              {isRecording ? '録音中...' : isSupported ? '音声入力可能' : ''}
+            </span>
           </div>
 
           {/* 下段：入力フィールドと送信ボタン */}
