@@ -267,19 +267,23 @@ export async function exportConversationToNotion(
     const dateTime = now.toISOString();
 
     // 📝 会話全体を結合（クエリと返答）
-    // フロントエンドから送られたメッセージをそのまま使用
-    // （チャットモーダルに表示されている内容のみ）
+    // ウェルカムメッセージ（最初のassistantメッセージ）を除外し、
+    // 実際の質問と回答のペアのみを保存
     let combinedQuery = '';
     let combinedResponse = '';
 
     let questionCount = 0;
     let answerCount = 0;
+    let hasUserMessage = false; // ユーザーメッセージが1つでもあるかフラグ
 
     conversation.messages.forEach((msg) => {
       if (msg.role === 'user') {
+        hasUserMessage = true;
         questionCount++;
         combinedQuery += `【質問${questionCount}】\n${msg.content}\n\n`;
-      } else if (msg.role === 'assistant') {
+      } else if (msg.role === 'assistant' && hasUserMessage) {
+        // ユーザーメッセージの後のassistantメッセージのみカウント
+        // （ウェルカムメッセージは除外）
         answerCount++;
         combinedResponse += `【回答${answerCount}】\n${msg.content}\n\n`;
       }
