@@ -53,7 +53,7 @@ export class DeepSeekProvider implements AIProvider {
             { role: 'user', content: message }
           ],
           temperature: 0.7,
-          max_tokens: 500
+          max_tokens: 2000  // 500 → 2000に増加（日本語の場合、より長い応答が可能）
         })
       });
 
