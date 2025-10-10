@@ -463,32 +463,30 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
           style={{ display: 'none' }}
         />
 
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {/* 上段：ツールボタン（モバイル） */}
           <div className="flex items-center gap-1 md:hidden">
             {/* 音声入力ボタン（モバイル） */}
             {isSupported && (
-              <div className="relative group">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-10 w-10 rounded-xl transition-all duration-200 ${
-                    isRecording
-                      ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
-                  }`}
-                  title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
-                  onClick={isRecording ? stopRecording : startRecording}
-                  disabled={isLoading}
-                >
-                  {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 rounded-xl transition-all duration-200 ${
+                  isRecording
+                    ? 'bg-red-500 hover:bg-red-600 text-white ring-4 ring-red-200'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)]'
+                }`}
+                title={isRecording ? '音声入力を停止 (Ctrl+M)' : '音声入力を開始 (Ctrl+M)'}
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={isLoading}
+              >
+                {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
             )}
 
-            <span className="text-xs text-gray-500 flex-1">
-              {isRecording ? '録音中...' : isSupported ? '音声入力可能' : ''}
-            </span>
+            {isRecording && (
+              <span className="text-xs text-gray-500 flex-1">録音中...</span>
+            )}
           </div>
 
           {/* 下段：入力フィールドと送信ボタン */}
