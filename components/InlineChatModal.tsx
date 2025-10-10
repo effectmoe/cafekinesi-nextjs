@@ -197,7 +197,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
     if (messages.length === 2 && shouldAnimateMailIcon) {
       const timer = setTimeout(() => {
         setShouldAnimateMailIcon(false);
-      }, 2500); // 2.5秒後にアニメーション停止（2回のバウンス完了後）
+      }, 1600); // 1.6秒後にアニメーション停止（減衰バウンス完了後）
       return () => clearTimeout(timer);
     }
   }, [messages.length, shouldAnimateMailIcon]);
@@ -242,7 +242,7 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce-twice' : ''}`}
+              className={`h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce-notice' : ''}`}
               title="会話を保存"
               onClick={() => setShowEmailModal(true)}
               disabled={!sessionId}
