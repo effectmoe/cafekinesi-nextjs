@@ -242,36 +242,40 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
           </div>
         </div>
         <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-          {/* 新しい会話ボタン */}
-          {messages.length > 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-green-50"
-              title="新しい会話を開始"
-              onClick={() => {
-                if (window.confirm('現在の会話を終了して新しい会話を開始しますか？')) {
-                  startSession();
-                }
-              }}
-              disabled={isLoading}
-            >
-              <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4" />
-            </Button>
-          )}
-          {/* メール送信ボタン */}
-          {messages.length > 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce-notice' : ''}`}
-              title="会話を保存"
-              onClick={() => setShowEmailModal(true)}
-              disabled={!sessionId}
-            >
-              <Mail className="h-3.5 w-3.5 md:h-4 md:w-4" />
-            </Button>
-          )}
+          {/* 新しい会話ボタン（常に表示） */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
+              messages.length > 1
+                ? 'text-text-primary hover:text-text-primary hover:bg-green-50'
+                : 'text-gray-300 cursor-not-allowed'
+            }`}
+            title={messages.length > 1 ? '新しい会話を開始' : 'チャット開始後に利用可能'}
+            onClick={() => {
+              if (messages.length > 1 && window.confirm('現在の会話を終了して新しい会話を開始しますか？')) {
+                startSession();
+              }
+            }}
+            disabled={messages.length <= 1 || isLoading}
+          >
+            <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4" />
+          </Button>
+          {/* メール送信ボタン（常に表示、チャット未開始時はグレーアウト） */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
+              messages.length > 1
+                ? 'text-text-primary hover:text-text-primary hover:bg-blue-50'
+                : 'text-gray-300 cursor-not-allowed'
+            } ${shouldAnimateMailIcon && messages.length > 1 ? 'animate-bounce-notice' : ''}`}
+            title={messages.length > 1 ? '会話を保存' : 'チャット開始後に利用可能'}
+            onClick={() => setShowEmailModal(true)}
+            disabled={messages.length <= 1 || !sessionId}
+          >
+            <Mail className="h-3.5 w-3.5 md:h-4 md:w-4" />
+          </Button>
           {/* 拡大ボタン（通常時）と閉じるボタン（フルスクリーン時）の切り替え */}
           {!isFullscreenView ? (
             <Button
@@ -294,12 +298,25 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               <X className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           )}
-          {/* オンライン表示（デスクトップのみ） */}
-          <div className="hidden md:flex items-center gap-2 ml-1">
+          {/* オンライン表示（常に表示） */}
+          <div className="flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
             <div className={`w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-            <span className="text-xs text-text-secondary whitespace-nowrap">
+            <span className="text-xs text-text-secondary whitespace-nowrap hidden sm:inline">
               {sessionId ? 'オンライン' : '接続中...'}
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ログ保存案内（常に表示） */}
+      <div className="px-4 md:px-6 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+        <div className="flex items-start gap-2">
+          <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-gray-700">ログ保存も可能です！</p>
+            <p className="text-xs text-gray-600 mt-0.5">
+              メールアドレスご登録でチャットログを自動送信致します
+            </p>
           </div>
         </div>
       </div>
@@ -446,28 +463,19 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             </Button>
           </div>
         )}
+        {/* ファイル入力（完全非表示） */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+          style={{ display: 'none' }}
+        />
+
         <div className="space-y-2">
           {/* 上段：ツールボタン（モバイル） */}
           <div className="flex items-center gap-2 md:hidden">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            {/* ファイル選択ボタン（非表示） */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl hidden"
-              title="画像を添付"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
-            >
-              <ImageIcon className="h-4 w-4" />
-            </Button>
-
             {/* 音声入力ボタン（モバイル） */}
             {isSupported && (
               <div className="relative group">
@@ -495,26 +503,6 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
 
           {/* 下段：入力フィールドと送信ボタン */}
           <div className="flex items-center gap-2">
-            {/* デスクトップ用インプット */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            {/* ファイル選択ボタン（デスクトップ・非表示） */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden h-12 w-12 text-text-secondary hover:text-text-primary hover:bg-[hsl(35,25%,95%)] rounded-xl"
-              title="画像を添付"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
-            >
-              <ImageIcon className="h-5 w-5" />
-            </Button>
-
             {/* 音声入力ボタン（デスクトップ） */}
             {isSupported && (
               <div className="hidden md:block relative group">
