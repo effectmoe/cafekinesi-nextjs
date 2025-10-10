@@ -35,6 +35,7 @@ const config: Config = {
         'fade-in': 'fadeIn 0.5s ease-out',
         'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
         'bounce': 'bounce 1s infinite',
+        'bounce-twice': 'bounce 1s ease-in-out 2',
       },
       keyframes: {
         fadeIn: {
@@ -44,6 +45,16 @@ const config: Config = {
         pulseSoft: {
           '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
           '50%': { opacity: '0.5', transform: 'scale(1.1)' },
+        },
+        bounce: {
+          '0%, 100%': {
+            transform: 'translateY(-25%)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+          },
+          '50%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+          },
         },
       },
       borderWidth: {
