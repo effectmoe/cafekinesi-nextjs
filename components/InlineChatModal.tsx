@@ -227,27 +227,27 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
   const chatContent = (isFullscreenView: boolean) => (
     <div className={`relative bg-white border-2 border-[hsl(35,30%,85%)] rounded-3xl shadow-xl overflow-hidden ${isFullscreenView ? 'h-full flex flex-col' : ''}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-6 py-4 flex items-center justify-between border-b border-border/30">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-amber-600" />
+      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b border-border/30">
+        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
           </div>
-          <div>
-            <h3 className="font-semibold text-text-primary text-sm">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-text-primary text-xs md:text-sm truncate">
               {headerTitle}
             </h3>
-            <p className="text-xs text-text-secondary">
+            <p className="text-xs text-text-secondary hidden md:block">
               {headerSubtitle}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
           {/* 新しい会話ボタン */}
           {messages.length > 1 && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-green-50"
+              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-green-50"
               title="新しい会話を開始"
               onClick={() => {
                 if (window.confirm('現在の会話を終了して新しい会話を開始しますか？')) {
@@ -256,7 +256,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               }}
               disabled={isLoading}
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           )}
           {/* メール送信ボタン */}
@@ -264,12 +264,12 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce-notice' : ''}`}
+              className={`h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-blue-50 ${shouldAnimateMailIcon ? 'animate-bounce-notice' : ''}`}
               title="会話を保存"
               onClick={() => setShowEmailModal(true)}
               disabled={!sessionId}
             >
-              <Mail className="h-4 w-4" />
+              <Mail className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           )}
           {/* 拡大ボタン（通常時）と閉じるボタン（フルスクリーン時）の切り替え */}
@@ -277,26 +277,27 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-text-secondary hover:text-text-primary"
+              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary"
               title="全画面表示"
               onClick={() => setIsFullscreen(true)}
             >
-              <Maximize2 className="h-4 w-4" />
+              <Maximize2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           ) : (
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-text-secondary hover:text-text-primary hover:bg-red-50"
+              className="h-7 w-7 md:h-8 md:w-8 text-text-secondary hover:text-text-primary hover:bg-red-50"
               title="全画面を閉じる"
               onClick={() => setIsFullscreen(false)}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           )}
-          <div className="flex items-center gap-2">
+          {/* オンライン表示（デスクトップのみ） */}
+          <div className="hidden md:flex items-center gap-2 ml-1">
             <div className={`w-2 h-2 rounded-full ${sessionId ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-            <span className="text-xs text-text-secondary">
+            <span className="text-xs text-text-secondary whitespace-nowrap">
               {sessionId ? 'オンライン' : '接続中...'}
             </span>
           </div>
