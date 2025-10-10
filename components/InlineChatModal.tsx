@@ -12,9 +12,11 @@ import { EmailModal } from '@/components/EmailModal';
 
 interface InlineChatModalProps {
   settings?: ChatModalSettings
+  autoSendQuestion?: string | null
+  onQuestionSent?: () => void
 }
 
-const InlineChatModal = ({ settings }: InlineChatModalProps) => {
+const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineChatModalProps) => {
   // デフォルト値（Sanityデータがない場合）
   const headerTitle = settings?.headerTitle || 'AIチャットアシスタント';
   const headerSubtitle = settings?.headerSubtitle || '24時間いつでもお答えします';
@@ -72,6 +74,26 @@ const InlineChatModal = ({ settings }: InlineChatModalProps) => {
       startSession();
     }
   }, [sessionId, startSession]);
+
+  // 自動質問送信（FAQカードクリック時）
+  useEffect(() => {
+    const autoSend = async () => {
+      if (autoSendQuestion && sessionId && !isLoading) {
+        console.log('🔵 Auto-sending question:', autoSendQuestion);
+        try {
+          await sendMessage(autoSendQuestion);
+          console.log('✅ Auto-send successful');
+          // 送信完了を通知
+          if (onQuestionSent) {
+            onQuestionSent();
+          }
+        } catch (error) {
+          console.error('❌ Auto-send failed:', error);
+        }
+      }
+    };
+    autoSend();
+  }, [autoSendQuestion, sessionId, isLoading, sendMessage, onQuestionSent]);
 
   // キーボードショートカット（Ctrl+M）
   useEffect(() => {

@@ -2,9 +2,8 @@ import BlogCard from '@/components/BlogCard'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
-import FAQSection from '@/components/FAQSection'
 import AboutSection from '@/components/AboutSection'
-import InlineChatModal from '@/components/InlineChatModal'
+import { ChatSectionWrapper } from '@/components/ChatSectionWrapper'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
 import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
@@ -13,7 +12,6 @@ import { FAQCard, ChatModalSettings } from '@/types/chat.types'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 async function getAboutPageData(): Promise<AboutPage | null> {
@@ -218,28 +216,11 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* FAQセクション - 新デザイン */}
-          <FAQSection
-            faqs={faqCards}
-            title={chatSettings?.faqSectionTitle}
-            subtitle={chatSettings?.faqSectionSubtitle}
+          {/* FAQ & Chat Section - 統合コンポーネント */}
+          <ChatSectionWrapper
+            faqCards={faqCards}
+            chatSettings={chatSettings}
           />
-
-          {/* AI Chat Section - インラインチャットモーダル */}
-          {chatSettings?.isActive !== false && (
-            <Suspense fallback={
-              <div className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
-                <div className="max-w-5xl mx-auto">
-                  <div className="animate-pulse">
-                    <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4" />
-                    <div className="h-96 bg-gray-100 rounded-3xl" />
-                  </div>
-                </div>
-              </div>
-            }>
-              <InlineChatModal settings={chatSettings} />
-            </Suspense>
-          )}
 
           {/* About Section - カフェキネシについて */}
           {aboutPage && aboutPage.isActive ? (

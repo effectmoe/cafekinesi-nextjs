@@ -8,9 +8,10 @@ interface FAQSectionProps {
   faqs?: FAQCard[]
   title?: string
   subtitle?: string
+  onQuestionClick?: (question: string) => Promise<void>
 }
 
-const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
+const FAQSection = ({ faqs, title, subtitle, onQuestionClick }: FAQSectionProps) => {
   // デフォルト値（Sanityデータがない場合）
   const defaultFaqs: FAQCard[] = [
     {
@@ -84,7 +85,13 @@ const FAQSection = ({ faqs, title, subtitle }: FAQSectionProps) => {
             return (
               <Card
                 key={faq._id}
-                className={`group p-5 ${faq.bgColor} hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5`}
+                className={`group p-5 ${faq.bgColor} hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95`}
+                onClick={() => {
+                  console.log('🟢 FAQ Card clicked:', faq.title);
+                  if (onQuestionClick) {
+                    onQuestionClick(faq.title);
+                  }
+                }}
               >
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className={`${faq.iconColor} opacity-70 group-hover:opacity-100 transition-opacity`}>
