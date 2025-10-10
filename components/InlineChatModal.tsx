@@ -249,7 +249,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
               messages.length > 1
                 ? 'text-text-primary hover:text-text-primary hover:bg-green-50'
-                : 'text-gray-300 cursor-not-allowed'
+                : 'text-gray-400 hover:text-gray-400 cursor-not-allowed opacity-60'
             }`}
             title={messages.length > 1 ? '新しい会話を開始' : 'チャット開始後に利用可能'}
             onClick={() => {
@@ -268,7 +268,7 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
             className={`h-7 w-7 md:h-8 md:w-8 transition-all duration-200 ${
               messages.length > 1
                 ? 'text-text-primary hover:text-text-primary hover:bg-blue-50'
-                : 'text-gray-300 cursor-not-allowed'
+                : 'text-gray-400 hover:text-gray-400 cursor-not-allowed opacity-60'
             } ${shouldAnimateMailIcon && messages.length > 1 ? 'animate-bounce-notice' : ''}`}
             title={messages.length > 1 ? '会話を保存' : 'チャット開始後に利用可能'}
             onClick={() => setShowEmailModal(true)}
