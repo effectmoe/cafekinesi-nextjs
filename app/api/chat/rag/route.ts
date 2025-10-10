@@ -79,14 +79,17 @@ export async function POST(request: NextRequest) {
     // 処理時間を計算
     const processingTime = (performance.now() - startTime) / 1000; // 秒
 
-    // チャットログを作成（Vercel KVに保存）
-    await createChatLog(
+    // チャットログを非同期で作成（レスポンスを待たない）
+    createChatLog(
       sessionId,
       message,
       response,
       processingTime,
       clientIp
-    );
+    ).catch(err => {
+      console.error('❌ Chat log creation failed:', err);
+      // ログ作成失敗は致命的ではないため、エラーログのみ記録
+    });
 
     const responseData: any = {
       response,

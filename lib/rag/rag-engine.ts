@@ -1,4 +1,5 @@
 import { vectorSearch, hybridSearch } from '@/lib/db/document-vector-operations';
+import { kv } from '@/lib/kv';
 
 export class RAGEngine {
   async initialize() {
@@ -184,7 +185,7 @@ ${query}
     );
   }
 
-  // AI Knowledge APIからデータ取得
+  // AI Knowledge APIからデータ取得（キャッシュ付き）
   private async fetchFromKnowledgeAPI(query: string): Promise<any[]> {
     try {
       // 質問内容から取得するタイプを判定
@@ -197,7 +198,22 @@ ${query}
         type = 'blog';
       }
 
-      console.log(`📡 AI Knowledge API呼び出し: type=${type}, limit=100`);
+      // キャッシュキー（type + limit）
+      const cacheKey = `ai_knowledge_cache:${type}:100`;
+
+      // キャッシュから取得を試みる
+      try {
+        const cached = await kv.get(cacheKey);
+        if (cached) {
+          console.log(`✅ AI Knowledge Cache HIT: type=${type}`);
+          return JSON.parse(cached as string);
+        }
+      } catch (cacheError) {
+        console.error('Cache read error:', cacheError);
+        // キャッシュエラーは無視して続行
+      }
+
+      console.log(`📡 AI Knowledge API呼び出し: type=${type}, limit=100 (Cache MISS)`);
 
       // 内部APIエンドポイントを呼び出し
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
@@ -212,7 +228,7 @@ ${query}
       console.log(`✅ AI Knowledge API: ${data.data.length}件取得`);
 
       // RAGエンジンの形式に変換
-      return data.data.map((item: any) => ({
+      const formattedData = data.data.map((item: any) => ({
         content: this.formatItemContent(item),
         type: item._type,
         title: item.title || item.name,
@@ -222,6 +238,17 @@ ${query}
         vector_score: 1.0,
         combined_score: 1.0
       }));
+
+      // キャッシュに保存（5分間 = 300秒）
+      try {
+        await kv.setex(cacheKey, 300, JSON.stringify(formattedData));
+        console.log(`💾 AI Knowledge Cache SAVED: type=${type}, expires in 5min`);
+      } catch (cacheError) {
+        console.error('Cache write error:', cacheError);
+        // キャッシュエラーは無視して続行
+      }
+
+      return formattedData;
     } catch (error) {
       console.error('AI Knowledge API fetch error:', error);
       return [];
