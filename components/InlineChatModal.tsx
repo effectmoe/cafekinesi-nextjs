@@ -227,21 +227,23 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
   const chatContent = (isFullscreenView: boolean) => (
     <div className={`relative bg-white border-2 border-[hsl(35,30%,85%)] rounded-3xl shadow-xl overflow-hidden ${isFullscreenView ? 'h-full flex flex-col' : ''}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-3 md:px-6 py-2.5 md:py-4 flex items-center justify-between border-b border-border/30">
-        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
+      <div className="bg-gradient-to-r from-[hsl(35,22%,91%)] to-[hsl(210,20%,88%)] px-3 md:px-6 py-2.5 md:py-4 border-b border-border/30">
+        {/* 1行目：タイトル＋ボタン群 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-text-primary text-xs md:text-sm truncate">
+                {headerTitle}
+              </h3>
+              <p className="text-xs text-text-secondary hidden md:block">
+                {headerSubtitle}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-text-primary text-xs md:text-sm truncate">
-              {headerTitle}
-            </h3>
-            <p className="text-xs text-text-secondary hidden md:block">
-              {headerSubtitle}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-0.5 md:gap-1 flex-shrink-0">
+          <div className="flex items-center gap-0.5 md:gap-1 flex-shrink-0">
           {/* 新しい会話ボタン（常に表示） */}
           <Button
             variant="ghost"
@@ -305,17 +307,16 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               {sessionId ? 'オンライン' : '接続中...'}
             </span>
           </div>
+          </div>
         </div>
-      </div>
 
-      {/* ログ保存案内（常に表示） */}
-      <div className="px-3 md:px-6 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-        <div className="flex items-start gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-gray-700 leading-tight">ログ保存も可能です！</p>
-            <p className="text-xs text-gray-600 mt-0.5 leading-tight">
-              メールアドレスご登録でチャットログを自動送信致します
+        {/* 2行目：ログ保存案内 */}
+        <div className="mt-2 pt-2 border-t border-white/50">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-amber-500 flex-shrink-0" />
+            <p className="text-xs text-gray-700 leading-tight">
+              <span className="font-medium">ログ保存も可能です！</span>
+              <span className="text-gray-600 ml-1.5">メールアドレスご登録でチャットログを自動送信致します</span>
             </p>
           </div>
         </div>
