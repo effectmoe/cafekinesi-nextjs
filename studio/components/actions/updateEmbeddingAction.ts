@@ -11,6 +11,9 @@ export const updateEmbeddingAction: DocumentActionComponent = (props) => {
 
   const doc = draft || published
 
+  // draft ID の場合、published ID に変換
+  const publishedId = id.replace(/^drafts\./, '')
+
   const handleUpdate = useCallback(async () => {
     if (!doc?.extractedText) {
       alert('抽出されたテキストがありません。先にファイルをアップロードしてください。')
@@ -36,7 +39,7 @@ export const updateEmbeddingAction: DocumentActionComponent = (props) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          _id: id,
+          _id: publishedId,
           _type: type,
           ...doc
         })
@@ -53,7 +56,7 @@ export const updateEmbeddingAction: DocumentActionComponent = (props) => {
       console.error('Embedding update error:', error)
       alert(`❌ エラーが発生しました: ${error instanceof Error ? error.message : '不明なエラー'}`)
     }
-  }, [doc, id, type])
+  }, [doc, publishedId, type])
 
   return {
     label: 'エンベディングを更新',

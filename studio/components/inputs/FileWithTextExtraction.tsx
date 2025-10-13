@@ -10,7 +10,10 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const documentId = useFormValue(['_id']) as string
   const documentType = useFormValue(['_type']) as string
   const extractedText = useFormValue(['extractedText']) as string | undefined
-  const { patch } = useDocumentOperation(documentId, documentType)
+
+  // draft ID の場合、published ID に変換
+  const publishedId = documentId?.replace(/^drafts\./, '') || documentId
+  const { patch } = useDocumentOperation(publishedId, documentType)
   const lastProcessedRef = useRef<string>('')
 
   // Extract text when file is uploaded
