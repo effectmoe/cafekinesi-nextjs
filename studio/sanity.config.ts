@@ -8,6 +8,7 @@ import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
 import { type UserConfig } from 'vite'
+import {updateEmbeddingAction} from './components/actions/updateEmbeddingAction'
 
 export default defineConfig({
   name: 'default',
@@ -303,7 +304,13 @@ export default defineConfig({
 
   document: {
     // ドキュメントアクションを有効化（削除、複製など）
-    actions: (prev, context) => prev,
+    actions: (prev, context) => {
+      // Add update embedding action for knowledgeBase documents
+      if (context.schemaType === 'knowledgeBase') {
+        return [...prev, updateEmbeddingAction]
+      }
+      return prev
+    },
   },
 
 
