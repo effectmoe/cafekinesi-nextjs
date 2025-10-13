@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {DocumentTextIcon} from '@sanity/icons'
+import {FileWithTextExtraction} from '../../components/inputs/FileWithTextExtraction'
 
 export const knowledgeBase = defineType({
   name: 'knowledgeBase',
@@ -25,9 +26,12 @@ export const knowledgeBase = defineType({
       title: 'ファイル',
       type: 'file',
       validation: Rule => Rule.required(),
-      description: 'PDF、Markdown(.md)、またはテキストファイル(.txt)をアップロード',
+      description: 'PDF、Markdown(.md)、またはテキストファイル(.txt)をアップロード。アップロード後、自動的にテキストが抽出されます。',
       options: {
         accept: '.pdf,.md,.txt'
+      },
+      components: {
+        input: FileWithTextExtraction
       }
     }),
     defineField({

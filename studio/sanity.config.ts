@@ -8,7 +8,6 @@ import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
 import { type UserConfig } from 'vite'
-import {extractTextAction} from './components/actions/extractTextAction'
 
 export default defineConfig({
   name: 'default',
@@ -304,13 +303,7 @@ export default defineConfig({
 
   document: {
     // ドキュメントアクションを有効化（削除、複製など）
-    actions: (prev, context) => {
-      // Add extract text action for knowledgeBase documents
-      if (context.schemaType === 'knowledgeBase') {
-        return [...prev, extractTextAction]
-      }
-      return prev
-    },
+    actions: (prev, context) => prev,
   },
 
 
