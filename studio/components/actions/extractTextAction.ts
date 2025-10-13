@@ -1,6 +1,5 @@
 import { DocumentActionComponent } from 'sanity'
 import { DocumentTextIcon } from '@sanity/icons'
-import { createClient } from '@sanity/client'
 
 const PROJECT_ID = 'e4aqw590'
 const DATASET = 'production'
@@ -27,14 +26,9 @@ export const extractTextAction: DocumentActionComponent = (context) => {
       }
 
       try {
-        // Create Sanity client directly
-        const client = createClient({
-          projectId: PROJECT_ID,
-          dataset: DATASET,
-          apiVersion: '2024-01-01',
-          useCdn: false,
-          token: process.env.SANITY_API_TOKEN, // Will use session token in Studio
-        })
+        // Use the Studio's authenticated client
+        // @ts-ignore - context.client exists but may not be in types
+        const client = context.client || context.getClient?.({ apiVersion: '2024-01-01' })
 
         // Get the file URL from Sanity
         const fileAsset = doc.file.asset
