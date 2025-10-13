@@ -17,26 +17,28 @@ export function FileWithTextExtraction(props: FileInputProps) {
   useEffect(() => {
     const extractText = async () => {
       if (!value?.asset?._ref) {
+        console.log('⚠️  No asset ref found')
         return
       }
 
       // Check if we've already processed this file
       if (lastProcessedRef.current === value.asset._ref) {
+        console.log('⏭️  File already processed:', value.asset._ref)
         return
       }
 
-      // Check if text has already been extracted
-      if (extractedText) {
-        lastProcessedRef.current = value.asset._ref
-        return
-      }
+      console.log('🚀 Starting text extraction...')
 
       try {
         // Extract file details
         const assetRef = value.asset._ref
+        console.log('📎 Asset ref:', assetRef)
+
         // assetRef format: file-{hash}-{ext}
         // Convert to: {hash}.{ext}
         const parts = assetRef.split('-')
+        console.log('📦 Parts:', parts)
+
         const extension = parts[parts.length - 1] // Get last part (extension)
         const hash = parts.slice(1, -1).join('-') // Get middle parts (hash)
         const assetId = `${hash}.${extension}`
@@ -102,7 +104,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
     }
 
     extractText()
-  }, [value?.asset?._ref, extractedText, patch])
+  }, [value?.asset?._ref, patch])
 
   // Render the default file input
   return <FileInput {...props} />
