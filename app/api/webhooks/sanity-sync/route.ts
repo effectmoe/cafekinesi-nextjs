@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (documentType !== 'knowledgeBase') {
+    // サポートするドキュメントタイプ
+    const supportedTypes = ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq'];
+
+    if (!supportedTypes.includes(documentType)) {
       console.log(`⏭️  Skipping document type: ${documentType}`);
       return NextResponse.json({
         message: `Document type ${documentType} is not processed`,
@@ -39,7 +42,7 @@ export async function POST(request: NextRequest) {
       }, { headers: corsHeaders });
     }
 
-    console.log(`🔄 Processing knowledgeBase document: ${documentId}`);
+    console.log(`🔄 Processing ${documentType} document: ${documentId}`);
 
     await syncSingleDocument(documentId, documentType);
 
@@ -70,18 +73,32 @@ export async function GET(request: NextRequest) {
     // Check if debug query parameter is set
     const url = new URL(request.url);
     if (url.searchParams.get('debug') === 'true') {
-      const result = await sql`
-        SELECT id, type, title,
-               LEFT(content, 300) as content_preview,
-               updated_at
-        FROM document_embeddings
-        WHERE type = 'knowledgeBase'
-        ORDER BY updated_at DESC;
-      `;
+      const typeFilter = url.searchParams.get('type');
+
+      let result;
+      if (typeFilter) {
+        result = await sql`
+          SELECT id, type, title,
+                 LEFT(content, 300) as content_preview,
+                 updated_at
+          FROM document_embeddings
+          WHERE type = ${typeFilter}
+          ORDER BY updated_at DESC;
+        `;
+      } else {
+        result = await sql`
+          SELECT id, type, title,
+                 LEFT(content, 300) as content_preview,
+                 updated_at
+          FROM document_embeddings
+          ORDER BY updated_at DESC;
+        `;
+      }
 
       return NextResponse.json({
         message: 'Vector DB Contents',
         count: result.rows.length,
+        typeFilter: typeFilter || 'all',
         documents: result.rows
       }, { headers: corsHeaders });
     }
@@ -90,9 +107,9 @@ export async function GET(request: NextRequest) {
       message: 'Sanity Sync Webhook Endpoint',
       status: 'active',
       endpoint: '/api/webhooks/sanity-sync',
-      supportedTypes: ['knowledgeBase'],
+      supportedTypes: ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq'],
       usage: 'Configure this endpoint in Sanity webhooks settings',
-      debug: 'Add ?debug=true to see vector DB contents'
+      debug: 'Add ?debug=true to see vector DB contents. Optionally filter by ?type=knowledgeBase'
     }, { headers: corsHeaders });
   } catch (error) {
     return NextResponse.json({

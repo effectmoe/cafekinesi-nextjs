@@ -2,32 +2,105 @@ import { publicClient } from '@/lib/sanity.client';
 import { sql } from '@vercel/postgres';
 import { deepseekEmbedder } from '@/lib/embeddings/deepseek-embedder';
 
+// PortableTextからテキストを抽出
+function extractTextFromPortableText(content: any[]): string {
+  if (!Array.isArray(content)) return '';
+
+  return content
+    .filter((block: any) => block._type === 'block')
+    .map((block: any) => {
+      return block.children
+        ?.map((child: any) => child.text)
+        .join('') || '';
+    })
+    .join('\n');
+}
+
+// コンテンツタイプごとのクエリとフォーマッター
+function getDocumentQuery(documentType: string): string {
+  switch (documentType) {
+    case 'knowledgeBase':
+      return `*[_id == $documentId][0] {
+        _id, _type, title, extractedText, category, tags, isActive, priority
+      }`;
+
+    case 'blogPost':
+      return `*[_id == $documentId][0] {
+        _id, _type, title, excerpt, content, category, publishedAt, isActive
+      }`;
+
+    case 'course':
+      return `*[_id == $documentId][0] {
+        _id, _type, title, description, duration, price, level, isActive
+      }`;
+
+    case 'instructor':
+      return `*[_id == $documentId][0] {
+        _id, _type, name, specialties, bio, region, profileDetails, website, email, isActive
+      }`;
+
+    case 'faq':
+      return `*[_id == $documentId][0] {
+        _id, _type, question, answer, category, isActive
+      }`;
+
+    default:
+      return `*[_id == $documentId][0]`;
+  }
+}
+
+// ドキュメントからテキストを抽出
+function extractContent(document: any, documentType: string): string {
+  switch (documentType) {
+    case 'knowledgeBase':
+      return document.extractedText || '';
+
+    case 'blogPost':
+      const blogContent = document.content ? extractTextFromPortableText(document.content) : '';
+      return `${document.title}\n${document.excerpt || ''}\n${blogContent}`;
+
+    case 'course':
+      return `${document.title}\n${document.description || ''}\n期間: ${document.duration || ''}\n料金: ${document.price || ''}\nレベル: ${document.level || ''}`;
+
+    case 'instructor':
+      return `${document.name}\n専門分野: ${document.specialties?.join(', ') || ''}\n経歴: ${document.bio || ''}\n地域: ${document.region || ''}\n詳細: ${document.profileDetails || ''}\nウェブサイト: ${document.website || ''}\nメール: ${document.email || ''}`;
+
+    case 'faq':
+      return `Q: ${document.question}\nA: ${document.answer}`;
+
+    default:
+      return JSON.stringify(document);
+  }
+}
+
+// ドキュメントのタイトルを取得
+function getDocumentTitle(document: any, documentType: string): string {
+  if (documentType === 'instructor') {
+    return document.name || 'Untitled';
+  } else if (documentType === 'faq') {
+    return document.question || 'Untitled';
+  }
+  return document.title || 'Untitled';
+}
+
 export async function syncSingleDocument(documentId: string, documentType: string) {
   console.log(`📄 Syncing document: ${documentId} (${documentType})`);
 
   try {
     // Sanityからドキュメントを取得
-    const document = await publicClient.fetch(
-      `*[_id == $documentId][0] {
-        _id,
-        _type,
-        title,
-        extractedText,
-        category,
-        tags,
-        isActive,
-        priority
-      }`,
-      { documentId }
-    );
+    const query = getDocumentQuery(documentType);
+    const document = await publicClient.fetch(query, { documentId });
 
     if (!document) {
       console.error(`❌ Document not found: ${documentId}`);
       return;
     }
 
-    if (!document.extractedText) {
-      console.warn(`⚠️  No extracted text for document: ${documentId}`);
+    // コンテンツを抽出
+    const content = extractContent(document, documentType);
+
+    if (!content || content.trim().length < 10) {
+      console.warn(`⚠️  No valid content for document: ${documentId}`);
       return;
     }
 
@@ -37,10 +110,11 @@ export async function syncSingleDocument(documentId: string, documentType: strin
       return;
     }
 
-    console.log(`🔢 Generating embedding for: ${document.title}`);
+    const documentTitle = getDocumentTitle(document, documentType);
+    console.log(`🔢 Generating embedding for: ${documentTitle}`);
 
     // エンベディング生成
-    const { embedding } = await deepseekEmbedder.embed(document.extractedText);
+    const { embedding } = await deepseekEmbedder.embed(content);
 
     // 古いチャンクデータを削除（旧システムの名残）
     const deleteResult = await sql`
@@ -58,14 +132,15 @@ export async function syncSingleDocument(documentId: string, documentType: strin
       VALUES (
         ${documentId},
         ${documentType},
-        ${document.title},
-        ${document.extractedText},
+        ${documentTitle},
+        ${content},
         '',
         ${JSON.stringify(embedding)}::vector,
         ${JSON.stringify({
           category: document.category,
           tags: document.tags || [],
-          priority: document.priority || 5
+          priority: document.priority || 5,
+          ...document
         })}::jsonb
       )
       ON CONFLICT (id)
@@ -78,7 +153,7 @@ export async function syncSingleDocument(documentId: string, documentType: strin
         updated_at = CURRENT_TIMESTAMP;
     `;
 
-    console.log(`✅ Document synced successfully: ${document.title}`);
+    console.log(`✅ Document synced successfully: ${documentTitle}`);
 
   } catch (error) {
     console.error(`❌ Error syncing document ${documentId}:`, error);
