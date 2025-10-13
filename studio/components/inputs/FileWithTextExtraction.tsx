@@ -4,6 +4,12 @@ import { useEffect, useRef } from 'react'
 
 const PROJECT_ID = 'e4aqw590'
 const DATASET = 'production'
+// Next.js API URL (Sanity Studio is on port 3333, Next.js is on 3000)
+const NEXTJS_API_URL = typeof window !== 'undefined'
+  ? window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'
+    : window.location.origin.replace('cafekinesi.sanity.studio', 'www.cafekinesi.com')
+  : 'http://localhost:3000'
 
 export function FileWithTextExtraction(props: FileInputProps) {
   const { value } = props
@@ -68,9 +74,30 @@ export function FileWithTextExtraction(props: FileInputProps) {
           // Text file
           extractedTextContent = await response.text()
         } else if (contentType.includes('pdf') || assetId.endsWith('.pdf')) {
-          // PDF not supported yet
-          console.warn('PDF text extraction not yet supported')
-          return
+          // PDF - extract using API
+          console.log('📄 Extracting text from PDF via API...')
+
+          try {
+            const apiResponse = await fetch(`${NEXTJS_API_URL}/api/extract-pdf-text`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ fileUrl })
+            })
+
+            if (!apiResponse.ok) {
+              console.error('Failed to extract PDF text:', apiResponse.statusText)
+              return
+            }
+
+            const { text, metadata } = await apiResponse.json()
+            extractedTextContent = text
+            console.log(`✅ PDF text extracted: ${metadata.pages} pages, ${metadata.textLength} characters`)
+          } catch (error) {
+            console.error('❌ PDF extraction failed:', error)
+            return
+          }
         } else {
           console.warn('Unsupported file type:', contentType)
           return
