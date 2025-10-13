@@ -1,5 +1,9 @@
 import { DocumentActionComponent } from 'sanity'
 import { DocumentTextIcon } from '@sanity/icons'
+import { createClient } from '@sanity/client'
+
+const PROJECT_ID = 'e4aqw590'
+const DATASET = 'production'
 
 export const extractTextAction: DocumentActionComponent = (context) => {
   const { draft, published, type, id } = context
@@ -23,9 +27,14 @@ export const extractTextAction: DocumentActionComponent = (context) => {
       }
 
       try {
-        // Get Sanity client
-        const client = context.getClient({ apiVersion: '2024-01-01' })
-        const config = client.config()
+        // Create Sanity client directly
+        const client = createClient({
+          projectId: PROJECT_ID,
+          dataset: DATASET,
+          apiVersion: '2024-01-01',
+          useCdn: false,
+          token: process.env.SANITY_API_TOKEN, // Will use session token in Studio
+        })
 
         // Get the file URL from Sanity
         const fileAsset = doc.file.asset
@@ -36,7 +45,7 @@ export const extractTextAction: DocumentActionComponent = (context) => {
 
         // Extract file details
         const assetId = fileAsset._ref.replace('file-', '').replace('-txt', '.txt').replace('-md', '.md').replace('-pdf', '.pdf')
-        const fileUrl = `https://cdn.sanity.io/files/${config.projectId}/${config.dataset}/${assetId}`
+        const fileUrl = `https://cdn.sanity.io/files/${PROJECT_ID}/${DATASET}/${assetId}`
 
         // Fetch file content
         const response = await fetch(fileUrl)
