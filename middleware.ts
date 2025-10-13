@@ -2,17 +2,17 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // CORS headers for PDF extraction API
-  if (request.nextUrl.pathname.startsWith('/api/extract-pdf-text')) {
-    const origin = request.headers.get('origin') || '';
-    const allowedOrigins = [
-      'https://cafekinesi.sanity.studio',
-      'http://localhost:3333', // Local Sanity Studio
-    ];
+  const origin = request.headers.get('origin') || '';
+  const allowedOrigins = [
+    'https://cafekinesi.sanity.studio',
+    'http://localhost:3333', // Local Sanity Studio
+  ];
 
+  // CORS headers for PDF extraction API
+  if (request.nextUrl.pathname === '/api/extract-pdf-text') {
     // Handle preflight request
     if (request.method === 'OPTIONS') {
-      const response = NextResponse.json({}, { status: 200 });
+      const response = new NextResponse(null, { status: 204 });
 
       if (allowedOrigins.includes(origin)) {
         response.headers.set('Access-Control-Allow-Origin', origin);
@@ -25,17 +25,27 @@ export function middleware(request: NextRequest) {
       return response;
     }
 
-    // Handle actual request
-    const response = NextResponse.next();
+    // Handle actual POST request - just add CORS headers, don't block
+    if (request.method === 'POST') {
+      // Clone the request headers
+      const requestHeaders = new Headers(request.headers);
 
-    if (allowedOrigins.includes(origin)) {
-      response.headers.set('Access-Control-Allow-Origin', origin);
+      // Create response that will continue to the API route
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
+
+      if (allowedOrigins.includes(origin)) {
+        response.headers.set('Access-Control-Allow-Origin', origin);
+      }
+
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+      return response;
     }
-
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-
-    return response;
   }
 
   return NextResponse.next();
