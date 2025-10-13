@@ -42,6 +42,16 @@ export async function syncSingleDocument(documentId: string, documentType: strin
     // エンベディング生成
     const { embedding } = await deepseekEmbedder.embed(document.extractedText);
 
+    // 古いチャンクデータを削除（旧システムの名残）
+    const deleteResult = await sql`
+      DELETE FROM document_embeddings
+      WHERE id LIKE ${documentId + '-chunk-%'};
+    `;
+
+    if (deleteResult.rowCount && deleteResult.rowCount > 0) {
+      console.log(`🗑️  Deleted ${deleteResult.rowCount} old chunk(s) for document: ${documentId}`);
+    }
+
     // データベースに保存（UPSERT）
     await sql`
       INSERT INTO document_embeddings (id, type, title, content, url, embedding, metadata)
