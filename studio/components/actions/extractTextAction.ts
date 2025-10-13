@@ -2,7 +2,7 @@ import { DocumentActionComponent } from 'sanity'
 import { DocumentTextIcon } from '@sanity/icons'
 
 export const extractTextAction: DocumentActionComponent = (props) => {
-  const { draft, published, type, id } = props
+  const { draft, published, type, id, getClient } = props
 
   // Only show this action for knowledgeBase documents
   if (type !== 'knowledgeBase') {
@@ -23,6 +23,10 @@ export const extractTextAction: DocumentActionComponent = (props) => {
       }
 
       try {
+        // Get Sanity client
+        const client = getClient({ apiVersion: '2024-01-01' })
+        const config = client.config()
+
         // Get the file URL from Sanity
         const fileAsset = doc.file.asset
         if (!fileAsset || !fileAsset._ref) {
@@ -32,7 +36,7 @@ export const extractTextAction: DocumentActionComponent = (props) => {
 
         // Extract file details
         const assetId = fileAsset._ref.replace('file-', '').replace('-txt', '.txt').replace('-md', '.md').replace('-pdf', '.pdf')
-        const fileUrl = `https://cdn.sanity.io/files/${props.client.config().projectId}/${props.client.config().dataset}/${assetId}`
+        const fileUrl = `https://cdn.sanity.io/files/${config.projectId}/${config.dataset}/${assetId}`
 
         // Fetch file content
         const response = await fetch(fileUrl)
@@ -67,7 +71,7 @@ export const extractTextAction: DocumentActionComponent = (props) => {
         }
 
         // Update the document with extracted text
-        await props.client
+        await client
           .patch(id)
           .set({
             extractedText,
