@@ -10,10 +10,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const documentId = useFormValue(['_id']) as string
   const documentType = useFormValue(['_type']) as string
   const extractedText = useFormValue(['extractedText']) as string | undefined
-
-  // draft ID の場合、published ID に変換
-  const publishedId = documentId?.replace(/^drafts\./, '') || documentId
-  const { patch } = useDocumentOperation(publishedId, documentType)
+  const { patch } = useDocumentOperation(documentId, documentType)
   const lastProcessedRef = useRef<string>('')
 
   // Extract text when file is uploaded
@@ -37,18 +34,21 @@ export function FileWithTextExtraction(props: FileInputProps) {
       try {
         // Extract file details
         const assetRef = value.asset._ref
-        const assetId = assetRef
-          .replace('file-', '')
-          .replace('-txt', '.txt')
-          .replace('-md', '.md')
-          .replace('-pdf', '.pdf')
+        // assetRef format: file-{hash}-{ext}
+        // Convert to: {hash}.{ext}
+        const parts = assetRef.split('-')
+        const extension = parts[parts.length - 1] // Get last part (extension)
+        const hash = parts.slice(1, -1).join('-') // Get middle parts (hash)
+        const assetId = `${hash}.${extension}`
 
         const fileUrl = `https://cdn.sanity.io/files/${PROJECT_ID}/${DATASET}/${assetId}`
+
+        console.log('🔍 Fetching file:', fileUrl)
 
         // Fetch file content
         const response = await fetch(fileUrl)
         if (!response.ok) {
-          console.error('Failed to fetch file:', response.statusText)
+          console.error('Failed to fetch file:', response.statusText, fileUrl)
           return
         }
 
