@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { syncSingleDocument } from '@/lib/db/sync-single-document';
+import { sql } from '@vercel/postgres';
 
 // CORS設定
 const corsHeaders = {
@@ -65,11 +66,38 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  return NextResponse.json({
-    message: 'Sanity Sync Webhook Endpoint',
-    status: 'active',
-    endpoint: '/api/webhooks/sanity-sync',
-    supportedTypes: ['knowledgeBase'],
-    usage: 'Configure this endpoint in Sanity webhooks settings'
-  }, { headers: corsHeaders });
+  try {
+    // Check if debug query parameter is set
+    const url = new URL(request.url);
+    if (url.searchParams.get('debug') === 'true') {
+      const result = await sql`
+        SELECT id, type, title,
+               LEFT(content, 300) as content_preview,
+               updated_at
+        FROM document_embeddings
+        WHERE type = 'knowledgeBase'
+        ORDER BY updated_at DESC;
+      `;
+
+      return NextResponse.json({
+        message: 'Vector DB Contents',
+        count: result.rows.length,
+        documents: result.rows
+      }, { headers: corsHeaders });
+    }
+
+    return NextResponse.json({
+      message: 'Sanity Sync Webhook Endpoint',
+      status: 'active',
+      endpoint: '/api/webhooks/sanity-sync',
+      supportedTypes: ['knowledgeBase'],
+      usage: 'Configure this endpoint in Sanity webhooks settings',
+      debug: 'Add ?debug=true to see vector DB contents'
+    }, { headers: corsHeaders });
+  } catch (error) {
+    return NextResponse.json({
+      error: 'Failed to fetch vector DB contents',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500, headers: corsHeaders });
+  }
 }
