@@ -1,8 +1,8 @@
 import { DocumentActionComponent } from 'sanity'
 import { DocumentTextIcon } from '@sanity/icons'
 
-export const extractTextAction: DocumentActionComponent = (props) => {
-  const { draft, published, type, id, getClient } = props
+export const extractTextAction: DocumentActionComponent = (context) => {
+  const { draft, published, type, id } = context
 
   // Only show this action for knowledgeBase documents
   if (type !== 'knowledgeBase') {
@@ -24,7 +24,7 @@ export const extractTextAction: DocumentActionComponent = (props) => {
 
       try {
         // Get Sanity client
-        const client = getClient({ apiVersion: '2024-01-01' })
+        const client = context.getClient({ apiVersion: '2024-01-01' })
         const config = client.config()
 
         // Get the file URL from Sanity
@@ -84,7 +84,7 @@ export const extractTextAction: DocumentActionComponent = (props) => {
         alert('テキストの抽出が完了しました')
 
         // Refresh the document
-        props.onComplete()
+        context.onComplete()
       } catch (error) {
         console.error('Text extraction error:', error)
         alert(`エラーが発生しました: ${error instanceof Error ? error.message : '不明なエラー'}`)
