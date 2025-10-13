@@ -8,7 +8,7 @@ const DATASET = 'production'
 const NEXTJS_API_URL = typeof window !== 'undefined'
   ? window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : window.location.origin.replace('cafekinesi.sanity.studio', 'www.cafekinesi.com')
+    : 'https://cafekinesi-nextjs.vercel.app'
   : 'http://localhost:3000'
 
 export function FileWithTextExtraction(props: FileInputProps) {
