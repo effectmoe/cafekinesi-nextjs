@@ -80,29 +80,32 @@ export const knowledgeBase = defineType({
       name: 'extractedText',
       title: '抽出されたテキスト',
       type: 'text',
-      readOnly: true,
-      description: '自動生成：ファイルから抽出されたテキスト（編集不可）'
+      description: 'ファイルから抽出されたテキスト。「テキストを抽出」ボタンでファイルからテキストを抽出し、ここに貼り付けてください。'
     }),
     defineField({
       name: 'fileType',
       title: 'ファイルタイプ',
       type: 'string',
-      readOnly: true,
-      description: '自動判定：pdf, markdown, text'
+      options: {
+        list: [
+          {title: 'テキスト', value: 'text'},
+          {title: 'Markdown', value: 'markdown'},
+          {title: 'PDF', value: 'pdf'}
+        ]
+      },
+      description: 'ファイルの種類を選択してください'
     }),
     defineField({
       name: 'fileSize',
-      title: 'ファイルサイズ',
+      title: 'ファイルサイズ（文字数）',
       type: 'number',
-      readOnly: true,
-      description: '自動記録：バイト単位'
+      description: '抽出されたテキストの文字数'
     }),
     defineField({
       name: 'lastProcessed',
       title: '最終処理日時',
       type: 'datetime',
-      readOnly: true,
-      description: '自動記録：最後にエンベディングが生成された日時'
+      description: '最後にエンベディングが生成された日時'
     })
   ],
   preview: {
