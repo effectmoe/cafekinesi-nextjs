@@ -30,10 +30,15 @@ export function FileWithTextExtraction(props: FileInputProps) {
         return
       }
 
-      // Check if we've already processed this file
-      if (lastProcessedRef.current === value.asset._ref) {
+      // Check if we've already processed this file AND it has extracted text
+      if (lastProcessedRef.current === value.asset._ref && extractedText && extractedText.trim().length > 0) {
         console.log('⏭️  File already processed:', value.asset._ref)
         return
+      }
+
+      // If extractedText is empty, process anyway
+      if (lastProcessedRef.current === value.asset._ref && (!extractedText || extractedText.trim().length === 0)) {
+        console.log('🔄 Re-processing file (extractedText is empty)')
       }
 
       console.log('🚀 Starting text extraction...')
@@ -151,7 +156,8 @@ export function FileWithTextExtraction(props: FileInputProps) {
     }
 
     extractText()
-  }, [value?.asset?._ref, patch])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value?.asset?._ref])
 
   // Render the default file input
   return <FileInput {...props} />
