@@ -151,7 +151,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
     }
 
     extractText()
-  }, [value?.asset?._ref, patch])
+  }, [value?.asset?._ref, patch, extractedText])
 
   // Render the default file input
   return <FileInput {...props} />
