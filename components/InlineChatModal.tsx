@@ -358,14 +358,27 @@ const InlineChatModal = ({ settings, autoSendQuestion, onQuestionSent }: InlineC
               }`}>
                 {message.content}
               </p>
-              <p className={`text-xs mt-2 ${
-                message.role === "user" ? "text-white/80" : "text-text-muted"
-              }`}>
-                {new Date(message.timestamp).toLocaleTimeString('ja-JP', {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </p>
+              <div className="flex items-center justify-between gap-2 mt-2">
+                <p className={`text-xs ${
+                  message.role === "user" ? "text-white/80" : "text-text-muted"
+                }`}>
+                  {new Date(message.timestamp).toLocaleTimeString('ja-JP', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+                {/* AIメッセージのみメール送信ボタンを表示 */}
+                {message.role === "assistant" && index > 0 && (
+                  <button
+                    onClick={() => setShowEmailModal(true)}
+                    className="text-xs text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 transition-colors"
+                    title="ここまでの会話をメールで送信"
+                  >
+                    <Mail className="w-3 h-3" />
+                    ここまでの内容をメールで送信
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
