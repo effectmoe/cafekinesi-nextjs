@@ -375,7 +375,8 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       case 'event':
         const startDate = item.startDate ? new Date(item.startDate).toLocaleDateString('ja-JP') : '';
         const status = item.status === 'open' ? '受付中' : item.status === 'full' ? '満席' : item.status === 'closed' ? '終了' : item.status;
-        return `【イベント】${item.title}\n日時: ${startDate}\n場所: ${item.location || '未定'}\nステータス: ${status}\n${item.description || ''}\nURL: ${item.url}`;
+        const fee = item.fee ? `¥${item.fee.toLocaleString()}` : '無料';
+        return `イベント: ${item.title}\nステータス: ${status}\n参加費: ${fee}\n日時: ${startDate}\n場所: ${item.location || '未定'}\n${item.description || ''}\nURL: ${item.url}`;
       case 'course':
         return `【講座】${item.title}\n${item.subtitle || ''}\n${item.description || ''}\nURL: ${item.url}`;
       case 'instructor':
