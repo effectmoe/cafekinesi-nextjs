@@ -1,5 +1,7 @@
 import { vectorSearch, hybridSearch } from '@/lib/db/document-vector-operations';
 import { kv } from '@/lib/kv';
+import { publicClient } from '@/lib/sanity.client';
+import { groq } from 'next-sanity';
 
 export class RAGEngine {
   async initialize() {
@@ -297,7 +299,7 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     );
   }
 
-  // AI Knowledge APIからデータ取得（キャッシュ付き）
+  // Sanityから直接データ取得（キャッシュ付き）
   private async fetchFromKnowledgeAPI(query: string): Promise<any[]> {
     try {
       // 質問内容から取得するタイプを判定
@@ -313,13 +315,13 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       }
 
       // キャッシュキー（type + limit）
-      const cacheKey = `ai_knowledge_cache:${type}:100`;
+      const cacheKey = `sanity_direct_cache:${type}:100`;
 
       // キャッシュから取得を試みる
       try {
         const cached = await kv.get(cacheKey);
         if (cached) {
-          console.log(`✅ AI Knowledge Cache HIT: type=${type}`);
+          console.log(`✅ Sanity Cache HIT: type=${type}`);
           return JSON.parse(cached as string);
         }
       } catch (cacheError) {
@@ -327,28 +329,94 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
         // キャッシュエラーは無視して続行
       }
 
-      console.log(`📡 AI Knowledge API呼び出し: type=${type}, limit=100 (Cache MISS)`);
+      console.log(`📡 Sanityから直接取得: type=${type} (Cache MISS)`);
 
-      // 内部APIエンドポイントを呼び出し
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-      const response = await fetch(`${baseUrl}/api/ai-knowledge?type=${type}&limit=100`);
+      let items: any[] = [];
 
-      if (!response.ok) {
-        console.error('AI Knowledge API error:', response.statusText);
-        return [];
+      // タイプに応じてSanityから直接取得
+      if (type === 'event') {
+        items = await publicClient.fetch(groq`
+          *[_type == "event" && useForAI == true]
+          | order(startDate asc) [0...100] {
+            _id,
+            _type,
+            title,
+            "slug": slug.current,
+            description,
+            startDate,
+            endDate,
+            location,
+            fee,
+            capacity,
+            currentParticipants,
+            status,
+            category,
+            tags,
+            registrationUrl,
+            _updatedAt
+          }
+        `);
+      } else if (type === 'course') {
+        items = await publicClient.fetch(groq`
+          *[_type == "course"] [0...100] {
+            _id,
+            _type,
+            title,
+            subtitle,
+            "slug": slug.current,
+            description,
+            _updatedAt
+          }
+        `);
+      } else if (type === 'instructor') {
+        items = await publicClient.fetch(groq`
+          *[_type == "instructor"] [0...100] {
+            _id,
+            _type,
+            name,
+            "slug": slug.current,
+            bio,
+            region,
+            specialties,
+            _updatedAt
+          }
+        `);
+      } else {
+        // allの場合は全タイプを取得
+        const [events, courses, instructors] = await Promise.all([
+          publicClient.fetch(groq`
+            *[_type == "event" && useForAI == true]
+            | order(startDate asc) [0...30] {
+              _id, _type, title, "slug": slug.current, description,
+              startDate, location, fee, status, _updatedAt
+            }
+          `),
+          publicClient.fetch(groq`
+            *[_type == "course"] [0...30] {
+              _id, _type, title, subtitle, "slug": slug.current,
+              description, _updatedAt
+            }
+          `),
+          publicClient.fetch(groq`
+            *[_type == "instructor"] [0...30] {
+              _id, _type, name, "slug": slug.current, bio,
+              region, specialties, _updatedAt
+            }
+          `),
+        ]);
+        items = [...events, ...courses, ...instructors];
       }
 
-      const data = await response.json();
-      console.log(`✅ AI Knowledge API: ${data.data.length}件取得`);
+      console.log(`✅ Sanityから${items.length}件取得`);
 
       // RAGエンジンの形式に変換
-      const formattedData = data.data.map((item: any) => ({
+      const formattedData = items.map((item: any) => ({
         content: this.formatItemContent(item),
         type: item._type,
         title: item.title || item.name,
-        url: item.url,
+        url: this.generateUrl(item),
         metadata: item,
-        similarity: 1.0, // API経由なので完全一致扱い
+        similarity: 1.0,
         vector_score: 1.0,
         combined_score: 1.0
       }));
@@ -356,7 +424,7 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       // キャッシュに保存（5分間 = 300秒）
       try {
         await kv.setex(cacheKey, 300, JSON.stringify(formattedData));
-        console.log(`💾 AI Knowledge Cache SAVED: type=${type}, expires in 5min`);
+        console.log(`💾 Sanity Cache SAVED: type=${type}, expires in 5min`);
       } catch (cacheError) {
         console.error('Cache write error:', cacheError);
         // キャッシュエラーは無視して続行
@@ -364,8 +432,25 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
 
       return formattedData;
     } catch (error) {
-      console.error('AI Knowledge API fetch error:', error);
+      console.error('Sanity fetch error:', error);
       return [];
+    }
+  }
+
+  // URLを生成
+  private generateUrl(item: any): string {
+    const slug = item.slug;
+    switch (item._type) {
+      case 'event':
+        return slug ? `/event/${slug}` : '';
+      case 'course':
+        return slug ? `/school/${slug}` : '';
+      case 'instructor':
+        return slug && item.region ? `/instructor/${item.region.toLowerCase()}/${slug}` : '';
+      case 'blogPost':
+        return slug ? `/blog/${slug}` : '';
+      default:
+        return '';
     }
   }
 
