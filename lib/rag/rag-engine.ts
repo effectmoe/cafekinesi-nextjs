@@ -86,8 +86,8 @@ export class RAGEngine {
       if (events.length > 0) {
         const eventPrices = events
           .map((e: any) => {
-            const priceMatch = e.content.match(/参加費[：:]\s*¥?(\d+)/);
-            const price = priceMatch ? parseInt(priceMatch[1]) : null;
+            const priceMatch = e.content.match(/参加費[：:]\s*¥?([\d,]+)/);
+            const price = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : null;
             const titleMatch = e.content.match(/イベント[：:]\s*([^\n]+)/);
             const title = titleMatch ? titleMatch[1].trim() : e.metadata?.title || e.title || '不明';
             const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
@@ -193,9 +193,9 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
         // 価格を抽出してソート
         const eventPrices = events
           .map((e: any) => {
-            // コンテンツから価格を抽出（¥の後の数字）
-            const priceMatch = e.content.match(/参加費[：:]\s*¥?(\d+)/);
-            const price = priceMatch ? parseInt(priceMatch[1]) : null;
+            // コンテンツから価格を抽出（¥の後の数字、カンマを含む）
+            const priceMatch = e.content.match(/参加費[：:]\s*¥?([\d,]+)/);
+            const price = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : null;
             const titleMatch = e.content.match(/イベント[：:]\s*([^\n]+)/);
             const title = titleMatch ? titleMatch[1].trim() : e.metadata?.title || e.title || '不明';
             // ステータスも抽出

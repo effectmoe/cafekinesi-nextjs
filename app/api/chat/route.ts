@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     // セッション取得
-    const session = SessionManager.getSession(sessionId);
+    const session = await SessionManager.getSession(sessionId);
     if (!session) {
       console.log('[Chat API] Session not found:', sessionId);
       return NextResponse.json(
@@ -128,10 +128,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('[Chat API] Session found, message count:', session.messages.length);
+    console.log('[Chat API] Session found, message count:', session.messages?.length || 0);
 
     // ユーザーメッセージを追加
-    SessionManager.addMessage(sessionId, {
+    await SessionManager.addMessage(sessionId, {
       role: 'user',
       content: message
     });
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
     console.log('[Chat API] AI response generated, length:', response.length);
 
     // 応答を履歴に追加
-    SessionManager.addMessage(sessionId, {
+    await SessionManager.addMessage(sessionId, {
       role: 'assistant',
       content: response
     });
