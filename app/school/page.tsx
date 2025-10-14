@@ -2,8 +2,7 @@ import { Metadata } from 'next'
 import { publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
-import type { Course } from '@/lib/types/course'
-import type { SchoolPageContent } from '@/lib/types/schoolPageContent'
+import type { Course, SchoolPageData } from '@/lib/types/course'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
@@ -44,8 +43,8 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
   }
 }`
 
-// スクールページコンテンツ取得
-const CONTENT_QUERY = groq`*[_type == "schoolPageContent" && isActive == true][0] {
+// スクールページ取得（ピラーページコンテンツ含む）
+const SCHOOL_PAGE_QUERY = groq`*[_type == "schoolPage" && isActive == true][0] {
   _id,
   title,
   selectionGuide {
@@ -108,19 +107,19 @@ async function getCourses(): Promise<Course[]> {
   }
 }
 
-async function getPageContent(): Promise<SchoolPageContent | null> {
+async function getSchoolPage(): Promise<SchoolPageData | null> {
   try {
     const draft = await draftMode()
     const isPreview = draft.isEnabled
     const selectedClient = isPreview ? previewClient : publicClient
 
-    const data = await selectedClient.fetch(CONTENT_QUERY, {}, {
+    const data = await selectedClient.fetch(SCHOOL_PAGE_QUERY, {}, {
       cache: isPreview ? 'no-store' : 'force-cache'
     } as any)
 
     return data
   } catch (error) {
-    console.error('Failed to fetch page content:', error)
+    console.error('Failed to fetch school page:', error)
     return null
   }
 }
@@ -157,7 +156,7 @@ export const revalidate = 1800
 export default async function SchoolPage() {
   const [courses, pageContent] = await Promise.all([
     getCourses(),
-    getPageContent()
+    getSchoolPage()
   ])
 
   const totalCourses = courses.reduce((sum, c) => sum + 1 + (c.childCourses?.length || 0), 0)

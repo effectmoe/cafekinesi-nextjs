@@ -98,6 +98,63 @@ export interface CourseDetail extends Course {
   sidebar?: CourseSidebar // サイドバー設定
 }
 
+export interface SelectionPoint {
+  title: string
+  description: string
+}
+
+export interface SelectionGuide {
+  title: string
+  description: string
+  image?: {
+    asset: {
+      url: string
+    }
+    alt?: string
+  }
+  points?: SelectionPoint[]
+}
+
+export interface LearningStep {
+  number: number
+  title: string
+  description: string
+  image?: {
+    asset: {
+      url: string
+    }
+    alt?: string
+  }
+}
+
+export interface LearningFlow {
+  title: string
+  description: string
+  steps?: LearningStep[]
+}
+
+export interface FAQItem {
+  question: string
+  answer: string
+}
+
+export interface FAQ {
+  title: string
+  items?: FAQItem[]
+}
+
+export interface Certification {
+  title: string
+  description: string
+  image?: {
+    asset: {
+      url: string
+    }
+    alt?: string
+  }
+  benefits?: string[]
+}
+
 export interface SchoolPageData {
   _id: string
   title: string
@@ -119,6 +176,11 @@ export interface SchoolPageData {
     }
   }
   featuredCourses?: Course[]
+  // ピラーページコンテンツ
+  selectionGuide?: SelectionGuide
+  learningFlow?: LearningFlow
+  faq?: FAQ
+  certification?: Certification
   seo?: {
     title: string
     description: string

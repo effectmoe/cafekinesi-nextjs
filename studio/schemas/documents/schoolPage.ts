@@ -13,6 +13,10 @@ export default defineType({
       default: true,
     },
     {
+      name: 'pillar',
+      title: 'ピラーページコンテンツ',
+    },
+    {
       name: 'courses',
       title: '講座設定',
     },
@@ -128,6 +132,175 @@ export default defineType({
       description: '特に推薦したい講座を選択（空の場合は全講座を表示順で表示）',
       group: 'courses',
     }),
+
+    // ピラーページコンテンツ
+    defineField({
+      name: 'selectionGuide',
+      title: '講座の選び方ガイド',
+      type: 'object',
+      group: 'pillar',
+      fields: [
+        {
+          name: 'title',
+          title: 'タイトル',
+          type: 'string',
+          initialValue: 'あなたに合った講座の選び方',
+        },
+        {
+          name: 'description',
+          title: '説明文',
+          type: 'text',
+          rows: 8,
+        },
+        {
+          name: 'image',
+          title: '画像',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              title: '代替テキスト',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          name: 'points',
+          title: 'ポイント',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'title', title: 'タイトル', type: 'string' },
+                { name: 'description', title: '説明', type: 'text', rows: 3 },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'learningFlow',
+      title: '学習の流れ',
+      type: 'object',
+      group: 'pillar',
+      fields: [
+        {
+          name: 'title',
+          title: 'タイトル',
+          type: 'string',
+          initialValue: '学習の流れ・ステップ',
+        },
+        {
+          name: 'description',
+          title: '説明文',
+          type: 'text',
+          rows: 4,
+        },
+        {
+          name: 'steps',
+          title: 'ステップ',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'number', title: 'ステップ番号', type: 'number' },
+                { name: 'title', title: 'タイトル', type: 'string' },
+                { name: 'description', title: '説明', type: 'text', rows: 3 },
+                {
+                  name: 'image',
+                  title: '画像',
+                  type: 'image',
+                  options: { hotspot: true },
+                  fields: [{ name: 'alt', title: '代替テキスト', type: 'string' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'faq',
+      title: 'よくある質問（FAQ）',
+      type: 'object',
+      group: 'pillar',
+      fields: [
+        {
+          name: 'title',
+          title: 'タイトル',
+          type: 'string',
+          initialValue: 'よくある質問',
+        },
+        {
+          name: 'items',
+          title: '質問と回答',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'question', title: '質問', type: 'string' },
+                { name: 'answer', title: '回答', type: 'text', rows: 4 },
+              ],
+              preview: {
+                select: {
+                  title: 'question',
+                  subtitle: 'answer',
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'certification',
+      title: '資格・認定について',
+      type: 'object',
+      group: 'pillar',
+      fields: [
+        {
+          name: 'title',
+          title: 'タイトル',
+          type: 'string',
+          initialValue: '資格・認定について',
+        },
+        {
+          name: 'description',
+          title: '説明文',
+          type: 'text',
+          rows: 8,
+        },
+        {
+          name: 'image',
+          title: '画像',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              title: '代替テキスト',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          name: 'benefits',
+          title: '認定取得のメリット',
+          type: 'array',
+          of: [{ type: 'string' }],
+        },
+      ],
+    }),
+
     defineField({
       name: 'seo',
       title: 'SEO設定',
