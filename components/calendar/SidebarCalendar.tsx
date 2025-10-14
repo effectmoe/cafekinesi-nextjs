@@ -10,6 +10,8 @@ import Holidays from 'date-holidays'
 export default function SidebarCalendar() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [events, setEvents] = useState<Event[]>([])
+  const [selectedDay, setSelectedDay] = useState<number | null>(null)
+  const [showEventModal, setShowEventModal] = useState(false)
   const holidays = new Holidays('JP')
 
   // 月が変更されたときにイベントを取得
@@ -69,6 +71,25 @@ export default function SidebarCalendar() {
   // 次月へ移動
   const goToNextMonth = () => {
     setCurrentMonth(addMonths(currentMonth, 1))
+  }
+
+  // 日付クリック時のハンドラー
+  const handleDayClick = (day: number) => {
+    if (hasEvent(day)) {
+      setSelectedDay(day)
+      setShowEventModal(true)
+    }
+  }
+
+  // 選択された日のイベントを取得
+  const getEventsForDay = (day: number): Event[] => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    const dateTime = startOfDay(date).getTime()
+
+    return events.filter((event) => {
+      const eventDate = startOfDay(new Date(event.startDate))
+      return eventDate.getTime() === dateTime
+    })
   }
 
   // カレンダーの日付配列を生成
@@ -156,17 +177,18 @@ export default function SidebarCalendar() {
             return (
               <div
                 key={index}
+                onClick={() => day && handleDayClick(day)}
                 className={`
                   p-1 rounded relative min-h-[24px] flex items-center justify-center
                   ${day ? 'hover:bg-blue-100 cursor-pointer' : ''}
-                  ${hasEventDay ? 'bg-blue-50 font-bold' : ''}
+                  ${hasEventDay ? 'bg-green-50 font-bold' : ''}
                   ${isSunday || isHolidayDay ? 'text-red-600' : ''}
                   ${isSaturday && !isHolidayDay ? 'text-blue-600' : ''}
                 `}
               >
                 {day || ''}
                 {hasEventDay && (
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-orange-500 rounded-full border border-white"></div>
+                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-white"></div>
                 )}
               </div>
             )
@@ -184,8 +206,8 @@ export default function SidebarCalendar() {
 
       <div className="mt-3 text-xs text-gray-600 space-y-1">
         <p className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
-          <span>イベント有</span>
+          <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+          <span>イベント有（クリックで詳細）</span>
         </p>
         <p className="flex items-center gap-2">
           <span className="text-red-600 font-semibold">●</span>
@@ -196,6 +218,101 @@ export default function SidebarCalendar() {
           <span>土曜日</span>
         </p>
       </div>
+
+      {/* イベント詳細モーダル */}
+      {showEventModal && selectedDay && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowEventModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* モーダルヘッダー */}
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-bold">
+                {format(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), selectedDay), 'M月d日 (E)', { locale: ja })}のイベント
+              </h3>
+              <button
+                onClick={() => setShowEventModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="閉じる"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* イベント一覧 */}
+            <div className="px-6 py-4 space-y-4">
+              {getEventsForDay(selectedDay).map((event) => (
+                <div key={event._id} className="border-l-4 border-green-500 pl-4 py-2">
+                  {/* イベントタイトル */}
+                  <h4 className="font-bold text-gray-900 mb-2">{event.title}</h4>
+
+                  {/* 時間 */}
+                  <div className="text-sm text-gray-600 mb-1">
+                    <span className="font-semibold">時間:</span> {format(new Date(event.startDate), 'HH:mm', { locale: ja })} 〜 {format(new Date(event.endDate), 'HH:mm', { locale: ja })}
+                  </div>
+
+                  {/* 場所 */}
+                  {event.location && (
+                    <div className="text-sm text-gray-600 mb-1">
+                      <span className="font-semibold">場所:</span> {event.location}
+                    </div>
+                  )}
+
+                  {/* 講師 */}
+                  {event.instructor && (
+                    <div className="text-sm text-gray-600 mb-1">
+                      <span className="font-semibold">講師:</span> {event.instructor.name}
+                    </div>
+                  )}
+
+                  {/* ステータス */}
+                  <div className="text-sm mb-2">
+                    <span className={`
+                      inline-block px-2 py-1 rounded text-xs font-semibold
+                      ${event.status === 'open' ? 'bg-green-100 text-green-800' : ''}
+                      ${event.status === 'full' ? 'bg-red-100 text-red-800' : ''}
+                      ${event.status === 'closed' ? 'bg-gray-100 text-gray-800' : ''}
+                    `}>
+                      {event.status === 'open' ? '受付中' :
+                       event.status === 'full' ? '満席' :
+                       event.status === 'closed' ? '終了' : event.status}
+                    </span>
+                  </div>
+
+                  {/* 定員情報 */}
+                  {event.capacity !== undefined && event.currentParticipants !== undefined && (
+                    <div className="text-sm text-gray-600 mb-2">
+                      <span className="font-semibold">定員:</span> {event.capacity}名（残り{event.capacity - event.currentParticipants}席）
+                    </div>
+                  )}
+
+                  {/* 参加費 */}
+                  {event.fee !== undefined && (
+                    <div className="text-sm text-gray-600 mb-3">
+                      <span className="font-semibold">参加費:</span> {event.fee === 0 ? '無料' : `¥${event.fee.toLocaleString()}`}
+                    </div>
+                  )}
+
+                  {/* 詳細リンク */}
+                  <Link
+                    href={`/events/${event.slug.current}`}
+                    className="inline-block bg-green-600 text-white text-sm px-4 py-2 rounded hover:bg-green-700 transition-colors"
+                    onClick={() => setShowEventModal(false)}
+                  >
+                    詳細を見る
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
