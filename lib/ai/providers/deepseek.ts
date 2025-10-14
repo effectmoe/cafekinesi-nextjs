@@ -28,7 +28,9 @@ export class DeepSeekProvider implements AIProvider {
       systemPrompt += `
 
 お客様の質問に温かく丁寧に答えてください。
-- 提供された情報に基づいて具体的に回答する
+- **提供された情報を正確に使用し、推測や想像で答えない**
+- 価格、日時、数量などの数値情報は、コンテキストから**そのまま正確に引用**する
+- 「最も」「一番」などの比較を求められた場合は、全ての選択肢を慎重に比較してから答える
 - インストラクター情報がある場合は、名前、専門分野、地域などを詳しく紹介する
 - 簡潔で分かりやすい回答を心がける
 - 日本語で自然な対話を行う`;
@@ -52,7 +54,7 @@ export class DeepSeekProvider implements AIProvider {
             })),
             { role: 'user', content: message }
           ],
-          temperature: 0.7,
+          temperature: 0.3,  // 正確性を重視して0.7から0.3に下げる
           max_tokens: 2000  // 500 → 2000に増加（日本語の場合、より長い応答が可能）
         })
       });
