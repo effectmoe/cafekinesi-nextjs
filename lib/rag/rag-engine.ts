@@ -67,10 +67,13 @@ export class RAGEngine {
       webResults = await this.searchWeb(query, config.webSearch);
     }
 
-    // 3. コンテキスト構築
-    const context = this.buildContext(formattedResults, webResults, config);
+    // 3. 複数条件のイベントフィルタリング（プログラムで厳密に処理）
+    const { filtered: filteredResults, filterInfo } = this.filterEventsByConditions(query, formattedResults);
 
-    // 4. プロンプト構築
+    // 4. コンテキスト構築
+    const context = this.buildContext(filteredResults, webResults, config) + filterInfo;
+
+    // 5. プロンプト構築
     // 比較質問の検出と事前計算された答え
     const isComparisonQuery = /最も|一番|どれ|どちら|比較|安い|高い|早い|遅い|新しい|古い/.test(query);
     const isCheapestQuery = /最も.*安|一番.*安|お金.*かからない|お求めやすい|低価格/.test(query);
@@ -251,6 +254,130 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     ];
 
     return sources;
+  }
+
+  // イベントの複数条件フィルタリング（プログラムで厳密に処理）
+  private filterEventsByConditions(query: string, results: any[]): { filtered: any[], filterInfo: string } {
+    const events = results.filter((r: any) => r.metadata?.type === 'event' || r.type === 'event');
+
+    if (events.length === 0) {
+      return { filtered: results, filterInfo: '' };
+    }
+
+    // 条件を抽出
+    const locationMatch = query.match(/(東京|大阪|名古屋|福岡|札幌|仙台|広島|神戸|京都|横浜|千葉|埼玉|渋谷|新宿|池袋)/);
+    const isOnlineQuery = /オンライン|online/i.test(query);
+    const priceMatch = query.match(/(\d+)円以下|(\d+)円以内|予算\s*(\d+)|(\d+)円/);
+    const isOpenQuery = /受付中|参加できる|空き|申し込める/.test(query);
+
+    let filteredEvents = [...events];
+    const conditions: string[] = [];
+
+    // 場所フィルタ
+    if (locationMatch) {
+      const location = locationMatch[1];
+      conditions.push(`場所: ${location}`);
+      filteredEvents = filteredEvents.filter((e: any) => {
+        const eventLocation = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
+        return eventLocation.includes(location);
+      });
+    } else if (isOnlineQuery) {
+      conditions.push('場所: オンライン');
+      filteredEvents = filteredEvents.filter((e: any) => {
+        const eventLocation = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
+        return eventLocation.includes('オンライン');
+      });
+    }
+
+    // 価格フィルタ
+    if (priceMatch) {
+      const maxPrice = parseInt(priceMatch[1] || priceMatch[2] || priceMatch[3] || priceMatch[4]);
+      conditions.push(`価格: ¥${maxPrice.toLocaleString()}以下`);
+      filteredEvents = filteredEvents.filter((e: any) => {
+        const priceMatch = e.content.match(/参加費[：:]\s*¥?([\d,]+)/);
+        if (!priceMatch) return false;
+        const price = parseInt(priceMatch[1].replace(/,/g, ''));
+        return price <= maxPrice;
+      });
+    }
+
+    // ステータスフィルタ
+    if (isOpenQuery) {
+      conditions.push('ステータス: 受付中');
+      filteredEvents = filteredEvents.filter((e: any) => {
+        const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
+        const status = statusMatch ? statusMatch[1].trim() : '';
+        return status === '受付中';
+      });
+    }
+
+    // フィルタリング情報を生成
+    let filterInfo = '';
+    if (conditions.length > 0) {
+      const originalCount = events.length;
+      const filteredCount = filteredEvents.length;
+
+      filterInfo = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      filterInfo += `【条件フィルタリング結果】\n`;
+      filterInfo += `条件: ${conditions.join(' AND ')}\n`;
+      filterInfo += `元のイベント数: ${originalCount}件\n`;
+      filterInfo += `条件に合致: ${filteredCount}件\n`;
+
+      if (filteredCount === 0) {
+        filterInfo += `\n⚠️ 該当するイベントがありません\n`;
+        filterInfo += `\n【代替提案用の情報】\n`;
+
+        // 条件ごとに該当するイベントを表示
+        if (locationMatch || isOnlineQuery) {
+          const locationEvents = events.filter((e: any) => {
+            const eventLocation = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
+            if (locationMatch) return eventLocation.includes(locationMatch[1]);
+            return eventLocation.includes('オンライン');
+          });
+          filterInfo += `- ${locationMatch ? locationMatch[1] : 'オンライン'}のイベント: ${locationEvents.map((e: any) => {
+            const title = e.content.match(/イベント[：:]\s*([^\n]+)/)?.[1] || '';
+            const fee = e.content.match(/参加費[：:]\s*([^\n]+)/)?.[1] || '';
+            return `${title}（${fee}）`;
+          }).join(', ') || 'なし'}\n`;
+        }
+
+        if (priceMatch) {
+          const maxPrice = parseInt(priceMatch[1] || priceMatch[2] || priceMatch[3] || priceMatch[4]);
+          const priceEvents = events.filter((e: any) => {
+            const pm = e.content.match(/参加費[：:]\s*¥?([\d,]+)/);
+            if (!pm) return false;
+            const price = parseInt(pm[1].replace(/,/g, ''));
+            return price <= maxPrice;
+          });
+          filterInfo += `- ¥${maxPrice.toLocaleString()}以下のイベント: ${priceEvents.map((e: any) => {
+            const title = e.content.match(/イベント[：:]\s*([^\n]+)/)?.[1] || '';
+            const location = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
+            return `${title}（${location}）`;
+          }).join(', ') || 'なし'}\n`;
+        }
+      } else {
+        filterInfo += `\n【該当イベント】\n`;
+        filteredEvents.forEach((e: any, idx: number) => {
+          const title = e.content.match(/イベント[：:]\s*([^\n]+)/)?.[1] || '';
+          const fee = e.content.match(/参加費[：:]\s*([^\n]+)/)?.[1] || '';
+          const location = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
+          const status = e.content.match(/ステータス[：:]\s*([^\n]+)/)?.[1] || '';
+          filterInfo += `${idx + 1}. ${title} - ${fee}, ${location}, ${status}\n`;
+        });
+      }
+
+      filterInfo += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+      console.log('🔍 条件フィルタリング実行:', conditions.join(' AND'));
+      console.log('📊 フィルタ結果:', `${filteredCount}/${originalCount}件`);
+    }
+
+    // フィルタリングされたイベントと非イベントを結合
+    const nonEvents = results.filter((r: any) => !(r.metadata?.type === 'event' || r.type === 'event'));
+    return {
+      filtered: [...filteredEvents, ...nonEvents],
+      filterInfo
+    };
   }
 
   // イベント関連の質問かどうか判定
