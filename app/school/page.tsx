@@ -111,54 +111,52 @@ export default async function SchoolPage() {
   }
 
   // Schema.org: ItemList (講座一覧)
+  // position値を正しく連番にするため、全ての講座を1つの配列に展開してから番号を振る
+  const allCourseItems: any[] = []
+
+  courses.forEach((course) => {
+    // 主要講座を追加
+    allCourseItems.push({
+      '@type': 'Course',
+      name: course.title,
+      description: course.subtitle,
+      url: `https://cafekinesi.com/school/${course.courseId}`,
+      provider: {
+        '@type': 'EducationalOrganization',
+        name: 'Cafe Kinesi',
+        url: 'https://cafekinesi.com',
+      },
+    })
+
+    // 子講座を追加
+    if (course.childCourses) {
+      course.childCourses.forEach((child) => {
+        allCourseItems.push({
+          '@type': 'Course',
+          name: child.title,
+          description: child.subtitle,
+          url: `https://cafekinesi.com/school/${child.courseId}`,
+          provider: {
+            '@type': 'EducationalOrganization',
+            name: 'Cafe Kinesi',
+            url: 'https://cafekinesi.com',
+          },
+        })
+      })
+    }
+  })
+
   const courseListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'Cafe Kinesi 講座一覧',
     description: 'カフェキネシオロジーで開講している全講座',
     numberOfItems: totalCourses,
-    itemListElement: courses.flatMap((course, index) => {
-      const items = [
-        {
-          '@type': 'ListItem',
-          position: index * 2 + 1,
-          item: {
-            '@type': 'Course',
-            name: course.title,
-            description: course.subtitle,
-            url: `https://cafekinesi.com/school/${course.courseId}`,
-            provider: {
-              '@type': 'EducationalOrganization',
-              name: 'Cafe Kinesi',
-              url: 'https://cafekinesi.com',
-            },
-          },
-        },
-      ]
-
-      // 子講座も追加
-      if (course.childCourses) {
-        course.childCourses.forEach((child, childIndex) => {
-          items.push({
-            '@type': 'ListItem',
-            position: index * 2 + 2 + childIndex,
-            item: {
-              '@type': 'Course',
-              name: child.title,
-              description: child.subtitle,
-              url: `https://cafekinesi.com/school/${child.courseId}`,
-              provider: {
-                '@type': 'EducationalOrganization',
-                name: 'Cafe Kinesi',
-                url: 'https://cafekinesi.com',
-              },
-            },
-          })
-        })
-      }
-
-      return items
-    }),
+    itemListElement: allCourseItems.map((courseItem, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: courseItem,
+    })),
   }
 
   return (
