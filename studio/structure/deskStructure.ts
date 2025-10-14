@@ -85,6 +85,53 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
+      // 講座を階層的に表示
+      S.listItem()
+        .title('講座')
+        .id('courses')
+        .child(
+          S.list()
+            .title('講座一覧')
+            .items([
+              // すべての講座
+              S.listItem()
+                .title('すべての講座')
+                .id('all-courses')
+                .child(
+                  S.documentTypeList('course')
+                    .title('すべての講座')
+                    .filter('_type == "course"')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              S.divider(),
+
+              // 主要講座
+              S.listItem()
+                .title('主要講座')
+                .id('main-courses')
+                .child(
+                  S.documentList()
+                    .title('主要講座')
+                    .filter('_type == "course" && courseType == "main"')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              // 補助講座
+              S.listItem()
+                .title('補助講座')
+                .id('auxiliary-courses')
+                .child(
+                  S.documentList()
+                    .title('補助講座')
+                    .filter('_type == "course" && courseType == "auxiliary"')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+            ])
+        ),
+
+      S.divider(),
+
       // その他のコンテンツ
       ...S.documentTypeListItems().filter(
         (listItem) => ![
@@ -94,6 +141,7 @@ export const structure = (S: StructureBuilder) =>
           'chatModal',
           'page',
           'blogPost',
+          'course',  // 講座は上で明示的に定義
           // オブジェクト・コンポーネントスキーマは非表示
           'seo',
           'hero',

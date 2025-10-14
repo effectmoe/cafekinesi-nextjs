@@ -199,6 +199,45 @@ export default defineType({
       group: 'basic',
     }),
     defineField({
+      name: 'courseType',
+      title: '講座タイプ',
+      type: 'string',
+      options: {
+        list: [
+          { title: '主要講座', value: 'main' },
+          { title: '補助講座', value: 'auxiliary' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'main',
+      validation: (Rule) => Rule.required(),
+      description: 'この講座が主要講座か補助講座かを選択してください',
+      group: 'basic',
+    }),
+    defineField({
+      name: 'parentCourse',
+      title: '親講座',
+      type: 'reference',
+      to: [{ type: 'course' }],
+      description: '補助講座の場合、親となる主要講座を選択してください',
+      group: 'basic',
+      options: {
+        filter: 'courseType == "main"',
+        disableNew: true,
+      },
+      hidden: ({ document }) => document?.courseType !== 'auxiliary',
+      validation: (Rule) => Rule.custom((current, context) => {
+        const courseType = (context.document as any)?.courseType
+        if (courseType === 'auxiliary' && !current) {
+          return '補助講座の場合、親講座を選択してください'
+        }
+        if (current?._ref === (context.document as any)?._id) {
+          return '自分自身を親講座に設定できません'
+        }
+        return true
+      }),
+    }),
+    defineField({
       name: 'isActive',
       title: '公開状態',
       type: 'boolean',
