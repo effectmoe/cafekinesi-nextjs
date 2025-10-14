@@ -25,20 +25,38 @@ export function FileWithTextExtraction(props: FileInputProps) {
   // Extract text when file is uploaded
   useEffect(() => {
     const extractText = async () => {
+      // Debug logging
+      console.log('🔍 [Debug] Current state:', {
+        hasAssetRef: !!value?.asset?._ref,
+        assetRef: value?.asset?._ref?.substring(0, 20) + '...',
+        lastProcessed: lastProcessedRef.current?.substring(0, 20) + '...',
+        hasExtractedText: !!extractedText,
+        extractedTextLength: extractedText?.length || 0,
+        extractedTextPreview: extractedText ? extractedText.substring(0, 50) + '...' : 'null/undefined'
+      })
+
       if (!value?.asset?._ref) {
         console.log('⚠️  No asset ref found')
         return
       }
 
-      // Check if we've already processed this file AND it has extracted text
-      if (lastProcessedRef.current === value.asset._ref && extractedText && extractedText.trim().length > 0) {
+      // Check if this is a different file
+      const isSameFile = lastProcessedRef.current === value.asset._ref
+      const hasExtractedText = extractedText && extractedText.trim().length > 10
+
+      console.log('🔍 [Check] isSameFile:', isSameFile, '| hasExtractedText:', hasExtractedText)
+
+      // If same file AND has valid extracted text, skip
+      if (isSameFile && hasExtractedText) {
         console.log('⏭️  File already processed:', value.asset._ref)
+        console.log('   📊 Extracted text length:', extractedText?.length)
         return
       }
 
-      // If extractedText is empty, process anyway
-      if (lastProcessedRef.current === value.asset._ref && (!extractedText || extractedText.trim().length === 0)) {
-        console.log('🔄 Re-processing file (extractedText is empty)')
+      // If same file but no valid text, re-process
+      if (isSameFile && !hasExtractedText) {
+        console.log('🔄 Re-processing file (extractedText is empty or too short)')
+        console.log('   📊 Current length:', extractedText?.length || 0)
       }
 
       console.log('🚀 Starting text extraction...')
