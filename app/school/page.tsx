@@ -1,130 +1,44 @@
 import { Metadata } from 'next'
-import SchoolHero from '@/components/school/SchoolHero'
-import CourseList from '@/components/school/CourseList'
-import CourseCard from '@/components/school/CourseCard'
-import CourseCTA from '@/components/school/CourseCTA'
-import { defaultCoursesData } from '@/components/school/CourseData'
-import { client, publicClient, previewClient } from '@/lib/sanity.client'
+import { publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
-import type { Course, SchoolPageData } from '@/lib/types/course'
+import type { Course } from '@/lib/types/course'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
+import CoursePillarCard from '@/components/school/CoursePillarCard'
+import Link from 'next/link'
 
-// Sanityクエリ
-const SCHOOL_PAGE_QUERY = groq`*[_type == "schoolPage"][0] {
-  _id,
-  title,
-  heroSection,
-  courseListTitle,
-  ctaSection,
-  featuredCourses[]-> {
-    _id,
-    courseId,
-    title,
-    subtitle,
-    description,
-    features,
-    image {
-      asset->,
-      alt
-    },
-    backgroundClass,
-    recommendations,
-    effects,
-    order,
-    isActive,
-    price,
-    duration,
-    prerequisites,
-    applicationLink,
-    ctaBox {
-      title,
-      subtitle,
-      primaryButtonText,
-      primaryButtonLink,
-      secondaryButtonText,
-      secondaryButtonLink
-    }
-  },
-  seo,
-  isActive
-}`
-
-const COURSES_QUERY = groq`*[_type == "course" && isActive == true] | order(order asc) {
+// GROQクエリ: 主要講座と子講座を取得
+const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(courseType) || courseType == "main")] | order(order asc) {
   _id,
   courseId,
   title,
   subtitle,
   description,
-  features,
   image {
     asset->,
     alt
   },
-  backgroundClass,
-  recommendations,
-  effects,
   order,
-  isActive,
+  courseType,
   price,
   duration,
-  prerequisites,
-  applicationLink,
-  ctaBox {
-    title,
-    subtitle,
-    primaryButtonText,
-    primaryButtonLink,
-    secondaryButtonText,
-    secondaryButtonLink
-  },
-  courseType,
-  parentCourse,
   "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true] | order(order asc) {
     _id,
     courseId,
     title,
     subtitle,
-    description,
-    features,
     image {
       asset->,
       alt
     },
-    backgroundClass,
     order,
-    price,
-    duration,
     courseType,
-    ctaBox {
-      title,
-      subtitle,
-      primaryButtonText,
-      primaryButtonLink,
-      secondaryButtonText,
-      secondaryButtonLink
-    }
+    price,
+    duration
   }
 }`
-
-async function getSchoolPageData(): Promise<SchoolPageData | null> {
-  try {
-    const draft = await draftMode()
-    const isPreview = draft.isEnabled
-    const selectedClient = isPreview ? previewClient : publicClient
-
-    const data = await selectedClient.fetch(SCHOOL_PAGE_QUERY, {}, {
-      cache: isPreview ? 'no-store' : 'force-cache'
-    } as any)
-
-    return data
-  } catch (error) {
-    console.error('Failed to fetch school page data:', error)
-    return null
-  }
-}
 
 async function getCourses(): Promise<Course[]> {
   try {
@@ -136,49 +50,35 @@ async function getCourses(): Promise<Course[]> {
       cache: isPreview ? 'no-store' : 'force-cache'
     } as any)
 
-    // Sanityからデータがない場合はデフォルトを使用
-    if (!data || data.length === 0) {
-      return defaultCoursesData.map((course, index) => ({
-        ...course,
-        _id: `default-${course.courseId}`
-      })) as Course[]
-    }
-
-    return data
+    return data || []
   } catch (error) {
     console.error('Failed to fetch courses:', error)
-    // エラー時はデフォルトデータを返す
-    return defaultCoursesData.map((course, index) => ({
-      ...course,
-      _id: `default-${course.courseId}`
-    })) as Course[]
+    return []
   }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const schoolPage = await getSchoolPageData()
-
-  if (schoolPage?.seo) {
-    return {
-      title: schoolPage.seo.title || 'スクール | Cafe Kinesi',
-      description: schoolPage.seo.description || 'カフェキネシオロジーの各講座をご紹介します。どなたでも気軽に始められる講座から、専門的な技術まで幅広く学べます。',
-      keywords: schoolPage.seo.keywords || 'キネシオロジー, スクール, 講座, ヒーリング, セラピー',
-      openGraph: {
-        title: schoolPage.seo.title || 'スクール | Cafe Kinesi',
-        description: schoolPage.seo.description || 'カフェキネシオロジーの各講座をご紹介します。',
-        images: schoolPage.seo.ogImage ? [schoolPage.seo.ogImage.asset.url] : ['/og-image.jpg'],
-      },
-    }
-  }
+  const courses = await getCourses()
+  const totalCourses = courses.reduce((sum, c) => sum + 1 + (c.childCourses?.length || 0), 0)
 
   return {
-    title: 'スクール | Cafe Kinesi',
-    description: 'カフェキネシオロジーの各講座をご紹介します。どなたでも気軽に始められる講座から、専門的な技術まで幅広く学べます。',
-    keywords: 'キネシオロジー, スクール, 講座, ヒーリング, セラピー',
+    title: 'スクール・講座一覧 | Cafe Kinesi - キネシオロジー講座',
+    description: `カフェキネシオロジーのスクールでは、${totalCourses}種類の講座を開講しています。初心者から上級者まで、レベルに合わせて段階的に学べる講座をご用意。基礎から応用、発展コースまで、あなたのペースで学べます。`,
+    keywords: 'キネシオロジー講座, スクール, カフェキネシ, ヒーリング, セラピー, 資格, 認定, 初心者, 上級者',
     openGraph: {
-      title: 'スクール | Cafe Kinesi',
-      description: 'カフェキネシオロジーの各講座をご紹介します。',
+      title: 'スクール・講座一覧 | Cafe Kinesi',
+      description: `${totalCourses}種類の講座を開講中。初心者から上級者まで段階的に学べます。`,
+      type: 'website',
+      url: 'https://cafekinesi.com/school',
       images: ['/og-image.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'スクール・講座一覧 | Cafe Kinesi',
+      description: `${totalCourses}種類の講座を開講中。初心者から上級者まで段階的に学べます。`,
+    },
+    alternates: {
+      canonical: 'https://cafekinesi.com/school',
     },
   }
 }
@@ -187,67 +87,209 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 1800
 
 export default async function SchoolPage() {
-  const [schoolPageData, courses] = await Promise.all([
-    getSchoolPageData(),
-    getCourses()
-  ])
+  const courses = await getCourses()
+  const totalCourses = courses.reduce((sum, c) => sum + 1 + (c.childCourses?.length || 0), 0)
 
-  // ページ設定がない、または非公開の場合はデフォルト値を使用
-  const heroSection = schoolPageData?.heroSection || {
-    title: 'スクール',
-    description: 'カフェキネシオロジーは、どなたでも気軽に始められるヒーリング技術です。基礎から応用まで、段階的に学べる6つの講座をご用意しています。あなたのペースで、楽しみながら技術を身につけていきましょう。'
+  // Schema.org: BreadcrumbList
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: 'https://cafekinesi.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'スクール',
+        item: 'https://cafekinesi.com/school',
+      },
+    ],
   }
 
-  const ctaSection = schoolPageData?.ctaSection || {
-    title: 'まずは体験してみませんか？',
-    description: 'カフェキネシオロジーの魅力を実際に体験していただける、体験講座を定期的に開催しています。お気軽にご参加ください。',
-    primaryButton: { text: '体験講座のご案内' },
-    secondaryButton: { text: 'お問い合わせ' }
+  // Schema.org: ItemList (講座一覧)
+  const courseListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Cafe Kinesi 講座一覧',
+    description: 'カフェキネシオロジーで開講している全講座',
+    numberOfItems: totalCourses,
+    itemListElement: courses.flatMap((course, index) => {
+      const items = [
+        {
+          '@type': 'ListItem',
+          position: index * 2 + 1,
+          item: {
+            '@type': 'Course',
+            name: course.title,
+            description: course.subtitle,
+            url: `https://cafekinesi.com/school/${course.courseId}`,
+            provider: {
+              '@type': 'EducationalOrganization',
+              name: 'Cafe Kinesi',
+              url: 'https://cafekinesi.com',
+            },
+          },
+        },
+      ]
+
+      // 子講座も追加
+      if (course.childCourses) {
+        course.childCourses.forEach((child, childIndex) => {
+          items.push({
+            '@type': 'ListItem',
+            position: index * 2 + 2 + childIndex,
+            item: {
+              '@type': 'Course',
+              name: child.title,
+              description: child.subtitle,
+              url: `https://cafekinesi.com/school/${child.courseId}`,
+              provider: {
+                '@type': 'EducationalOrganization',
+                name: 'Cafe Kinesi',
+                url: 'https://cafekinesi.com',
+              },
+            },
+          })
+        })
+      }
+
+      return items
+    }),
   }
-
-  const courseListTitle = schoolPageData?.courseListTitle || '講座一覧'
-
-  // 注目講座が設定されている場合はそれを使用、なければ全講座を使用
-  let displayCourses = schoolPageData?.featuredCourses && schoolPageData.featuredCourses.length > 0
-    ? schoolPageData.featuredCourses
-    : courses
-
-  // 主要講座のみを表示（補助講座はchildCoursesに含まれるため除外）
-  displayCourses = displayCourses.filter(course => !course.courseType || course.courseType === 'main')
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <main className="relative">
-        {/* ヒーローセクション */}
-        <SchoolHero
-          title={heroSection.title}
-          description={heroSection.description}
-        />
+    <>
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseListSchema) }}
+      />
 
-        {/* メインコンテンツ */}
-        <section className="w-full max-w-screen-xl mx-auto px-6 pb-12">
-          {/* 講座一覧（目次） */}
-          <CourseList courses={displayCourses} title={courseListTitle} />
+      <div className="min-h-screen bg-gray-50">
+        <Header />
 
-          {/* 各講座の詳細 */}
-          <div className="space-y-8">
-            {displayCourses.map((course) => (
-              <CourseCard key={course._id || course.courseId} course={course} />
-            ))}
-          </div>
-        </section>
+        <main className="relative">
+          {/* ヒーローセクション */}
+          <section className="bg-gradient-to-br from-[#8B5A3C]/10 via-orange-50 to-white py-16 md:py-24">
+            <div className="max-w-screen-xl mx-auto px-6">
+              {/* パンくずリスト */}
+              <nav className="mb-6" aria-label="パンくずリスト">
+                <ol className="flex items-center gap-2 text-sm text-gray-600" itemScope itemType="https://schema.org/BreadcrumbList">
+                  <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                    <Link href="/" className="hover:text-[#8B5A3C] transition-colors" itemProp="item">
+                      <span itemProp="name">ホーム</span>
+                    </Link>
+                    <meta itemProp="position" content="1" />
+                  </li>
+                  <li className="text-gray-400">/</li>
+                  <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                    <span className="text-gray-900 font-medium" itemProp="name">スクール</span>
+                    <meta itemProp="position" content="2" />
+                  </li>
+                </ol>
+              </nav>
 
-        {/* CTAセクション */}
-        <CourseCTA
-          title={ctaSection.title}
-          description={ctaSection.description}
-          primaryButton={ctaSection.primaryButton}
-          secondaryButton={ctaSection.secondaryButton}
-        />
-      </main>
-      <SocialLinks />
-      <Footer />
-    </div>
+              {/* タイトル */}
+              <h1 className="font-noto-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                スクール・講座一覧
+              </h1>
+
+              {/* 説明 */}
+              <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mb-8">
+                カフェキネシオロジーは、どなたでも気軽に始められるヒーリング技術です。
+                基礎から応用まで、段階的に学べる<strong className="text-[#8B5A3C]">{totalCourses}種類</strong>の講座をご用意しています。
+              </p>
+
+              {/* 統計情報 */}
+              <div className="flex flex-wrap gap-6">
+                <div className="bg-white rounded-lg shadow-md px-6 py-4">
+                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">{courses.length}</div>
+                  <div className="text-sm text-gray-600">主要講座</div>
+                </div>
+                <div className="bg-white rounded-lg shadow-md px-6 py-4">
+                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">
+                    {courses.reduce((sum, c) => sum + (c.childCourses?.length || 0), 0)}
+                  </div>
+                  <div className="text-sm text-gray-600">発展コース</div>
+                </div>
+                <div className="bg-white rounded-lg shadow-md px-6 py-4">
+                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">{totalCourses}</div>
+                  <div className="text-sm text-gray-600">総講座数</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 講座一覧セクション */}
+          <section className="max-w-screen-xl mx-auto px-6 py-12" itemScope itemType="https://schema.org/ItemList">
+            <meta itemProp="name" content="Cafe Kinesi 講座一覧" />
+            <meta itemProp="description" content="カフェキネシオロジーで開講している全講座" />
+
+            {/* セクションヘッダー */}
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                開講中の講座
+              </h2>
+              <p className="text-gray-600">
+                各講座の詳細は、カードをクリックしてご確認ください。
+                初心者の方は<strong>レベル1</strong>から始めることをおすすめします。
+              </p>
+            </div>
+
+            {/* 講座カードリスト */}
+            <div className="space-y-6">
+              {courses.map((course) => (
+                <CoursePillarCard key={course._id} course={course} />
+              ))}
+            </div>
+
+            {/* 空の場合 */}
+            {courses.length === 0 && (
+              <div className="text-center py-16">
+                <p className="text-gray-500 text-lg">現在、開講中の講座はありません。</p>
+              </div>
+            )}
+          </section>
+
+          {/* CTAセクション */}
+          <section className="bg-[#8B5A3C] text-white py-16">
+            <div className="max-w-screen-xl mx-auto px-6 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                まずは体験してみませんか？
+              </h2>
+              <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
+                カフェキネシオロジーの魅力を実際に体験していただける、
+                体験講座を定期的に開催しています。お気軽にご参加ください。
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contact"
+                  className="inline-block bg-white text-[#8B5A3C] px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+                >
+                  お問い合わせ
+                </Link>
+                <Link
+                  href="/events"
+                  className="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/10 transition-colors"
+                >
+                  イベント一覧を見る
+                </Link>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <SocialLinks />
+        <Footer />
+      </div>
+    </>
   )
 }
