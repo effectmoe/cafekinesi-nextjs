@@ -77,6 +77,21 @@ function isRepresentativeQuery(message: string): boolean {
   ) && !isInstructorQuery(message);
 }
 
+// イベント関連の質問かどうか判定
+function isEventQuery(message: string): boolean {
+  const keywords = [
+    'イベント', 'event', 'セッション', 'session',
+    '講座', '体験会', 'ワークショップ', 'workshop',
+    '説明会', '開催', 'スケジュール', 'schedule',
+    '予定', '申込', '参加', '予約'
+  ];
+
+  const lowerMessage = message.toLowerCase();
+  return keywords.some(keyword =>
+    lowerMessage.includes(keyword.toLowerCase())
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('[Chat API] === Request Start ===');
@@ -137,20 +152,33 @@ export async function POST(request: NextRequest) {
     const ragEngine = new RAGEngine();
     await ragEngine.initialize();
 
-    // インストラクター関連の質問は専用の検索設定を使用
-    const searchConfig = isInstructorQuery(message)
-      ? {
-          vectorSearch: {
-            topK: 50,      // インストラクターは多めに取得
-            threshold: 0.05 // より低い閾値で幅広く取得
-          }
+    // 質問タイプに応じた検索設定を使用
+    let searchConfig;
+    if (isInstructorQuery(message)) {
+      // インストラクター質問は多めに取得
+      searchConfig = {
+        vectorSearch: {
+          topK: 50,
+          threshold: 0.05 // より低い閾値で幅広く取得
         }
-      : {
-          vectorSearch: {
-            topK: 20,
-            threshold: 0.15
-          }
-        };
+      };
+    } else if (isEventQuery(message)) {
+      // イベント質問も低い閾値で確実に取得
+      searchConfig = {
+        vectorSearch: {
+          topK: 30,
+          threshold: 0.05 // より低い閾値で幅広く取得
+        }
+      };
+    } else {
+      // その他の質問はデフォルト設定
+      searchConfig = {
+        vectorSearch: {
+          topK: 20,
+          threshold: 0.15
+        }
+      };
+    }
 
     const ragData = await ragEngine.generateAugmentedResponse(message, searchConfig);
 
@@ -162,6 +190,16 @@ export async function POST(request: NextRequest) {
       ragData.searchResults.forEach((result: any, idx: number) => {
         if (result.metadata?.type === 'instructor') {
           console.log(`  ${idx + 1}. ${result.metadata.name} (${result.metadata.location})`);
+        }
+      });
+    }
+
+    // イベント質問の場合は詳細ログ出力
+    if (isEventQuery(message) && ragData.searchResults?.length > 0) {
+      console.log('[Chat API] Event data retrieved from database:');
+      ragData.searchResults.forEach((result: any, idx: number) => {
+        if (result.metadata?.type === 'event') {
+          console.log(`  ${idx + 1}. ${result.metadata.title}`);
         }
       });
     }
