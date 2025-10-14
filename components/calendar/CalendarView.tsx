@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar } from '@/components/ui/calendar'
 import { Event } from '@/lib/types/event'
 import EventCard from './EventCard'
-import { format, startOfMonth, endOfMonth } from 'date-fns'
+import { format, startOfMonth, endOfMonth, getDaysInMonth, getDay, startOfDay, addMonths, subMonths } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import Holidays from 'date-holidays'
 
 export default function CalendarView() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
@@ -13,6 +13,7 @@ export default function CalendarView() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const holidays = new Holidays('JP')
 
   // 月が変更されたときにイベントを取得
   useEffect(() => {
@@ -61,82 +62,223 @@ export default function CalendarView() {
       })
     : []
 
-  // イベントがある日付を取得
-  const eventDates = events.map((event) => {
-    const start = new Date(event.startDate)
-    start.setHours(0, 0, 0, 0)
-    return start.getTime()
+  // イベントがある日付のセットを作成
+  const eventDateMap = new Map<number, Event[]>()
+  events.forEach((event) => {
+    const date = startOfDay(new Date(event.startDate))
+    const dateTime = date.getTime()
+    if (!eventDateMap.has(dateTime)) {
+      eventDateMap.set(dateTime, [])
+    }
+    eventDateMap.get(dateTime)?.push(event)
   })
 
-  // カスタムモディファイア：イベントがある日
-  const modifiers = {
-    hasEvent: (date: Date) => {
-      const checkDate = new Date(date)
-      checkDate.setHours(0, 0, 0, 0)
-      return eventDates.includes(checkDate.getTime())
-    }
+  // 日付がイベントを持っているかチェック
+  const getEventsForDay = (day: number): Event[] => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    const dateTime = startOfDay(date).getTime()
+    return eventDateMap.get(dateTime) || []
   }
 
-  const modifiersStyles = {
-    hasEvent: {
-      fontWeight: 'bold',
-      textDecoration: 'underline',
-    }
+  // 祝日かどうかをチェック
+  const isHoliday = (day: number): boolean => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return holidays.isHoliday(date) !== false
   }
+
+  // 曜日を取得（0: 日曜日, 6: 土曜日）
+  const getDayOfWeek = (day: number): number => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return date.getDay()
+  }
+
+  // 前月へ移動
+  const goToPreviousMonth = () => {
+    setCurrentMonth(subMonths(currentMonth, 1))
+    setSelectedDate(undefined)
+  }
+
+  // 次月へ移動
+  const goToNextMonth = () => {
+    setCurrentMonth(addMonths(currentMonth, 1))
+    setSelectedDate(undefined)
+  }
+
+  // 日付クリック時のハンドラー
+  const handleDayClick = (day: number) => {
+    const clickedDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    setSelectedDate(clickedDate)
+  }
+
+  // カレンダーの日付配列を生成
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear()
+    const month = currentMonth.getMonth()
+    const daysInMonth = getDaysInMonth(currentMonth)
+    const firstDayOfMonth = getDay(new Date(year, month, 1))
+
+    const days: (number | null)[] = []
+
+    // 月の最初の日までの空白を追加
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(null)
+    }
+
+    // 月の日付を追加
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(day)
+    }
+
+    return days
+  }
+
+  const calendarDays = generateCalendarDays()
 
   return (
     <div className="space-y-8">
       {/* カレンダー表示エリア */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">
-          {format(currentMonth, 'yyyy年 M月', { locale: ja })}
-        </h2>
+      <div className="bg-white rounded-lg shadow-lg p-8">
+        {/* 年月表示と切り替えボタン */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={goToPreviousMonth}
+            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="前月"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h2 className="text-3xl font-bold text-gray-900">
+            {format(currentMonth, 'yyyy年 M月', { locale: ja })}
+          </h2>
+          <button
+            onClick={goToNextMonth}
+            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="次月"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
 
         {loading && (
-          <div className="text-center py-8">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-            <p className="mt-2 text-gray-600">読み込み中...</p>
+          <div className="text-center py-16">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <p className="mt-4 text-gray-600 text-lg">読み込み中...</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-800">{error}</p>
           </div>
         )}
 
         {!loading && (
-          <div className="flex justify-center">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              month={currentMonth}
-              onMonthChange={setCurrentMonth}
-              modifiers={modifiers}
-              modifiersStyles={modifiersStyles}
-              locale={ja}
-              className="rounded-md border"
-            />
-          </div>
-        )}
+          <>
+            {/* 曜日ヘッダー */}
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              <div className="text-center font-bold text-lg py-3 text-red-600">日</div>
+              <div className="text-center font-bold text-lg py-3">月</div>
+              <div className="text-center font-bold text-lg py-3">火</div>
+              <div className="text-center font-bold text-lg py-3">水</div>
+              <div className="text-center font-bold text-lg py-3">木</div>
+              <div className="text-center font-bold text-lg py-3">金</div>
+              <div className="text-center font-bold text-lg py-3 text-blue-600">土</div>
+            </div>
 
-        <div className="mt-6 pt-6 border-t">
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-primary"></div>
-              <span>今日</span>
+            {/* 日付グリッド */}
+            <div className="grid grid-cols-7 gap-2">
+              {calendarDays.map((day, index) => {
+                const dayOfWeek = day ? getDayOfWeek(day) : -1
+                const isSunday = dayOfWeek === 0
+                const isSaturday = dayOfWeek === 6
+                const isHolidayDay = day ? isHoliday(day) : false
+                const dayEvents = day ? getEventsForDay(day) : []
+                const hasEvents = dayEvents.length > 0
+
+                return (
+                  <div
+                    key={index}
+                    onClick={() => day && handleDayClick(day)}
+                    className={`
+                      min-h-[120px] border rounded-lg p-3 transition-all
+                      ${day ? 'hover:bg-gray-50 cursor-pointer hover:shadow-md' : 'bg-gray-50'}
+                      ${isSunday || isHolidayDay ? 'bg-red-50' : ''}
+                      ${isSaturday && !isHolidayDay ? 'bg-blue-50' : ''}
+                      ${selectedDate && day === selectedDate.getDate() && currentMonth.getMonth() === selectedDate.getMonth() ? 'ring-2 ring-blue-500 bg-blue-100' : ''}
+                    `}
+                  >
+                    {day && (
+                      <>
+                        <div className={`
+                          text-lg font-semibold mb-2
+                          ${isSunday || isHolidayDay ? 'text-red-600' : ''}
+                          ${isSaturday && !isHolidayDay ? 'text-blue-600' : ''}
+                        `}>
+                          {day}
+                        </div>
+                        {hasEvents && (
+                          <div className="space-y-1">
+                            {dayEvents.slice(0, 3).map((event) => (
+                              <div
+                                key={event._id}
+                                className={`
+                                  text-xs px-2 py-1 rounded text-white truncate font-medium
+                                  ${event.status === 'open' ? 'bg-green-500' : ''}
+                                  ${event.status === 'full' ? 'bg-red-500' : ''}
+                                  ${event.status === 'closed' ? 'bg-gray-500' : ''}
+                                `}
+                                title={event.title}
+                              >
+                                {event.title}
+                              </div>
+                            ))}
+                            {dayEvents.length > 3 && (
+                              <div className="text-xs text-gray-600 px-2">
+                                +{dayEvents.length - 3}件
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full border-2 border-gray-400"></div>
-              <span className="font-bold underline">イベント有</span>
+
+            {/* 凡例 */}
+            <div className="mt-8 pt-6 border-t flex flex-wrap items-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-50 border border-red-200 rounded"></div>
+                <span>日曜・祝日</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-blue-50 border border-blue-200 rounded"></div>
+                <span>土曜日</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-green-500 rounded"></div>
+                <span>受付中</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-500 rounded"></div>
+                <span>満席</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gray-500 rounded"></div>
+                <span>終了</span>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {/* イベント一覧表示エリア */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">
           {selectedDate ? (
             <>
@@ -167,7 +309,7 @@ export default function CalendarView() {
             <p className="mt-4 text-gray-600">この日のイベントはありません</p>
             <button
               onClick={() => setSelectedDate(undefined)}
-              className="mt-4 text-blue-600 hover:text-blue-800 underline"
+              className="mt-4 text-blue-600 hover:text-blue-800 underline font-semibold"
             >
               全イベントを表示
             </button>
@@ -177,7 +319,7 @@ export default function CalendarView() {
             {selectedDate && selectedDayEvents.length > 0 && (
               <button
                 onClick={() => setSelectedDate(undefined)}
-                className="mb-4 text-sm text-blue-600 hover:text-blue-800 underline"
+                className="mb-4 text-sm text-blue-600 hover:text-blue-800 underline font-semibold"
               >
                 ← 全イベントを表示
               </button>
