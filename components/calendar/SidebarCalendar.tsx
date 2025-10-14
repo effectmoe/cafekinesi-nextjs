@@ -1,14 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar } from '@/components/ui/calendar'
 import { Event } from '@/lib/types/event'
-import { startOfMonth, endOfMonth } from 'date-fns'
+import { startOfMonth, endOfMonth, format, getDaysInMonth, getDay, startOfDay } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import Link from 'next/link'
 
 export default function SidebarCalendar() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [events, setEvents] = useState<Event[]>([])
 
@@ -35,29 +33,43 @@ export default function SidebarCalendar() {
     }
   }
 
-  // イベントがある日付を取得
-  const eventDates = events.map((event) => {
-    const start = new Date(event.startDate)
-    start.setHours(0, 0, 0, 0)
-    return start.getTime()
-  })
+  // イベントがある日付のセットを作成
+  const eventDateSet = new Set(
+    events.map((event) => {
+      const date = startOfDay(new Date(event.startDate))
+      return date.getTime()
+    })
+  )
 
-  // カスタムモディファイア：イベントがある日
-  const modifiers = {
-    hasEvent: (date: Date) => {
-      const checkDate = new Date(date)
-      checkDate.setHours(0, 0, 0, 0)
-      return eventDates.includes(checkDate.getTime())
-    }
+  // 日付がイベントを持っているかチェック
+  const hasEvent = (day: number): boolean => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return eventDateSet.has(startOfDay(date).getTime())
   }
 
-  const modifiersStyles = {
-    hasEvent: {
-      fontWeight: 'bold',
-      textDecoration: 'underline',
-      color: '#3b82f6', // blue-500
+  // カレンダーの日付配列を生成
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear()
+    const month = currentMonth.getMonth()
+    const daysInMonth = getDaysInMonth(currentMonth)
+    const firstDayOfMonth = getDay(new Date(year, month, 1))
+
+    const days: (number | null)[] = []
+
+    // 月の最初の日までの空白を追加
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(null)
     }
+
+    // 月の日付を追加
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(day)
+    }
+
+    return days
   }
+
+  const calendarDays = generateCalendarDays()
 
   return (
     <div className="bg-gray-50 p-4 rounded">
@@ -71,18 +83,36 @@ export default function SidebarCalendar() {
         </Link>
       </div>
 
-      <div className="text-xs">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          month={currentMonth}
-          onMonthChange={setCurrentMonth}
-          modifiers={modifiers}
-          modifiersStyles={modifiersStyles}
-          locale={ja}
-          className="rounded-md border bg-white"
-        />
+      <div className="text-xs text-gray-600">
+        {/* 曜日ヘッダー */}
+        <div className="grid grid-cols-7 gap-1 text-center mb-2">
+          <div>日</div>
+          <div>月</div>
+          <div>火</div>
+          <div>水</div>
+          <div>木</div>
+          <div>金</div>
+          <div>土</div>
+        </div>
+
+        {/* 日付グリッド */}
+        <div className="grid grid-cols-7 gap-1 text-center">
+          {calendarDays.map((day, index) => (
+            <div
+              key={index}
+              className={`
+                p-1 rounded relative
+                ${day ? 'hover:bg-blue-100 cursor-pointer' : ''}
+                ${day && hasEvent(day) ? 'bg-blue-50 font-semibold text-blue-600' : ''}
+              `}
+            >
+              {day || ''}
+              {day && hasEvent(day) && (
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mt-4">
@@ -95,8 +125,8 @@ export default function SidebarCalendar() {
 
       <div className="mt-3 text-xs text-gray-600">
         <p className="flex items-center gap-1">
-          <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
-          <span className="font-bold underline">イベント有</span>
+          <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+          <span>イベント有</span>
         </p>
       </div>
     </div>
