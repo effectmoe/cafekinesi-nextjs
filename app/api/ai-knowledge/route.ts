@@ -53,10 +53,10 @@ setInterval(cleanupRateLimitMap, 300000)
  * AI Knowledge API
  *
  * AIエージェント向けの公開APIエンドポイント
- * Sanityのコンテンツ（blogPost, course, instructor）をJSON形式で提供
+ * Sanityのコンテンツ（blogPost, course, instructor, event）をJSON形式で提供
  *
  * クエリパラメータ:
- * - type: 'blog' | 'course' | 'instructor' | 'all'
+ * - type: 'blog' | 'course' | 'instructor' | 'event' | 'all'
  * - q: 検索クエリ（部分一致）
  * - limit: 取得件数（デフォルト: 10、最大: 100）
  *
@@ -64,6 +64,7 @@ setInterval(cleanupRateLimitMap, 300000)
  * GET /api/ai-knowledge?type=blog&limit=20
  * GET /api/ai-knowledge?type=course&q=キネシオロジー
  * GET /api/ai-knowledge?type=instructor&q=東京
+ * GET /api/ai-knowledge?type=event&limit=10
  * GET /api/ai-knowledge?type=all
  */
 export async function GET(request: NextRequest) {
@@ -182,12 +183,43 @@ export async function GET(request: NextRequest) {
         break
       }
 
+      case 'event': {
+        // イベント情報取得
+        const searchFilter = query
+          ? `&& (title match "*${query}*" || description match "*${query}*" || location match "*${query}*")`
+          : ''
+
+        data = await publicClient.fetch(groq`
+          *[_type == "event" && useForAI == true ${searchFilter}]
+          | order(startDate asc) [0...${limit}] {
+            _id,
+            _type,
+            title,
+            "slug": slug.current,
+            description,
+            startDate,
+            endDate,
+            location,
+            fee,
+            capacity,
+            currentParticipants,
+            status,
+            category,
+            tags,
+            registrationUrl,
+            _updatedAt,
+            "url": "/event/" + slug.current
+          }
+        `)
+        break
+      }
+
       case 'all':
       default: {
         // 全タイプから取得
-        const perTypeLimit = Math.ceil(limit / 3)
+        const perTypeLimit = Math.ceil(limit / 4)
 
-        const [blogs, courses, instructors] = await Promise.all([
+        const [blogs, courses, instructors, events] = await Promise.all([
           publicClient.fetch(groq`
             *[_type == "blogPost" && !(_id in path("drafts.*"))]
             | order(publishedAt desc) [0...${perTypeLimit}] {
@@ -223,9 +255,23 @@ export async function GET(request: NextRequest) {
               "url": "/instructor/" + lower(region) + "/" + slug.current
             }
           `),
+          publicClient.fetch(groq`
+            *[_type == "event" && useForAI == true]
+            | order(startDate asc) [0...${perTypeLimit}] {
+              _id,
+              _type,
+              title,
+              "slug": slug.current,
+              startDate,
+              location,
+              fee,
+              status,
+              "url": "/event/" + slug.current
+            }
+          `),
         ])
 
-        data = [...blogs, ...courses, ...instructors]
+        data = [...blogs, ...courses, ...instructors, ...events]
         contentType = 'all'
         break
       }
