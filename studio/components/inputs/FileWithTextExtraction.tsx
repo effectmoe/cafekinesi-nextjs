@@ -30,8 +30,8 @@ export function FileWithTextExtraction(props: FileInputProps) {
         return
       }
 
-      // Check if we've already processed this file AND extractedText exists
-      if (lastProcessedRef.current === value.asset._ref && extractedText) {
+      // Check if we've already processed this file
+      if (lastProcessedRef.current === value.asset._ref) {
         console.log('⏭️  File already processed:', value.asset._ref)
         return
       }
@@ -151,7 +151,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
     }
 
     extractText()
-  }, [value?.asset?._ref, patch, extractedText])
+  }, [value?.asset?._ref, patch])
 
   // Render the default file input
   return <FileInput {...props} />
