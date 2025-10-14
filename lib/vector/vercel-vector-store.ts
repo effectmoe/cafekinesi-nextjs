@@ -39,25 +39,36 @@ export class VercelVectorStore {
         // ハッシュ生成
         const contentHash = this.hashContent(doc.content);
 
-        // UPSERT処理
+        // document_embeddingsテーブルに挿入
+        // id, type, title, content, url, embedding, metadata
+        const docId = doc.metadata?.id || `${doc.metadata?.type}-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+        const docType = doc.metadata?.type || 'unknown';
+        const docTitle = doc.metadata?.title || doc.metadata?.name || doc.metadata?.question || 'Untitled';
+        const docUrl = doc.metadata?.slug ? `/${docType}/${doc.metadata.slug}` : null;
+
         await sql`
-          INSERT INTO embeddings (
+          INSERT INTO document_embeddings (
+            id,
+            type,
+            title,
             content,
-            metadata,
+            url,
             embedding,
-            source,
-            content_hash,
-            search_text
+            metadata
           ) VALUES (
+            ${docId},
+            ${docType},
+            ${docTitle},
             ${doc.content},
-            ${JSON.stringify(doc.metadata || {})},
+            ${docUrl},
             ${JSON.stringify(embedding)},
-            ${doc.source || 'sanity'},
-            ${contentHash},
-            to_tsvector('simple', ${doc.content})
+            ${JSON.stringify(doc.metadata || {})}
           )
-          ON CONFLICT (content_hash)
+          ON CONFLICT (id)
           DO UPDATE SET
+            content = EXCLUDED.content,
+            title = EXCLUDED.title,
+            url = EXCLUDED.url,
             embedding = EXCLUDED.embedding,
             metadata = EXCLUDED.metadata,
             updated_at = NOW()
@@ -90,7 +101,7 @@ export class VercelVectorStore {
         metadata,
         source,
         1 - (embedding <=> ${JSON.stringify(embedding)}::vector) as similarity
-      FROM embeddings
+      FROM document_embeddings
       WHERE
         (metadata::text LIKE '%instructor%' OR source LIKE '%instructor%')
         AND 1 - (embedding <=> ${JSON.stringify(embedding)}::vector) > ${threshold}
@@ -134,7 +145,7 @@ export class VercelVectorStore {
           metadata,
           source,
           1 - (embedding <=> ${JSON.stringify(queryEmbedding)}::vector) as vector_score
-        FROM embeddings
+        FROM document_embeddings
         WHERE 1 - (embedding <=> ${JSON.stringify(queryEmbedding)}::vector) > ${threshold}
         ORDER BY vector_score DESC
         LIMIT ${topK}
@@ -143,7 +154,7 @@ export class VercelVectorStore {
         SELECT
           id,
           ts_rank(search_text, plainto_tsquery('simple', ${query})) as text_score
-        FROM embeddings
+        FROM document_embeddings
         WHERE search_text @@ plainto_tsquery('simple', ${query})
       )
       SELECT
@@ -168,7 +179,7 @@ export class VercelVectorStore {
         COUNT(*) as total_documents,
         COUNT(DISTINCT source) as sources,
         MAX(updated_at) as last_update
-      FROM embeddings
+      FROM document_embeddings
     `;
 
     return stats.rows[0];
