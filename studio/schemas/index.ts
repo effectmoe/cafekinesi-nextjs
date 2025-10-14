@@ -17,6 +17,7 @@ import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
 import course from './documents/course'
 import schoolPage from './documents/schoolPage'
+import schoolPageContent from './documents/schoolPageContent'
 import instructor from './documents/instructor'
 import instructorPage from './documents/instructorPage'
 import profilePage from './documents/profilePage'
@@ -71,6 +72,7 @@ export const schemaTypes = [
   siteSettings,
   course,
   schoolPage,
+  schoolPageContent,
   instructor,
   instructorPage,
   profilePage,

@@ -3,11 +3,13 @@ import { publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import { groq } from 'next-sanity'
 import type { Course } from '@/lib/types/course'
+import type { SchoolPageContent } from '@/lib/types/schoolPageContent'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import CoursePillarCard from '@/components/school/CoursePillarCard'
 import Link from 'next/link'
+import Image from 'next/image'
 
 // GROQクエリ: 主要講座と子講座を取得
 const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(courseType) || courseType == "main")] | order(order asc) {
@@ -16,6 +18,7 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
   title,
   subtitle,
   description,
+  recommendations,
   image {
     asset->,
     alt
@@ -29,6 +32,7 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
     courseId,
     title,
     subtitle,
+    recommendations,
     image {
       asset->,
       alt
@@ -37,6 +41,53 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
     courseType,
     price,
     duration
+  }
+}`
+
+// スクールページコンテンツ取得
+const CONTENT_QUERY = groq`*[_type == "schoolPageContent" && isActive == true][0] {
+  _id,
+  title,
+  selectionGuide {
+    title,
+    description,
+    image {
+      asset->,
+      alt
+    },
+    points[] {
+      title,
+      description
+    }
+  },
+  learningFlow {
+    title,
+    description,
+    steps[] {
+      number,
+      title,
+      description,
+      image {
+        asset->,
+        alt
+      }
+    }
+  },
+  faq {
+    title,
+    items[] {
+      question,
+      answer
+    }
+  },
+  certification {
+    title,
+    description,
+    image {
+      asset->,
+      alt
+    },
+    benefits[]
   }
 }`
 
@@ -54,6 +105,23 @@ async function getCourses(): Promise<Course[]> {
   } catch (error) {
     console.error('Failed to fetch courses:', error)
     return []
+  }
+}
+
+async function getPageContent(): Promise<SchoolPageContent | null> {
+  try {
+    const draft = await draftMode()
+    const isPreview = draft.isEnabled
+    const selectedClient = isPreview ? previewClient : publicClient
+
+    const data = await selectedClient.fetch(CONTENT_QUERY, {}, {
+      cache: isPreview ? 'no-store' : 'force-cache'
+    } as any)
+
+    return data
+  } catch (error) {
+    console.error('Failed to fetch page content:', error)
+    return null
   }
 }
 
@@ -87,7 +155,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 1800
 
 export default async function SchoolPage() {
-  const courses = await getCourses()
+  const [courses, pageContent] = await Promise.all([
+    getCourses(),
+    getPageContent()
+  ])
+
   const totalCourses = courses.reduce((sum, c) => sum + 1 + (c.childCourses?.length || 0), 0)
 
   // Schema.org: BreadcrumbList
@@ -110,12 +182,9 @@ export default async function SchoolPage() {
     ],
   }
 
-  // Schema.org: ItemList (講座一覧)
-  // position値を正しく連番にするため、全ての講座を1つの配列に展開してから番号を振る
+  // Schema.org: ItemList
   const allCourseItems: any[] = []
-
   courses.forEach((course) => {
-    // 主要講座を追加
     allCourseItems.push({
       '@type': 'Course',
       name: course.title,
@@ -128,7 +197,6 @@ export default async function SchoolPage() {
       },
     })
 
-    // 子講座を追加
     if (course.childCourses) {
       course.childCourses.forEach((child) => {
         allCourseItems.push({
@@ -159,6 +227,20 @@ export default async function SchoolPage() {
     })),
   }
 
+  // Schema.org: FAQPage
+  const faqSchema = pageContent?.faq?.items ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: pageContent.faq.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  } : null
+
   return (
     <>
       {/* 構造化データ */}
@@ -170,6 +252,12 @@ export default async function SchoolPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(courseListSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -178,7 +266,6 @@ export default async function SchoolPage() {
           {/* ヒーローセクション */}
           <section className="bg-gradient-to-br from-[#8B5A3C]/10 via-orange-50 to-white py-16 md:py-24">
             <div className="max-w-screen-xl mx-auto px-6">
-              {/* パンくずリスト */}
               <nav className="mb-6" aria-label="パンくずリスト">
                 <ol className="flex items-center gap-2 text-sm text-gray-600" itemScope itemType="https://schema.org/BreadcrumbList">
                   <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
@@ -195,18 +282,15 @@ export default async function SchoolPage() {
                 </ol>
               </nav>
 
-              {/* タイトル */}
               <h1 className="font-noto-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 スクール・講座一覧
               </h1>
 
-              {/* 説明 */}
               <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mb-8">
                 カフェキネシオロジーは、どなたでも気軽に始められるヒーリング技術です。
                 基礎から応用まで、段階的に学べる<strong className="text-[#8B5A3C]">{totalCourses}種類</strong>の講座をご用意しています。
               </p>
 
-              {/* 統計情報 */}
               <div className="flex flex-wrap gap-6">
                 <div className="bg-white rounded-lg shadow-md px-6 py-4">
                   <div className="text-3xl font-bold text-[#8B5A3C] mb-1">{courses.length}</div>
@@ -226,12 +310,92 @@ export default async function SchoolPage() {
             </div>
           </section>
 
+          {/* 講座の選び方ガイド */}
+          {pageContent?.selectionGuide && (
+            <section className="max-w-screen-xl mx-auto px-6 py-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+                {pageContent.selectionGuide.title}
+              </h2>
+
+              {pageContent.selectionGuide.description && (
+                <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-12 text-center">
+                  {pageContent.selectionGuide.description}
+                </p>
+              )}
+
+              {pageContent.selectionGuide.image && (
+                <div className="relative w-full max-w-2xl mx-auto h-64 md:h-96 mb-12 rounded-lg overflow-hidden shadow-lg">
+                  <Image
+                    src={pageContent.selectionGuide.image.asset.url}
+                    alt={pageContent.selectionGuide.image.alt || '講座の選び方'}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+
+              {pageContent.selectionGuide.points && pageContent.selectionGuide.points.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {pageContent.selectionGuide.points.map((point, index) => (
+                    <div key={index} className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow">
+                      <div className="text-[#8B5A3C] text-4xl font-bold mb-4">{index + 1}</div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">{point.title}</h3>
+                      <p className="text-gray-700 leading-relaxed">{point.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* 学習の流れ */}
+          {pageContent?.learningFlow && (
+            <section className="bg-white py-16">
+              <div className="max-w-screen-xl mx-auto px-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+                  {pageContent.learningFlow.title}
+                </h2>
+
+                {pageContent.learningFlow.description && (
+                  <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-12 text-center">
+                    {pageContent.learningFlow.description}
+                  </p>
+                )}
+
+                {pageContent.learningFlow.steps && pageContent.learningFlow.steps.length > 0 && (
+                  <div className="space-y-8">
+                    {pageContent.learningFlow.steps.map((step, index) => (
+                      <div key={index} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-8`}>
+                        {step.image && (
+                          <div className="relative w-full md:w-1/2 h-64 rounded-lg overflow-hidden shadow-lg">
+                            <Image
+                              src={step.image.asset.url}
+                              alt={step.image.alt || `ステップ${step.number}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="w-full md:w-1/2">
+                          <div className="inline-block bg-[#8B5A3C] text-white px-4 py-2 rounded-full font-bold mb-4">
+                            STEP {step.number}
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-4">{step.title}</h3>
+                          <p className="text-gray-700 leading-relaxed">{step.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* 講座一覧セクション */}
           <section className="max-w-screen-xl mx-auto px-6 py-12" itemScope itemType="https://schema.org/ItemList">
             <meta itemProp="name" content="Cafe Kinesi 講座一覧" />
             <meta itemProp="description" content="カフェキネシオロジーで開講している全講座" />
 
-            {/* セクションヘッダー */}
             <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                 開講中の講座
@@ -242,20 +406,82 @@ export default async function SchoolPage() {
               </p>
             </div>
 
-            {/* 講座カードリスト */}
             <div className="space-y-6">
               {courses.map((course) => (
                 <CoursePillarCard key={course._id} course={course} />
               ))}
             </div>
 
-            {/* 空の場合 */}
             {courses.length === 0 && (
               <div className="text-center py-16">
                 <p className="text-gray-500 text-lg">現在、開講中の講座はありません。</p>
               </div>
             )}
           </section>
+
+          {/* FAQ */}
+          {pageContent?.faq && pageContent.faq.items && pageContent.faq.items.length > 0 && (
+            <section className="bg-white py-16">
+              <div className="max-w-screen-xl mx-auto px-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+                  {pageContent.faq.title}
+                </h2>
+
+                <div className="max-w-3xl mx-auto space-y-4">
+                  {pageContent.faq.items.map((item, index) => (
+                    <details key={index} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                      <summary className="font-bold text-lg text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                        <span className="flex-1">{item.question}</span>
+                        <span className="text-[#8B5A3C] ml-4">▼</span>
+                      </summary>
+                      <div className="mt-4 text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {item.answer}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* 資格・認定 */}
+          {pageContent?.certification && (
+            <section className="max-w-screen-xl mx-auto px-6 py-16">
+              <div className="bg-gradient-to-br from-[#8B5A3C]/5 to-orange-50 rounded-2xl p-8 md:p-12">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+                  {pageContent.certification.title}
+                </h2>
+
+                {pageContent.certification.description && (
+                  <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-8 text-center">
+                    {pageContent.certification.description}
+                  </p>
+                )}
+
+                {pageContent.certification.image && (
+                  <div className="relative w-full max-w-2xl mx-auto h-64 md:h-80 mb-8 rounded-lg overflow-hidden shadow-lg">
+                    <Image
+                      src={pageContent.certification.image.asset.url}
+                      alt={pageContent.certification.image.alt || '資格・認定'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+
+                {pageContent.certification.benefits && pageContent.certification.benefits.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+                    {pageContent.certification.benefits.map((benefit, index) => (
+                      <div key={index} className="flex items-start gap-3 bg-white rounded-lg p-4 shadow-sm">
+                        <span className="text-[#8B5A3C] text-xl">✓</span>
+                        <span className="text-gray-700">{benefit}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
 
           {/* CTAセクション */}
           <section className="bg-[#8B5A3C] text-white py-16">
