@@ -28,13 +28,9 @@ export class RAGEngine {
       console.log('🔢 集計質問を検出: AI Knowledge APIから全件取得...');
       searchResults = await this.fetchFromKnowledgeAPI(query);
     } else if (isEventQuery) {
-      // イベント質問の場合は専用設定
-      console.log('📅 イベント専用検索を実行...');
-      searchResults = await vectorSearch(query, {
-        topK: 30,
-        threshold: 0.05,
-        type: 'event'
-      });
+      // イベント質問の場合はAI Knowledge APIを使用（ベクトル検索ではなく）
+      console.log('📅 イベント専用: AI Knowledge APIから取得...');
+      searchResults = await this.fetchFromKnowledgeAPI(query);
     } else if (isInstructorQuery) {
       // インストラクター質問の場合は専用設定
       console.log('👩‍🏫 インストラクター専用検索を実行...');
