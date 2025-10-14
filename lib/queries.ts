@@ -752,6 +752,9 @@ export const CHAT_MODAL_QUERY = `
     },
     faqSectionTitle,
     faqSectionSubtitle,
+    calendarButtonEnabled,
+    calendarButtonText,
+    calendarButtonUrl,
     isActive
   }
 `

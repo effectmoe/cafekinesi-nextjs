@@ -20,6 +20,9 @@ export interface ChatModalSettings {
   sampleMessages: SampleMessage[]
   faqSectionTitle: string
   faqSectionSubtitle: string
+  calendarButtonEnabled?: boolean
+  calendarButtonText?: string
+  calendarButtonUrl?: string
   isActive: boolean
 }
 

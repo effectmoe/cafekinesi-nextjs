@@ -42,6 +42,7 @@ export default async function RootLayout({
     <html lang="ja">
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <Providers>
           <a href="#main-content" className="skip-to-content">

@@ -4,6 +4,9 @@ import { useRef, useState, Suspense } from 'react';
 import FAQSection from './FAQSection';
 import InlineChatModal from './InlineChatModal';
 import { FAQCard, ChatModalSettings } from '@/types/chat.types';
+import Link from 'next/link';
+import { Card } from "@/components/ui/card";
+import { Calendar } from 'lucide-react';
 
 interface ChatSectionWrapperProps {
   faqCards: FAQCard[];
@@ -67,6 +70,28 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
             />
           </Suspense>
         </div>
+      )}
+
+      {/* カレンダーボタン - チャットモーダルの下 */}
+      {chatSettings?.calendarButtonEnabled && (
+        <section className="w-full pt-6 pb-12 px-6 bg-[hsl(35,25%,95%)]">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex justify-center">
+              <Link href={chatSettings.calendarButtonUrl || '/calendar'} className="w-full md:w-auto">
+                <Card className="group p-5 bg-[hsl(180,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
+                  <div className="flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-3 md:gap-4">
+                    <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 transition-opacity">
+                      <Calendar className="w-8 h-8" strokeWidth={1.5} />
+                    </div>
+                    <p className="text-sm font-medium text-text-primary">
+                      {chatSettings.calendarButtonText || 'イベントの予定を見る'}
+                    </p>
+                  </div>
+                </Card>
+              </Link>
+            </div>
+          </div>
+        </section>
       )}
     </>
   );

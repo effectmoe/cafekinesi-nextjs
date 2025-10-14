@@ -113,6 +113,36 @@ export default defineType({
       initialValue: '何かお探しですか？AIアシスタントがお答えします'
     }),
     defineField({
+      name: 'calendarButtonEnabled',
+      title: 'イベントカレンダーボタンを表示',
+      type: 'boolean',
+      description: 'チャットモーダル下部に「イベントの予定を見る」ボタンを表示するかどうか',
+      initialValue: true
+    }),
+    defineField({
+      name: 'calendarButtonText',
+      title: 'カレンダーボタンのテキスト',
+      type: 'string',
+      description: 'ボタンに表示するテキスト',
+      initialValue: 'イベントの予定を見る',
+      hidden: ({document}) => !document?.calendarButtonEnabled
+    }),
+    defineField({
+      name: 'calendarButtonUrl',
+      title: 'カレンダーボタンのリンク先',
+      type: 'string',
+      description: 'ボタンをクリックした時の遷移先URL',
+      initialValue: '/calendar',
+      validation: Rule => Rule.custom((value) => {
+        if (!value) return true;
+        if (!value.startsWith('/')) {
+          return 'URLは/から始まる必要があります（例: /calendar）';
+        }
+        return true;
+      }),
+      hidden: ({document}) => !document?.calendarButtonEnabled
+    }),
+    defineField({
       name: 'isActive',
       title: '有効',
       type: 'boolean',

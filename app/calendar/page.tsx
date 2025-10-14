@@ -48,7 +48,7 @@ export default function CalendarPage() {
       <main className="pt-20">
         {/* ページヘッダー */}
         <div className="bg-gradient-to-r from-primary/10 to-secondary/10 py-12">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-5xl mx-auto px-8 md:px-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               イベントカレンダー
             </h1>
@@ -59,7 +59,7 @@ export default function CalendarPage() {
         </div>
 
         {/* カレンダービュー */}
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-5xl mx-auto px-8 md:px-12 py-12">
           <CalendarView />
         </div>
       </main>
