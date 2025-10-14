@@ -4,12 +4,12 @@ import { useEffect, useRef } from 'react'
 
 const PROJECT_ID = 'e4aqw590'
 const DATASET = 'production'
-// Next.js API URL (Sanity Studio is on port 3333, Next.js is on 3000)
+// Next.js API URL (Sanity Studio is on port 3333, Next.js is on 3000/3002)
 const NEXTJS_API_URL = typeof window !== 'undefined'
   ? window.location.hostname === 'localhost'
-    ? 'http://localhost:3000'
+    ? 'http://localhost:3002'  // Changed from 3000 to 3002
     : 'https://cafekinesi-nextjs.vercel.app'
-  : 'http://localhost:3000'
+  : 'http://localhost:3002'
 
 export function FileWithTextExtraction(props: FileInputProps) {
   const { value } = props
@@ -115,6 +115,23 @@ export function FileWithTextExtraction(props: FileInputProps) {
         }
 
         // Update the document fields using patch
+        console.log('🔧 Attempting to patch document...')
+        console.log('📝 Document ID:', documentId)
+        console.log('📝 Published ID:', publishedId)
+        console.log('📝 Document Type:', documentType)
+        console.log('📝 Patch function available:', !!patch)
+        console.log('📝 Data to patch:', {
+          extractedText: extractedTextContent.substring(0, 100) + '...',
+          fileType,
+          fileSize,
+          lastProcessed: new Date().toISOString()
+        })
+
+        if (!patch) {
+          console.error('❌ Patch function is not available!')
+          return
+        }
+
         patch.execute([
           {
             set: {
@@ -127,7 +144,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
         ])
 
         lastProcessedRef.current = value.asset._ref
-        console.log('✅ Text extracted successfully:', { fileSize, fileType })
+        console.log('✅ Text extracted successfully and patch executed:', { fileSize, fileType })
       } catch (error) {
         console.error('❌ Text extraction error:', error)
       }
