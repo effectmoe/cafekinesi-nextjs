@@ -39,6 +39,12 @@ export interface Course {
   prerequisites?: string
   applicationLink?: string
   ctaBox?: CourseCTABox // CTAボックス設定
+  courseType?: 'main' | 'auxiliary' // 講座タイプ（主要講座 or 補助講座）
+  parentCourse?: {
+    _ref: string
+    _type: string
+  }
+  childCourses?: Course[] // 子講座（補助講座）のリスト
 }
 
 // 講座詳細ページ用のセクション定義

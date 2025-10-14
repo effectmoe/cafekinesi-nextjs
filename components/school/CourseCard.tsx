@@ -20,6 +20,7 @@ export default function CourseCard({ course }: CourseCardProps) {
   const secondaryButtonLink = course.ctaBox?.secondaryButtonLink || ''
 
   return (
+    <>
     <div id={course.courseId} className="mb-6 border border-gray-200 overflow-hidden">
       {/* メインカード - 各カードに個別の背景色 */}
       <div className={`${course.backgroundClass} py-8 px-6 md:px-10 flex flex-col md:flex-row items-center`}>
@@ -196,5 +197,113 @@ export default function CourseCard({ course }: CourseCardProps) {
         </div>
       </div>
     </div>
+
+    {/* 子講座（補助講座）がある場合は表示 */}
+    {course.childCourses && course.childCourses.length > 0 && (
+      <div className="ml-8 mb-6 space-y-4">
+        {course.childCourses.map((childCourse) => {
+          const childCtaTitle = childCourse.ctaBox?.title || 'この講座について'
+          const childCtaSubtitle = childCourse.ctaBox?.subtitle || '詳細情報やお申込みはこちら'
+          const childPrimaryButtonText = childCourse.ctaBox?.primaryButtonText || '詳細を見る'
+          const childPrimaryButtonLink = childCourse.ctaBox?.primaryButtonLink || `/school/${childCourse.courseId}`
+
+          return (
+            <div key={childCourse._id} id={childCourse.courseId} className="border border-gray-300 overflow-hidden bg-gray-50 relative">
+              {/* 階層を示す視覚的な線 */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-400"></div>
+
+              {/* 補助講座のコンパクトなカード */}
+              <div className="pl-4">
+                <div className={`${childCourse.backgroundClass || 'bg-gray-100'} py-6 px-6 md:px-8 flex flex-col md:flex-row items-center opacity-90`}>
+                  {/* 画像（小さめ） */}
+                  {childCourse.image?.asset?.url && (
+                    <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+                      <div className="bg-white p-3 rounded-lg">
+                        <Image
+                          src={childCourse.image.asset.url}
+                          alt={childCourse.image.alt || `${childCourse.title} ${childCourse.subtitle}`}
+                          width={180}
+                          height={120}
+                          className="w-[150px] md:w-[180px] h-[100px] md:h-[120px] object-contain"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* コンテンツ */}
+                  <div className="flex-1 text-center md:text-left">
+                    {/* 補助講座ラベル */}
+                    <div className="mb-2">
+                      <span className="inline-block bg-gray-600 text-white px-3 py-1 rounded text-xs font-medium">
+                        補助講座 - レベル {childCourse.order || 1}
+                      </span>
+                    </div>
+
+                    {/* 講座タイトル */}
+                    <Link href={`/school/${childCourse.courseId}`} className="block hover:opacity-80 transition-opacity">
+                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1">
+                        {childCourse.title}
+                      </h3>
+                      <h4 className="text-sm text-gray-700 mb-2">
+                        {childCourse.subtitle}
+                      </h4>
+                    </Link>
+
+                    {/* 説明文 */}
+                    {childCourse.description && (
+                      <p className="text-gray-600 leading-relaxed text-xs md:text-sm">
+                        {childCourse.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* 詳細セクション（簡易版） */}
+                {childCourse.features && childCourse.features.length > 0 && (
+                  <div className="bg-white px-6 md:px-8 py-6">
+                    <div className="md:flex items-stretch gap-6">
+                      {/* 講座の特徴 */}
+                      <div className="flex-1 mb-6 md:mb-0">
+                        <h5 className="text-xs font-bold text-gray-900 mb-3 flex items-center">
+                          <span className="text-base mr-2">●</span> 講座の特徴
+                        </h5>
+                        <div className="space-y-2">
+                          {childCourse.features.slice(0, 3).map((feature, index) => (
+                            <div key={index} className="bg-gray-50 p-3 rounded flex items-center">
+                              <span className="bg-gray-600 text-white rounded-full min-w-[18px] w-[18px] h-[18px] flex items-center justify-center text-xs flex-shrink-0">
+                                {index + 1}
+                              </span>
+                              <span className="ml-3 text-gray-700 text-xs leading-relaxed">{feature}</span>
+                            </div>
+                          ))}
+                          {childCourse.features.length > 3 && (
+                            <p className="text-xs text-gray-500 ml-7">他 {childCourse.features.length - 3}件</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* CTAボックス（小） */}
+                      <div className="w-full md:w-56 flex-shrink-0">
+                        <div className="bg-gray-50 p-4 rounded-lg text-center">
+                          <p className="text-xs text-gray-700 font-medium mb-1">{childCtaTitle}</p>
+                          <p className="text-xs text-gray-500 mb-3">{childCtaSubtitle}</p>
+                          <Link
+                            href={childPrimaryButtonLink}
+                            className="inline-block bg-gray-700 text-white px-4 py-2 text-xs font-medium hover:bg-gray-600 transition-colors w-full rounded text-center"
+                          >
+                            {childPrimaryButtonText}
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )}
+    </>
   )
 }

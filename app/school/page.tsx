@@ -79,6 +79,33 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true] | order(orde
     primaryButtonLink,
     secondaryButtonText,
     secondaryButtonLink
+  },
+  courseType,
+  parentCourse,
+  "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true] | order(order asc) {
+    _id,
+    courseId,
+    title,
+    subtitle,
+    description,
+    features,
+    image {
+      asset->,
+      alt
+    },
+    backgroundClass,
+    order,
+    price,
+    duration,
+    courseType,
+    ctaBox {
+      title,
+      subtitle,
+      primaryButtonText,
+      primaryButtonLink,
+      secondaryButtonText,
+      secondaryButtonLink
+    }
   }
 }`
 
@@ -181,9 +208,12 @@ export default async function SchoolPage() {
   const courseListTitle = schoolPageData?.courseListTitle || '講座一覧'
 
   // 注目講座が設定されている場合はそれを使用、なければ全講座を使用
-  const displayCourses = schoolPageData?.featuredCourses && schoolPageData.featuredCourses.length > 0
+  let displayCourses = schoolPageData?.featuredCourses && schoolPageData.featuredCourses.length > 0
     ? schoolPageData.featuredCourses
     : courses
+
+  // 主要講座のみを表示（補助講座はchildCoursesに含まれるため除外）
+  displayCourses = displayCourses.filter(course => !course.courseType || course.courseType === 'main')
 
   return (
     <div className="min-h-screen bg-white">
