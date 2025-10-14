@@ -270,6 +270,18 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     const priceMatch = query.match(/(\d+)円以下|(\d+)円以内|予算\s*(\d+)|(\d+)円/);
     const isOpenQuery = /受付中|参加できる|空き|申し込める/.test(query);
 
+    // 時間軸の条件を抽出
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 0-indexed
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+    const nextMonthYear = currentMonth === 12 ? currentYear + 1 : currentYear;
+
+    const isThisMonthQuery = /今月|this month/i.test(query);
+    const isNextMonthQuery = /来月|next month/i.test(query);
+    const isThisWeekQuery = /今週|this week/i.test(query);
+    const isNextWeekQuery = /来週|next week/i.test(query);
+
     let filteredEvents = [...events];
     const conditions: string[] = [];
 
@@ -308,6 +320,21 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
         const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
         const status = statusMatch ? statusMatch[1].trim() : '';
         return status === '受付中';
+      });
+    }
+
+    // 時間軸フィルタ
+    if (isThisMonthQuery || isNextMonthQuery) {
+      const targetMonth = isThisMonthQuery ? currentMonth : nextMonth;
+      const targetYear = isThisMonthQuery ? currentYear : nextMonthYear;
+      conditions.push(`時期: ${targetYear}年${targetMonth}月${isThisMonthQuery ? '（今月）' : '（来月）'}`);
+
+      filteredEvents = filteredEvents.filter((e: any) => {
+        const dateMatch = e.content.match(/日時[：:]\s*(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+        if (!dateMatch) return false;
+        const eventYear = parseInt(dateMatch[1]);
+        const eventMonth = parseInt(dateMatch[2]);
+        return eventYear === targetYear && eventMonth === targetMonth;
       });
     }
 

@@ -14,8 +14,24 @@ export class DeepSeekProvider implements AIProvider {
 
   async generateResponse(message: string, context: MessageContext): Promise<string> {
     try {
+      // 現在の日付情報を取得
+      const now = new Date();
+      const currentDate = now.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long'
+      });
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+
       // RAGコンテキストがある場合は優先的に使用
       let systemPrompt = `あなたはCafe Kinesiの親切なAIアシスタントです。
+
+【現在の日時情報】
+今日の日付: ${currentDate}
+年: ${currentYear}年
+月: ${currentMonth}月
 
 カフェ情報: ${JSON.stringify(context.cafeInfo || {}, null, 2)}`;
 
@@ -28,6 +44,13 @@ export class DeepSeekProvider implements AIProvider {
       systemPrompt += `
 
 お客様の質問に温かく丁寧に答えてください。
+
+【時間軸の理解】
+- **イベントの日付を必ず確認し、今日の日付（${currentDate}）と比較すること**
+- 「今月」= ${currentYear}年${currentMonth}月のイベント
+- 「来月」= ${currentYear}年${currentMonth + 1}月のイベント
+- 「今週」「来週」なども現在の日付を基準に判断すること
+- 過去のイベントは「終了しました」と伝えること
 
 【最優先事項】
 - **コンテキストに「【正解】」というタグで明示的な答えが提示されている場合、その答えを必ずそのまま使用する**
