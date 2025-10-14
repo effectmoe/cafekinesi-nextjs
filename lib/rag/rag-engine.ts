@@ -73,13 +73,54 @@ export class RAGEngine {
     const context = this.buildContext(formattedResults, webResults, config);
 
     // 4. プロンプト構築
-    // 比較質問の検出
+    // 比較質問の検出と事前計算された答え
     const isComparisonQuery = /最も|一番|どれ|どちら|比較|安い|高い|早い|遅い|新しい|古い/.test(query);
+    const isCheapestQuery = /最も.*安|一番.*安|お金.*かからない|お求めやすい|低価格/.test(query);
+    const isMostExpensiveQuery = /最も.*高|一番.*高|最高.*価格/.test(query);
+
+    // イベント価格を事前計算
+    let precomputedAnswer = '';
+    if (isComparisonQuery && (isCheapestQuery || isMostExpensiveQuery)) {
+      const events = formattedResults.filter((r: any) =>
+        r.metadata?.type === 'event' || r.type === 'event'
+      );
+
+      if (events.length > 0) {
+        const eventPrices = events
+          .map((e: any) => {
+            const priceMatch = e.content.match(/参加費[：:]\s*¥?(\d+)/);
+            const price = priceMatch ? parseInt(priceMatch[1]) : null;
+            const titleMatch = e.content.match(/イベント[：:]\s*([^\n]+)/);
+            const title = titleMatch ? titleMatch[1].trim() : e.metadata?.title || e.title || '不明';
+            const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
+            const status = statusMatch ? statusMatch[1].trim() : '';
+            return { title, price, status };
+          })
+          .filter((e: any) => e.price !== null)
+          .sort((a: any, b: any) => a.price - b.price);
+
+        if (eventPrices.length > 0) {
+          if (isCheapestQuery) {
+            const cheapest = eventPrices[0];
+            precomputedAnswer = `【正解】最もお求めやすいイベントは「${cheapest.title}」で、参加費は¥${cheapest.price.toLocaleString()}です。`;
+            console.log('💡 最安値イベント検出:', cheapest.title, cheapest.price);
+          } else if (isMostExpensiveQuery) {
+            const mostExpensive = eventPrices[eventPrices.length - 1];
+            precomputedAnswer = `【正解】最も高いイベントは「${mostExpensive.title}」で、参加費は¥${mostExpensive.price.toLocaleString()}です。`;
+            console.log('💡 最高値イベント検出:', mostExpensive.title, mostExpensive.price);
+          }
+        }
+      }
+    }
+
+    if (precomputedAnswer) {
+      console.log('✅ 事前計算された答えをプロンプトに追加:', precomputedAnswer);
+    }
 
     const augmentedPrompt = `
 以下のコンテキスト情報を基に質問に答えてください。
 
-【コンテキスト】
+${precomputedAnswer ? `${precomputedAnswer}\n\n**この正解を必ずそのまま使用して回答してください。**\n\n` : ''}【コンテキスト】
 ${context}
 
 【質問】
