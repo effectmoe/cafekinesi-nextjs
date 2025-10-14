@@ -85,12 +85,27 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
+      // スクールページ設定（シングルトン）
+      S.listItem()
+        .title('スクールページ設定')
+        .id('schoolPage')
+        .child(
+          S.document()
+            .schemaType('schoolPage')
+            .documentId('schoolPage')
+            .views([
+              S.view.form().id('schoolPageEditor').title('編集'),
+              S.view.component(PreviewPane).id('schoolPagePreview').title('プレビュー')
+            ])
+        ),
+
       // 講座を階層的に表示
       S.listItem()
         .title('講座')
         .id('courses')
         .child(
           S.list()
+            .id('courses-list')
             .title('講座一覧')
             .items([
               // すべての講座
@@ -112,6 +127,7 @@ export const structure = (S: StructureBuilder) =>
                 .id('main-courses')
                 .child(
                   S.documentList()
+                    .id('main-courses-list')
                     .title('主要講座')
                     .filter('_type == "course" && courseType == "main"')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
@@ -123,6 +139,7 @@ export const structure = (S: StructureBuilder) =>
                 .id('auxiliary-courses')
                 .child(
                   S.documentList()
+                    .id('auxiliary-courses-list')
                     .title('補助講座')
                     .filter('_type == "course" && courseType == "auxiliary"')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
@@ -142,6 +159,7 @@ export const structure = (S: StructureBuilder) =>
           'page',
           'blogPost',
           'course',  // 講座は上で明示的に定義
+          'schoolPage',  // スクールページは上で明示的に定義
           // オブジェクト・コンポーネントスキーマは非表示
           'seo',
           'hero',
