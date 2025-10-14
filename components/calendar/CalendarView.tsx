@@ -8,7 +8,7 @@ import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
 export default function CalendarView() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
