@@ -17,6 +17,8 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
     const { fileUrl } = await request.json();
 
@@ -41,13 +43,32 @@ export async function POST(request: NextRequest) {
 
     // Get the PDF as ArrayBuffer
     const arrayBuffer = await response.arrayBuffer();
+    const fileSizeMB = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2);
+    console.log(`📦 PDF file size: ${fileSizeMB}MB`);
+
+    // Check file size limit (max 4.5MB for Vercel)
+    if (arrayBuffer.byteLength > 4.5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'PDF file too large. Maximum size is 4.5MB' },
+        { status: 413, headers: corsHeaders }
+      );
+    }
+
+    console.log('⏱️  Starting PDF text extraction...');
+    const extractStartTime = Date.now();
 
     // Extract text using unpdf
     const data = await extractText(new Uint8Array(arrayBuffer));
     const extractedText = Array.isArray(data.text) ? data.text.join('\n\n') : data.text;
 
+    const extractDuration = ((Date.now() - extractStartTime) / 1000).toFixed(2);
+    console.log(`⏱️  Extraction completed in ${extractDuration}s`);
+
     console.log('✅ PDF text extracted successfully');
     console.log(`📊 Extracted ${extractedText.length} characters from ${data.totalPages || 0} pages`);
+
+    const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`⏱️  Total processing time: ${totalDuration}s`);
 
     return NextResponse.json(
       {
@@ -56,16 +77,21 @@ export async function POST(request: NextRequest) {
         metadata: {
           pages: data.totalPages || 0,
           textLength: extractedText.length,
+          processingTime: `${totalDuration}s`,
         },
       },
       { headers: corsHeaders }
     );
   } catch (error) {
+    const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2);
     console.error('❌ PDF extraction error:', error);
+    console.error(`⏱️  Failed after ${totalDuration}s`);
+
     return NextResponse.json(
       {
         error: 'Failed to extract text from PDF',
         details: error instanceof Error ? error.message : 'Unknown error',
+        processingTime: `${totalDuration}s`,
       },
       { status: 500, headers: corsHeaders }
     );
