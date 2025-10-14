@@ -21,6 +21,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const publishedId = documentId?.replace(/^drafts\./, '') || documentId
   const { patch } = useDocumentOperation(publishedId, documentType)
   const lastProcessedRef = useRef<string>('')
+  const isProcessingRef = useRef<boolean>(false)
 
   // Extract text when file is uploaded
   useEffect(() => {
@@ -32,11 +33,18 @@ export function FileWithTextExtraction(props: FileInputProps) {
         lastProcessed: lastProcessedRef.current?.substring(0, 20) + '...',
         hasExtractedText: !!extractedText,
         extractedTextLength: extractedText?.length || 0,
-        extractedTextPreview: extractedText ? extractedText.substring(0, 50) + '...' : 'null/undefined'
+        extractedTextPreview: extractedText ? extractedText.substring(0, 50) + '...' : 'null/undefined',
+        isProcessing: isProcessingRef.current
       })
 
       if (!value?.asset?._ref) {
         console.log('⚠️  No asset ref found')
+        return
+      }
+
+      // Prevent concurrent processing
+      if (isProcessingRef.current) {
+        console.log('🚫 Already processing, skipping...')
         return
       }
 
@@ -60,6 +68,10 @@ export function FileWithTextExtraction(props: FileInputProps) {
       }
 
       console.log('🚀 Starting text extraction...')
+
+      // Mark as processing BEFORE starting
+      isProcessingRef.current = true
+      lastProcessedRef.current = value.asset._ref
 
       try {
         // Extract file details
@@ -166,16 +178,21 @@ export function FileWithTextExtraction(props: FileInputProps) {
           }
         ])
 
-        lastProcessedRef.current = value.asset._ref
         console.log('✅ Text extracted successfully and patch executed:', { fileSize, fileType })
       } catch (error) {
         console.error('❌ Text extraction error:', error)
+        // Reset on error to allow retry
+        lastProcessedRef.current = ''
+      } finally {
+        // Always reset processing flag
+        isProcessingRef.current = false
+        console.log('🏁 Processing complete')
       }
     }
 
     extractText()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value?.asset?._ref])
+  }, [value?.asset?._ref, extractedText])
 
   // Render the default file input
   return <FileInput {...props} />

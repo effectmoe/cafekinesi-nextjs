@@ -347,12 +347,20 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
             const pm = e.content.match(/参加費[：:]\s*¥?([\d,]+)/);
             if (!pm) return false;
             const price = parseInt(pm[1].replace(/,/g, ''));
+            // 「受付中」が条件の場合は、受付中のイベントのみ表示
+            if (isOpenQuery) {
+              const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
+              const status = statusMatch ? statusMatch[1].trim() : '';
+              return price <= maxPrice && status === '受付中';
+            }
             return price <= maxPrice;
           });
-          filterInfo += `- ¥${maxPrice.toLocaleString()}以下のイベント: ${priceEvents.map((e: any) => {
+          filterInfo += `- ¥${maxPrice.toLocaleString()}以下${isOpenQuery ? 'で受付中' : ''}のイベント: ${priceEvents.map((e: any) => {
             const title = e.content.match(/イベント[：:]\s*([^\n]+)/)?.[1] || '';
             const location = e.content.match(/場所[：:]\s*([^\n]+)/)?.[1] || '';
-            return `${title}（${location}）`;
+            const statusMatch = e.content.match(/ステータス[：:]\s*([^\n]+)/);
+            const status = statusMatch ? statusMatch[1].trim() : '';
+            return `${title}（${location}${status ? '、' + status : ''}）`;
           }).join(', ') || 'なし'}\n`;
         }
       } else {
