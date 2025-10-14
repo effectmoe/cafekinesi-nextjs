@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pdf from 'pdf-parse';
+import { extractText } from 'unpdf';
 
 // CORS headers for Sanity Studio
 const corsHeaders = {
@@ -41,22 +41,20 @@ export async function POST(request: NextRequest) {
 
     // Get the PDF as ArrayBuffer
     const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
 
-    // Extract text using pdf-parse
-    const data = await pdf(buffer);
-    const extractedText = data.text;
+    // Extract text using unpdf
+    const data = await extractText(new Uint8Array(arrayBuffer));
+    const extractedText = Array.isArray(data.text) ? data.text.join('\n\n') : data.text;
 
     console.log('✅ PDF text extracted successfully');
-    console.log(`📊 Extracted ${extractedText.length} characters from ${data.numpages} pages`);
+    console.log(`📊 Extracted ${extractedText.length} characters from ${data.totalPages || 0} pages`);
 
     return NextResponse.json(
       {
         success: true,
         text: extractedText,
         metadata: {
-          pages: data.numpages,
-          info: data.info,
+          pages: data.totalPages || 0,
           textLength: extractedText.length,
         },
       },
