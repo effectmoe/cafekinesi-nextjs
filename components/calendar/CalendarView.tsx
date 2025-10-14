@@ -85,7 +85,7 @@ export default function CalendarView() {
   }
 
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
+    <div className="space-y-8">
       {/* カレンダー表示エリア */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">
@@ -138,11 +138,18 @@ export default function CalendarView() {
       {/* イベント一覧表示エリア */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">
-          {selectedDate ? format(selectedDate, 'M月d日 (E)', { locale: ja }) : '日付を選択'}
-          のイベント
+          {selectedDate ? (
+            <>
+              {format(selectedDate, 'M月d日 (E)', { locale: ja })}のイベント
+            </>
+          ) : (
+            <>
+              {format(currentMonth, 'M月', { locale: ja })}の全イベント
+            </>
+          )}
         </h2>
 
-        {selectedDayEvents.length === 0 ? (
+        {selectedDate && selectedDayEvents.length === 0 ? (
           <div className="text-center py-12">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
@@ -158,13 +165,51 @@ export default function CalendarView() {
               />
             </svg>
             <p className="mt-4 text-gray-600">この日のイベントはありません</p>
+            <button
+              onClick={() => setSelectedDate(undefined)}
+              className="mt-4 text-blue-600 hover:text-blue-800 underline"
+            >
+              全イベントを表示
+            </button>
           </div>
         ) : (
-          <div className="space-y-4">
-            {selectedDayEvents.map((event) => (
-              <EventCard key={event._id} event={event} />
-            ))}
-          </div>
+          <>
+            {selectedDate && selectedDayEvents.length > 0 && (
+              <button
+                onClick={() => setSelectedDate(undefined)}
+                className="mb-4 text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                ← 全イベントを表示
+              </button>
+            )}
+            <div className="grid md:grid-cols-2 gap-6">
+              {(selectedDate ? selectedDayEvents : events).map((event) => (
+                <EventCard
+                  key={event._id}
+                  event={event}
+                  isHighlighted={selectedDate ? true : false}
+                />
+              ))}
+            </div>
+            {!selectedDate && events.length === 0 && (
+              <div className="text-center py-12">
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <p className="mt-4 text-gray-600">この月のイベントはありません</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

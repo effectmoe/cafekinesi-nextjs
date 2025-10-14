@@ -7,9 +7,10 @@ import Link from 'next/link'
 
 interface EventCardProps {
   event: Event
+  isHighlighted?: boolean
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, isHighlighted = false }: EventCardProps) {
   // ステータスに応じた表示
   const getStatusDisplay = (status: string) => {
     switch (status) {
@@ -77,7 +78,7 @@ export default function EventCard({ event }: EventCardProps) {
   const statusDisplay = getStatusDisplay(event.status)
 
   return (
-    <div className={`border-l-4 ${statusDisplay.borderColor} bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4`}>
+    <div className={`border-l-4 ${statusDisplay.borderColor} ${isHighlighted ? 'bg-blue-50 ring-2 ring-blue-400' : 'bg-white'} rounded-lg shadow-sm hover:shadow-md transition-all p-4`}>
       {/* ステータスとカテゴリー */}
       <div className="flex items-center gap-2 mb-3">
         <span className={`${statusDisplay.bgColor} ${statusDisplay.textColor} text-xs font-semibold px-2.5 py-0.5 rounded`}>
