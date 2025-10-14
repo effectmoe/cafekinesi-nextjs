@@ -30,8 +30,8 @@ export function FileWithTextExtraction(props: FileInputProps) {
         return
       }
 
-      // Check if we've already processed this file
-      if (lastProcessedRef.current === value.asset._ref) {
+      // Check if we've already processed this file AND extractedText exists
+      if (lastProcessedRef.current === value.asset._ref && extractedText) {
         console.log('⏭️  File already processed:', value.asset._ref)
         return
       }
