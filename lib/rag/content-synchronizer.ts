@@ -20,7 +20,7 @@ export class ContentSynchronizer {
       { type: 'shopInfo', query: '*[_type == "shopInfo"]' },
       { type: 'menuItem', query: '*[_type == "menuItem"]' },
       { type: 'blogPost', query: '*[_type == "blogPost"]' },
-      { type: 'event', query: '*[_type == "event"]' },
+      { type: 'event', query: '*[_type == "event" && useForAI == true]' },
       { type: 'news', query: '*[_type == "news"]' },
       { type: 'course', query: '*[_type == "course"]' },
       { type: 'instructor', query: '*[_type == "instructor"]' },
@@ -96,11 +96,34 @@ export class ContentSynchronizer {
           カテゴリ: ${item.category?.title || ''}`;
 
       case 'event':
+        const startDate = item.startDate ? new Date(item.startDate).toLocaleString('ja-JP') : '';
+        const endDate = item.endDate ? new Date(item.endDate).toLocaleString('ja-JP') : '';
+        const statusText = {
+          'open': '受付中',
+          'full': '満席',
+          'closed': '終了',
+          'cancelled': 'キャンセル'
+        }[item.status] || item.status;
+        const categoryText = {
+          'course': '講座',
+          'session': 'セッション',
+          'information': '説明会',
+          'workshop': 'ワークショップ',
+          'other': 'その他'
+        }[item.category] || item.category;
+
         return `イベント: ${item.title || ''}
-          説明: ${item.description || ''}
-          日時: ${item.date || ''}
-          場所: ${item.location || ''}
-          料金: ${item.price || ''}`;
+          カテゴリ: ${categoryText || ''}
+          ステータス: ${statusText || ''}
+          開始日時: ${startDate}
+          終了日時: ${endDate}
+          開催場所: ${item.location || ''}
+          参加費: ${item.fee ? `¥${item.fee}` : '無料'}
+          定員: ${item.capacity ? `${item.capacity}名` : '制限なし'}
+          現在の参加者: ${item.currentParticipants || 0}名
+          説明: ${this.extractTextFromPortableText(item.description) || ''}
+          タグ: ${item.tags?.join(', ') || ''}
+          申込みURL: ${item.registrationUrl || ''}`;
 
       case 'news':
         return `ニュース: ${item.title || ''}

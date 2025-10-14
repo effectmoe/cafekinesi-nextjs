@@ -139,25 +139,25 @@ export default function CalendarView() {
       {/* カレンダー表示エリア */}
       <div className="bg-white rounded-lg shadow-lg p-8">
         {/* 年月表示と切り替えボタン */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <button
             onClick={goToPreviousMonth}
-            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 md:p-3 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
             aria-label="前月"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 whitespace-nowrap px-2">
             {format(currentMonth, 'yyyy年 M月', { locale: ja })}
           </h2>
           <button
             onClick={goToNextMonth}
-            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 md:p-3 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
             aria-label="次月"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -190,7 +190,7 @@ export default function CalendarView() {
             </div>
 
             {/* 日付グリッド */}
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1 md:gap-2">
               {calendarDays.map((day, index) => {
                 const dayOfWeek = day ? getDayOfWeek(day) : -1
                 const isSunday = dayOfWeek === 0
@@ -204,7 +204,7 @@ export default function CalendarView() {
                     key={index}
                     onClick={() => day && handleDayClick(day)}
                     className={`
-                      min-h-[120px] border rounded-lg p-3 transition-all
+                      min-h-[70px] md:min-h-[90px] lg:min-h-[110px] border rounded-lg p-1.5 md:p-2 lg:p-3 transition-all
                       ${day ? 'hover:bg-gray-50 cursor-pointer hover:shadow-md' : 'bg-gray-50'}
                       ${isSunday || isHolidayDay ? 'bg-red-50' : ''}
                       ${isSaturday && !isHolidayDay ? 'bg-blue-50' : ''}
@@ -214,19 +214,19 @@ export default function CalendarView() {
                     {day && (
                       <>
                         <div className={`
-                          text-lg font-semibold mb-2
+                          text-sm md:text-base lg:text-lg font-semibold mb-1 md:mb-2
                           ${isSunday || isHolidayDay ? 'text-red-600' : ''}
                           ${isSaturday && !isHolidayDay ? 'text-blue-600' : ''}
                         `}>
                           {day}
                         </div>
                         {hasEvents && (
-                          <div className="space-y-1">
-                            {dayEvents.slice(0, 3).map((event) => (
+                          <div className="space-y-0.5 md:space-y-1">
+                            {dayEvents.slice(0, 2).map((event) => (
                               <div
                                 key={event._id}
                                 className={`
-                                  text-xs px-2 py-1 rounded text-white truncate font-medium
+                                  text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded text-white truncate font-medium
                                   ${event.status === 'open' ? 'bg-green-500' : ''}
                                   ${event.status === 'full' ? 'bg-red-500' : ''}
                                   ${event.status === 'closed' ? 'bg-gray-500' : ''}
@@ -236,9 +236,9 @@ export default function CalendarView() {
                                 {event.title}
                               </div>
                             ))}
-                            {dayEvents.length > 3 && (
-                              <div className="text-xs text-gray-600 px-2">
-                                +{dayEvents.length - 3}件
+                            {dayEvents.length > 2 && (
+                              <div className="text-[10px] md:text-xs text-gray-600 px-1 md:px-2">
+                                +{dayEvents.length - 2}件
                               </div>
                             )}
                           </div>
