@@ -110,12 +110,79 @@ export default {
       },
       initialValue: 'open',
     },
+    {
+      name: 'currentParticipants',
+      title: '現在の参加者数',
+      type: 'number',
+      initialValue: 0,
+      description: '現在の参加者数（定員と比較して空き状況を判定）',
+    },
+    {
+      name: 'category',
+      title: 'カテゴリ',
+      type: 'string',
+      options: {
+        list: [
+          {title: '講座', value: 'course'},
+          {title: 'セッション', value: 'session'},
+          {title: '説明会', value: 'information'},
+          {title: 'ワークショップ', value: 'workshop'},
+          {title: 'その他', value: 'other'},
+        ],
+      },
+    },
+    {
+      name: 'instructor',
+      title: '講師',
+      type: 'reference',
+      to: [{type: 'instructor'}],
+      description: 'イベントを担当する講師',
+    },
+    {
+      name: 'tags',
+      title: 'タグ',
+      type: 'array',
+      of: [{type: 'string'}],
+      description: 'AI検索用のキーワード（例: ピーチタッチ, 初心者向け, 福岡）',
+      options: {
+        layout: 'tags'
+      }
+    },
+    {
+      name: 'useForAI',
+      title: 'AI学習に使用',
+      type: 'boolean',
+      initialValue: true,
+      description: 'AIチャットボットでこのイベント情報を参照可能にする',
+    },
+    {
+      name: 'aiSearchText',
+      title: 'AI検索用テキスト（自動生成）',
+      type: 'text',
+      readOnly: true,
+      description: 'AIが検索するためのテキスト（自動生成されます）',
+    },
   ],
   preview: {
     select: {
       title: 'title',
       subtitle: 'startDate',
       media: 'image',
+      status: 'status',
+    },
+    prepare({title, subtitle, media, status}) {
+      const statusLabel = {
+        open: '受付中',
+        full: '満席',
+        closed: '終了',
+        cancelled: 'キャンセル',
+      }[status] || status
+
+      return {
+        title,
+        subtitle: `${new Date(subtitle).toLocaleDateString('ja-JP')} - ${statusLabel}`,
+        media,
+      }
     },
   },
   orderings: [

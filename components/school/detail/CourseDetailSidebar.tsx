@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { CourseDetail } from '@/lib/types/course'
+import SidebarCalendar from '@/components/calendar/SidebarCalendar'
 
 interface CourseDetailSidebarProps {
   course: CourseDetail
@@ -102,57 +103,7 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
       )}
 
       {/* カレンダーセクション */}
-      <div className="bg-gray-50 p-4 rounded">
-        <h3 className="font-semibold text-sm mb-3">カレンダー</h3>
-        <div className="text-xs text-gray-600">
-          <div className="grid grid-cols-7 gap-1 text-center mb-2">
-            <div>日</div>
-            <div>月</div>
-            <div>火</div>
-            <div>水</div>
-            <div>木</div>
-            <div>金</div>
-            <div>土</div>
-          </div>
-          <div className="grid grid-cols-7 gap-1 text-center">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">1</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">2</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">3</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">4</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">5</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">6</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">7</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">8</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">9</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">10</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">11</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">12</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">13</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">14</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">15</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">16</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">17</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">18</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">19</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">20</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">21</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">22</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">23</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">24</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">25</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">26</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">27</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">28</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">29</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">30</div>
-            <div className="hover:bg-blue-100 cursor-pointer p-1 rounded">31</div>
-            <div></div>
-          </div>
-        </div>
-      </div>
+      <SidebarCalendar />
     </div>
   )
 }

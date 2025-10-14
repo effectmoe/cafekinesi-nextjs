@@ -15,6 +15,7 @@
     "db:setup-document": "tsx scripts/setup-document-embeddings.ts",
     "sanity:sync": "tsx scripts/sync-sanity-content.ts",
     "vector:sync": "tsx scripts/sync-courses-to-vector-db.ts",
+    "vector:sync-events": "tsx scripts/sync-events-to-vector-db.ts",
     "vector:search": "tsx scripts/test-vector-search.ts"
   },
   "dependencies": {
@@ -47,9 +48,11 @@
     "next-themes": "^0.4.6",
     "nodemailer": "^7.0.9",
     "openai": "^6.2.0",
+    "pdf-parse": "^2.3.0",
     "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "react": "19.1.0",
+    "react-day-picker": "^9.11.1",
     "react-dom": "19.1.0",
     "react-simple-maps": "^3.0.0",
     "schema-dts": "^1.1.5",

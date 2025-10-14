@@ -60,19 +60,156 @@ export const NEWS_QUERY = `
   }
 `
 
-// イベント情報を取得
+// イベント情報を取得（全詳細）
 export const EVENTS_QUERY = `
   *[_type == "event" && endDate >= now()] | order(startDate) {
     _id,
     title,
     titleEn,
+    slug,
     description,
     descriptionEn,
     startDate,
     endDate,
     location,
-    image,
-    registrationUrl
+    image {
+      asset->,
+      alt
+    },
+    registrationUrl,
+    capacity,
+    currentParticipants,
+    fee,
+    status,
+    category,
+    instructor-> {
+      _id,
+      name,
+      slug
+    },
+    tags,
+    useForAI
+  }
+`
+
+// 月別イベントを取得
+export const EVENTS_BY_MONTH_QUERY = `
+  *[_type == "event" &&
+    startDate >= $startOfMonth &&
+    startDate < $endOfMonth
+  ] | order(startDate) {
+    _id,
+    title,
+    slug,
+    startDate,
+    endDate,
+    status,
+    category,
+    capacity,
+    currentParticipants,
+    location,
+    image {
+      asset->,
+      alt
+    }
+  }
+`
+
+// 期間指定イベント取得
+export const EVENTS_BY_DATE_RANGE_QUERY = `
+  *[_type == "event" &&
+    startDate >= $startDate &&
+    endDate <= $endDate
+  ] | order(startDate) {
+    _id,
+    title,
+    titleEn,
+    slug,
+    description,
+    startDate,
+    endDate,
+    location,
+    image {
+      asset->,
+      alt
+    },
+    registrationUrl,
+    capacity,
+    currentParticipants,
+    fee,
+    status,
+    category,
+    instructor-> {
+      _id,
+      name,
+      slug
+    },
+    tags
+  }
+`
+
+// 空きありイベント取得（AI用）
+export const AVAILABLE_EVENTS_QUERY = `
+  *[_type == "event" &&
+    useForAI == true &&
+    status == "open" &&
+    endDate >= now() &&
+    (capacity == null || currentParticipants < capacity)
+  ] | order(startDate) {
+    _id,
+    title,
+    slug,
+    description,
+    startDate,
+    endDate,
+    location,
+    capacity,
+    currentParticipants,
+    fee,
+    category,
+    instructor-> {
+      name
+    },
+    tags
+  }
+`
+
+// イベント詳細取得
+export const EVENT_DETAIL_QUERY = `
+  *[_type == "event" && slug.current == $slug][0] {
+    _id,
+    title,
+    titleEn,
+    slug,
+    description,
+    descriptionEn,
+    startDate,
+    endDate,
+    location,
+    image {
+      asset->,
+      alt
+    },
+    registrationUrl,
+    capacity,
+    currentParticipants,
+    fee,
+    status,
+    category,
+    instructor-> {
+      _id,
+      name,
+      slug,
+      title,
+      image {
+        asset->,
+        alt
+      },
+      bio
+    },
+    tags,
+    useForAI,
+    aiSearchText
   }
 `
 

@@ -17,6 +17,9 @@ export class RAGEngine {
     // インストラクター関連の質問を検出
     const isInstructorQuery = this.isInstructorRelatedQuery(query);
 
+    // イベント関連の質問を検出
+    const isEventQuery = this.isEventRelatedQuery(query);
+
     // 1. データ取得
     let searchResults;
 
@@ -24,6 +27,14 @@ export class RAGEngine {
       // 集計質問の場合はAI Knowledge APIから全件取得
       console.log('🔢 集計質問を検出: AI Knowledge APIから全件取得...');
       searchResults = await this.fetchFromKnowledgeAPI(query);
+    } else if (isEventQuery) {
+      // イベント質問の場合は専用設定
+      console.log('📅 イベント専用検索を実行...');
+      searchResults = await vectorSearch(query, {
+        topK: 30,
+        threshold: 0.05,
+        type: 'event'
+      });
     } else if (isInstructorQuery) {
       // インストラクター質問の場合は専用設定
       console.log('👩‍🏫 インストラクター専用検索を実行...');
@@ -156,6 +167,23 @@ ${query}
     return sources;
   }
 
+  // イベント関連の質問かどうか判定
+  private isEventRelatedQuery(query: string): boolean {
+    const eventKeywords = [
+      'イベント', 'event', 'カレンダー', 'スケジュール',
+      '開催', '予定', '今月', '来月', '今週', '来週',
+      '講座', 'セッション', 'ワークショップ', '説明会',
+      '空き', '受付', '申し込み', '参加', '定員',
+      'いつ', 'どこで', 'どこ', '場所', '日程',
+      'ピーチタッチ', 'キネシ', 'チャクラ'
+    ];
+
+    const lowerQuery = query.toLowerCase();
+    return eventKeywords.some(keyword =>
+      lowerQuery.includes(keyword.toLowerCase())
+    );
+  }
+
   // インストラクター関連の質問かどうか判定
   private isInstructorRelatedQuery(query: string): boolean {
     const instructorKeywords = [
@@ -190,7 +218,9 @@ ${query}
     try {
       // 質問内容から取得するタイプを判定
       let type = 'all';
-      if (query.includes('講座') || query.includes('コース') || query.includes('course')) {
+      if (this.isEventRelatedQuery(query)) {
+        type = 'event';
+      } else if (query.includes('講座') || query.includes('コース') || query.includes('course')) {
         type = 'course';
       } else if (this.isInstructorRelatedQuery(query)) {
         type = 'instructor';
@@ -258,6 +288,10 @@ ${query}
   // アイテムの内容をフォーマット
   private formatItemContent(item: any): string {
     switch (item._type) {
+      case 'event':
+        const startDate = item.startDate ? new Date(item.startDate).toLocaleDateString('ja-JP') : '';
+        const status = item.status === 'open' ? '受付中' : item.status === 'full' ? '満席' : item.status === 'closed' ? '終了' : item.status;
+        return `【イベント】${item.title}\n日時: ${startDate}\n場所: ${item.location || '未定'}\nステータス: ${status}\n${item.description || ''}\nURL: ${item.url}`;
       case 'course':
         return `【講座】${item.title}\n${item.subtitle || ''}\n${item.description || ''}\nURL: ${item.url}`;
       case 'instructor':
