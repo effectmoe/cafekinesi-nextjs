@@ -137,7 +137,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
               </svg>
             )}
           </div>
-          <span className="text-xs text-gray-600 group-hover:text-gray-900 transition-colors text-center w-full">
+          <span className="text-xs text-gray-600 group-hover:text-gray-900 transition-colors text-center">
             {copied ? "コピー済み" : "URLコピー"}
           </span>
         </button>
