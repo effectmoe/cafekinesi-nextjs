@@ -54,17 +54,18 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">受講料</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">所要時間</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">対象者</th>
-              <th className="border border-gray-300 px-4 py-3 text-center font-semibold text-white">詳細</th>
             </tr>
           </thead>
           <tbody>
             {allCourses.map((course, index) => (
               <tr key={course._id} className="hover:bg-gray-50 transition-colors">
                 <td className="border border-gray-300 px-4 py-3">
-                  <div className="font-semibold text-gray-900">{course.title}</div>
-                  {course.subtitle && (
-                    <div className="text-xs text-gray-600 mt-1">{course.subtitle}</div>
-                  )}
+                  <Link href={`/school/${course.courseId}`} className="block hover:text-[#8B5A3C] transition-colors">
+                    <div className="font-semibold text-gray-900">{course.title}</div>
+                    {course.subtitle && (
+                      <div className="text-xs text-gray-600 mt-1">{course.subtitle}</div>
+                    )}
+                  </Link>
                 </td>
                 <td className="border border-gray-300 px-4 py-3 text-center">
                   <span className={`text-xs px-2 py-1 rounded-full ${course.courseType === 'auxiliary' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
@@ -107,14 +108,6 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
                 <td className="border border-gray-300 px-4 py-3 text-sm">
                   {getTarget(course)}
                 </td>
-                <td className="border border-gray-300 px-4 py-3 text-center">
-                  <Link
-                    href={`/school/${course.courseId}`}
-                    className="inline-block bg-[#8B5A3C] text-white px-4 py-2 rounded-md hover:bg-[#6d4630] transition-colors text-sm font-medium"
-                  >
-                    詳細を見る
-                  </Link>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -125,10 +118,12 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
       <div className="md:hidden mt-8 space-y-4">
         {allCourses.map((course, index) => (
           <div key={course._id} className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-            <div className="font-bold text-lg text-gray-900 mb-2">{course.title}</div>
-            {course.subtitle && (
-              <div className="text-sm text-gray-600 mb-3">{course.subtitle}</div>
-            )}
+            <Link href={`/school/${course.courseId}`} className="block hover:text-[#8B5A3C] transition-colors">
+              <div className="font-bold text-lg text-gray-900 mb-2">{course.title}</div>
+              {course.subtitle && (
+                <div className="text-sm text-gray-600 mb-3">{course.subtitle}</div>
+              )}
+            </Link>
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -166,13 +161,6 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
                 <span>{getTarget(course)}</span>
               </div>
             </div>
-
-            <Link
-              href={`/school/${course.courseId}`}
-              className="block mt-4 bg-[#8B5A3C] text-white text-center px-4 py-2 rounded-md hover:bg-[#6d4630] transition-colors font-medium"
-            >
-              詳細を見る
-            </Link>
           </div>
         ))}
       </div>
