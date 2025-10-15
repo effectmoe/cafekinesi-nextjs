@@ -61,15 +61,15 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
             </Link>
 
             {/* Right side - Icons and Hamburger */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-1 ml-auto">
               {/* 検索アイコン */}
               {headerIcons?.searchIcon?.show !== false && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
+                  className="p-2 hover:opacity-70 transition-opacity"
                   aria-label="検索"
                 >
-                  <Search size={20} className="text-red-500 block" strokeWidth={1.5} />
+                  <Search size={20} className="text-gray-700" />
                 </button>
               )}
 
@@ -78,14 +78,14 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                 headerIcons?.cartIcon?.link ? (
                   <Link
                     href={headerIcons.cartIcon.link}
-                    className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
+                    className="p-2 hover:opacity-70 transition-opacity"
                     aria-label="カート"
                   >
-                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={1.5} />
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </Link>
                 ) : (
-                  <button className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0" aria-label="カート">
-                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={1.5} />
+                  <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </button>
                 )
               )}
@@ -93,13 +93,13 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* ハンバーガーメニュー */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={20} className="text-gray-700 block" strokeWidth={1.5} />
+                  <X size={20} className="text-gray-700" />
                 ) : (
-                  <Menu size={20} className="text-gray-700 block" strokeWidth={1.5} />
+                  <Menu size={20} className="text-gray-700" />
                 )}
               </button>
             </div>
