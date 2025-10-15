@@ -7,8 +7,37 @@ interface CourseDetailContentProps {
   course: CourseDetail
 }
 
-// 簡易マークダウンパーサー
+// 簡易マークダウンパーサー（HTML table対応）
 function parseMarkdown(text: string): string {
+  // HTMLテーブルが含まれている場合は特別処理
+  if (text.includes('<table')) {
+    // テーブルにTailwindスタイルを追加
+    let processedText = text
+      .replace(/<table class="([^"]+)">/g, '<table class="$1 w-full border-collapse border border-gray-300 my-6 text-sm">')
+      .replace(/<thead>/g, '<thead class="bg-gray-100">')
+      .replace(/<th>/g, '<th class="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-700">')
+      .replace(/<td>/g, '<td class="border border-gray-300 px-4 py-3">')
+      .replace(/<tr>/g, '<tr class="hover:bg-gray-50">')
+
+    // テーブル以外の部分（段落や見出し）も処理
+    const parts = processedText.split(/(<table[\s\S]*?<\/table>)/)
+    return parts.map((part, index) => {
+      if (part.includes('<table')) {
+        // テーブル部分はそのまま
+        return part
+      } else {
+        // それ以外はマークダウン処理
+        return processMarkdownText(part)
+      }
+    }).join('')
+  }
+
+  // テーブルがない場合は通常のマークダウン処理
+  return processMarkdownText(text)
+}
+
+// マークダウンテキスト処理関数
+function processMarkdownText(text: string): string {
   return text
     // 太字 **text** -> <strong>text</strong>
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -17,19 +46,22 @@ function parseMarkdown(text: string): string {
     // 段落分け
     .split('\n\n')
     .map(para => {
+      if (!para.trim()) return ''
+
       // リスト項目の処理
       if (para.startsWith('・') || para.startsWith('-')) {
         const items = para.split('\n').map(item =>
           item.replace(/^[・\-]\s*/, '').trim()
         ).filter(item => item)
-        return `<ul class="list-disc list-inside space-y-1">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
+        return `<ul class="list-disc list-inside space-y-1 mb-4">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
       }
       // 見出しの処理
       if (para.startsWith('**') && para.endsWith('**')) {
-        return `<h3 class="font-semibold text-lg mt-4 mb-2">${para.replace(/\*\*/g, '')}</h3>`
+        return `<h3 class="font-semibold text-lg mt-6 mb-3">${para.replace(/\*\*/g, '')}</h3>`
       }
       return `<p class="mb-4">${para}</p>`
     })
+    .filter(p => p)
     .join('')
 }
 
