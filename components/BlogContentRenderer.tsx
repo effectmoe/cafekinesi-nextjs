@@ -185,7 +185,7 @@ export default function BlogContentRenderer({
         if (!post.gallery || post.gallery.length === 0) return null
         return (
           <div key="gallery" className="mb-12">
-            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">ギャラリー</h2>
+            <h2 className="text-2xl font-light text-gray-900 mb-6">ギャラリー</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {post.gallery.map((image: any, index: number) => (
                 <div key={index} className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
@@ -224,8 +224,8 @@ export default function BlogContentRenderer({
         if (!post.tldr) return null
         return (
           <section key="tldr" className="mb-12 sm:mb-16">
-            <div className="border-l-2 border-gray-900 pl-6">
-              <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">要約</h2>
+            <div className="border-l-4 border-gray-900 pl-6">
+              <h2 className="text-2xl font-light text-gray-900 mb-4">要約</h2>
               <p className="text-lg font-light text-gray-700 leading-relaxed">{post.tldr}</p>
             </div>
           </section>
@@ -312,7 +312,7 @@ export default function BlogContentRenderer({
         if (!post.keyPoint) return null
         return (
           <section key="keyPoint" className="mb-12 py-8 border-t border-b border-gray-200">
-            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">
+            <h2 className="text-2xl font-light text-gray-900 mb-6">
               {typeof post.keyPoint === 'object' && post.keyPoint.title
                 ? post.keyPoint.title
                 : '重要なポイント'}
@@ -340,8 +340,8 @@ export default function BlogContentRenderer({
       case 'summary':
         if (!post.summary) return null
         return (
-          <section key="summary" className="mb-12 p-8 bg-gray-50">
-            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-4 font-light">まとめ</h2>
+          <section key="summary" className="mb-12 p-8 bg-gray-50 rounded-lg">
+            <h2 className="text-2xl font-light text-gray-900 mb-6">まとめ</h2>
             <p className="text-lg text-gray-700 leading-relaxed font-light">{post.summary}</p>
           </section>
         )
