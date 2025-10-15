@@ -66,7 +66,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {headerIcons?.searchIcon?.show !== false && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity"
+                  className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
                   aria-label="検索"
                 >
                   <Search size={20} className="text-gray-700" />
@@ -76,11 +76,11 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* カートアイコン */}
               {headerIcons?.cartIcon?.show !== false && (
                 headerIcons?.cartIcon?.link ? (
-                  <Link href={headerIcons.cartIcon.link} className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
+                  <Link href={headerIcons.cartIcon.link} className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
                     <ShoppingCart size={20} className="text-gray-700" />
                   </Link>
                 ) : (
-                  <button className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
+                  <button className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
                     <ShoppingCart size={20} className="text-gray-700" />
                   </button>
                 )
@@ -89,7 +89,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* ハンバーガーメニュー */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity"
+                className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
