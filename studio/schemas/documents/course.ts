@@ -1,5 +1,14 @@
 import { defineType, defineField } from 'sanity'
 import { BookOpen } from 'lucide-react'
+import { createClient } from '@sanity/client'
+
+// バリデーション用のクライアント
+const validationClient = createClient({
+  projectId: 'e4aqw590',
+  dataset: 'production',
+  apiVersion: '2024-01-01',
+  useCdn: false
+})
 
 export default defineType({
   name: 'course',
@@ -101,8 +110,33 @@ export default defineType({
       name: 'courseId',
       title: '講座ID',
       type: 'string',
-      description: 'URLに使用される識別子（例：kinesi1, peach-touch）',
-      validation: (Rule) => Rule.required(),
+      description: '⚠️ 重要: URLに使用される一意の識別子（例：kinesi1, peach-touch）。他の講座と重複しないようにしてください。',
+      validation: (Rule) => Rule.required().custom(async (value, context) => {
+        if (!value) return true
+
+        const { document } = context as any
+        const currentId = document._id.replace(/^drafts\./, '')
+
+        // 同じcourseIdを持つ他の講座を検索
+        const query = `*[_type == "course" && courseId == $courseId && !(_id in [$currentId, $draftId])]{
+          _id,
+          title,
+          subtitle
+        }`
+
+        const duplicates = await validationClient.fetch(query, {
+          courseId: value,
+          currentId,
+          draftId: `drafts.${currentId}`
+        })
+
+        if (duplicates && duplicates.length > 0) {
+          const conflictCourse = duplicates[0]
+          return `❌ このcourseIDは既に使用されています: 「${conflictCourse.title}」（${conflictCourse.subtitle}）\n\n別のcourseIDを使用してください。`
+        }
+
+        return true
+      }),
       group: 'basic',
     }),
     defineField({
@@ -194,8 +228,34 @@ export default defineType({
       name: 'order',
       title: '表示順序',
       type: 'number',
-      description: '講座の表示順序（小さい番号が上に表示）',
-      validation: (Rule) => Rule.required().min(0),
+      description: '⚠️ 重要: 講座の表示順序（小さい番号が上に表示）。他の講座と重複しないようにしてください。',
+      validation: (Rule) => Rule.required().min(0).custom(async (value, context) => {
+        if (value === undefined || value === null) return true
+
+        const { document } = context as any
+        const currentId = document._id.replace(/^drafts\./, '')
+
+        // 同じorder番号を持つ他の講座を検索
+        const query = `*[_type == "course" && order == $order && !(_id in [$currentId, $draftId])]{
+          _id,
+          title,
+          subtitle,
+          order
+        }`
+
+        const duplicates = await validationClient.fetch(query, {
+          order: value,
+          currentId,
+          draftId: `drafts.${currentId}`
+        })
+
+        if (duplicates && duplicates.length > 0) {
+          const conflictCourse = duplicates[0]
+          return `❌ この表示順序は既に使用されています: 【${conflictCourse.order}】「${conflictCourse.title}」（${conflictCourse.subtitle}）\n\n別のorder番号を使用してください。\n💡 ヒント: 既存の講座と重複しない番号を選んでください。`
+        }
+
+        return true
+      }),
       group: 'basic',
     }),
     defineField({
