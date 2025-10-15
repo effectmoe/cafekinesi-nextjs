@@ -129,6 +129,7 @@ export default function BlogContentRenderer({
             updatedAt={post._updatedAt || post.publishedAt}
             content={post.content || []}
             authorName={post.author?.name}
+            authorSlug={post.author?.slug?.current}
           />
         )
 

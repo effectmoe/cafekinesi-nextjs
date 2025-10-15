@@ -50,6 +50,7 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   },
   author-> {
     name,
+    slug,
     image,
     bio
   },
@@ -97,6 +98,7 @@ const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0]
   },
   author-> {
     name,
+    slug,
     image,
     bio
   },

@@ -1,12 +1,14 @@
 'use client'
 
 import { PortableTextBlock } from '@portabletext/types'
+import Link from 'next/link'
 
 interface ArticleMetaInfoProps {
   publishedAt: string
   updatedAt?: string
   content: PortableTextBlock[]
   authorName?: string
+  authorSlug?: string
 }
 
 // テキストから読了時間を計算（日本語は文字数、英語は単語数）
@@ -43,7 +45,8 @@ export default function ArticleMetaInfo({
   publishedAt,
   updatedAt,
   content,
-  authorName
+  authorName,
+  authorSlug
 }: ArticleMetaInfoProps) {
   const readingTime = calculateReadingTime(content)
   const isUpdated = updatedAt && updatedAt !== publishedAt
@@ -106,7 +109,16 @@ export default function ArticleMetaInfo({
             </svg>
             <div>
               <span className="text-xs text-gray-500 uppercase tracking-wider block">著者</span>
-              <span className="font-medium text-gray-700">{authorName}</span>
+              {authorSlug ? (
+                <Link
+                  href={`/author/${authorSlug}`}
+                  className="font-medium text-gray-700 hover:text-[#8B5A3C] transition-colors underline-offset-2 hover:underline"
+                >
+                  {authorName}
+                </Link>
+              ) : (
+                <span className="font-medium text-gray-700">{authorName}</span>
+              )}
             </div>
           </div>
         )}
