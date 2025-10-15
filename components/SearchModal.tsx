@@ -139,18 +139,20 @@ function CustomSearchBox({ onClose }: { onClose: () => void }) {
         classNames={{
           root: 'w-full',
           form: 'relative flex items-center',
-          input: 'w-full px-4 py-4 text-lg border-none focus:outline-none bg-transparent',
+          input: 'w-full px-4 py-4 pr-12 text-lg border-none focus:outline-none bg-transparent',
           submit: 'hidden',
           reset: 'hidden',
           submitIcon: 'hidden',
           resetIcon: 'hidden',
           loadingIndicator: 'hidden'
         }}
+        submitIconComponent={() => null}
+        resetIconComponent={() => null}
         autoFocus
       />
       <button
         onClick={onClose}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded transition-colors"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded transition-colors z-10"
         aria-label="閉じる"
       >
         <X size={20} className="text-gray-500" />
