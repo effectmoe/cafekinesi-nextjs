@@ -46,14 +46,14 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300 text-sm bg-white shadow-lg">
-          <thead className="bg-[#8B5A3C] text-white">
+          <thead className="bg-[#8B5A3C]">
             <tr>
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">講座名</th>
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">難易度</th>
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">受講料</th>
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">所要時間</th>
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">対象者</th>
-              <th className="border border-gray-300 px-4 py-3 text-center font-semibold">詳細</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">講座名</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">難易度</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">受講料</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">所要時間</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">対象者</th>
+              <th className="border border-gray-300 px-4 py-3 text-center font-semibold text-white">詳細</th>
             </tr>
           </thead>
           <tbody>
