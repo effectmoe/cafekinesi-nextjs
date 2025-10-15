@@ -11,8 +11,8 @@ import CourseComparisonTable from '@/components/school/CourseComparisonTable'
 import Link from 'next/link'
 import Image from 'next/image'
 
-// GROQクエリ: 主要講座と子講座を取得
-const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(courseType) || courseType == "main")] | order(order asc) {
+// GROQクエリ: 主要講座と子講座を取得（クラスターページを除外）
+const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(isClusterPage) || isClusterPage == false) && (!defined(courseType) || courseType == "main")] | order(order asc) {
   _id,
   courseId,
   title,
@@ -27,7 +27,7 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
   courseType,
   price,
   duration,
-  "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true] | order(order asc) {
+  "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true && (!defined(isClusterPage) || isClusterPage == false)] | order(order asc) {
     _id,
     courseId,
     title,
