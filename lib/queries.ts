@@ -327,7 +327,17 @@ export const HOMEPAGE_QUERY = `
       link,
       order,
       isActive
-    } | order(order asc)
+    } | order(order asc),
+    headerIcons {
+      searchIcon {
+        show,
+        link
+      },
+      cartIcon {
+        show,
+        link
+      }
+    }
   }
 `
 
