@@ -354,6 +354,7 @@ async function updateBlogPostFull() {
       contentOrder: [
         'metaInfo',
         'tldr',
+        'tags',
         'socialShare',
         'mainImage',
         'toc',
