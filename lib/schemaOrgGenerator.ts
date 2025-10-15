@@ -7,13 +7,15 @@ interface SchemaOrgGeneratorProps {
 }
 
 export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGeneratorProps): any {
-  // 💥 直接埋め込み版フィールド構造に対応
-  if (!post?.seo?.schemaEnabled) {
+  // SEO設定がない場合でもBlogPostingは生成
+  const schemaEnabled = post?.seo?.schemaEnabled !== false // デフォルトtrue
+
+  if (!schemaEnabled && !post?.faq) {
     return null
   }
 
   // カスタムJSON-LDが設定されている場合は優先
-  if (post.seo.schemaCustom) {
+  if (post?.seo?.schemaCustom) {
     try {
       return JSON.parse(post.seo.schemaCustom)
     } catch (error) {
@@ -21,7 +23,7 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     }
   }
 
-  const schemaType = post.seo?.schemaType || 'BlogPosting'
+  const schemaType = post?.seo?.schemaType || 'BlogPosting'
   const baseUrl = siteUrl || 'https://cafekinesi.com'
   const postUrl = `${baseUrl}/blog/${post.slug?.current}`
 
@@ -68,11 +70,11 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     case 'NewsArticle':
       return {
         ...baseSchema,
-        ...(post.seo.schema.articleSection && {
-          articleSection: post.seo.schema.articleSection
+        ...(post.seo?.schema?.articleSection && {
+          articleSection: post.seo?.schema?.articleSection
         }),
-        ...(post.seo.schema.wordCount && {
-          wordCount: post.seo.schema.wordCount
+        ...(post.seo?.schema?.wordCount && {
+          wordCount: post.seo?.schema?.wordCount
         }),
         ...(post.content && {
           articleBody: extractTextFromPortableText(post.content)
@@ -82,23 +84,23 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     case 'HowTo':
       const howToSchema = {
         ...baseSchema,
-        ...(post.seo.schema.prepTime && {
-          prepTime: post.seo.schema.prepTime
+        ...(post.seo?.schema?.prepTime && {
+          prepTime: post.seo?.schema?.prepTime
         }),
-        ...(post.seo.schema.performTime && {
-          performTime: post.seo.schema.performTime
+        ...(post.seo?.schema?.performTime && {
+          performTime: post.seo?.schema?.performTime
         }),
-        ...(post.seo.schema.totalTime && {
-          totalTime: post.seo.schema.totalTime
+        ...(post.seo?.schema?.totalTime && {
+          totalTime: post.seo?.schema?.totalTime
         }),
-        ...(post.seo.schema.supply && {
-          supply: post.seo.schema.supply.map((item: string) => ({
+        ...(post.seo?.schema?.supply && {
+          supply: post.seo?.schema?.supply.map((item: string) => ({
             '@type': 'HowToSupply',
             name: item
           }))
         }),
-        ...(post.seo.schema.tool && {
-          tool: post.seo.schema.tool.map((item: string) => ({
+        ...(post.seo?.schema?.tool && {
+          tool: post.seo?.schema?.tool.map((item: string) => ({
             '@type': 'HowToTool',
             name: item
           }))
@@ -118,25 +120,25 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     case 'Recipe':
       return {
         ...baseSchema,
-        ...(post.seo.schema.prepTime && {
-          prepTime: post.seo.schema.prepTime
+        ...(post.seo?.schema?.prepTime && {
+          prepTime: post.seo?.schema?.prepTime
         }),
-        ...(post.seo.schema.totalTime && {
-          totalTime: post.seo.schema.totalTime
+        ...(post.seo?.schema?.totalTime && {
+          totalTime: post.seo?.schema?.totalTime
         }),
-        ...(post.seo.schema.recipeYield && {
-          recipeYield: post.seo.schema.recipeYield
+        ...(post.seo?.schema?.recipeYield && {
+          recipeYield: post.seo?.schema?.recipeYield
         }),
-        ...(post.seo.schema.recipeCuisine && {
-          recipeCuisine: post.seo.schema.recipeCuisine
+        ...(post.seo?.schema?.recipeCuisine && {
+          recipeCuisine: post.seo?.schema?.recipeCuisine
         }),
-        ...(post.seo.schema.ingredients && {
-          recipeIngredient: post.seo.schema.ingredients
+        ...(post.seo?.schema?.ingredients && {
+          recipeIngredient: post.seo?.schema?.ingredients
         }),
-        ...(post.seo.schema.nutrition && {
+        ...(post.seo?.schema?.nutrition && {
           nutrition: {
             '@type': 'NutritionInformation',
-            ...post.seo.schema.nutrition
+            ...post.seo?.schema?.nutrition
           }
         }),
         ...(post.content && {
@@ -169,37 +171,37 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     case 'Event':
       return {
         ...baseSchema,
-        ...(post.seo.schema.eventLocation && {
+        ...(post.seo?.schema?.eventLocation && {
           location: {
             '@type': 'Place',
-            name: post.seo.schema.eventLocation.name,
+            name: post.seo?.schema?.eventLocation.name,
             address: {
               '@type': 'PostalAddress',
-              streetAddress: post.seo.schema.eventLocation.address
+              streetAddress: post.seo?.schema?.eventLocation.address
             }
           }
         }),
-        ...(post.seo.schema.eventStartDate && {
-          startDate: post.seo.schema.eventStartDate
+        ...(post.seo?.schema?.eventStartDate && {
+          startDate: post.seo?.schema?.eventStartDate
         }),
-        ...(post.seo.schema.eventEndDate && {
-          endDate: post.seo.schema.eventEndDate
+        ...(post.seo?.schema?.eventEndDate && {
+          endDate: post.seo?.schema?.eventEndDate
         }),
-        ...(post.seo.schema.eventStatus && {
-          eventStatus: `https://schema.org/${post.seo.schema.eventStatus}`
+        ...(post.seo?.schema?.eventStatus && {
+          eventStatus: `https://schema.org/${post.seo?.schema?.eventStatus}`
         })
       }
 
     case 'Product':
       return {
         ...baseSchema,
-        ...(post.seo.schema.productPrice && {
+        ...(post.seo?.schema?.productPrice && {
           offers: {
             '@type': 'Offer',
-            price: post.seo.schema.productPrice.price,
-            priceCurrency: post.seo.schema.productPrice.currency || 'JPY',
-            availability: post.seo.schema.productAvailability
-              ? `https://schema.org/${post.seo.schema.productAvailability}`
+            price: post.seo?.schema?.productPrice.price,
+            priceCurrency: post.seo?.schema?.productPrice.currency || 'JPY',
+            availability: post.seo?.schema?.productAvailability
+              ? `https://schema.org/${post.seo?.schema?.productAvailability}`
               : 'https://schema.org/InStock'
           }
         })
@@ -208,18 +210,18 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
     case 'Review':
       return {
         ...baseSchema,
-        ...(post.seo.schema.itemReviewed && {
+        ...(post.seo?.schema?.itemReviewed && {
           itemReviewed: {
-            '@type': post.seo.schema.itemReviewed.type || 'Thing',
-            name: post.seo.schema.itemReviewed.name
+            '@type': post.seo?.schema?.itemReviewed.type || 'Thing',
+            name: post.seo?.schema?.itemReviewed.name
           }
         }),
-        ...(post.seo.schema.reviewRating && {
+        ...(post.seo?.schema?.reviewRating && {
           reviewRating: {
             '@type': 'Rating',
-            ratingValue: post.seo.schema.reviewRating.ratingValue,
-            bestRating: post.seo.schema.reviewRating.bestRating || 5,
-            worstRating: post.seo.schema.reviewRating.worstRating || 1
+            ratingValue: post.seo?.schema?.reviewRating.ratingValue,
+            bestRating: post.seo?.schema?.reviewRating.bestRating || 5,
+            worstRating: post.seo?.schema?.reviewRating.worstRating || 1
           }
         })
       }
@@ -326,6 +328,39 @@ export function generateBreadcrumbSchema(post: any, siteUrl: string, siteName: s
       }
     ]
   }
+}
+
+// BlogPosting + FAQPage を両方返す関数（LLMO最適化）
+export function generateBlogSchemas(post: any, siteUrl: string, siteName: string): any[] {
+  const schemas: any[] = []
+
+  // BlogPosting schema
+  const blogSchema = generateSchemaOrg({ post, siteUrl, siteName })
+  if (blogSchema) {
+    schemas.push(blogSchema)
+  }
+
+  // FAQがある場合はFAQPage schemaも追加
+  if (post.faq && post.faq.length > 0) {
+    const baseUrl = siteUrl || 'https://cafekinesi.com'
+    const postUrl = `${baseUrl}/blog/${post.slug?.current}`
+
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      url: postUrl,
+      mainEntity: post.faq.map((item: any) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer
+        }
+      }))
+    })
+  }
+
+  return schemas
 }
 
 // SchemaOrgGeneratorクラス（コース・インストラクター対応）

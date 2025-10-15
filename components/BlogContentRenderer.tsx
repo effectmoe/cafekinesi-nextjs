@@ -3,6 +3,8 @@
 import React from 'react'
 import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/lib/sanity.client'
+import TableOfContents from '@/components/blog/TableOfContents'
+import BlogFAQSection from '@/components/blog/BlogFAQSection'
 
 interface BlogContentRendererProps {
   post: any
@@ -199,8 +201,9 @@ export default function BlogContentRenderer({
         )
 
       case 'toc':
-        // 目次の実装は別途必要
-        return null
+        // 自動目次生成
+        if (!post.content || post.content.length === 0) return null
+        return <TableOfContents key="toc" content={post.content} />
 
       case 'tags':
         if (!post.tags || post.tags.length === 0) return null
@@ -229,6 +232,16 @@ export default function BlogContentRenderer({
             <PortableText
               value={post.content}
               components={{
+                block: {
+                  h2: ({children, value}: any) => {
+                    const index = post.content.findIndex((b: any) => b._key === value._key)
+                    return <h2 id={`heading-${index}`} className="scroll-mt-20">{children}</h2>
+                  },
+                  h3: ({children, value}: any) => {
+                    const index = post.content.findIndex((b: any) => b._key === value._key)
+                    return <h3 id={`heading-${index}`} className="scroll-mt-20">{children}</h3>
+                  }
+                },
                 types: {
                   image: ({value}: any) => {
                     if (!value?.asset?._ref) {
@@ -277,27 +290,9 @@ export default function BlogContentRenderer({
         )
 
       case 'faq':
+        // インタラクティブなFAQセクション
         if (!post.faq || post.faq.length === 0) return null
-        return (
-          <section key="faq" className="mb-16">
-            <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-8 font-light">よくある質問</h2>
-            <div className="space-y-8">
-              {post.faq.map((item: any, index: number) => {
-                if (!item || typeof item !== 'object') return null
-                return (
-                  <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                    <h3 className="text-base font-normal text-gray-900 mb-3">
-                      Q: {item.question || '質問'}
-                    </h3>
-                    <p className="text-base text-gray-600 leading-relaxed font-light">
-                      A: {item.answer || '回答'}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-        )
+        return <BlogFAQSection key="faq" faqs={post.faq} />
 
       case 'prevNext':
         return (

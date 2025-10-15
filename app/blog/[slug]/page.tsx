@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 import BlogContentRenderer from '@/components/BlogContentRenderer'
-import { generateSchemaOrg, generateBreadcrumbSchema } from '@/lib/schemaOrgGenerator'
+import { generateBlogSchemas, generateBreadcrumbSchema } from '@/lib/schemaOrgGenerator'
 import Script from 'next/script'
 
 // 動的レンダリングを強制
@@ -355,24 +355,25 @@ export default async function BlogPostPage({
     previewEnabled: draft.isEnabled
   }
 
-  // Schema.org JSON-LDを生成
+  // Schema.org JSON-LDを生成（BlogPosting + FAQPage）
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
   const siteName = 'Cafe Kinesi'
-  const schemaOrgData = generateSchemaOrg({ post, siteUrl, siteName })
+  const blogSchemas = generateBlogSchemas(post, siteUrl, siteName)
   const breadcrumbSchema = generateBreadcrumbSchema(post, siteUrl, siteName)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Schema.org JSON-LD */}
-      {schemaOrgData && (
+      {/* Schema.org JSON-LD (BlogPosting + FAQPage) */}
+      {blogSchemas.map((schema, index) => (
         <Script
-          id="schema-org"
+          key={`schema-${index}`}
+          id={`schema-${schema['@type'].toLowerCase()}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schemaOrgData)
+            __html: JSON.stringify(schema)
           }}
         />
-      )}
+      ))}
       {breadcrumbSchema && (
         <Script
           id="breadcrumb-schema"
