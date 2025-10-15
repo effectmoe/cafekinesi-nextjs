@@ -59,16 +59,16 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
             </Link>
 
             {/* Right side - Icons and Hamburger */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-1 ml-auto">
               {/* 検索アイコン */}
               {headerIcons?.searchIcon?.show !== false && (
                 headerIcons?.searchIcon?.link ? (
                   <Link href={headerIcons.searchIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
-                    <Search size={18} className="text-gray-700" />
+                    <Search size={20} className="text-gray-700" />
                   </Link>
                 ) : (
                   <button className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
-                    <Search size={18} className="text-gray-700" />
+                    <Search size={20} className="text-gray-700" />
                   </button>
                 )
               )}
@@ -77,11 +77,11 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {headerIcons?.cartIcon?.show !== false && (
                 headerIcons?.cartIcon?.link ? (
                   <Link href={headerIcons.cartIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
-                    <ShoppingCart size={18} className="text-gray-700" />
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </Link>
                 ) : (
                   <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
-                    <ShoppingCart size={18} className="text-gray-700" />
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </button>
                 )
               )}
@@ -92,9 +92,9 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={22} className="text-gray-700" />
+                  <X size={20} className="text-gray-700" />
                 ) : (
-                  <Menu size={22} className="text-gray-700" />
+                  <Menu size={20} className="text-gray-700" />
                 )}
               </button>
             </div>
