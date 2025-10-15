@@ -114,6 +114,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export async function generateStaticParams() {
   const courseIds = [
     'kinesi1',
+    'kinesi1-cluster',
     'peach-touch',
     'chakra-kinesi',
     'help',
@@ -148,16 +149,22 @@ export default async function CourseDetailPage({ params }: PageProps) {
     courseId,
   })
 
+  // スキーマデータが配列の場合（クラスターページでCourseとFAQPageの両方）と単一の場合に対応
+  const schemaScripts = Array.isArray(schemaData) ? schemaData : [schemaData]
+
   return (
     <div className="min-h-screen bg-white">
       {/* Schema.org JSON-LD */}
-      <Script
-        id="schema-course"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schemaData, null, 2)
-        }}
-      />
+      {schemaScripts.map((schema, index) => (
+        <Script
+          key={`schema-${index}`}
+          id={`schema-${index}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema, null, 2)
+          }}
+        />
+      ))}
 
       <Header />
       <main className="pt-20">

@@ -347,6 +347,13 @@ export class SchemaOrgGenerator {
 
     switch (_type) {
       case 'course':
+        // クラスターページでFAQがある場合は配列で返す
+        if (data.isClusterPage && data.faq && data.faq.length > 0) {
+          return [
+            this.generateCourseSchema(data),
+            this.generateFAQPageSchema(data)
+          ]
+        }
         return this.generateCourseSchema(data)
       case 'instructor':
         return this.generatePersonSchema(data)
@@ -385,6 +392,24 @@ export class SchemaOrgGenerator {
       ...(course.aiSearchKeywords && {
         keywords: course.aiSearchKeywords.join(', '),
       }),
+    }
+  }
+
+  private generateFAQPageSchema(course: any): any {
+    const courseUrl = `${this.config.siteUrl}/school/${course.courseId || course.slug?.current}`
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      url: courseUrl,
+      mainEntity: course.faq.map((item: any) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
     }
   }
 

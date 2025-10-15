@@ -126,6 +126,21 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </a>
               </li>
             )}
+            {/* FAQ */}
+            {course.faq && course.faq.length > 0 && (
+              <li className="flex items-start">
+                <span className="font-medium mr-2">
+                  {sections.length + (course.effects && course.effects.length > 0 ? 2 : 1)}.
+                </span>
+                <a
+                  href="#faq"
+                  onClick={(e) => handleAnchorClick(e, 'faq')}
+                  className="text-blue-600 hover:underline transition-colors cursor-pointer"
+                >
+                  よくある質問（FAQ）
+                </a>
+              </li>
+            )}
           </ol>
         </div>
       )}
@@ -169,6 +184,29 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </li>
               ))}
             </ul>
+        </div>
+      )}
+
+      {/* FAQセクション */}
+      {course.faq && course.faq.length > 0 && (
+        <div id="faq" className="scroll-mt-24 border-l-4 border-blue-300 pl-6 min-h-[200px]">
+          <h2 className="text-xl font-semibold mb-6 text-gray-900">
+            よくある質問（FAQ）
+          </h2>
+          <div className="space-y-6">
+            {course.faq.map((item, index) => (
+              <div key={index} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-start">
+                  <span className="text-blue-600 mr-2">Q{index + 1}.</span>
+                  <span>{item.question}</span>
+                </h3>
+                <div className="text-gray-700 leading-relaxed pl-8">
+                  <span className="font-semibold text-gray-600 mr-2">A.</span>
+                  {item.answer}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

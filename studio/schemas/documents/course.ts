@@ -505,6 +505,67 @@ export default defineType({
       description: '詳細ページで推奨する関連講座',
       group: 'details',
     }),
+
+    // ========== クラスターページ用フィールド ==========
+    defineField({
+      name: 'isClusterPage',
+      title: 'クラスターページ',
+      type: 'boolean',
+      initialValue: false,
+      description: 'このページをクラスターページ（SEO最適化された詳細ページ）として扱う場合にチェック',
+      group: 'seo',
+    }),
+    defineField({
+      name: 'faq',
+      title: 'よくある質問（FAQ）',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'faqItem',
+          title: 'FAQ項目',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'question',
+              title: '質問',
+              type: 'string',
+              description: 'よくある質問（例：「この講座は初心者でも受講できますか？」）',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'answer',
+              title: '回答',
+              type: 'text',
+              rows: 4,
+              description: '質問に対する詳しい回答',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'question',
+              subtitle: 'answer',
+            },
+            prepare(selection) {
+              const { title, subtitle } = selection
+              return {
+                title: title,
+                subtitle: subtitle ? subtitle.substring(0, 100) + '...' : '',
+              }
+            },
+          },
+        }),
+      ],
+      description: 'クラスターページ用のFAQセクション（5-10個推奨）。SEOとLLMO最適化に重要。',
+      group: 'content',
+      validation: (Rule) => Rule.custom((value, context) => {
+        const isClusterPage = (context.document as any)?.isClusterPage
+        if (isClusterPage && (!value || value.length < 3)) {
+          return 'クラスターページの場合、最低3つのFAQを設定してください（5-10個推奨）'
+        }
+        return true
+      }),
+    }),
     defineField({
       name: 'seo',
       title: 'SEO設定',

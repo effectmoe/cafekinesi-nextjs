@@ -96,6 +96,8 @@ export interface CourseDetail extends Course {
   }
   relatedCourses?: Course[] // 実際の講座オブジェクト
   sidebar?: CourseSidebar // サイドバー設定
+  faq?: FAQItem[] // クラスターページ用FAQ
+  isClusterPage?: boolean // クラスターページフラグ
 }
 
 export interface SelectionPoint {

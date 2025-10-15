@@ -366,6 +366,7 @@ export const COURSE_DETAIL_QUERY = `
     effects,
     order,
     isActive,
+    isClusterPage,
     price,
     duration,
     prerequisites,
@@ -413,6 +414,10 @@ export const COURSE_DETAIL_QUERY = `
           link
         }
       }
+    },
+    faq[] {
+      question,
+      answer
     },
     seo
   }
