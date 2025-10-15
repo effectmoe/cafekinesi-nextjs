@@ -92,10 +92,10 @@ export function AlwaysOpenChatSection() {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 max-w-5xl relative z-10">
+    <div className="container mx-auto px-2 sm:px-4 max-w-5xl relative z-10">
       {/* アイキャッチヘッダー */}
       <div className="text-center mb-10 animate-fade-in">
-        <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 bg-amber-500 text-white rounded-full mb-4">
+        <div className="inline-flex items-center gap-1.5 px-3 sm:px-6 py-2 bg-amber-500 text-white rounded-full mb-4">
           <Sparkles className="w-3 sm:w-4 h-3 sm:h-4 animate-pulse" />
           <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
             {chatConfig?.config?.chatUI?.title || 'AI チャットで簡単検索'}
@@ -103,10 +103,10 @@ export function AlwaysOpenChatSection() {
           <Sparkles className="w-3 sm:w-4 h-3 sm:h-4 animate-pulse" />
         </div>
 
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-gray-800 mb-3">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif text-gray-800 mb-3">
           Cafe Kinesi へようこそ
         </h2>
-        <p className="text-gray-600 text-base sm:text-lg italic">
+        <p className="text-gray-600 text-sm sm:text-base md:text-lg italic">
           {chatConfig?.config?.chatUI?.welcomeMessage || '何かお探しですか？AIアシスタントがお答えします'}
         </p>
       </div>
@@ -137,7 +137,7 @@ export function AlwaysOpenChatSection() {
       )}>
         {/* チャットヘッダー */}
         <div
-          className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 sm:p-4 text-white"
+          className="bg-gradient-to-r from-amber-500 to-orange-500 p-2 sm:p-3 md:p-4 text-white"
           style={{
             background: chatConfig?.config?.chatUI?.primaryColor
               ? `linear-gradient(to right, ${chatConfig.config.chatUI.primaryColor}, ${chatConfig.config.chatUI.primaryColor}dd)`
@@ -145,15 +145,15 @@ export function AlwaysOpenChatSection() {
           }}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-white/20 rounded-lg backdrop-blur">
-                <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+              <div className="p-1 sm:p-1.5 md:p-2 bg-white/20 rounded-lg backdrop-blur">
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
-              <div>
-                <h3 className="font-semibold text-sm sm:text-base lg:text-lg">
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg truncate">
                   {chatConfig?.config?.chatUI?.title || 'AIチャットアシスタント'}
                 </h3>
-                <p className="text-xs opacity-90">24時間いつでもお答えします</p>
+                <p className="text-[10px] sm:text-xs opacity-90 truncate">24時間いつでもお答えします</p>
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
