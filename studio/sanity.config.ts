@@ -20,8 +20,7 @@ export default defineConfig({
 
   // 国際化設定 - 日本語をデフォルトに
   i18n: {
-    locales: [jaJPLocale],
-    default: 'ja-JP'
+    bundles: [jaJPLocale],
   },
 
   plugins: (() => {

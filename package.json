@@ -28,6 +28,7 @@
     "@sanity/assist": "^5.0.0",
     "@sanity/client": "^6.29.1",
     "@sanity/image-url": "^1.2.0",
+    "@sanity/locale-ja-jp": "^1.1.26",
     "@sanity/mutator": "^4.10.2",
     "@sanity/overlays": "^2.3.59",
     "@sanity/preview-url-secret": "^2.1.15",
