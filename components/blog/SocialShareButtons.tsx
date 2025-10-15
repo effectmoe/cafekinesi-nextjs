@@ -123,7 +123,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
         {/* URLコピー */}
         <button
           onClick={copyToClipboard}
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0 p-0 border-0 bg-transparent cursor-pointer"
           aria-label="URLをコピー"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
