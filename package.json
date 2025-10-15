@@ -16,7 +16,8 @@
     "sanity:sync": "tsx scripts/sync-sanity-content.ts",
     "vector:sync": "tsx scripts/sync-courses-to-vector-db.ts",
     "vector:sync-events": "tsx scripts/sync-events-to-vector-db.ts",
-    "vector:search": "tsx scripts/test-vector-search.ts"
+    "vector:search": "tsx scripts/test-vector-search.ts",
+    "algolia:sync": "tsx scripts/sync-algolia.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -39,6 +40,7 @@
     "@vercel/og": "^0.8.5",
     "@vercel/postgres": "^0.10.0",
     "@xenova/transformers": "^2.17.2",
+    "algoliasearch": "^5.40.1",
     "autoprefixer": "^10.4.21",
     "date-holidays": "^3.26.1",
     "ioredis": "^5.8.1",
@@ -56,6 +58,7 @@
     "react": "19.1.0",
     "react-day-picker": "^9.11.1",
     "react-dom": "19.1.0",
+    "react-instantsearch": "^7.16.3",
     "react-simple-maps": "^3.0.0",
     "schema-dts": "^1.1.5",
     "styled-components": "^6.1.19",

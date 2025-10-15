@@ -1,0 +1,59 @@
+/* Algolia InstantSearch カスタムスタイル */
+
+/* 検索ボックスのスタイル */
+.ais-SearchBox-input {
+  width: 100%;
+  padding: 1rem 3rem;
+  font-size: 1.125rem;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.ais-SearchBox-input:focus {
+  outline: none;
+}
+
+.ais-SearchBox-submit,
+.ais-SearchBox-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ais-SearchBox-submitIcon,
+.ais-SearchBox-resetIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: #9ca3af;
+}
+
+/* 検索結果のハイライト */
+.ais-Highlight-highlighted,
+mark {
+  background-color: #fef3c7;
+  font-weight: 600;
+  font-style: normal;
+  color: inherit;
+}
+
+/* 検索結果リスト */
+.ais-Hits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ais-Hits-item {
+  padding: 0;
+  box-shadow: none;
+  border: none;
+}
+
+/* 検索結果が空の場合 */
+.ais-Hits--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}

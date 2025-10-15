@@ -3,6 +3,7 @@
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import SearchModal from "./SearchModal";
 const logo = "/logo.jpeg";
 
 interface NavigationItem {
@@ -40,6 +41,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
 
   const navItems = navigationItems.length > 0 ? navigationItems : defaultNavItems
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <>
@@ -62,15 +64,13 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
             <div className="flex items-center gap-1 ml-auto">
               {/* 検索アイコン */}
               {headerIcons?.searchIcon?.show !== false && (
-                headerIcons?.searchIcon?.link ? (
-                  <Link href={headerIcons.searchIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
-                    <Search size={20} className="text-gray-700" />
-                  </Link>
-                ) : (
-                  <button className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
-                    <Search size={20} className="text-gray-700" />
-                  </button>
-                )
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="p-2 hover:opacity-70 transition-opacity"
+                  aria-label="検索"
+                >
+                  <Search size={20} className="text-gray-700" />
+                </button>
               )}
 
               {/* カートアイコン */}
@@ -127,6 +127,12 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 };

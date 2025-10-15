@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Algolia InstantSearch Styles */
+@import '../styles/algolia.css';
+
 /* Kitchen Label Design System - Minimal & Clean */
 
 @layer base {
