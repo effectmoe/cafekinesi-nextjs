@@ -5,7 +5,7 @@ import { X, Search as SearchIcon, FileText, GraduationCap, User, FileIcon } from
 import { liteClient as algoliasearch } from 'algoliasearch/lite'
 import {
   InstantSearch,
-  SearchBox,
+  useSearchBox,
   Hits,
   Highlight,
   Configure,
@@ -132,22 +132,16 @@ function NoResults() {
 
 // カスタム検索ボックス
 function CustomSearchBox({ onClose }: { onClose: () => void }) {
+  const { query, refine } = useSearchBox()
+
   return (
     <div className="relative">
-      <SearchBox
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => refine(e.target.value)}
         placeholder="検索キーワードを入力..."
-        classNames={{
-          root: 'w-full',
-          form: 'relative flex items-center',
-          input: 'w-full px-4 py-4 pr-12 text-lg border-none focus:outline-none bg-transparent',
-          submit: 'hidden',
-          reset: 'hidden',
-          submitIcon: 'hidden',
-          resetIcon: 'hidden',
-          loadingIndicator: 'hidden'
-        }}
-        submitIconComponent={() => null}
-        resetIconComponent={() => null}
+        className="w-full px-4 py-4 pr-12 text-lg border-none focus:outline-none bg-transparent"
         autoFocus
       />
       <button
