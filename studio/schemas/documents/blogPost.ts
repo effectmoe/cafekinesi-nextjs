@@ -70,7 +70,7 @@ export default {
           }
         }
       ],
-      initialValue: ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
+      initialValue: ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'socialShare', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
     },
 
     // === 基本情報（必須項目） ===
