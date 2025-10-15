@@ -262,12 +262,10 @@ export default function BlogContentRenderer({
 
       case 'socialShare':
         // ソーシャルシェアボタン
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
-        const postUrl = `${baseUrl}/blog/${post.slug?.current}`
+        // urlは指定しない（SocialShareButtons内で動的に現在のURLを取得）
         return (
           <SocialShareButtons
             key="socialShare"
-            url={postUrl}
             title={post.title || ''}
             description={post.excerpt || post.tldr}
           />

@@ -1,17 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface SocialShareButtonsProps {
-  url: string
+  url?: string  // オプショナルにして、未指定の場合は現在のURLを使用
   title: string
   description?: string
 }
 
 export default function SocialShareButtons({ url, title, description }: SocialShareButtonsProps) {
   const [copied, setCopied] = useState(false)
+  const [currentUrl, setCurrentUrl] = useState(url || '')
 
-  const encodedUrl = encodeURIComponent(url)
+  // クライアントサイドで現在のURLを動的に取得
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // urlが指定されていない場合、または不正な場合は現在のURLを使用
+      if (!url || url.includes('cafekinesi.com/blog')) {
+        setCurrentUrl(window.location.href)
+      } else {
+        setCurrentUrl(url)
+      }
+    }
+  }, [url])
+
+  const encodedUrl = encodeURIComponent(currentUrl)
   const encodedTitle = encodeURIComponent(title)
   const encodedDescription = encodeURIComponent(description || title)
 
@@ -25,7 +38,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(url)
+      await navigator.clipboard.writeText(currentUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
