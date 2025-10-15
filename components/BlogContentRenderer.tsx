@@ -88,6 +88,8 @@ export default function BlogContentRenderer({
                 src={getImageUrl(post.ogImage, 1200, 630)}
                 alt="OGP画像"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -150,6 +152,8 @@ export default function BlogContentRenderer({
                   src={getImageUrl(post.author.image, 48, 48)}
                   alt={post.author.name}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             )}
@@ -162,23 +166,26 @@ export default function BlogContentRenderer({
       case 'excerpt':
         if (!post.excerpt) return null
         return (
-          <div key="excerpt" className="mb-8 p-4 bg-gray-50 rounded-lg">
+          <aside key="excerpt" className="mb-8 p-4 bg-gray-50 rounded-lg" role="note" aria-label="記事の抜粋">
             <p className="text-gray-700">{post.excerpt}</p>
-          </div>
+          </aside>
         )
 
       case 'mainImage':
         if (!post.mainImage) return null
         return (
-          <div key="mainImage" className="-mx-4 sm:-mx-6 lg:-mx-8 mb-8 sm:mb-12 lg:mb-16">
+          <figure key="mainImage" className="-mx-4 sm:-mx-6 lg:-mx-8 mb-8 sm:mb-12 lg:mb-16">
             <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-gray-100">
               <img
                 src={getImageUrl(post.mainImage, 1400, 600)}
                 alt={post.title}
                 className="w-full h-full object-cover"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
               />
             </div>
-          </div>
+          </figure>
         )
 
       case 'gallery':
@@ -193,6 +200,8 @@ export default function BlogContentRenderer({
                     src={getImageUrl(image, 400, 400)}
                     alt={image.caption || `ギャラリー画像 ${index + 1}`}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    decoding="async"
                   />
                   {image.caption && (
                     <p className="text-xs text-gray-600 mt-2">{image.caption}</p>
@@ -214,6 +223,8 @@ export default function BlogContentRenderer({
                   src={getImageUrl(image, 800, 450)}
                   alt={`追加画像 ${index + 1}`}
                   className="w-full h-auto rounded-lg"
+                  loading="lazy"
+                  decoding="async"
                 />
               ))}
             </div>
@@ -296,6 +307,8 @@ export default function BlogContentRenderer({
                         src={getImageUrl(value, 800, 450)}
                         alt={value.alt || ''}
                         className="w-full h-auto rounded-lg my-8"
+                        loading="lazy"
+                        decoding="async"
                       />
                     )
                   },
@@ -411,6 +424,8 @@ export default function BlogContentRenderer({
                       src={getImageUrl(relatedPost.mainImage, 400, 267)}
                       alt={relatedPost.title}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
 
