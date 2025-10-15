@@ -347,14 +347,12 @@ export class SchemaOrgGenerator {
 
     switch (_type) {
       case 'course':
-        // クラスターページでFAQがある場合は配列で返す
-        if (data.isClusterPage && data.faq && data.faq.length > 0) {
-          return [
-            this.generateCourseSchema(data),
-            this.generateFAQPageSchema(data)
-          ]
+        // FAQがある場合はCourseとFAQPageの両方を返す
+        const schemas = [this.generateCourseSchema(data)]
+        if (data.faq && data.faq.length > 0) {
+          schemas.push(this.generateFAQPageSchema(data))
         }
-        return this.generateCourseSchema(data)
+        return schemas.length > 1 ? schemas : schemas[0]
       case 'instructor':
         return this.generatePersonSchema(data)
       default:
