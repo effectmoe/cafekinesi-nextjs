@@ -138,12 +138,13 @@ function CustomSearchBox({ onClose }: { onClose: () => void }) {
         placeholder="検索キーワードを入力..."
         classNames={{
           root: 'w-full',
-          form: 'relative',
-          input: 'w-full pl-12 pr-12 py-4 text-lg border-none focus:outline-none bg-transparent',
-          submit: 'absolute left-4 top-1/2 -translate-y-1/2',
-          reset: 'absolute right-12 top-1/2 -translate-y-1/2',
-          submitIcon: 'w-5 h-5 text-gray-400',
-          resetIcon: 'w-5 h-5 text-gray-400'
+          form: 'relative flex items-center',
+          input: 'w-full px-4 py-4 text-lg border-none focus:outline-none bg-transparent',
+          submit: 'hidden',
+          reset: 'hidden',
+          submitIcon: 'hidden',
+          resetIcon: 'hidden',
+          loadingIndicator: 'hidden'
         }}
         autoFocus
       />
@@ -159,6 +160,13 @@ function CustomSearchBox({ onClose }: { onClose: () => void }) {
 }
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  // 環境変数チェック
+  const isAlgoliaConfigured =
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID &&
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID !== 'temp' &&
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY &&
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY !== 'temp'
+
   // Escキーでモーダルを閉じる
   const handleEscape = useCallback(
     (event: KeyboardEvent) => {
@@ -183,6 +191,43 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   }, [isOpen, handleEscape])
 
   if (!isOpen) return null
+
+  // Algolia未設定の場合
+  if (!isAlgoliaConfigured) {
+    return (
+      <div className="fixed inset-0 z-50">
+        <div
+          className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <div className="relative h-full flex items-start justify-center pt-[10vh] px-4">
+          <div
+            className="bg-white rounded-lg shadow-2xl w-full max-w-2xl p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <SearchIcon size={48} className="mx-auto text-gray-300 mb-4" />
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                検索機能の設定が必要です
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Algoliaの環境変数が設定されていません。
+              </p>
+              <p className="text-sm text-gray-500 mb-6">
+                設定方法は <code className="bg-gray-100 px-2 py-1 rounded">docs/ALGOLIA_SETUP.md</code> をご確認ください。
+              </p>
+              <button
+                onClick={onClose}
+                className="px-6 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50">
@@ -211,7 +256,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             <Configure hitsPerPage={10} />
 
             {/* 検索結果 */}
-            <div className="overflow-y-auto flex-1">
+            <div className="overflow-y-auto flex-1 min-h-[300px]">
               <Hits
                 hitComponent={({ hit }) => (
                   <div onClick={onClose}>
@@ -219,9 +264,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   </div>
                 )}
                 classNames={{
-                  root: 'w-full',
+                  root: 'w-full h-full',
                   list: 'divide-y divide-gray-100',
-                  item: 'p-0'
+                  item: 'p-0',
+                  emptyRoot: 'h-full flex items-center justify-center'
                 }}
               />
             </div>
