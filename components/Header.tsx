@@ -69,7 +69,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                   className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                   aria-label="検索"
                 >
-                  <Search size={20} className="text-gray-700 block" strokeWidth={1.5} />
+                  <Search size={20} className="text-red-500 block" strokeWidth={1.5} />
                 </button>
               )}
 
