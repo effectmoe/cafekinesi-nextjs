@@ -46,7 +46,7 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300 text-sm bg-white shadow-lg">
-          <thead className="bg-[#8B5A3C]">
+          <thead style={{ backgroundColor: '#8B5A3C' }}>
             <tr>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">講座名</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">タイプ</th>
