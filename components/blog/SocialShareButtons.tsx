@@ -45,7 +45,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
           href={shareLinks.twitter}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="Twitterでシェア"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#1DA1F2] text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
@@ -61,7 +61,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
           href={shareLinks.facebook}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="Facebookでシェア"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#1877F2] text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
@@ -77,7 +77,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
           href={shareLinks.line}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="LINEでシェア"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#00B900] text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
@@ -93,7 +93,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
           href={shareLinks.hatena}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="はてなブックマークに追加"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#00A4DE] text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
@@ -109,7 +109,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
           href={shareLinks.pocket}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="Pocketに保存"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#EF3F56] text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
@@ -123,7 +123,7 @@ export default function SocialShareButtons({ url, title, description }: SocialSh
         {/* URLコピー */}
         <button
           onClick={copyToClipboard}
-          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20"
+          className="flex flex-col items-center gap-1 sm:gap-1.5 group w-16 sm:w-20 flex-shrink-0"
           aria-label="URLをコピー"
         >
           <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">

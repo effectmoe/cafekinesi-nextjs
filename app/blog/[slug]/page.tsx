@@ -18,6 +18,8 @@ export const dynamic = 'force-dynamic'
 const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
   _type,
+  _createdAt,
+  _updatedAt,
   title,
   slug,
   excerpt,
@@ -63,6 +65,8 @@ const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
 // ドラフトを優先的に取得するquery（同じ構造でdrafts perspectiveが自動処理）
 const DRAFT_POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
+  _createdAt,
+  _updatedAt,
   title,
   slug,
   excerpt,
