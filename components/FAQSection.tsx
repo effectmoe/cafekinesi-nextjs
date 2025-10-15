@@ -66,7 +66,7 @@ const FAQSection = ({ faqs, title, subtitle, onQuestionClick }: FAQSectionProps)
         {hasAnyText && (
           <div className="text-center py-12">
             {hasTitle && (
-              <h2 className="text-3xl md:text-4xl font-medium text-text-primary mb-3 tracking-tight">
+              <h2 className="text-xl md:text-3xl lg:text-4xl font-medium text-text-primary mb-3 tracking-tight">
                 {title}
               </h2>
             )}
