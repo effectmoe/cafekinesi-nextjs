@@ -89,7 +89,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* ハンバーガーメニュー */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 flex items-center justify-center hover:opacity-70 transition-opacity"
+                className="p-2 flex items-center justify-center hover:opacity-70 transition-opacity translate-y-[1px]"
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
