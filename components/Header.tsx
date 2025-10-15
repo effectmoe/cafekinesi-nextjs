@@ -66,10 +66,10 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {headerIcons?.searchIcon?.show !== false && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
+                  className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                   aria-label="検索"
                 >
-                  <Search size={20} className="text-gray-700" />
+                  <Search size={20} className="text-gray-700 block" strokeWidth={2} />
                 </button>
               )}
 
@@ -78,14 +78,14 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                 headerIcons?.cartIcon?.link ? (
                   <Link
                     href={headerIcons.cartIcon.link}
-                    className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
+                    className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                     aria-label="カート"
                   >
-                    <ShoppingCart size={20} className="text-gray-700" />
+                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={2} />
                   </Link>
                 ) : (
-                  <button className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity" aria-label="カート">
-                    <ShoppingCart size={20} className="text-gray-700" />
+                  <button className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0" aria-label="カート">
+                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={2} />
                   </button>
                 )
               )}
@@ -93,13 +93,13 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* ハンバーガーメニュー */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
+                className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={20} className="text-gray-700" />
+                  <X size={20} className="text-gray-700 block" strokeWidth={2} />
                 ) : (
-                  <Menu size={20} className="text-gray-700" />
+                  <Menu size={20} className="text-gray-700 block" strokeWidth={2} />
                 )}
               </button>
             </div>
