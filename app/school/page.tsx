@@ -7,6 +7,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import CoursePillarCard from '@/components/school/CoursePillarCard'
+import CourseComparisonTable from '@/components/school/CourseComparisonTable'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -181,34 +182,78 @@ export default async function SchoolPage() {
     ],
   }
 
-  // Schema.org: ItemList
+  // Schema.org: ItemList (価格・時間情報を含む)
   const allCourseItems: any[] = []
   courses.forEach((course) => {
-    allCourseItems.push({
+    const courseSchema: any = {
       '@type': 'Course',
       name: course.title,
-      description: course.subtitle,
+      description: course.subtitle || course.description,
       url: `https://cafekinesi.com/school/${course.courseId}`,
       provider: {
         '@type': 'EducationalOrganization',
         name: 'Cafe Kinesi',
         url: 'https://cafekinesi.com',
       },
-    })
+    }
+
+    // 価格情報を追加
+    if (course.price) {
+      const priceAmount = typeof course.price === 'object' && 'amount' in course.price
+        ? course.price.amount
+        : course.price
+      courseSchema.offers = {
+        '@type': 'Offer',
+        price: priceAmount,
+        priceCurrency: 'JPY',
+      }
+    }
+
+    // 所要時間を追加
+    if (course.duration) {
+      const hours = typeof course.duration === 'object' && 'hours' in course.duration
+        ? course.duration.hours
+        : course.duration
+      courseSchema.timeRequired = `PT${hours}H`
+    }
+
+    allCourseItems.push(courseSchema)
 
     if (course.childCourses) {
       course.childCourses.forEach((child) => {
-        allCourseItems.push({
+        const childSchema: any = {
           '@type': 'Course',
           name: child.title,
-          description: child.subtitle,
+          description: child.subtitle || child.description,
           url: `https://cafekinesi.com/school/${child.courseId}`,
           provider: {
             '@type': 'EducationalOrganization',
             name: 'Cafe Kinesi',
             url: 'https://cafekinesi.com',
           },
-        })
+        }
+
+        // 子講座の価格情報
+        if (child.price) {
+          const priceAmount = typeof child.price === 'object' && 'amount' in child.price
+            ? child.price.amount
+            : child.price
+          childSchema.offers = {
+            '@type': 'Offer',
+            price: priceAmount,
+            priceCurrency: 'JPY',
+          }
+        }
+
+        // 子講座の所要時間
+        if (child.duration) {
+          const hours = typeof child.duration === 'object' && 'hours' in child.duration
+            ? child.duration.hours
+            : child.duration
+          childSchema.timeRequired = `PT${hours}H`
+        }
+
+        allCourseItems.push(childSchema)
       })
     }
   })
@@ -390,6 +435,11 @@ export default async function SchoolPage() {
             </section>
           )}
 
+          {/* 講座比較表 */}
+          <div className="max-w-screen-xl mx-auto px-6">
+            <CourseComparisonTable courses={courses} />
+          </div>
+
           {/* 講座一覧セクション */}
           <section className="max-w-screen-xl mx-auto px-6 py-12" itemScope itemType="https://schema.org/ItemList">
             <meta itemProp="name" content="Cafe Kinesi 講座一覧" />
@@ -420,25 +470,26 @@ export default async function SchoolPage() {
 
           {/* FAQ */}
           {pageContent?.faq && pageContent.faq.items && pageContent.faq.items.length > 0 && (
-            <section className="bg-white py-16">
+            <section className="bg-white py-16" id="faq">
               <div className="max-w-screen-xl mx-auto px-6">
                 <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
                   {pageContent.faq.title}
                 </h2>
 
-                <div className="max-w-3xl mx-auto space-y-4">
+                <dl className="max-w-3xl mx-auto space-y-6">
                   {pageContent.faq.items.map((item, index) => (
-                    <details key={index} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <summary className="font-bold text-lg text-gray-900 cursor-pointer list-none flex items-center justify-between">
-                        <span className="flex-1">{item.question}</span>
-                        <span className="text-[#8B5A3C] ml-4">▼</span>
-                      </summary>
-                      <div className="mt-4 text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    <div key={index} className="bg-gray-50 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                      <dt className="font-bold text-lg text-gray-900 mb-3 flex items-start">
+                        <span className="text-[#8B5A3C] mr-2 flex-shrink-0">Q{index + 1}.</span>
+                        <span>{item.question}</span>
+                      </dt>
+                      <dd className="text-gray-700 leading-relaxed pl-8 whitespace-pre-wrap">
+                        <span className="font-semibold text-gray-600 mr-2">A.</span>
                         {item.answer}
-                      </div>
-                    </details>
+                      </dd>
+                    </div>
                   ))}
-                </div>
+                </dl>
               </div>
             </section>
           )}
