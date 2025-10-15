@@ -235,8 +235,8 @@ td {
 }
 
 th {
-  background-color: #f9fafb;
   font-weight: 600;
+  /* background-color は各コンポーネントで個別に設定 */
 }
 
 /* 読み上げ順序の調整 */
