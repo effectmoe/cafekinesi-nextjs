@@ -12,11 +12,22 @@ interface NavigationItem {
   isActive: boolean
 }
 
-interface HeaderProps {
-  navigationItems?: NavigationItem[]
+interface HeaderIconConfig {
+  show: boolean
+  link: string
 }
 
-const Header = ({ navigationItems = [] }: HeaderProps) => {
+interface HeaderIcons {
+  searchIcon?: HeaderIconConfig
+  cartIcon?: HeaderIconConfig
+}
+
+interface HeaderProps {
+  navigationItems?: NavigationItem[]
+  headerIcons?: HeaderIcons
+}
+
+const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
   // フォールバック用のデフォルトメニュー
   const defaultNavItems = [
     { label: "カフェキネシについて", link: "/#about-section", order: 1, isActive: true },
@@ -49,12 +60,32 @@ const Header = ({ navigationItems = [] }: HeaderProps) => {
 
             {/* Right side - Icons and Hamburger */}
             <div className="flex items-center gap-2 ml-auto">
-              <button className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
-                <Search size={18} className="text-gray-700" />
-              </button>
-              <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
-                <ShoppingCart size={18} className="text-gray-700" />
-              </button>
+              {/* 検索アイコン */}
+              {headerIcons?.searchIcon?.show !== false && (
+                headerIcons?.searchIcon?.link ? (
+                  <Link href={headerIcons.searchIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
+                    <Search size={18} className="text-gray-700" />
+                  </Link>
+                ) : (
+                  <button className="p-2 hover:opacity-70 transition-opacity" aria-label="検索">
+                    <Search size={18} className="text-gray-700" />
+                  </button>
+                )
+              )}
+
+              {/* カートアイコン */}
+              {headerIcons?.cartIcon?.show !== false && (
+                headerIcons?.cartIcon?.link ? (
+                  <Link href={headerIcons.cartIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
+                    <ShoppingCart size={18} className="text-gray-700" />
+                  </Link>
+                ) : (
+                  <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
+                    <ShoppingCart size={18} className="text-gray-700" />
+                  </button>
+                )
+              )}
+
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"

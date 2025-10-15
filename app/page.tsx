@@ -88,7 +88,7 @@ export default async function HomePage() {
     // ブログ記事取得
     const posts = await sanityFetch<Post[]>({
       query: RECENT_POSTS_QUERY,
-      params: { limit: homepage.blogSection?.displayCount || 9 },
+      params: { limit: homepage.blogSection?.numberOfPosts || 3 },
       preview: isPreview,
       tags: ['post'],
     })
@@ -121,7 +121,7 @@ export default async function HomePage() {
 
     return (
       <div className="min-h-screen bg-white">
-        <Header navigationItems={activeNavigationItems} />
+        <Header navigationItems={activeNavigationItems} headerIcons={homepage.headerIcons} />
         <main className="relative">
           {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
           <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
@@ -241,34 +241,34 @@ export default async function HomePage() {
           )}
 
           {/* ブログセクション - 既存のデザインを完全維持 */}
-          <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
-            <div className="text-center mb-12">
-              <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
-                {homepage.blogSection?.sectionTitle || 'ブログ'}
-              </h2>
-              <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
-            </div>
+          {homepage.blogSection?.showLatestPosts && (
+            <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
+              <div className="text-center mb-12">
+                <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
+                  {homepage.blogSection?.title || '最新の記事'}
+                </h2>
+                <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
+              </div>
 
-            {posts?.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {posts.map((post) => (
-                    <BlogCard
-                      key={post._id}
-                      image={urlForImage(post.mainImage)?.url() || '/images/blog-1.webp'}
-                      title={post.title}
-                      excerpt={post.excerpt}
-                      date={new Date(post.publishedAt).toLocaleDateString('ja-JP')}
-                      author={post.author}
-                      slug={post.slug}
-                    />
-                  ))}
-                </div>
+              {posts?.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {posts.map((post) => (
+                      <BlogCard
+                        key={post._id}
+                        image={urlForImage(post.mainImage)?.url() || '/images/blog-1.webp'}
+                        title={post.title}
+                        excerpt={post.excerpt}
+                        date={new Date(post.publishedAt).toLocaleDateString('ja-JP')}
+                        author={post.author}
+                        slug={post.slug}
+                      />
+                    ))}
+                  </div>
 
-                {homepage.blogSection?.showAllButton && (
                   <div className="text-center mt-12">
                     <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">
-                      ※ 最新の{homepage.blogSection.displayCount}件を表示しています
+                      ※ 最新の{homepage.blogSection.numberOfPosts}件を表示しています
                     </p>
                     <Link
                       href="/blog"
@@ -281,16 +281,16 @@ export default async function HomePage() {
                       </svg>
                     </Link>
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-[hsl(var(--text-secondary))]">
-                  {homepage.blogSection?.noPostsMessage || '記事がまだありません'}
-                </p>
-              </div>
-            )}
-          </section>
+                </>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-[hsl(var(--text-secondary))]">
+                    記事がまだありません
+                  </p>
+                </div>
+              )}
+            </section>
+          )}
         </main>
         <SocialLinks />
         <Footer />

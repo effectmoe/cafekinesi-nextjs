@@ -13,10 +13,9 @@ export interface CategoryCard {
 }
 
 export interface BlogSectionConfig {
-  sectionTitle: string
-  displayCount: number
-  showAllButton: boolean
-  noPostsMessage: string
+  title: string
+  numberOfPosts: number
+  showLatestPosts: boolean
 }
 
 export interface SocialLink {
@@ -46,6 +45,16 @@ export interface NavigationMenuItem {
   isActive: boolean
 }
 
+export interface HeaderIconConfig {
+  show: boolean
+  link: string
+}
+
+export interface HeaderIcons {
+  searchIcon: HeaderIconConfig
+  cartIcon: HeaderIconConfig
+}
+
 export interface Homepage extends SanityDocument {
   _type: 'homepage'
   title: string
@@ -55,6 +64,7 @@ export interface Homepage extends SanityDocument {
   viewAllButton: ViewAllButton
   profileButton?: ProfileButton
   navigationMenu?: NavigationMenuItem[]
+  headerIcons?: HeaderIcons
 }
 
 // ブログ記事用の型定義

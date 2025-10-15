@@ -26,29 +26,23 @@ export default defineType({
       type: 'object',
       fields: [
         {
-          name: 'sectionTitle',
+          name: 'title',
           title: 'セクションタイトル',
           type: 'string',
-          initialValue: 'ブログ'
+          initialValue: '最新の記事'
         },
         {
-          name: 'displayCount',
+          name: 'numberOfPosts',
           title: '表示件数',
           type: 'number',
-          initialValue: 9,
-          validation: Rule => Rule.min(3).max(12)
+          initialValue: 3,
+          validation: Rule => Rule.min(1).max(12)
         },
         {
-          name: 'showAllButton',
-          title: '「すべての記事を見る」ボタンを表示',
+          name: 'showLatestPosts',
+          title: '最新記事を表示',
           type: 'boolean',
           initialValue: true
-        },
-        {
-          name: 'noPostsMessage',
-          title: '記事がない時のメッセージ',
-          type: 'string',
-          initialValue: '記事がまだありません'
         }
       ]
     }),
@@ -117,6 +111,53 @@ export default defineType({
       of: [{ type: 'navigationMenu' }],
       description: 'ヘッダーのハンバーガーメニューに表示される項目',
       validation: Rule => Rule.min(1).error('少なくとも1つのメニュー項目を追加してください')
+    }),
+    defineField({
+      name: 'headerIcons',
+      title: 'ヘッダーアイコン設定',
+      type: 'object',
+      fields: [
+        {
+          name: 'searchIcon',
+          title: '検索アイコン',
+          type: 'object',
+          fields: [
+            {
+              name: 'show',
+              title: '表示する',
+              type: 'boolean',
+              initialValue: true
+            },
+            {
+              name: 'link',
+              title: 'リンク先',
+              type: 'string',
+              initialValue: '/search',
+              description: '検索ページのURL'
+            }
+          ]
+        },
+        {
+          name: 'cartIcon',
+          title: 'カートアイコン',
+          type: 'object',
+          fields: [
+            {
+              name: 'show',
+              title: '表示する',
+              type: 'boolean',
+              initialValue: true
+            },
+            {
+              name: 'link',
+              title: 'リンク先',
+              type: 'string',
+              initialValue: '/cart',
+              description: 'カートページのURL'
+            }
+          ]
+        }
+      ]
     })
   ],
   preview: {
