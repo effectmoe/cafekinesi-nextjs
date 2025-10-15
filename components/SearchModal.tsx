@@ -137,7 +137,7 @@ function CustomSearchBox({ onClose }: { onClose: () => void }) {
   return (
     <div className="relative">
       <input
-        type="search"
+        type="text"
         value={query}
         onChange={(e) => refine(e.target.value)}
         placeholder="検索キーワードを入力..."
