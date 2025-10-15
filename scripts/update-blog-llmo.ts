@@ -19,17 +19,12 @@ async function updateBlogPost() {
   const slug = 'breathing-stress-relief'
 
   try {
-    //  既存の記事を取得
-    const existingPost = await sanityClient.fetch(`
-      *[_type == "blogPost" && slug.current == $slug][0] {
-        _id
-      }
-    `, { slug })
-
-    if (!existingPost) {
-      console.error('記事が見つかりません')
-      return
+    // 公開版のIDを直接使用
+    const existingPost = {
+      _id: 'post-9'  // 公開版を直接指定
     }
+
+    console.log(`📝 公開版を更新します: ${existingPost._id}`)
 
     // LLMO最適化されたダミーコンテンツ
     const content = [

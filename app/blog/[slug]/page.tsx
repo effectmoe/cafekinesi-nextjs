@@ -200,7 +200,7 @@ async function getPost(slug: string) {
   try {
     const result = await selectedClient.fetch<BlogPost>(query, { slug }, {
       // キャッシュを無効化してリアルタイムデータを取得
-      cache: isPreview ? 'no-store' : 'force-cache'
+      cache: 'no-store'  // 常に最新データを取得
     } as any)
     console.log(`Post result for ${slug}:`, result ? `Found: ${result._id}, isDraft: ${result._id?.startsWith('drafts.')}` : 'Not found')
     return result
