@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://cdn.sanity.io https://www.google-analytics.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://www.google-analytics.com",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://www.google-analytics.com https://*.algolia.net https://*.algolianet.com",
               "media-src 'self' https://cdn.sanity.io",
               "frame-src 'self'",
               "object-src 'none'",
