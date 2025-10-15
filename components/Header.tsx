@@ -61,12 +61,12 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
             </Link>
 
             {/* Right side - Icons and Hamburger */}
-            <div className="flex items-center gap-1 ml-auto">
+            <div className="flex items-center gap-2 ml-auto">
               {/* 検索アイコン */}
               {headerIcons?.searchIcon?.show !== false && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="p-2 hover:opacity-70 transition-opacity"
+                  className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
                   aria-label="検索"
                 >
                   <Search size={20} className="text-gray-700" />
@@ -76,19 +76,24 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {/* カートアイコン */}
               {headerIcons?.cartIcon?.show !== false && (
                 headerIcons?.cartIcon?.link ? (
-                  <Link href={headerIcons.cartIcon.link} className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
+                  <Link
+                    href={headerIcons.cartIcon.link}
+                    className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
+                    aria-label="カート"
+                  >
                     <ShoppingCart size={20} className="text-gray-700" />
                   </Link>
                 ) : (
-                  <button className="p-2 hover:opacity-70 transition-opacity" aria-label="カート">
+                  <button className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity" aria-label="カート">
                     <ShoppingCart size={20} className="text-gray-700" />
                   </button>
                 )
               )}
 
+              {/* ハンバーガーメニュー */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity"
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
