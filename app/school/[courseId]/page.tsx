@@ -152,6 +152,32 @@ export default async function CourseDetailPage({ params }: PageProps) {
   // スキーマデータが配列の場合（クラスターページでCourseとFAQPageの両方）と単一の場合に対応
   const schemaScripts = Array.isArray(schemaData) ? schemaData : [schemaData]
 
+  // BreadcrumbList Schema.org
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi.com'}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '講座一覧',
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi.com'}/school`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: course.title,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi.com'}/school/${courseId}`,
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Schema.org JSON-LD */}
@@ -165,6 +191,14 @@ export default async function CourseDetailPage({ params }: PageProps) {
           }}
         />
       ))}
+      {/* BreadcrumbList Schema.org */}
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema, null, 2)
+        }}
+      />
 
       <Header />
       <main className="pt-20">
