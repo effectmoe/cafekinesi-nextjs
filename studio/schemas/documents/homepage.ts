@@ -158,6 +158,12 @@ export default defineType({
           ]
         }
       ]
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO設定',
+      type: 'seo',
+      description: '検索エンジン最適化のための設定'
     })
   ],
   preview: {
