@@ -44,6 +44,11 @@ import testimonial from './objects/testimonial'
 import categoryCard from './objects/categoryCard'
 import socialLink from './objects/socialLink'
 import navigationMenu from './objects/navigationMenu'
+import table from './objects/table'
+import infoBox from './objects/infoBox'
+import comparisonTable from './objects/comparisonTable'
+import internalLink from './objects/internalLink'
+import externalReference from './objects/externalReference'
 
 // コンポーネントスキーマ
 import customImage from './components/customImage'
@@ -99,6 +104,11 @@ export const schemaTypes = [
   categoryCard,
   socialLink,
   navigationMenu,
+  table,
+  infoBox,
+  comparisonTable,
+  internalLink,
+  externalReference,
 
   // コンポーネント
   customImage,

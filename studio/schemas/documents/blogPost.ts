@@ -45,11 +45,13 @@ export default {
               {title: 'タイトル', value: 'title'},
               {title: 'スラッグ', value: 'slug'},
               {title: '注目記事バッジ', value: 'featured'},
+              {title: 'メタ情報（更新日時・読了時間）', value: 'metaInfo'},
               {title: '公開日時', value: 'publishedAt'},
               {title: 'カテゴリー', value: 'category'},
               {title: '著者情報', value: 'author'},
               {title: '抜粋', value: 'excerpt'},
               {title: 'タグ', value: 'tags'},
+              {title: 'ソーシャルシェアボタン', value: 'socialShare'},
               {title: 'メイン画像', value: 'mainImage'},
               {title: 'ギャラリー画像', value: 'gallery'},
               {title: '追加画像', value: 'additionalImages'},
@@ -57,7 +59,9 @@ export default {
               {title: 'TL;DR（要約）', value: 'tldr'},
               {title: '目次', value: 'toc'},
               {title: '本文', value: 'content'},
+              {title: '内部リンク', value: 'internalLinks'},
               {title: '重要ポイント', value: 'keyPoint'},
+              {title: '外部リンク・参考文献', value: 'externalReferences'},
               {title: 'まとめ', value: 'summary'},
               {title: 'FAQ', value: 'faq'},
               {title: '関連記事', value: 'related'},
@@ -331,6 +335,15 @@ export default {
             hotspot: true,
           },
         },
+        {
+          type: 'table',
+        },
+        {
+          type: 'infoBox',
+        },
+        {
+          type: 'comparisonTable',
+        },
       ],
     },
     {
@@ -406,6 +419,24 @@ export default {
     },
 
     // === 関連性・ナビゲーション ===
+    {
+      name: 'internalLinks',
+      title: '内部リンク',
+      type: 'array',
+      group: 'navigation',
+      of: [{type: 'internalLink'}],
+      description: 'ピラーページやクラスターページへのリンク（LLMO/SEO最適化）',
+      validation: (Rule: any) => Rule.max(6).warning('内部リンクは最大6個までを推奨します'),
+    },
+    {
+      name: 'externalReferences',
+      title: '外部リンク・参考文献',
+      type: 'array',
+      group: 'navigation',
+      of: [{type: 'externalReference'}],
+      description: '記事の信頼性を高める外部リンク（LLMO/SEO最適化）',
+      validation: (Rule: any) => Rule.max(10).warning('外部リンクは最大10個までを推奨します'),
+    },
     {
       name: 'relatedArticles',
       title: '関連記事',

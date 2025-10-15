@@ -5,6 +5,13 @@ import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/lib/sanity.client'
 import TableOfContents from '@/components/blog/TableOfContents'
 import BlogFAQSection from '@/components/blog/BlogFAQSection'
+import ArticleMetaInfo from '@/components/blog/ArticleMetaInfo'
+import SocialShareButtons from '@/components/blog/SocialShareButtons'
+import InternalLinksSection from '@/components/blog/InternalLinksSection'
+import ExternalReferencesSection from '@/components/blog/ExternalReferencesSection'
+import TableComponent from '@/components/blog/TableComponent'
+import InfoBoxComponent from '@/components/blog/InfoBoxComponent'
+import ComparisonTableComponent from '@/components/blog/ComparisonTableComponent'
 
 interface BlogContentRendererProps {
   post: any
@@ -21,7 +28,19 @@ export default function BlogContentRenderer({
 }: BlogContentRendererProps) {
 
   // デフォルトの表示順序（全項目を含む）
-  const defaultOrder = ['title', 'slug', 'featured', 'publishedAt', 'category', 'author', 'excerpt', 'tags', 'mainImage', 'gallery', 'additionalImages', 'ogImage', 'tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related', 'prevNext']
+  const defaultOrder = [
+    'title', 'slug', 'featured',
+    'metaInfo', // 最終更新日時・読了時間
+    'category', 'author', 'excerpt', 'tags',
+    'socialShare', // ソーシャルシェアボタン
+    'mainImage', 'gallery', 'additionalImages', 'ogImage',
+    'tldr', 'toc', 'content',
+    'internalLinks', // 内部リンク
+    'keyPoint',
+    'externalReferences', // 外部リンク・参考文献
+    'summary', 'faq',
+    'related', 'prevNext'
+  ]
 
   // contentOrderが設定されていればそれを使用、なければデフォルト
   // 空文字列のみの配列や無効な値の場合もデフォルトを使用
@@ -97,6 +116,18 @@ export default function BlogContentRenderer({
               })}
             </time>
           </div>
+        )
+
+      case 'metaInfo':
+        // 最終更新日時・読了時間・著者情報
+        return (
+          <ArticleMetaInfo
+            key="metaInfo"
+            publishedAt={post.publishedAt}
+            updatedAt={post._updatedAt || post.publishedAt}
+            content={post.content || []}
+            authorName={post.author?.name}
+          />
         )
 
       case 'category':
@@ -217,6 +248,19 @@ export default function BlogContentRenderer({
           </div>
         )
 
+      case 'socialShare':
+        // ソーシャルシェアボタン
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
+        const postUrl = `${baseUrl}/blog/${post.slug?.current}`
+        return (
+          <SocialShareButtons
+            key="socialShare"
+            url={postUrl}
+            title={post.title || ''}
+            description={post.excerpt || post.tldr}
+          />
+        )
+
       case 'content':
         if (!post.content) return null
         return (
@@ -254,7 +298,10 @@ export default function BlogContentRenderer({
                         className="w-full h-auto rounded-lg my-8"
                       />
                     )
-                  }
+                  },
+                  table: ({value}: any) => <TableComponent value={value} />,
+                  infoBox: ({value}: any) => <InfoBoxComponent value={value} />,
+                  comparisonTable: ({value}: any) => <ComparisonTableComponent value={value} />
                 }
               }}
             />
@@ -279,6 +326,16 @@ export default function BlogContentRenderer({
             </p>
           </section>
         )
+
+      case 'internalLinks':
+        // 内部リンク（ピラーページ/クラスターページへのリンク）
+        if (!post.internalLinks || post.internalLinks.length === 0) return null
+        return <InternalLinksSection key="internalLinks" links={post.internalLinks} />
+
+      case 'externalReferences':
+        // 外部リンク（参考文献）
+        if (!post.externalReferences || post.externalReferences.length === 0) return null
+        return <ExternalReferencesSection key="externalReferences" references={post.externalReferences} />
 
       case 'summary':
         if (!post.summary) return null
