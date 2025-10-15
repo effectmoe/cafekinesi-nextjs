@@ -49,7 +49,8 @@ export default async function RelatedPosts({
   tags = [],
 }: RelatedPostsProps) {
   // プレビューモードの確認
-  const { isEnabled: isDraftMode } = draftMode()
+  const draft = await draftMode()
+  const isDraftMode = draft.isEnabled
   const sanityClient = isDraftMode ? previewClient : client
 
   // 関連記事を取得するGROQクエリ
@@ -73,10 +74,28 @@ export default async function RelatedPosts({
     } | order(score desc, publishedAt desc) [0...5]
   `
 
+  // フォールバック：最新記事を取得
+  const LATEST_POSTS_QUERY = groq`
+    *[_type == "blogPost" && _id != $currentPostId && !(_id in path("drafts.*"))] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      mainImage,
+      publishedAt,
+      category,
+      tags,
+      author-> {
+        name
+      },
+      content
+    } | order(publishedAt desc) [0...5]
+  `
+
   try {
     console.log(`[RelatedPosts] Fetching related posts for ${currentPostId}, isDraftMode: ${isDraftMode}`)
 
-    const relatedPosts = await sanityClient.fetch<RelatedPost[]>(
+    let relatedPosts = await sanityClient.fetch<RelatedPost[]>(
       RELATED_POSTS_QUERY,
       {
         currentPostId,
@@ -87,8 +106,18 @@ export default async function RelatedPosts({
 
     console.log(`[RelatedPosts] Found ${relatedPosts?.length || 0} related posts`)
 
+    // 関連記事が見つからない場合は、最新記事を取得
     if (!relatedPosts || relatedPosts.length === 0) {
-      console.log('[RelatedPosts] No related posts found')
+      console.log('[RelatedPosts] No related posts found, fetching latest posts instead')
+      relatedPosts = await sanityClient.fetch<RelatedPost[]>(
+        LATEST_POSTS_QUERY,
+        { currentPostId }
+      )
+      console.log(`[RelatedPosts] Found ${relatedPosts?.length || 0} latest posts`)
+    }
+
+    if (!relatedPosts || relatedPosts.length === 0) {
+      console.log('[RelatedPosts] No posts found at all')
       return null
     }
 

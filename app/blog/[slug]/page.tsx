@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import PreviewModeIndicator from '@/components/PreviewModeIndicator'
 import BlogContentRenderer from '@/components/BlogContentRenderer'
+import RelatedPosts from '@/app/components/RelatedPosts'
 import { generateBlogSchemas, generateBreadcrumbSchema } from '@/lib/schemaOrgGenerator'
 import Script from 'next/script'
 
@@ -409,8 +410,17 @@ export default async function BlogPostPage({
             prevPost={prevPost}
             nextPost={nextPost}
           />
+        </div>
 
-          {/* ブログ一覧に戻るボタン */}
+        {/* 関連記事セクション（自動取得） */}
+        <RelatedPosts
+          currentPostId={post._id}
+          category={post.category}
+          tags={post.tags}
+        />
+
+        {/* ブログ一覧に戻るボタン */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
             <a
               href="/blog"

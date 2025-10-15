@@ -201,11 +201,47 @@ export interface BlogPost extends SanityDocument {
   category: string;
   tags?: string[];
   featured?: boolean;
+  tldr?: string;
+  gallery?: SanityImage[];
+  additionalImages?: SanityImage[];
+  keyPoint?: string | { title?: string; content?: string };
+  summary?: string;
+  faq?: Array<{
+    question: string;
+    answer: string;
+  }>;
+  contentOrder?: string[];
   seo?: SeoSettings;
   author?: {
     _ref: string;
     _type: 'reference';
+    name?: string;
+    image?: SanityImage;
+    bio?: string;
   };
+  relatedArticles?: Array<{
+    _id: string;
+    title: string;
+    slug: {
+      current: string;
+    };
+    excerpt?: string;
+    mainImage?: SanityImage;
+    publishedAt?: string;
+    author?: {
+      name: string;
+    };
+  }>;
+  internalLinks?: Array<{
+    title: string;
+    url: string;
+    description?: string;
+  }>;
+  externalReferences?: Array<{
+    title: string;
+    url: string;
+    description?: string;
+  }>;
 }
 
 export interface Author extends SanityDocument {
