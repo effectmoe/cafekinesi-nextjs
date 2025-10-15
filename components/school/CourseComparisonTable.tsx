@@ -49,6 +49,7 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
           <thead className="bg-[#8B5A3C]">
             <tr>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">講座名</th>
+              <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">タイプ</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">難易度</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">受講料</th>
               <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-white">所要時間</th>
@@ -64,6 +65,11 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
                   {course.subtitle && (
                     <div className="text-xs text-gray-600 mt-1">{course.subtitle}</div>
                   )}
+                </td>
+                <td className="border border-gray-300 px-4 py-3 text-center">
+                  <span className={`text-xs px-2 py-1 rounded-full ${course.courseType === 'auxiliary' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                    {course.courseType === 'auxiliary' ? '発展コース' : '主要講座'}
+                  </span>
                 </td>
                 <td className="border border-gray-300 px-4 py-3 text-center">
                   <span className="text-yellow-500 text-base">{getDifficulty(course.order || index + 1)}</span>
@@ -125,6 +131,12 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
             )}
 
             <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">タイプ：</span>
+                <span className={`text-xs px-2 py-1 rounded-full ${course.courseType === 'auxiliary' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                  {course.courseType === 'auxiliary' ? '発展コース' : '主要講座'}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">難易度：</span>
                 <span className="text-yellow-500">{getDifficulty(course.order || index + 1)}</span>
