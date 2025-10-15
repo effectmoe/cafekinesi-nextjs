@@ -1,24 +1,5 @@
 [
   {
-    "_id": "breathing-stress-relief",
-    "category": "wellness",
-    "excerpt": "深呼吸は最もシンプルで効果的なストレス解消法です。正しい呼吸法を身につけることで、心身のバランスを整えましょう！",
-    "featured": true,
-    "mainImage": {
-      "_type": "image",
-      "asset": {
-        "_ref": "image-1b3daea97a33992a2fe57029d86e6cfb2fa5f3e8-16x16-jpg",
-        "_type": "reference"
-      }
-    },
-    "publishedAt": "2025-09-24T13:33:41.704Z",
-    "slug": {
-      "_type": "slug",
-      "current": "breathing-methoddailynosutoresuwoshitayo"
-    },
-    "title": "呼吸法で日常のストレスを解放したよ"
-  },
-  {
     "_id": "post-9",
     "category": "wellness",
     "excerpt": "簡単にできる呼吸法を身につけることで、日常のストレスを効果的に解放することができます。正しい呼吸が心身に与える影響について詳しく解説します。",
@@ -26,7 +7,7 @@
     "mainImage": {
       "_type": "image",
       "asset": {
-        "_ref": "image-5e7af6e5721bdb155d34a24fdaca7d30b915a0f4-1200x800-webp",
+        "_ref": "image-c44cf6bf946017b1d5da3d5899c0c32aea17718b-768x512-jpg",
         "_type": "reference"
       }
     },
@@ -36,108 +17,5 @@
       "current": "breathing-stress-relief"
     },
     "title": "呼吸法で日常のストレスを解放"
-  },
-  {
-    "_id": "XAQEqtwWGfwaiZX4sDipwF",
-    "category": "wellness",
-    "excerpt": "マーカー機能のテスト用記事ですよー！\nいかがですか？",
-    "featured": false,
-    "mainImage": {
-      "_type": "image",
-      "asset": {
-        "_ref": "image-c44cf6bf946017b1d5da3d5899c0c32aea17718b-768x512-jpg",
-        "_type": "reference"
-      }
-    },
-    "publishedAt": "2025-09-18T17:42:40.674Z",
-    "slug": {
-      "_type": "slug",
-      "current": "marker-test-post"
-    },
-    "title": "マーカー機能テスト記事｜寺の写真"
-  },
-  {
-    "_id": "post-1",
-    "category": "wellness",
-    "excerpt": "忙しい現代社会において、ほんの少しの時間でも心を落ち着かせることの大切さを改めて感じています。日本茶を丁寧に淹れる時間は、自分自身と向き合う貴重なひとときとなります。",
-    "featured": true,
-    "mainImage": null,
-    "publishedAt": "2024-12-15T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "japanese-tea-mindfulness"
-    },
-    "title": "心と身体を整える日本茶の時間"
-  },
-  {
-    "_id": "post-2",
-    "category": "aromatherapy",
-    "excerpt": "朝の目覚めを心地よくするアロマの選び方をご紹介します。自然の香りが持つ力を借りて、一日を穏やかに始めるための実践的なアプローチを探っていきましょう。",
-    "featured": true,
-    "mainImage": null,
-    "publishedAt": "2024-12-08T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "morning-aromatherapy-routine"
-    },
-    "title": "アロマテラピーで始める新しい朝の習慣"
-  },
-  {
-    "_id": "post-3",
-    "category": "meditation",
-    "excerpt": "日常生活の中に静寂な時間を取り入れるための空間デザインについて考えてみました。シンプルで機能的な環境が、心の平穏をもたらすための基盤となります。",
-    "featured": false,
-    "mainImage": null,
-    "publishedAt": "2024-12-01T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "meditation-space-design"
-    },
-    "title": "瞑想空間としての住まいづくり"
-  },
-  {
-    "_id": "post-4",
-    "category": "yoga",
-    "excerpt": "身体の緊張をほぐし、精神的な安定を得るための基本的なヨガポーズをご紹介します。日々の練習を通じて、内なる平和と調和を見つけていきましょう。",
-    "featured": false,
-    "mainImage": null,
-    "publishedAt": "2024-11-24T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "yoga-poses-for-mind"
-    },
-    "title": "ヨガのポーズで心を整える"
-  },
-  {
-    "_id": "post-5",
-    "category": "wellness",
-    "excerpt": "自宅でできる簡単なセルフマッサージの方法をお伝えします。緊張した筋肉をほぐし、血行を促進することで、心身のリラクゼーションを深めることができます。",
-    "featured": false,
-    "mainImage": {
-      "_type": "image",
-      "asset": {
-        "_ref": "image-02b7aa7db2b2f3b0607a4bae6b279cbc400edda6-971x918-jpg",
-        "_type": "reference"
-      }
-    },
-    "publishedAt": "2024-11-17T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "healing-massage-techniques"
-    },
-    "title": "癒しのマッサージ技法２"
-  },
-  {
-    "_id": "post-6",
-    "category": "food_health",
-    "excerpt": "旬の食材を使った栄養バランスの取れた食事は、身体だけでなく心の健康にも大きく影響します。自然の恵みを活かした食習慣について考えてみましょう。",
-    "featured": true,
-    "mainImage": null,
-    "publishedAt": "2024-11-10T00:00:00.000Z",
-    "slug": {
-      "_type": "slug",
-      "current": "healthy-eating-beauty"
-    },
-    "title": "健康的な食事で内側から美しく"
   }
 ]

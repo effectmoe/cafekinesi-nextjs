@@ -27,7 +27,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
     <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 pt-12 pb-16">
       {/* Hero Section - Simple title and subtitle only */}
       <div className="relative mb-16 text-center">
-        <h2 className="font-noto-serif text-3xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">
+        <h2 className="font-noto-serif text-2xl md:text-5xl font-medium text-[hsl(var(--text-primary))] mb-6">
           {aboutData.heroSection?.title || 'カフェキネシのページにようこそ'}
         </h2>
         <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed max-w-3xl mx-auto">
