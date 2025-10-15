@@ -71,7 +71,7 @@ const FAQSection = ({ faqs, title, subtitle, onQuestionClick }: FAQSectionProps)
               </h2>
             )}
             {hasSubtitle && (
-              <p className="text-text-secondary text-base">
+              <p className="text-text-secondary text-sm md:text-base">
                 {subtitle}
               </p>
             )}
