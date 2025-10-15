@@ -7,6 +7,32 @@ interface CourseDetailContentProps {
   course: CourseDetail
 }
 
+// 簡易マークダウンパーサー
+function parseMarkdown(text: string): string {
+  return text
+    // 太字 **text** -> <strong>text</strong>
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // リンク [text](url) -> <a href="url">text</a>
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-600 hover:underline">$1</a>')
+    // 段落分け
+    .split('\n\n')
+    .map(para => {
+      // リスト項目の処理
+      if (para.startsWith('・') || para.startsWith('-')) {
+        const items = para.split('\n').map(item =>
+          item.replace(/^[・\-]\s*/, '').trim()
+        ).filter(item => item)
+        return `<ul class="list-disc list-inside space-y-1">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
+      }
+      // 見出しの処理
+      if (para.startsWith('**') && para.endsWith('**')) {
+        return `<h3 class="font-semibold text-lg mt-4 mb-2">${para.replace(/\*\*/g, '')}</h3>`
+      }
+      return `<p class="mb-4">${para}</p>`
+    })
+    .join('')
+}
+
 export default function CourseDetailContent({ course }: CourseDetailContentProps) {
   // sectionsが存在しない場合のフォールバック
   const sections = course.sections || []
@@ -95,10 +121,10 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
   }
 
   return (
-    <div className="space-y-8">
+    <article className="space-y-8">
       {/* 目次セクション */}
       {sections.length > 0 && (
-        <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+        <nav className="mb-8 p-6 bg-gray-50 rounded-lg" aria-label="目次">
           <h2 className="text-xl font-semibold mb-4">目次</h2>
           <ol className="space-y-2 text-sm">
             {sections.map((section, index) => (
@@ -142,21 +168,22 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
               </li>
             )}
           </ol>
-        </div>
+        </nav>
       )}
 
       {/* 講座セクション */}
       {sections.length > 0 && (
         <div className="space-y-12">
           {sections.map((section) => (
-            <div key={section.id} id={section.id} className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
+            <section key={section.id} id={section.id} className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900">
                   {section.title}
                 </h2>
-                <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {section.content}
-                </div>
-            </div>
+                <div
+                  className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: parseMarkdown(section.content) }}
+                />
+            </section>
           ))}
         </div>
       )}
@@ -172,7 +199,7 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
-        <div id="effects" className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
+        <section id="effects" className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
             <h2 className="text-xl font-semibold mb-4 text-gray-900">
               受講後の効果
             </h2>
@@ -184,35 +211,35 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
                 </li>
               ))}
             </ul>
-        </div>
+        </section>
       )}
 
       {/* FAQセクション */}
       {course.faq && course.faq.length > 0 && (
-        <div id="faq" className="scroll-mt-24 border-l-4 border-blue-300 pl-6 min-h-[200px]">
+        <section id="faq" className="scroll-mt-24 border-l-4 border-blue-300 pl-6 min-h-[200px]">
           <h2 className="text-xl font-semibold mb-6 text-gray-900">
             よくある質問（FAQ）
           </h2>
-          <div className="space-y-6">
+          <dl className="space-y-6">
             {course.faq.map((item, index) => (
               <div key={index} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-start">
+                <dt className="text-lg font-semibold text-gray-900 mb-3 flex items-start">
                   <span className="text-blue-600 mr-2">Q{index + 1}.</span>
                   <span>{item.question}</span>
-                </h3>
-                <div className="text-gray-700 leading-relaxed pl-8">
+                </dt>
+                <dd className="text-gray-700 leading-relaxed pl-8">
                   <span className="font-semibold text-gray-600 mr-2">A.</span>
                   {item.answer}
-                </div>
+                </dd>
               </div>
             ))}
-          </div>
-        </div>
+          </dl>
+        </section>
       )}
 
       {/* インストラクターリンクセクション */}
       {course.instructorInfo && (
-        <div className="mt-8 p-6 bg-white border rounded">
+        <aside className="mt-8 p-6 bg-white border rounded">
           <div className="flex items-start gap-4">
             <div
               className="w-16 h-20 bg-gradient-to-br from-pink-100 to-orange-100 rounded flex items-center justify-center"
@@ -241,8 +268,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
               )}
             </div>
           </div>
-        </div>
+        </aside>
       )}
-    </div>
+    </article>
   )
 }
