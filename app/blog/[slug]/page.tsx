@@ -10,6 +10,7 @@ import BlogContentRenderer from '@/components/BlogContentRenderer'
 import RelatedPosts from '@/app/components/RelatedPosts'
 import { generateBlogSchemas, generateBreadcrumbSchema } from '@/lib/schemaOrgGenerator'
 import Script from 'next/script'
+import Link from 'next/link'
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic'
@@ -399,7 +400,22 @@ export default async function BlogPostPage({
       <article className="flex-grow">
         {/* ヒーローセクション - タイトルのみ */}
         <header className="bg-white border-b border-gray-100">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            {/* パンくずナビゲーション */}
+            <div className="mb-6 sm:mb-8">
+              <nav className="text-sm text-gray-600">
+                <Link href="/" className="hover:text-[#8B5A3C] transition-colors">
+                  ホーム
+                </Link>
+                <span className="mx-2">&gt;</span>
+                <Link href="/blog" className="hover:text-[#8B5A3C] transition-colors">
+                  ブログ
+                </Link>
+                <span className="mx-2">&gt;</span>
+                <span className="text-gray-900 font-medium">{post.title}</span>
+              </nav>
+            </div>
+
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-gray-900 mb-6 sm:mb-8">
               {post.title}
             </h1>
