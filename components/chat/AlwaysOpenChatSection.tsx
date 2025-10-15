@@ -92,21 +92,21 @@ export function AlwaysOpenChatSection() {
   };
 
   return (
-    <div className="container mx-auto px-4 max-w-5xl relative z-10">
+    <div className="container mx-auto px-3 sm:px-4 max-w-5xl relative z-10">
       {/* アイキャッチヘッダー */}
       <div className="text-center mb-10 animate-fade-in">
-        <div className="inline-flex items-center gap-2 px-6 py-2 bg-amber-500 text-white rounded-full mb-4">
-          <Sparkles className="w-4 h-4 animate-pulse" />
-          <span className="text-sm font-medium">
+        <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 bg-amber-500 text-white rounded-full mb-4">
+          <Sparkles className="w-3 sm:w-4 h-3 sm:h-4 animate-pulse" />
+          <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
             {chatConfig?.config?.chatUI?.title || 'AI チャットで簡単検索'}
           </span>
-          <Sparkles className="w-4 h-4 animate-pulse" />
+          <Sparkles className="w-3 sm:w-4 h-3 sm:h-4 animate-pulse" />
         </div>
 
-        <h2 className="text-4xl font-serif text-gray-800 mb-3">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-gray-800 mb-3">
           Cafe Kinesi へようこそ
         </h2>
-        <p className="text-gray-600 text-lg italic">
+        <p className="text-gray-600 text-base sm:text-lg italic">
           {chatConfig?.config?.chatUI?.welcomeMessage || '何かお探しですか？AIアシスタントがお答えします'}
         </p>
       </div>
@@ -137,7 +137,7 @@ export function AlwaysOpenChatSection() {
       )}>
         {/* チャットヘッダー */}
         <div
-          className="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white"
+          className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 sm:p-4 text-white"
           style={{
             background: chatConfig?.config?.chatUI?.primaryColor
               ? `linear-gradient(to right, ${chatConfig.config.chatUI.primaryColor}, ${chatConfig.config.chatUI.primaryColor}dd)`
@@ -145,34 +145,34 @@ export function AlwaysOpenChatSection() {
           }}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur">
-                <MessageCircle className="w-6 h-6" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-white/20 rounded-lg backdrop-blur">
+                <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">
+                <h3 className="font-semibold text-sm sm:text-base lg:text-lg">
                   {chatConfig?.config?.chatUI?.title || 'AIチャットアシスタント'}
                 </h3>
                 <p className="text-xs opacity-90">24時間いつでもお答えします</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {/* RAG設定状態表示 */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {/* RAG設定状態表示（小画面では非表示） */}
               {ragConfig && (
-                <div className="text-xs opacity-90 mr-2">
+                <div className="hidden md:block text-xs opacity-90 mr-2">
                   RAG: {ragConfig.vectorSearch?.enabled ? 'ON' : 'OFF'} |
                   Web: {ragConfig.webSearch?.enabled ? 'ON' : 'OFF'}
                 </div>
               )}
               {sessionId ? (
                 <>
-                  <span className="inline-flex h-3 w-3 rounded-full bg-green-400 animate-pulse" />
-                  <span className="text-sm">オンライン</span>
+                  <span className="inline-flex h-2.5 sm:h-3 w-2.5 sm:w-3 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-xs sm:text-sm">オンライン</span>
                 </>
               ) : (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">接続中...</span>
+                  <Loader2 className="w-3.5 sm:w-4 h-3.5 sm:h-4 animate-spin" />
+                  <span className="text-xs sm:text-sm">接続中...</span>
                 </>
               )}
             </div>
