@@ -69,7 +69,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                   className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                   aria-label="検索"
                 >
-                  <Search size={20} className="text-gray-700 block" strokeWidth={2} />
+                  <Search size={20} className="text-gray-700 block" strokeWidth={1.5} />
                 </button>
               )}
 
@@ -81,11 +81,11 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                     className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0"
                     aria-label="カート"
                   >
-                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={2} />
+                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={1.5} />
                   </Link>
                 ) : (
                   <button className="flex items-center justify-center w-9 h-9 hover:opacity-70 transition-opacity shrink-0" aria-label="カート">
-                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={2} />
+                    <ShoppingCart size={20} className="text-gray-700 block" strokeWidth={1.5} />
                   </button>
                 )
               )}
@@ -97,9 +97,9 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={20} className="text-gray-700 block" strokeWidth={2} />
+                  <X size={20} className="text-gray-700 block" strokeWidth={1.5} />
                 ) : (
-                  <Menu size={20} className="text-gray-700 block" strokeWidth={2} />
+                  <Menu size={20} className="text-gray-700 block" strokeWidth={1.5} />
                 )}
               </button>
             </div>
