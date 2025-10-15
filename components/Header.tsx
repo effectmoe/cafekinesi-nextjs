@@ -69,7 +69,7 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                   className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity"
                   aria-label="検索"
                 >
-                  <Search size={20} className="text-gray-700" strokeWidth={2} />
+                  <Search size={20} className="text-gray-700" />
                 </button>
               )}
 
@@ -77,11 +77,11 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
               {headerIcons?.cartIcon?.show !== false && (
                 headerIcons?.cartIcon?.link ? (
                   <Link href={headerIcons.cartIcon.link} className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
-                    <ShoppingCart size={20} className="text-gray-700" strokeWidth={2} />
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </Link>
                 ) : (
                   <button className="w-10 h-10 inline-flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="カート">
-                    <ShoppingCart size={20} className="text-gray-700" strokeWidth={2} />
+                    <ShoppingCart size={20} className="text-gray-700" />
                   </button>
                 )
               )}
@@ -93,9 +93,9 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                 aria-label="メニュー"
               >
                 {isMobileMenuOpen ? (
-                  <X size={20} className="text-gray-700" strokeWidth={2} />
+                  <X size={20} className="text-gray-700" />
                 ) : (
-                  <Menu size={20} className="text-gray-700" strokeWidth={2} />
+                  <Menu size={20} className="text-gray-700" />
                 )}
               </button>
             </div>
