@@ -306,6 +306,17 @@ export default defineType({
       group: 'basic',
     }),
     defineField({
+      name: 'lastUpdated',
+      title: '最終更新日',
+      type: 'datetime',
+      description: 'ページに表示される最終更新日（手動で設定可能。未設定の場合は自動更新日が使用されます）',
+      group: 'basic',
+      options: {
+        dateFormat: 'YYYY-MM-DD',
+        timeFormat: 'HH:mm',
+      },
+    }),
+    defineField({
       name: 'price',
       title: '受講料',
       type: 'object',
@@ -783,6 +794,22 @@ export default defineType({
       title: '表示順序',
       name: 'orderAsc',
       by: [{ field: 'order', direction: 'asc' }],
+    },
+    {
+      title: '最終更新日（新しい順）',
+      name: 'lastUpdatedDesc',
+      by: [
+        { field: 'lastUpdated', direction: 'desc' },
+        { field: '_updatedAt', direction: 'desc' },
+      ],
+    },
+    {
+      title: '最終更新日（古い順）',
+      name: 'lastUpdatedAsc',
+      by: [
+        { field: 'lastUpdated', direction: 'asc' },
+        { field: '_updatedAt', direction: 'asc' },
+      ],
     },
   ],
 })

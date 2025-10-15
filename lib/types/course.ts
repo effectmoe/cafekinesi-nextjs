@@ -26,6 +26,8 @@ export interface Course {
   effects?: string[]
   order: number
   isActive: boolean
+  lastUpdated?: string // 手動設定の最終更新日
+  _updatedAt?: string // Sanityの自動更新日
   price?: {
     amount: number
     unit: string
@@ -194,4 +196,6 @@ export interface SchoolPageData {
     }
   }
   isActive: boolean
+  lastUpdated?: string // 手動設定の最終更新日
+  _updatedAt?: string // Sanityの自動更新日
 }

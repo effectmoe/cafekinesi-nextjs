@@ -170,17 +170,28 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <main className="pt-20">
         {/* パンくずナビゲーション */}
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <nav className="text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-primary transition-colors">
-              ホーム
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <Link href="/school" className="hover:text-primary transition-colors">
-              講座一覧
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <span className="text-foreground">{course.title}</span>
-          </nav>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <nav className="text-sm text-muted-foreground">
+              <Link href="/" className="hover:text-primary transition-colors">
+                ホーム
+              </Link>
+              <span className="mx-2">&gt;</span>
+              <Link href="/school" className="hover:text-primary transition-colors">
+                講座一覧
+              </Link>
+              <span className="mx-2">&gt;</span>
+              <span className="text-foreground">{course.title}</span>
+            </nav>
+            {(course.lastUpdated || course._updatedAt) && (
+              <time className="text-xs text-gray-500" dateTime={course.lastUpdated || course._updatedAt}>
+                最終更新: {new Date(course.lastUpdated || course._updatedAt || '').toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            )}
+          </div>
         </div>
 
         {/* 講座ヘッダー */}

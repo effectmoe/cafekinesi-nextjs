@@ -48,6 +48,8 @@ const COURSES_QUERY = groq`*[_type == "course" && isActive == true && (!defined(
 const SCHOOL_PAGE_QUERY = groq`*[_type == "schoolPage" && isActive == true][0] {
   _id,
   title,
+  lastUpdated,
+  _updatedAt,
   selectionGuide {
     title,
     description,
@@ -310,21 +312,32 @@ export default async function SchoolPage() {
           {/* ヒーローセクション */}
           <section className="bg-gradient-to-br from-[#8B5A3C]/10 via-orange-50 to-white py-16 md:py-24">
             <div className="max-w-screen-xl mx-auto px-6">
-              <nav className="mb-6" aria-label="パンくずリスト">
-                <ol className="flex items-center gap-2 text-sm text-gray-600" itemScope itemType="https://schema.org/BreadcrumbList">
-                  <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                    <Link href="/" className="hover:text-[#8B5A3C] transition-colors" itemProp="item">
-                      <span itemProp="name">ホーム</span>
-                    </Link>
-                    <meta itemProp="position" content="1" />
-                  </li>
-                  <li className="text-gray-400">/</li>
-                  <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                    <span className="text-gray-900 font-medium" itemProp="name">スクール</span>
-                    <meta itemProp="position" content="2" />
-                  </li>
-                </ol>
-              </nav>
+              <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+                <nav aria-label="パンくずリスト">
+                  <ol className="flex items-center gap-2 text-sm text-gray-600" itemScope itemType="https://schema.org/BreadcrumbList">
+                    <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                      <Link href="/" className="hover:text-[#8B5A3C] transition-colors" itemProp="item">
+                        <span itemProp="name">ホーム</span>
+                      </Link>
+                      <meta itemProp="position" content="1" />
+                    </li>
+                    <li className="text-gray-400">/</li>
+                    <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                      <span className="text-gray-900 font-medium" itemProp="name">スクール</span>
+                      <meta itemProp="position" content="2" />
+                    </li>
+                  </ol>
+                </nav>
+                {(pageContent?.lastUpdated || pageContent?._updatedAt) && (
+                  <time className="text-xs text-gray-500" dateTime={pageContent.lastUpdated || pageContent._updatedAt}>
+                    最終更新: {new Date(pageContent.lastUpdated || pageContent._updatedAt || '').toLocaleDateString('ja-JP', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                )}
+              </div>
 
               <h1 className="font-noto-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 スクール・講座一覧

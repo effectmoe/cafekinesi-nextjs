@@ -344,6 +344,35 @@ export default defineType({
       description: 'チェックを外すとスクールページが非公開になります',
       group: 'content',
     }),
+    defineField({
+      name: 'lastUpdated',
+      title: '最終更新日',
+      type: 'datetime',
+      description: 'ページに表示される最終更新日（手動で設定可能。未設定の場合は自動更新日が使用されます）',
+      group: 'content',
+      options: {
+        dateFormat: 'YYYY-MM-DD',
+        timeFormat: 'HH:mm',
+      },
+    }),
+  ],
+  orderings: [
+    {
+      title: '最終更新日（新しい順）',
+      name: 'lastUpdatedDesc',
+      by: [
+        { field: 'lastUpdated', direction: 'desc' },
+        { field: '_updatedAt', direction: 'desc' },
+      ],
+    },
+    {
+      title: '最終更新日（古い順）',
+      name: 'lastUpdatedAsc',
+      by: [
+        { field: 'lastUpdated', direction: 'asc' },
+        { field: '_updatedAt', direction: 'asc' },
+      ],
+    },
   ],
   preview: {
     select: {

@@ -376,6 +376,9 @@ export class SchemaOrgGenerator {
         url: this.config.siteUrl,
       },
       url: courseUrl,
+      ...((course.lastUpdated || course._updatedAt) && {
+        dateModified: course.lastUpdated || course._updatedAt,
+      }),
       ...(course.image?.asset?.url && {
         image: course.image.asset.url,
       }),

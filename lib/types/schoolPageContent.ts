@@ -65,4 +65,6 @@ export interface SchoolPageContent {
   faq?: FAQ
   certification?: Certification
   isActive: boolean
+  lastUpdated?: string // 手動設定の最終更新日
+  _updatedAt?: string // Sanityの自動更新日
 }
