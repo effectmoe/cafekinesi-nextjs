@@ -16,6 +16,7 @@
   "dependencies": {
     "@portabletext/react": "^4.0.3",
     "@sanity/icons": "^3.7.4",
+    "@sanity/locale-ja-jp": "^1.1.26",
     "@sanity/rich-date-input": "^3.0.6",
     "@sanity/vision": "^4.9.0",
     "@vercel/og": "^0.8.5",

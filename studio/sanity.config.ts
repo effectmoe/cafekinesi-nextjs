@@ -9,6 +9,7 @@ import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
 import { type UserConfig } from 'vite'
 import {updateEmbeddingAction} from './components/actions/updateEmbeddingAction'
+import {jaJPLocale} from '@sanity/locale-ja-jp'
 
 export default defineConfig({
   name: 'default',
@@ -16,6 +17,12 @@ export default defineConfig({
 
   projectId: 'e4aqw590',
   dataset: 'production',
+
+  // 国際化設定 - 日本語をデフォルトに
+  i18n: {
+    locales: [jaJPLocale],
+    default: 'ja-JP'
+  },
 
   plugins: (() => {
     const basePlugins = [
