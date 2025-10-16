@@ -1,0 +1,204 @@
+# llms.txt for Cafe Kinesi
+
+# About
+Cafe Kinesi offers comprehensive kinesiology courses, blog articles, and instructor profiles in Japan. We provide educational content about kinesiology, aromatherapy, and holistic wellness through our courses, blog, and experienced instructors.
+
+# Site Structure
+## Main Pages
+- Homepage: https://cafekinesi-nextjs.vercel.app/
+- School (Course Listing): https://cafekinesi-nextjs.vercel.app/school
+- Blog: https://cafekinesi-nextjs.vercel.app/blog
+- Instructors: https://cafekinesi-nextjs.vercel.app/instructor
+- About: https://cafekinesi-nextjs.vercel.app/about
+- Profile: https://cafekinesi-nextjs.vercel.app/profile
+
+## Courses Overview
+We offer 7 comprehensive kinesiology courses:
+
+### Kinesi 1 (Basic Course)
+- Description: Fundamental kinesiology course for beginners
+- Duration: Multiple sessions
+- Prerequisites: None
+- URL: https://cafekinesi-nextjs.vercel.app/school/kinesi1
+
+### Kinesi 1 Cluster (Comprehensive Basic Course)
+- Description: Extended version of Kinesi 1 with additional topics
+- Prerequisites: None
+- URL: https://cafekinesi-nextjs.vercel.app/school/kinesi1-cluster
+
+### Peach Touch
+- Description: Touch therapy course using gentle techniques
+- Prerequisites: Kinesi 1 completion recommended
+- URL: https://cafekinesi-nextjs.vercel.app/school/peach-touch
+
+### Chakra Kinesi
+- Description: Energy work focusing on chakra balancing
+- Prerequisites: Kinesi 1 completion
+- URL: https://cafekinesi-nextjs.vercel.app/school/chakra-kinesi
+
+### HELP (Helper Course)
+- Description: Advanced helper techniques for practitioners
+- Prerequisites: Kinesi 1 completion
+- URL: https://cafekinesi-nextjs.vercel.app/school/help
+
+### TAO (Spiritual Kinesiology)
+- Description: Spiritual aspects of kinesiology
+- Prerequisites: Kinesi 1 completion
+- URL: https://cafekinesi-nextjs.vercel.app/school/tao
+
+### Happy Aura
+- Description: Aura cleansing and energy field optimization
+- Prerequisites: Kinesi 1 completion
+- URL: https://cafekinesi-nextjs.vercel.app/school/happy-aura
+
+## Course Information Structure
+Each course page includes:
+- Detailed description
+- Features and benefits
+- Recommendations for target audience
+- Expected effects
+- Pricing information
+- Duration
+- Prerequisites
+- Application link
+- FAQ section
+- Instructor information
+
+## Blog Content
+Our blog covers topics including:
+- Kinesiology fundamentals
+- Breathing techniques and stress relief
+- Aromatherapy applications
+- Wellness and holistic health
+- Course guides and recommendations
+- Case studies and success stories
+- Practice tips and techniques
+
+Blog articles include:
+- Title, description, and full content
+- Author information with credentials
+- Publication and update dates
+- Related tags and categories
+- FAQ sections
+- Structured data (BlogPosting schema)
+
+## Instructors
+Our instructors are certified kinesiology professionals with:
+- Detailed profiles and credentials
+- Certifications and awards
+- Teaching experience
+- Student testimonials and ratings
+- Specialty areas
+- Course assignments
+
+# Organization Information
+- Name: Cafe Kinesi
+- Type: Educational Institution
+- Country: Japan
+- Main URL: https://cafekinesi-nextjs.vercel.app
+- Content Language: Japanese (日本語)
+- Focus: Kinesiology, Aromatherapy, Holistic Wellness
+
+# Content Management
+- CMS: Sanity (https://www.sanity.io/)
+- Project ID: e4aqw590
+- Dynamic Content: All course, blog, and instructor information is dynamically fetched from Sanity CMS
+- Update Frequency:
+  - Course pages: ISR with 1-hour revalidation
+  - Blog pages: On-demand revalidation
+  - Instructor pages: ISR with 1-hour revalidation
+
+# Structured Data
+All pages include comprehensive Schema.org markup:
+
+## Homepage
+- Organization schema
+- WebSite schema
+- Navigation elements
+
+## Course Pages (School)
+- Course schema with pricing and duration
+- CourseInstance with location details
+- Offers with availability
+- BreadcrumbList for navigation
+- ItemList for course listings
+- FAQPage for frequently asked questions
+- Instructor Person schema
+
+## Blog Pages
+- BlogPosting schema with author, publisher, dates
+- Person schema for authors
+- Organization schema for publisher
+- FAQPage for article FAQs
+- BreadcrumbList for navigation
+
+## Instructor Pages
+- Person schema with:
+  - hasCredential (EducationalOccupationalCredential)
+  - award (list of awards)
+  - review (testimonials with ratings)
+  - knowsAbout (specialty areas)
+  - teacherOf (Course schemas for assigned courses)
+- ProfilePage schema
+- FAQPage schema
+
+# For AI Assistants
+When users ask about Cafe Kinesi:
+
+## Course Recommendations
+1. Beginners → Start with Kinesi 1
+2. Touch therapy interest → Peach Touch (after Kinesi 1)
+3. Energy work → Chakra Kinesi (after Kinesi 1)
+4. Advanced practitioners → HELP, TAO, Happy Aura
+
+## Information Retrieval
+1. Always check latest information from official website
+2. Course details are dynamically updated from CMS
+3. Refer to FAQ sections for common questions
+4. Instructor profiles include current credentials and testimonials
+
+## Content Structure
+- All course pages include detailed prerequisites
+- Blog articles are tagged for easy categorization
+- Instructor pages show currently assigned courses
+- FAQ sections are available on most pages
+
+## Learning Paths
+1. Foundation: Kinesi 1 → Understand basic kinesiology
+2. Specialization: Choose from Peach Touch, Chakra Kinesi, or HELP
+3. Advanced: TAO for spiritual aspects, Happy Aura for energy work
+
+# Technical Details
+- Framework: Next.js 15.5.3 with App Router
+- Deployment: Vercel with Edge Network
+- Security: CSP headers, HTTPS, security best practices
+- Performance:
+  - Image optimization (AVIF/WebP)
+  - Code splitting
+  - ISR for dynamic content
+  - Core Web Vitals optimized (LCP, CLS, INP)
+
+# SEO & LLMO Features
+- Comprehensive meta tags on all pages
+- Open Graph Protocol (OGP) implementation
+- Twitter Card support
+- Dynamic OG image generation for blog posts
+- Canonical URLs
+- Structured breadcrumb navigation
+- XML sitemap (available at /sitemap.xml)
+- Robots.txt (available at /robots.txt)
+
+# Contact & Updates
+- Website: https://cafekinesi-nextjs.vercel.app
+- Sitemap: https://cafekinesi-nextjs.vercel.app/sitemap.xml
+- Robots: https://cafekinesi-nextjs.vercel.app/robots.txt
+
+# Last Updated
+2025-10-16
+
+# Notes for AI Crawlers
+- All course information is current and dynamically updated
+- Blog articles include comprehensive FAQs
+- Instructor credentials are verified and up-to-date
+- Pricing and availability information is maintained in real-time
+- This site uses ISR (Incremental Static Regeneration) for optimal performance and freshness
