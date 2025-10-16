@@ -414,6 +414,11 @@ export default function FAQPage() {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
   const pageUrl = `${baseUrl}/faq`
 
+  // 現在の日付（更新日時）
+  const currentDate = new Date().toISOString()
+  // 公開日（FAQページの初回公開日 - 適宜調整してください）
+  const publishedDate = '2025-01-17T00:00:00+09:00'
+
   // BreadcrumbList Schema
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -434,10 +439,41 @@ export default function FAQPage() {
     ],
   }
 
-  // FAQPage Schema
+  // WebPage Schema（ページタイプの明確化）
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: 'よくある質問（FAQ） | Cafe Kinesi',
+    description: 'カフェキネシに関するよくある質問をまとめました。キネシオロジー、講座、料金、申し込み方法など、57件のQ&Aで疑問を解決します。',
+    inLanguage: 'ja-JP',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': `${baseUrl}#website`,
+      url: baseUrl,
+      name: 'Cafe Kinesi',
+    },
+    datePublished: publishedDate,
+    dateModified: currentDate,
+    breadcrumb: {
+      '@id': `${pageUrl}#breadcrumb`,
+    },
+    mainEntity: {
+      '@id': `${pageUrl}#faqpage`,
+    },
+  }
+
+  // FAQPage Schema（LLMO最適化）
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': `${pageUrl}#faqpage`,
+    url: pageUrl,
+    name: 'よくある質問（FAQ）',
+    inLanguage: 'ja-JP',
+    datePublished: publishedDate,
+    dateModified: currentDate,
     mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
@@ -456,6 +492,15 @@ export default function FAQPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+
+      {/* Schema.org JSON-LD (WebPage) */}
+      <Script
+        id="webpage-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webPageSchema),
         }}
       />
 
