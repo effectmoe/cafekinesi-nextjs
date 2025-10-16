@@ -6,6 +6,16 @@ export const structure = (S: StructureBuilder) =>
     .id('root')
     .title('コンテンツ')
     .items([
+      // サイト設定（LLMO/SEO）シングルトン
+      S.listItem()
+        .title('サイト設定 (LLMO/SEO)')
+        .id('siteConfig')
+        .child(
+          S.document()
+            .schemaType('siteConfig')
+            .documentId('ouiRwKup4ANFrhR4PnqqqH')
+        ),
+
       // サイト設定（シングルトン）
       S.listItem()
         .title('サイト設定')
@@ -152,6 +162,7 @@ export const structure = (S: StructureBuilder) =>
       // その他のコンテンツ
       ...S.documentTypeListItems().filter(
         (listItem) => ![
+          'siteConfig',  // サイト設定（LLMO/SEO）は上で明示的に定義
           'siteSettings',
           'homepage',
           'aboutPage',
