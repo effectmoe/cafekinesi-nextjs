@@ -26,6 +26,7 @@ import representative from './representative'
 import { faq } from './faq'
 import faqCard from './documents/faqCard'
 import chatModal from './documents/chatModal'
+import siteConfig from './documents/siteConfig'
 
 // AI/RAGスキーマ
 import chatConfiguration from './chat/chatConfiguration'
@@ -86,6 +87,7 @@ export const schemaTypes = [
   faq,
   faqCard,
   chatModal,
+  siteConfig,
 
   // AI/RAG設定
   chatConfiguration,
