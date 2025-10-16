@@ -12,8 +12,9 @@ import { generateBlogSchemas, generateBreadcrumbSchema } from '@/lib/schemaOrgGe
 import Script from 'next/script'
 import Link from 'next/link'
 
-// 動的レンダリングを強制
-export const dynamic = 'force-dynamic'
+// ISR設定: 30分ごとに再生成（1800秒）
+// ブログ記事は更新頻度が低いため、適度なキャッシュでパフォーマンス最適化
+export const revalidate = 1800
 
 // プレビューモードと通常モードで異なるqueryを使用
 const POST_QUERY = groq`*[_type == "blogPost" && slug.current == $slug][0] {

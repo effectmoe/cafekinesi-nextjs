@@ -12,6 +12,7 @@ import { FAQCard, ChatModalSettings } from '@/types/chat.types'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
+import Script from 'next/script'
 import type { Metadata } from 'next'
 
 async function getAboutPageData(): Promise<AboutPage | null> {
@@ -32,27 +33,91 @@ async function getAboutPageData(): Promise<AboutPage | null> {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+
   try {
     const homepage = await sanityFetch<Homepage>({
       query: HOMEPAGE_QUERY,
       tags: ['homepage'],
     })
 
+    // Sanityから取得したデータまたはデフォルト値
+    const title = homepage?.seo?.title || homepage?.title || 'Cafe Kinesi - カフェキネシオロジー | 心と身体を整えるヒーリングスクール'
+    const description = homepage?.seo?.description || 'カフェキネシオロジーは、誰でも気軽に学べるヒーリング技術です。キネシオロジーの基礎から応用まで、段階的に学べる講座を全国で開講中。初心者から上級者まで、あなたのペースで心と身体を整える技術を習得できます。'
+    const keywords = homepage?.seo?.keywords || 'カフェキネシオロジー, キネシオロジー, ヒーリング, スクール, 講座, セラピー, 心と身体, アロマ, 認定資格, 初心者歓迎'
+
+    // OGP画像（Sanityにあれば使用、なければデフォルト）
+    const ogImage = homepage?.seo?.ogImage
+      ? urlForImage(homepage.seo.ogImage)?.width(1200).height(630).url()
+      : `${baseUrl}/og-image.jpg`
+
     return {
-      title: homepage?.title || 'Cafe Kinesi - 心と身体を整える空間',
-      description: 'アロマテラピーとキネシオロジーが融合した新しい体験',
+      title,
+      description,
+      keywords,
+      authors: [{ name: 'Cafe Kinesi' }],
+      creator: 'Cafe Kinesi',
+      publisher: 'Cafe Kinesi',
+      openGraph: {
+        type: 'website',
+        locale: 'ja_JP',
+        url: baseUrl,
+        siteName: 'Cafe Kinesi',
+        title,
+        description,
+        images: [
+          {
+            url: ogImage || `${baseUrl}/og-image.jpg`,
+            width: 1200,
+            height: 630,
+            alt: 'Cafe Kinesi - カフェキネシオロジー',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [ogImage || `${baseUrl}/og-image.jpg`],
+        creator: '@cafekinesi',
+        site: '@cafekinesi',
+      },
+      alternates: {
+        canonical: baseUrl,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+      verification: {
+        google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+      },
     }
   } catch (error) {
+    console.error('Error generating homepage metadata:', error)
+
+    // エラー時のフォールバック
     return {
-      title: 'Cafe Kinesi - 心と身体を整える空間',
-      description: 'アロマテラピーとキネシオロジーが融合した新しい体験',
+      title: 'Cafe Kinesi - カフェキネシオロジー | 心と身体を整えるヒーリングスクール',
+      description: 'カフェキネシオロジーは、誰でも気軽に学べるヒーリング技術です。キネシオロジーの基礎から応用まで、段階的に学べる講座を全国で開講中。',
+      keywords: 'カフェキネシオロジー, キネシオロジー, ヒーリング, スクール',
+      alternates: {
+        canonical: baseUrl,
+      },
     }
   }
 }
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
+// ISR設定: 1時間ごとに再生成（3600秒）
+// TOPページは高トラフィックのため、適切なキャッシュ戦略でパフォーマンス向上
+export const revalidate = 3600
 
 export default async function HomePage() {
   const draft = await draftMode()
@@ -119,9 +184,79 @@ export default async function HomePage() {
     // アクティブなナビゲーションメニュー項目のみフィルタリング
     const activeNavigationItems = homepage.navigationMenu?.filter(item => item.isActive).sort((a, b) => a.order - b.order) || []
 
+    // Schema.org構造化データ生成
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+
+    // WebSite schema（サイト全体の情報）
+    const websiteSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${baseUrl}/#website`,
+      url: baseUrl,
+      name: 'Cafe Kinesi - カフェキネシオロジー',
+      description: 'カフェキネシオロジーは、誰でも気軽に学べるヒーリング技術です。キネシオロジーの基礎から応用まで、段階的に学べる講座を全国で開講中。',
+      inLanguage: 'ja',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${baseUrl}/search?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+      publisher: {
+        '@id': `${baseUrl}/#organization`,
+      },
+    }
+
+    // Organization schema（組織情報）
+    const organizationSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      '@id': `${baseUrl}/#organization`,
+      name: 'Cafe Kinesi',
+      legalName: 'カフェキネシオロジー',
+      url: baseUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/logo.png`,
+        width: 512,
+        height: 512,
+      },
+      description: 'カフェキネシオロジーは、心と身体を整えるヒーリング技術を提供するスクールです。初心者から上級者まで、誰でも気軽に学べる講座を全国で開講しています。',
+      foundingDate: '2015',
+      sameAs: [
+        'https://www.facebook.com/cafekinesi',
+        'https://www.instagram.com/cafekinesi',
+        'https://twitter.com/cafekinesi',
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        availableLanguage: ['Japanese'],
+      },
+    }
+
     return (
-      <div className="min-h-screen bg-white">
-        <Header navigationItems={activeNavigationItems} headerIcons={homepage.headerIcons} />
+      <>
+        {/* Schema.org JSON-LD */}
+        <Script
+          id="schema-website"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+        <Script
+          id="schema-organization"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+
+        <div className="min-h-screen bg-white">
+          <Header navigationItems={activeNavigationItems} headerIcons={homepage.headerIcons} />
         <main className="relative">
           {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
           <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
@@ -295,6 +430,7 @@ export default async function HomePage() {
         <SocialLinks />
         <Footer />
       </div>
+    </>
     )
   } catch (error) {
     console.error('Error loading homepage:', error)

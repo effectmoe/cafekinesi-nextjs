@@ -1,10 +1,9 @@
 import { client, groq, urlFor, publicClient, previewClient } from '@/lib/sanity.client'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
+import Script from 'next/script'
 import type { BlogPost } from '@/types/sanity.types'
-
-// 動的レンダリングを強制（Next.js 15ではこれだけで十分）
-export const dynamic = 'force-dynamic'
+import type { Metadata } from 'next'
 
 const POSTS_QUERY = groq`*[_type == "blogPost"] | order(publishedAt desc) {
   _id,
@@ -31,15 +30,184 @@ async function getPosts() {
   return selectedClient.fetch<BlogPost[]>(POSTS_QUERY)
 }
 
+// Metadata生成
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+
+  try {
+    const posts = await publicClient.fetch<BlogPost[]>(POSTS_QUERY)
+    const postCount = posts.length
+
+    const title = 'ブログ | Cafe Kinesi - キネシオロジー・ヒーリングの最新情報'
+    const description = `カフェキネシオロジーの公式ブログ。キネシオロジーやヒーリング、セラピーに関する最新情報、講座レポート、実践テクニックなど、${postCount}件以上の記事を掲載中。初心者から上級者まで役立つ情報をお届けします。`
+    const keywords = 'カフェキネシオロジー, キネシオロジー, ヒーリング, セラピー, ブログ, 最新情報, 講座レポート, 実践テクニック'
+
+    return {
+      title,
+      description,
+      keywords,
+      authors: [{ name: 'Cafe Kinesi' }],
+      creator: 'Cafe Kinesi',
+      publisher: 'Cafe Kinesi',
+      openGraph: {
+        type: 'website',
+        locale: 'ja_JP',
+        url: `${baseUrl}/blog`,
+        siteName: 'Cafe Kinesi',
+        title,
+        description,
+        images: [
+          {
+            url: `${baseUrl}/og-image-blog.jpg`,
+            width: 1200,
+            height: 630,
+            alt: 'Cafe Kinesi Blog - キネシオロジー・ヒーリングの最新情報',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [`${baseUrl}/og-image-blog.jpg`],
+        creator: '@cafekinesi',
+        site: '@cafekinesi',
+      },
+      alternates: {
+        canonical: `${baseUrl}/blog`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+    }
+  } catch (error) {
+    console.error('Error generating blog metadata:', error)
+
+    // エラー時のフォールバック
+    return {
+      title: 'ブログ | Cafe Kinesi',
+      description: 'カフェキネシオロジーの公式ブログ。キネシオロジーやヒーリングに関する最新情報をお届けします。',
+      keywords: 'カフェキネシオロジー, キネシオロジー, ヒーリング, ブログ',
+      alternates: {
+        canonical: `${baseUrl}/blog`,
+      },
+    }
+  }
+}
+
+// ISR設定: 10分ごとに再生成（600秒）
+// ブログ一覧は更新頻度が高いため、TOPページより短い間隔
+export const revalidate = 600
+
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 export default async function BlogPage() {
   const posts = await getPosts()
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: baseUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'ブログ',
+        item: `${baseUrl}/blog`,
+      },
+    ],
+  }
+
+  // CollectionPage Schema（記事一覧ページとして）
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${baseUrl}/blog#collectionpage`,
+    url: `${baseUrl}/blog`,
+    name: 'ブログ | Cafe Kinesi',
+    description: 'カフェキネシオロジーの公式ブログ。キネシオロジーやヒーリングに関する最新情報をお届けします。',
+    inLanguage: 'ja',
+    isPartOf: {
+      '@id': `${baseUrl}/#website`,
+    },
+    about: {
+      '@type': 'Thing',
+      name: 'キネシオロジー',
+    },
+    publisher: {
+      '@id': `${baseUrl}/#organization`,
+    },
+  }
+
+  // ItemList Schema（記事のリスト）
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${baseUrl}/blog/${post.slug.current}`,
+      name: post.title,
+      item: {
+        '@type': 'BlogPosting',
+        '@id': `${baseUrl}/blog/${post.slug.current}#blogposting`,
+        headline: post.title,
+        description: post.excerpt,
+        image: post.mainImage
+          ? urlFor(post.mainImage).width(1200).height(630).url()
+          : `${baseUrl}/og-image-blog.jpg`,
+        datePublished: post.publishedAt,
+        author: {
+          '@type': 'Person',
+          name: post.author?.name || 'Cafe Kinesi',
+        },
+      },
+    })),
+  }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+    <>
+      {/* Schema.org JSON-LD */}
+      <Script
+        id="schema-breadcrumb"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      <Script
+        id="schema-collectionpage"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionPageSchema),
+        }}
+      />
+      <Script
+        id="schema-itemlist"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListSchema),
+        }}
+      />
+
+      <div className="min-h-screen bg-white flex flex-col">
+        <Header />
       <main className="flex-grow">
         {/* シンプルなタイトル */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
@@ -117,7 +285,6 @@ export default async function BlogPage() {
       </main>
       <Footer />
     </div>
+    </>
   )
 }
-
-// export const revalidate = 60 // 上部で定義済み

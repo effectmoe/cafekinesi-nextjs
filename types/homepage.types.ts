@@ -1,4 +1,15 @@
-import { SanityDocument, SanityImageObject } from '@sanity/types'
+import { SanityDocument } from '@sanity/types'
+
+// Sanity Image型定義
+export interface SanityImageObject {
+  _type: 'image'
+  asset: {
+    _ref: string
+    _type: 'reference'
+    url?: string
+  }
+  alt?: string
+}
 
 export interface CategoryCard {
   titleJa: string
@@ -55,6 +66,13 @@ export interface HeaderIcons {
   cartIcon: HeaderIconConfig
 }
 
+export interface SEO {
+  title?: string
+  description?: string
+  keywords?: string
+  ogImage?: SanityImageObject
+}
+
 export interface Homepage extends SanityDocument {
   _type: 'homepage'
   title: string
@@ -65,6 +83,7 @@ export interface Homepage extends SanityDocument {
   profileButton?: ProfileButton
   navigationMenu?: NavigationMenuItem[]
   headerIcons?: HeaderIcons
+  seo?: SEO
 }
 
 // ブログ記事用の型定義
