@@ -100,10 +100,15 @@ async function getAuthor(slug: string) {
   }
 }
 
+// ISR設定: 1時間ごとに再生成（3600秒）
+// 著者情報は更新頻度が低いため、長めの間隔でキャッシュ
+export const revalidate = 3600
+
 // メタデータ生成
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const author = await getAuthor(slug)
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
 
   if (!author) {
     return {
@@ -113,14 +118,79 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const postCount = author.posts?.length || 0
+  const authorUrl = `${baseUrl}/author/${slug}`
+
+  // specialtiesをkeywordsとして活用
+  const keywords = author.specialties?.length > 0
+    ? `${author.name}, ${author.specialties.join(', ')}, キネシオロジー, ヒーリング, セラピスト, インストラクター`
+    : `${author.name}, キネシオロジー, ヒーリング, セラピスト, インストラクター`
+
+  const title = `${author.name} - 著者プロフィール | Cafe Kinesi Blog`
+  const description = author.bioLong || author.bio || `${author.name}が執筆した記事（${postCount}件）を掲載しています。キネシオロジーやヒーリングに関する専門知識と経験を共有します。`
+  const imageUrl = author.image
+    ? urlFor(author.image).width(1200).height(630).url()
+    : `${baseUrl}/og-image-author.jpg`
 
   return {
-    title: `${author.name} - 著者プロフィール | Cafe Kinesi Blog`,
-    description: author.bio || `${author.name}が執筆した記事（${postCount}件）を掲載しています。`,
+    title,
+    description,
+    keywords,
+    authors: [{ name: author.name }],
+    creator: author.name,
+    publisher: 'Cafe Kinesi',
+
+    // Open Graph（SNSシェア用）
     openGraph: {
-      title: `${author.name} - 著者プロフィール | Cafe Kinesi Blog`,
-      description: author.bio || `${author.name}が執筆した記事を掲載しています。`,
-      images: author.image ? [urlFor(author.image).width(1200).height(630).url()] : [],
+      type: 'profile',
+      locale: 'ja_JP',
+      url: authorUrl,
+      siteName: 'Cafe Kinesi',
+      title,
+      description,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${author.name} - Cafe Kinesi`,
+        },
+      ],
+      ...(author.name && {
+        profile: {
+          firstName: author.name.split(' ')[0] || author.name,
+          ...(author.name.split(' ').length > 1 && {
+            lastName: author.name.split(' ').slice(1).join(' '),
+          }),
+        },
+      }),
+    },
+
+    // Twitter Card
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+      creator: '@cafekinesi',
+      site: '@cafekinesi',
+    },
+
+    // 正規URL（重複コンテンツ対策）
+    alternates: {
+      canonical: authorUrl,
+    },
+
+    // robots制御（検索エンジン向けの詳細な指示）
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   }
 }
@@ -283,6 +353,40 @@ export default async function AuthorPage({ params }: PageProps) {
     ]
   }
 
+  // ItemList Schema（著者の記事リスト）
+  const itemListSchema = author.posts && author.posts.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    numberOfItems: author.posts.length,
+    itemListElement: author.posts.map((post: any, index: number) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${siteUrl}/blog/${post.slug?.current}`,
+      name: post.title,
+      item: {
+        '@type': 'BlogPosting',
+        '@id': `${siteUrl}/blog/${post.slug?.current}#blogposting`,
+        headline: post.title,
+        description: post.excerpt,
+        image: post.mainImage
+          ? getImageUrl(post.mainImage, 1200, 630)
+          : `${siteUrl}/og-image-blog.jpg`,
+        datePublished: post.publishedAt,
+        author: {
+          '@type': 'Person',
+          name: author.name,
+          url: authorUrl,
+        },
+        ...(post.category && {
+          articleSection: post.category,
+        }),
+        ...(post.tags && post.tags.length > 0 && {
+          keywords: post.tags.join(', '),
+        }),
+      },
+    })),
+  } : null
+
   // 画像URL生成
   function getImageUrl(imageAsset: any, width: number = 800, height: number = 600): string {
     if (!imageAsset) return '/images/blog-1.webp'
@@ -330,6 +434,15 @@ export default async function AuthorPage({ params }: PageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(faqPageSchema, null, 2)
+          }}
+        />
+      )}
+      {itemListSchema && (
+        <Script
+          id="item-list-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(itemListSchema, null, 2)
           }}
         />
       )}
