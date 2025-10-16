@@ -64,7 +64,7 @@ const DEFAULT_ROBOTS_RULES: MetadataRoute.Robots['rules'] = [
 ]
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app').replace(/[\r\n]+/g, '')
 
   try {
     const siteConfig = await publicClient.fetch(ROBOTS_CONFIG_QUERY)

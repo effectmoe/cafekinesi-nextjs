@@ -50,7 +50,7 @@ const HOMEPAGE_QUERY = groq`
 `
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app'
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://cafekinesi-nextjs.vercel.app').replace(/[\r\n]+/g, '')
 
   try {
     // Sanityから各種データを並列取得
