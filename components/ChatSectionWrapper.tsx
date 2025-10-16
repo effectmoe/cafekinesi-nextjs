@@ -95,24 +95,26 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
               <Link href="/faq">
                 <Card className="group p-5 bg-[hsl(260,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
                   <div className="flex items-center justify-center gap-3">
-                    <span className="text-sm font-medium text-text-primary">
+                    <p className="text-sm font-medium text-text-primary">
                       すべてのFAQを見る
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
-                    >
-                      <path d="M5 12h14" />
-                      <path d="m12 5 7 7-7 7" />
-                    </svg>
+                    </p>
+                    <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-8 h-8"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </div>
                   </div>
                 </Card>
               </Link>
