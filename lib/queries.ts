@@ -777,3 +777,14 @@ export const CHAT_MODAL_QUERY = `
     isActive
   }
 `
+
+// FAQ一覧を取得（カテゴリー別、順序付き）
+export const FAQ_LIST_QUERY = `
+  *[_type == "faq"] | order(category asc, order asc) {
+    _id,
+    question,
+    answer,
+    category,
+    order
+  }
+`

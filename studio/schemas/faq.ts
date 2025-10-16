@@ -23,12 +23,19 @@ export const faq = defineType({
       type: 'string',
       options: {
         list: [
-          {title: '料金について', value: 'pricing'},
-          {title: 'サービスについて', value: 'service'},
-          {title: 'アクセス', value: 'access'},
+          {title: 'キネシオロジーについて', value: 'kinesi'},
+          {title: '初心者向け', value: 'beginner'},
+          {title: '講座について', value: 'course'},
+          {title: '料金・支払い', value: 'price'},
+          {title: 'キャンセル・変更', value: 'cancel'},
+          {title: 'インストラクターについて', value: 'instructor'},
+          {title: 'セッションについて', value: 'session'},
+          {title: '予約・申込について', value: 'booking'},
+          {title: '会場・アクセスについて', value: 'venue'},
           {title: 'その他', value: 'other'}
         ]
-      }
+      },
+      validation: Rule => Rule.required()
     }),
     defineField({
       name: 'order',
