@@ -536,7 +536,7 @@ export default function FAQPage() {
                           />
                         </svg>
                       </summary>
-                      <div className="px-6 pb-6 pt-0">
+                      <div className="px-6 pb-6 pt-4">
                         <div className="flex items-start gap-4 pl-12">
                           <div className="text-gray-700 leading-relaxed whitespace-pre-line">
                             {faq.answer}
