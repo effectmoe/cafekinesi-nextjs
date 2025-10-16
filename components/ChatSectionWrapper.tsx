@@ -72,20 +72,47 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
         </div>
       )}
 
-      {/* カレンダーボタン - チャットモーダルの下 */}
+      {/* アクションボタン - チャットモーダルの下 */}
       {chatSettings?.calendarButtonEnabled && (
         <section className="w-full pt-6 pb-12 px-6 bg-[hsl(35,25%,95%)]">
           <div className="max-w-5xl mx-auto">
-            <div className="flex justify-center">
-              <Link href={chatSettings.calendarButtonUrl || '/calendar'} className="w-full md:w-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* イベントの予定を見るボタン */}
+              <Link href={chatSettings.calendarButtonUrl || '/calendar'}>
                 <Card className="group p-5 bg-[hsl(180,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
-                  <div className="flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-3 md:gap-4">
+                  <div className="flex items-center justify-center gap-3">
                     <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 transition-opacity">
                       <Calendar className="w-8 h-8" strokeWidth={1.5} />
                     </div>
                     <p className="text-sm font-medium text-text-primary">
                       {chatSettings.calendarButtonText || 'イベントの予定を見る'}
                     </p>
+                  </div>
+                </Card>
+              </Link>
+
+              {/* すべてのFAQを見るボタン */}
+              <Link href="/faq">
+                <Card className="group p-5 bg-[hsl(260,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-sm font-medium text-text-primary">
+                      すべてのFAQを見る
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
                   </div>
                 </Card>
               </Link>

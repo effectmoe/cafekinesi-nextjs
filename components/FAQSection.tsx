@@ -106,34 +106,6 @@ const FAQSection = ({ faqs, title, subtitle, onQuestionClick }: FAQSectionProps)
             );
           })}
         </div>
-
-        {/* すべてのFAQを見るボタン */}
-        <div className="flex justify-center mt-8">
-          <Link href="/faq">
-            <Card className="group px-8 py-4 bg-white hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-full hover:-translate-y-0.5 active:scale-95">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-text-primary">
-                  すべてのFAQを見る
-                </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-text-primary group-hover:translate-x-1 transition-transform"
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </div>
-            </Card>
-          </Link>
-        </div>
       </div>
     </section>
   );
