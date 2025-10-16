@@ -82,7 +82,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       return {
         rules,
         sitemap: `${siteConfig.baseUrl || baseUrl}/sitemap.xml`,
-        host: siteConfig.baseUrl || baseUrl,
+        host: (siteConfig.baseUrl || baseUrl).replace(/^https?:\/\//, ''),
       }
     }
 
@@ -90,7 +90,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     return {
       rules: DEFAULT_ROBOTS_RULES,
       sitemap: `${baseUrl}/sitemap.xml`,
-      host: baseUrl,
+      host: baseUrl.replace(/^https?:\/\//, ''),
     }
   } catch (error) {
     console.error('Error fetching robots config from Sanity:', error)
@@ -99,7 +99,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     return {
       rules: DEFAULT_ROBOTS_RULES,
       sitemap: `${baseUrl}/sitemap.xml`,
-      host: baseUrl,
+      host: baseUrl.replace(/^https?:\/\//, ''),
     }
   }
 }
