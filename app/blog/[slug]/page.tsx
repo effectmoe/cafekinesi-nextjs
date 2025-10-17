@@ -360,7 +360,7 @@ export default async function BlogPostPage({
   const debugInfo = {
     slug,
     postId: post._id,
-    isDraft: post._id.startsWith('drafts.'),
+    isDraft: post._id?.startsWith('drafts.') ?? false,
     previewEnabled: draft.isEnabled
   }
 
