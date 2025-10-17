@@ -1,0 +1,10 @@
+{"_type":"faqCategory","_id":"faqCategory-kinesi","title":"キネシオロジーについて","slug":{"_type":"slug","current":"kinesi"},"order":1}
+{"_type":"faqCategory","_id":"faqCategory-beginner","title":"初心者向け","slug":{"_type":"slug","current":"beginner"},"order":2}
+{"_type":"faqCategory","_id":"faqCategory-course","title":"講座について","slug":{"_type":"slug","current":"course"},"order":3}
+{"_type":"faqCategory","_id":"faqCategory-price","title":"料金・支払い","slug":{"_type":"slug","current":"price"},"order":4}
+{"_type":"faqCategory","_id":"faqCategory-cancel","title":"キャンセル・変更","slug":{"_type":"slug","current":"cancel"},"order":5}
+{"_type":"faqCategory","_id":"faqCategory-instructor","title":"インストラクターについて","slug":{"_type":"slug","current":"instructor"},"order":6}
+{"_type":"faqCategory","_id":"faqCategory-session","title":"セッションについて","slug":{"_type":"slug","current":"session"},"order":7}
+{"_type":"faqCategory","_id":"faqCategory-booking","title":"予約・申込について","slug":{"_type":"slug","current":"booking"},"order":8}
+{"_type":"faqCategory","_id":"faqCategory-venue","title":"会場・アクセスについて","slug":{"_type":"slug","current":"venue"},"order":9}
+{"_type":"faqCategory","_id":"faqCategory-other","title":"その他","slug":{"_type":"slug","current":"other"},"order":10}

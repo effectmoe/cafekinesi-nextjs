@@ -6,18 +6,19 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import { publicClient } from '@/lib/sanity.client'
 import { FAQ_LIST_QUERY } from '@/lib/queries'
-import { FAQ, CATEGORY_LABELS } from '@/lib/types/faq'
+import { FAQWithCategory } from '@/lib/types/faq'
 
 // ISR設定（30分ごとに再生成）
 export const revalidate = 1800
 
 // FAQデータを取得
-async function getFAQs(): Promise<FAQ[]> {
+async function getFAQs(): Promise<FAQWithCategory[]> {
   try {
-    const faqs = await publicClient.fetch<FAQ[]>(FAQ_LIST_QUERY, {}, {
+    const faqs = await publicClient.fetch<FAQWithCategory[]>(FAQ_LIST_QUERY, {}, {
       cache: 'force-cache',
     } as any)
-    return faqs || []
+    // カテゴリー情報が正しくpopulateされているFAQのみを返す
+    return faqs.filter(faq => faq.category && faq.category.title) || []
   } catch (error) {
     console.error('Failed to fetch FAQs:', error)
     return []
@@ -134,11 +135,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FAQPage() {
   const faqs = await getFAQs()
 
-  // カテゴリー一覧を取得（英語キーから日本語名に変換）
-  const categoryKeys = Array.from(new Set(faqs.map((faq) => faq.category)))
-  const categories = categoryKeys.map((key) => ({
-    key,
-    label: CATEGORY_LABELS[key] || key,
+  // カテゴリー一覧を取得（重複排除してorderでソート）
+  const uniqueCategories = Array.from(
+    new Map(faqs.map((faq) => [faq.category._id, faq.category])).values()
+  ).sort((a, b) => a.order - b.order)
+
+  const categories = uniqueCategories.map((cat) => ({
+    id: cat._id,
+    slug: cat.slug.current,
+    title: cat.title,
+    order: cat.order,
   }))
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cafekinesi.com'
@@ -273,16 +279,16 @@ export default async function FAQPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           {/* カテゴリごとに表示 */}
           {categories.map((category) => (
-            <div key={category.key} className="mb-12">
+            <div key={category.id} className="mb-12">
               {/* カテゴリタイトル */}
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-[#8B5A3C]">
-                {category.label}
+                {category.title}
               </h2>
 
               {/* FAQアコーディオン */}
               <div className="space-y-4">
                 {faqs
-                  .filter((faq) => faq.category === category.key)
+                  .filter((faq) => faq.category._id === category.id)
                   .map((faq) => (
                     <details
                       key={faq._id}

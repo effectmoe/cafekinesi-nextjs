@@ -133,13 +133,33 @@ function NoResults() {
 // カスタム検索ボックス
 function CustomSearchBox({ onClose }: { onClose: () => void }) {
   const { query, refine } = useSearchBox()
+  const [isComposing, setIsComposing] = useState(false)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // IME変換中でない場合のみ検索を実行
+    if (!isComposing) {
+      refine(e.target.value)
+    }
+  }
+
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    setIsComposing(false)
+    // 変換確定時に検索を実行
+    refine(e.currentTarget.value)
+  }
 
   return (
     <div className="relative">
       <input
         type="text"
         value={query}
-        onChange={(e) => refine(e.target.value)}
+        onChange={handleChange}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         placeholder="検索キーワードを入力..."
         className="w-full px-4 py-4 pr-12 text-lg border-none focus:outline-none bg-transparent"
         autoFocus

@@ -20,22 +20,10 @@ export const faq = defineType({
     defineField({
       name: 'category',
       title: 'カテゴリー',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'キネシオロジーについて', value: 'kinesi'},
-          {title: '初心者向け', value: 'beginner'},
-          {title: '講座について', value: 'course'},
-          {title: '料金・支払い', value: 'price'},
-          {title: 'キャンセル・変更', value: 'cancel'},
-          {title: 'インストラクターについて', value: 'instructor'},
-          {title: 'セッションについて', value: 'session'},
-          {title: '予約・申込について', value: 'booking'},
-          {title: '会場・アクセスについて', value: 'venue'},
-          {title: 'その他', value: 'other'}
-        ]
-      },
-      validation: Rule => Rule.required()
+      type: 'reference',
+      to: [{type: 'faqCategory'}],
+      validation: Rule => Rule.required(),
+      description: 'FAQのカテゴリーを選択してください。カテゴリーは「FAQカテゴリー」から追加・編集できます。'
     }),
     defineField({
       name: 'order',
@@ -47,7 +35,14 @@ export const faq = defineType({
   preview: {
     select: {
       title: 'question',
-      subtitle: 'category'
+      categoryTitle: 'category.title',
+      categorySlug: 'category.slug.current'
+    },
+    prepare({title, categoryTitle, categorySlug}) {
+      return {
+        title: title,
+        subtitle: categoryTitle || categorySlug || 'カテゴリーなし'
+      }
     }
   }
 })

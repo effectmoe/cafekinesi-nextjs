@@ -24,6 +24,7 @@ import profilePage from './documents/profilePage'
 import aboutPage from './documents/aboutPage'
 import representative from './representative'
 import { faq } from './faq'
+import { faqCategory } from './faqCategory'
 import faqCard from './documents/faqCard'
 import chatModal from './documents/chatModal'
 import siteConfig from './documents/siteConfig'
@@ -85,6 +86,7 @@ export const schemaTypes = [
   aboutPage,
   representative,
   faq,
+  faqCategory,
   faqCard,
   chatModal,
   siteConfig,

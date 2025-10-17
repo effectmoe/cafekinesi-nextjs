@@ -1,14 +1,38 @@
 // FAQ型定義
 
-export interface FAQ {
+// FAQカテゴリー型
+export interface FAQCategory {
   _id: string
-  question: string
-  answer: string
-  category: string
+  _type: 'faqCategory'
+  title: string
+  slug: {
+    _type: 'slug'
+    current: string
+  }
+  description?: string
   order: number
 }
 
-// カテゴリー名のマッピング（英語キー → 日本語表示名）
+// FAQ型（Sanityから取得した生のデータ）
+export interface FAQ {
+  _id: string
+  _type: 'faq'
+  question: string
+  answer: string
+  category: {
+    _ref: string
+    _type: 'reference'
+  }
+  order: number
+}
+
+// FAQ型（カテゴリー情報をpopulateした後）
+export interface FAQWithCategory extends Omit<FAQ, 'category'> {
+  category: FAQCategory
+}
+
+// 後方互換性のため残しておく（非推奨）
+// @deprecated カテゴリーはSanityドキュメントから動的に取得してください
 export const CATEGORY_LABELS: Record<string, string> = {
   kinesi: 'キネシオロジーについて',
   beginner: '初心者向け',
