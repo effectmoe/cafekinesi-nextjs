@@ -52,7 +52,10 @@ export class RAGEngine {
           console.log(`  ${idx + 1}. スコア: ${result.combined_score?.toFixed(3)} (vector: ${result.vector_score?.toFixed(3)}, text: ${result.text_score?.toFixed(3)}) - ${result.title}`);
         });
       } else {
-        console.warn('⚠️  [EVENT SEARCH] 検索結果が0件です！');
+        console.warn('⚠️  [EVENT SEARCH] PostgreSQL検索結果が0件！Sanity APIへフォールバック...');
+        // フォールバック: Sanity APIから直接取得
+        searchResults = await this.fetchFromKnowledgeAPI(query);
+        console.log('📊 [EVENT SEARCH FALLBACK] Sanityから取得:', searchResults.length, '件');
       }
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     } else if (isInstructorQuery) {
