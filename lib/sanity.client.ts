@@ -30,7 +30,7 @@ export const previewClient = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
   useCdn: false, // ⭐ 重要：ドラフト取得時は必ずfalse
-  perspective: 'previewDrafts', // ⭐ ドラフトを優先的に取得（未公開の変更を表示）
+  perspective: 'drafts', // ⭐ ドラフトを優先的に取得（未公開の変更を表示）
   token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN,
   ignoreBrowserTokenWarning: true
 })
@@ -40,7 +40,7 @@ export function getClient(preview?: boolean) {
   if (preview) {
     return client.withConfig({
       useCdn: false,
-      perspective: 'previewDrafts',
+      perspective: 'drafts',
       token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN || process.env.SANITY_API_READ_TOKEN,
     })
   }

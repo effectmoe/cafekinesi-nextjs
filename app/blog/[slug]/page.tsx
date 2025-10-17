@@ -336,8 +336,10 @@ export default async function BlogPostPage({
   // 関連記事はpostオブジェクトから取得
   const relatedPosts = post.relatedArticles || []
 
-  // 前後の記事を取得
-  const { prevPost, nextPost } = await getAdjacentPosts(post.publishedAt, slug)
+  // 前後の記事を取得（publishedAtが存在する場合のみ）
+  const { prevPost, nextPost } = post.publishedAt
+    ? await getAdjacentPosts(post.publishedAt, slug)
+    : { prevPost: null, nextPost: null }
 
   // 画像URL生成のヘルパー関数
   function getImageUrl(imageAsset: any, width: number = 800, height: number = 600): string {
