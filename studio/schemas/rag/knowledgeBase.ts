@@ -84,7 +84,15 @@ export const knowledgeBase = defineType({
       name: 'extractedText',
       title: '抽出されたテキスト',
       type: 'text',
-      description: 'ファイルから抽出されたテキスト。「テキストを抽出」ボタンでファイルからテキストを抽出し、ここに貼り付けてください。'
+      description: 'ファイルから抽出されたテキスト。手動で編集可能です。編集すると、以降の自動抽出がスキップされます。'
+    }),
+    defineField({
+      name: 'manuallyEdited',
+      title: '手動編集フラグ',
+      type: 'boolean',
+      hidden: true, // UIには表示しない
+      initialValue: false,
+      description: 'extractedTextが手動編集された場合にtrueになります（内部使用）'
     }),
     defineField({
       name: 'fileType',
