@@ -18,6 +18,10 @@ export class RAGEngine {
     const isAggregationQuery = this.isAggregationQuery(query);
     console.log('🔢 集計質問?', isAggregationQuery);
 
+    // アクセス情報の質問を検出（イベント質問より優先）
+    const isAccessInfoQuery = this.isAccessInfoQuery(query);
+    console.log('📍 アクセス情報質問?', isAccessInfoQuery);
+
     // インストラクター関連の質問を検出
     const isInstructorQuery = this.isInstructorRelatedQuery(query);
     console.log('👩‍🏫 インストラクター質問?', isInstructorQuery);
@@ -33,6 +37,24 @@ export class RAGEngine {
       // 集計質問の場合はAI Knowledge APIから全件取得
       console.log('🔢 集計質問を検出: AI Knowledge APIから全件取得...');
       searchResults = await this.fetchFromKnowledgeAPI(query);
+    } else if (isAccessInfoQuery) {
+      // アクセス情報質問の場合はknowledgeBaseを検索
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📍 [ACCESS INFO SEARCH] アクセス情報検索がトリガーされました');
+      console.log('🔍 [ACCESS INFO SEARCH] クエリ:', query);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      searchResults = await hybridSearch(query, {
+        topK: 10,
+        threshold: 0.03,
+        type: 'knowledgeBase'
+      });
+      console.log('📊 [ACCESS INFO SEARCH] 検索結果:', searchResults.length, '件');
+      if (searchResults.length > 0) {
+        searchResults.slice(0, 5).forEach((result: any, idx: number) => {
+          console.log(`  ${idx + 1}. スコア: ${result.combined_score?.toFixed(3)} (vector: ${result.vector_score?.toFixed(3)}, text: ${result.text_score?.toFixed(3)}) - ${result.title}`);
+        });
+      }
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     } else if (isEventQuery) {
       // イベント質問の場合は専用設定でハイブリッド検索（document_embeddingsテーブルから）
       // ベクトル検索 + 全文検索を組み合わせることで、キーワードマッチングも活用
@@ -450,6 +472,24 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     };
   }
 
+  // アクセス情報の質問かどうか判定
+  private isAccessInfoQuery(query: string): boolean {
+    const accessKeywords = [
+      'アクセス', 'access', '行き方', '行く', '場所', '住所', 'address',
+      '駅', 'station', '新幹線', 'shinkansen', '電車', 'train',
+      'バス', 'bus', '車', 'car', '徒歩', 'walk',
+      '営業時間', '営業', '何時', '時間', 'hour', 'open',
+      '定休日', '休み', 'closed', 'holiday',
+      '駐車場', 'parking', '電話', 'phone', 'tel',
+      '最寄り', '近く', '降りる', '下車'
+    ];
+
+    const lowerQuery = query.toLowerCase();
+    return accessKeywords.some(keyword =>
+      lowerQuery.includes(keyword.toLowerCase())
+    );
+  }
+
   // イベント関連の質問かどうか判定
   private isEventRelatedQuery(query: string): boolean {
     const eventKeywords = [
@@ -457,11 +497,15 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       '開催', '予定', '今月', '来月', '今週', '来週',
       '講座', 'セッション', 'ワークショップ', '説明会',
       '空き', '受付', '申し込み', '参加', '定員', '予約',
-      'いつ', 'どこで', 'どこ', '場所', '日程',
-      'ピーチタッチ', 'キネシ', 'チャクラ', 'ハッピーオーラ'
+      'いつ', 'どこで', '日程',
+      'ピーチタッチ', 'チャクラ', 'ハッピーオーラ'
     ];
 
     const lowerQuery = query.toLowerCase();
+    // アクセス情報質問でない場合のみイベント質問として扱う
+    if (this.isAccessInfoQuery(query)) {
+      return false;
+    }
     return eventKeywords.some(keyword =>
       lowerQuery.includes(keyword.toLowerCase())
     );
