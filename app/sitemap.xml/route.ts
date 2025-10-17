@@ -154,6 +154,12 @@ export async function GET() {
         changeFrequency: 'weekly',
         priority: 0.8,
       },
+      {
+        url: `${baseUrl}/faq`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.8,
+      },
     ]
 
     // 静的ページを追加
