@@ -20,6 +20,10 @@ export async function POST(request: NextRequest) {
 
     const payload = await request.json();
     console.log('📦 Webhook payload:', JSON.stringify(payload, null, 2));
+    console.log('🔍 Payload keys:', Object.keys(payload));
+    console.log('🔍 Has extractedText:', !!payload.extractedText);
+    console.log('🔍 extractedText length:', payload.extractedText?.length || 0);
+    console.log('🔍 _id:', payload._id);
 
     const documentType = payload._type;
     const documentId = payload._id;

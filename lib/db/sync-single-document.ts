@@ -87,16 +87,36 @@ export async function syncSingleDocument(documentId: string, documentType: strin
   console.log(`📄 Syncing document: ${documentId} (${documentType})`);
 
   try {
-    // Webhookから提供されたドキュメントを優先的に使用
     let document = providedDocument;
 
-    // 提供されていない場合のみSanityから取得
+    // providedDocumentの検証
+    if (providedDocument) {
+      console.log('📦 Provided document received from webhook');
+      console.log('🔍 Provided document keys:', Object.keys(providedDocument));
+
+      // 必須フィールドの確認（documentTypeに応じて）
+      const hasRequiredFields = documentType === 'knowledgeBase'
+        ? !!providedDocument.extractedText
+        : true;
+
+      if (!hasRequiredFields) {
+        console.warn('⚠️  Provided document missing required fields, fetching from Sanity...');
+        console.warn('   Missing extractedText:', !providedDocument.extractedText);
+        document = null;  // Sanityから再取得
+      } else {
+        console.log('✅ Using provided document from webhook');
+        console.log('   extractedText length:', providedDocument.extractedText?.length || 0);
+      }
+    }
+
+    // 提供されていない、または不完全な場合はSanityから取得
     if (!document) {
-      console.log('📡 Fetching document from Sanity...');
+      console.log('📡 Fetching document from Sanity (published version)...');
       const query = getDocumentQuery(documentType);
       document = await publicClient.fetch(query, { documentId });
-    } else {
-      console.log('✅ Using provided document from webhook');
+      console.log('📥 Fetched document from Sanity');
+      console.log('   Has extractedText:', !!document?.extractedText);
+      console.log('   extractedText length:', document?.extractedText?.length || 0);
     }
 
     if (!document) {

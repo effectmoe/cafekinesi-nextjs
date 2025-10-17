@@ -192,7 +192,7 @@ export function FileWithTextExtraction(props: FileInputProps) {
 
     extractText()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value?.asset?._ref, extractedText])
+  }, [value?.asset?._ref])  // extractedTextを削除 - 手動編集時に再実行されないようにする
 
   // Render the default file input
   return <FileInput {...props} />
