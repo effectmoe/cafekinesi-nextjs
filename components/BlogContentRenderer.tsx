@@ -45,6 +45,7 @@ export default function BlogContentRenderer({
   // contentOrderが設定されていればそれを使用、なければデフォルト
   // 空文字列のみの配列や無効な値の場合もデフォルトを使用
   const contentOrder = post.contentOrder &&
+                      Array.isArray(post.contentOrder) &&
                       post.contentOrder.length > 0 &&
                       post.contentOrder.some((item: string) => item && item.trim() !== '')
                       ? post.contentOrder.filter((item: string) => item && item.trim() !== '')
@@ -190,7 +191,7 @@ export default function BlogContentRenderer({
         )
 
       case 'gallery':
-        if (!post.gallery || post.gallery.length === 0) return null
+        if (!post.gallery || !Array.isArray(post.gallery) || post.gallery.length === 0) return null
         return (
           <div key="gallery" className="mb-12">
             <h2 className="text-2xl font-light text-gray-900 mb-6">ギャラリー</h2>
@@ -214,7 +215,7 @@ export default function BlogContentRenderer({
         )
 
       case 'additionalImages':
-        if (!post.additionalImages || post.additionalImages.length === 0) return null
+        if (!post.additionalImages || !Array.isArray(post.additionalImages) || post.additionalImages.length === 0) return null
         return (
           <div key="additionalImages" className="mb-12">
             <div className="space-y-6">
@@ -245,11 +246,11 @@ export default function BlogContentRenderer({
 
       case 'toc':
         // 自動目次生成
-        if (!post.content || post.content.length === 0) return null
+        if (!post.content || !Array.isArray(post.content) || post.content.length === 0) return null
         return <TableOfContents key="toc" content={post.content} />
 
       case 'tags':
-        if (!post.tags || post.tags.length === 0) return null
+        if (!post.tags || !Array.isArray(post.tags) || post.tags.length === 0) return null
         return (
           <div key="tags" className="flex flex-wrap gap-4 mb-12 pb-12 border-b border-gray-200">
             {post.tags.map((tag: string, index: number) => (
@@ -341,12 +342,12 @@ export default function BlogContentRenderer({
 
       case 'internalLinks':
         // 内部リンク（ピラーページ/クラスターページへのリンク）
-        if (!post.internalLinks || post.internalLinks.length === 0) return null
+        if (!post.internalLinks || !Array.isArray(post.internalLinks) || post.internalLinks.length === 0) return null
         return <InternalLinksSection key="internalLinks" links={post.internalLinks} />
 
       case 'externalReferences':
         // 外部リンク（参考文献）
-        if (!post.externalReferences || post.externalReferences.length === 0) return null
+        if (!post.externalReferences || !Array.isArray(post.externalReferences) || post.externalReferences.length === 0) return null
         return <ExternalReferencesSection key="externalReferences" references={post.externalReferences} />
 
       case 'summary':
@@ -360,7 +361,7 @@ export default function BlogContentRenderer({
 
       case 'faq':
         // インタラクティブなFAQセクション
-        if (!post.faq || post.faq.length === 0) return null
+        if (!post.faq || !Array.isArray(post.faq) || post.faq.length === 0) return null
         return <BlogFAQSection key="faq" faqs={post.faq} />
 
       case 'prevNext':
@@ -407,7 +408,7 @@ export default function BlogContentRenderer({
         )
 
       case 'related':
-        if (!relatedPosts || relatedPosts.length === 0) return null
+        if (!relatedPosts || !Array.isArray(relatedPosts) || relatedPosts.length === 0) return null
         return (
           <section key="related" className="mt-12 pt-8 border-t border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">関連記事</h2>
