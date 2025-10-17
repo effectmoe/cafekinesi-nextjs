@@ -132,13 +132,17 @@ function NoResults() {
 
 // カスタム検索ボックス
 function CustomSearchBox({ onClose }: { onClose: () => void }) {
-  const { query, refine } = useSearchBox()
+  const { refine } = useSearchBox()
+  const [inputValue, setInputValue] = useState('')
   const [isComposing, setIsComposing] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+
     // IME変換中でない場合のみ検索を実行
     if (!isComposing) {
-      refine(e.target.value)
+      refine(value)
     }
   }
 
@@ -149,14 +153,16 @@ function CustomSearchBox({ onClose }: { onClose: () => void }) {
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
     setIsComposing(false)
     // 変換確定時に検索を実行
-    refine(e.currentTarget.value)
+    const value = e.currentTarget.value
+    setInputValue(value)
+    refine(value)
   }
 
   return (
     <div className="relative">
       <input
         type="text"
-        value={query}
+        value={inputValue}
         onChange={handleChange}
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
