@@ -26,48 +26,26 @@ export function FileWithTextExtraction(props: FileInputProps) {
   // Extract text when file is uploaded
   useEffect(() => {
     const extractText = async () => {
-      // Debug logging
-      console.log('🔍 [Debug] Current state:', {
-        hasAssetRef: !!value?.asset?._ref,
-        assetRef: value?.asset?._ref?.substring(0, 20) + '...',
-        lastProcessed: lastProcessedRef.current?.substring(0, 20) + '...',
-        hasExtractedText: !!extractedText,
-        extractedTextLength: extractedText?.length || 0,
-        extractedTextPreview: extractedText ? extractedText.substring(0, 50) + '...' : 'null/undefined',
-        isProcessing: isProcessingRef.current
-      })
-
       if (!value?.asset?._ref) {
-        console.log('⚠️  No asset ref found')
+        return
+      }
+
+      // 【重要】extractedTextが既に存在する場合はスキップ（手動編集を保護）
+      if (extractedText && extractedText.trim().length > 10) {
+        console.log('✅ extractedText already exists, skipping extraction to preserve manual edits')
         return
       }
 
       // Prevent concurrent processing
       if (isProcessingRef.current) {
-        console.log('🚫 Already processing, skipping...')
         return
       }
 
       // Check if this is a different file
       const isSameFile = lastProcessedRef.current === value.asset._ref
-      const hasExtractedText = extractedText && extractedText.trim().length > 10
-
-      console.log('🔍 [Check] isSameFile:', isSameFile, '| hasExtractedText:', hasExtractedText)
-
-      // If same file AND has valid extracted text, skip
-      if (isSameFile && hasExtractedText) {
-        console.log('⏭️  File already processed:', value.asset._ref)
-        console.log('   📊 Extracted text length:', extractedText?.length)
+      if (isSameFile) {
         return
       }
-
-      // If same file but no valid text, re-process
-      if (isSameFile && !hasExtractedText) {
-        console.log('🔄 Re-processing file (extractedText is empty or too short)')
-        console.log('   📊 Current length:', extractedText?.length || 0)
-      }
-
-      console.log('🚀 Starting text extraction...')
 
       // Mark as processing BEFORE starting
       isProcessingRef.current = true
@@ -76,20 +54,16 @@ export function FileWithTextExtraction(props: FileInputProps) {
       try {
         // Extract file details
         const assetRef = value.asset._ref
-        console.log('📎 Asset ref:', assetRef)
 
         // assetRef format: file-{hash}-{ext}
         // Convert to: {hash}.{ext}
         const parts = assetRef.split('-')
-        console.log('📦 Parts:', parts)
 
         const extension = parts[parts.length - 1] // Get last part (extension)
         const hash = parts.slice(1, -1).join('-') // Get middle parts (hash)
         const assetId = `${hash}.${extension}`
 
         const fileUrl = `https://cdn.sanity.io/files/${PROJECT_ID}/${DATASET}/${assetId}`
-
-        console.log('🔍 Fetching file:', fileUrl)
 
         // Fetch file content
         const response = await fetch(fileUrl)
@@ -110,8 +84,6 @@ export function FileWithTextExtraction(props: FileInputProps) {
           extractedTextContent = await response.text()
         } else if (contentType.includes('pdf') || assetId.endsWith('.pdf')) {
           // PDF - extract using API
-          console.log('📄 Extracting text from PDF via API...')
-
           try {
             const apiResponse = await fetch(`${NEXTJS_API_URL}/api/extract-pdf-text`, {
               method: 'POST',
@@ -126,11 +98,10 @@ export function FileWithTextExtraction(props: FileInputProps) {
               return
             }
 
-            const { text, metadata } = await apiResponse.json()
+            const { text } = await apiResponse.json()
             extractedTextContent = text
-            console.log(`✅ PDF text extracted: ${metadata.pages} pages, ${metadata.textLength} characters`)
           } catch (error) {
-            console.error('❌ PDF extraction failed:', error)
+            console.error('PDF extraction failed:', error)
             return
           }
         } else {
@@ -150,20 +121,8 @@ export function FileWithTextExtraction(props: FileInputProps) {
         }
 
         // Update the document fields using patch
-        console.log('🔧 Attempting to patch document...')
-        console.log('📝 Document ID:', documentId)
-        console.log('📝 Published ID:', publishedId)
-        console.log('📝 Document Type:', documentType)
-        console.log('📝 Patch function available:', !!patch)
-        console.log('📝 Data to patch:', {
-          extractedText: extractedTextContent.substring(0, 100) + '...',
-          fileType,
-          fileSize,
-          lastProcessed: new Date().toISOString()
-        })
-
         if (!patch) {
-          console.error('❌ Patch function is not available!')
+          console.error('Patch function is not available')
           return
         }
 
@@ -177,16 +136,13 @@ export function FileWithTextExtraction(props: FileInputProps) {
             }
           }
         ])
-
-        console.log('✅ Text extracted successfully and patch executed:', { fileSize, fileType })
       } catch (error) {
-        console.error('❌ Text extraction error:', error)
+        console.error('Text extraction error:', error)
         // Reset on error to allow retry
         lastProcessedRef.current = ''
       } finally {
         // Always reset processing flag
         isProcessingRef.current = false
-        console.log('🏁 Processing complete')
       }
     }
 
