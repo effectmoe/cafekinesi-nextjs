@@ -18,17 +18,20 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔔 Sanity Webhook received');
 
+    // HTTPヘッダーから削除イベントを検出
+    const sanityOperation = request.headers.get('sanity-operation');
+    console.log('🔍 sanity-operation header:', sanityOperation);
+
     const payload = await request.json();
     console.log('📦 Webhook payload:', JSON.stringify(payload, null, 2));
     console.log('🔍 Payload keys:', Object.keys(payload));
     console.log('🔍 Has extractedText:', !!payload.extractedText);
     console.log('🔍 extractedText length:', payload.extractedText?.length || 0);
     console.log('🔍 _id:', payload._id);
-    console.log('🔍 _deleted:', payload._deleted);
 
     const documentType = payload._type;
     const documentId = payload._id;
-    const isDeleted = payload._deleted === true;
+    const isDeleted = sanityOperation === 'delete';
 
     if (!documentType || !documentId) {
       return NextResponse.json(
