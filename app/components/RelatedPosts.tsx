@@ -48,6 +48,9 @@ export default async function RelatedPosts({
   category,
   tags = [],
 }: RelatedPostsProps) {
+  // nullをチェックして空配列に変換
+  const safeTags = tags || []
+
   // プレビューモードの確認
   const draft = await draftMode()
   const isDraftMode = draft.isEnabled
@@ -70,7 +73,7 @@ export default async function RelatedPosts({
       content,
       "score": 0
         ${category ? '+ select(category == $category => 2, 0)' : ''}
-        ${tags.length > 0 ? '+ count((tags[])[@ in $tags])' : ''}
+        ${safeTags.length > 0 ? '+ count((tags[])[@ in $tags])' : ''}
     } | order(score desc, publishedAt desc) [0...5]
   `
 
@@ -100,7 +103,7 @@ export default async function RelatedPosts({
       {
         currentPostId,
         category: category || null,
-        tags: tags || [],
+        tags: safeTags,
       }
     )
 
