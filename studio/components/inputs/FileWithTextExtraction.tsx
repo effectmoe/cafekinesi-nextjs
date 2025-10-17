@@ -23,15 +23,24 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const lastProcessedRef = useRef<string>('')
   const isProcessingRef = useRef<boolean>(false)
 
-  // 【重要】useEffectを完全に無効化 - 自動抽出を停止
-  // ファイルアップロード時に自動実行されないようにする
-  const manualExtractText = async () => {
+  // Extract text when file is uploaded
+  useEffect(() => {
+    const extractText = async () => {
+      console.log('🔄 useEffect triggered', {
+        hasAsset: !!value?.asset?._ref,
+        assetRef: value?.asset?._ref?.substring(0, 30) + '...',
+        lastProcessed: lastProcessedRef.current?.substring(0, 30) + '...',
+        hasExtractedText: !!extractedText,
+        extractedTextLength: extractedText?.length || 0
+      })
+
       if (!value?.asset?._ref) {
         return
       }
 
       // Prevent concurrent processing
       if (isProcessingRef.current) {
+        console.log('⏸️  Already processing, skipping')
         return
       }
 
@@ -48,6 +57,8 @@ export function FileWithTextExtraction(props: FileInputProps) {
       // 新しいファイルまたはextractedTextが空の場合は抽出を続行
       if (!isSameFile) {
         console.log('🆕 New file detected, extracting text...')
+      } else {
+        console.log('📝 Same file but no text, extracting...')
       }
 
       // Mark as processing BEFORE starting
@@ -147,10 +158,11 @@ export function FileWithTextExtraction(props: FileInputProps) {
         // Always reset processing flag
         isProcessingRef.current = false
       }
-  }
+    }
 
-  // useEffectを削除 - 自動抽出を完全に無効化
-  // これにより、保存時やパブリッシュ時に再実行されなくなる
+    extractText()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value?.asset?._ref])  // ファイル参照が変わったときのみ実行
 
   // Render the default file input
   return <FileInput {...props} />
