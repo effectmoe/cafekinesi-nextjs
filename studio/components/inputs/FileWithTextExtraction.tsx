@@ -30,12 +30,6 @@ export function FileWithTextExtraction(props: FileInputProps) {
         return
       }
 
-      // 【重要】extractedTextが既に存在する場合はスキップ（手動編集を保護）
-      if (extractedText && extractedText.trim().length > 10) {
-        console.log('✅ extractedText already exists, skipping extraction to preserve manual edits')
-        return
-      }
-
       // Prevent concurrent processing
       if (isProcessingRef.current) {
         return
@@ -43,8 +37,17 @@ export function FileWithTextExtraction(props: FileInputProps) {
 
       // Check if this is a different file
       const isSameFile = lastProcessedRef.current === value.asset._ref
-      if (isSameFile) {
+
+      // 【重要】同じファイルで、extractedTextが既に存在する場合はスキップ（手動編集を保護）
+      // 新しいファイルの場合は、extractedTextが存在していても抽出を実行
+      if (isSameFile && extractedText && extractedText.trim().length > 10) {
+        console.log('✅ Same file with existing text, skipping to preserve manual edits')
         return
+      }
+
+      // 新しいファイルまたはextractedTextが空の場合は抽出を続行
+      if (!isSameFile) {
+        console.log('🆕 New file detected, extracting text...')
       }
 
       // Mark as processing BEFORE starting
