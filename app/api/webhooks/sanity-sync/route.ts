@@ -24,9 +24,11 @@ export async function POST(request: NextRequest) {
     console.log('🔍 Has extractedText:', !!payload.extractedText);
     console.log('🔍 extractedText length:', payload.extractedText?.length || 0);
     console.log('🔍 _id:', payload._id);
+    console.log('🔍 _deleted:', payload._deleted);
 
     const documentType = payload._type;
     const documentId = payload._id;
+    const isDeleted = payload._deleted === true;
 
     if (!documentType || !documentId) {
       return NextResponse.json(
@@ -46,6 +48,38 @@ export async function POST(request: NextRequest) {
       }, { headers: corsHeaders });
     }
 
+    // 削除イベントの処理
+    if (isDeleted) {
+      console.log(`🗑️  Deleting ${documentType} document: ${documentId}`);
+
+      const result = await sql`
+        DELETE FROM document_embeddings
+        WHERE id = ${documentId}
+        RETURNING id, type, title;
+      `;
+
+      if (result.rows.length > 0) {
+        console.log('✅ Document deleted from vector DB:', result.rows[0]);
+        return NextResponse.json({
+          success: true,
+          message: 'Document deleted successfully',
+          documentId,
+          documentType,
+          deleted: true
+        }, { headers: corsHeaders });
+      } else {
+        console.log('⚠️  Document not found in vector DB (already deleted?)');
+        return NextResponse.json({
+          success: true,
+          message: 'Document not found (already deleted)',
+          documentId,
+          documentType,
+          deleted: false
+        }, { headers: corsHeaders });
+      }
+    }
+
+    // 通常の同期処理（追加・更新）
     console.log(`🔄 Processing ${documentType} document: ${documentId}`);
 
     // Webhookから受け取ったドキュメントデータを使用（Sanityから再取得しない）
