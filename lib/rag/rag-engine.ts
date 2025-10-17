@@ -12,15 +12,19 @@ export class RAGEngine {
   // RAG応答生成
   async generateAugmentedResponse(query: string, config: any) {
     console.log('🤖 RAG応答生成中... (document_embeddings)');
+    console.log('📝 クエリ:', query);
 
     // 集計質問を検出（「何個」「何人」「全部で」など）
     const isAggregationQuery = this.isAggregationQuery(query);
+    console.log('🔢 集計質問?', isAggregationQuery);
 
     // インストラクター関連の質問を検出
     const isInstructorQuery = this.isInstructorRelatedQuery(query);
+    console.log('👩‍🏫 インストラクター質問?', isInstructorQuery);
 
     // イベント関連の質問を検出
     const isEventQuery = this.isEventRelatedQuery(query);
+    console.log('📅 イベント質問?', isEventQuery);
 
     // 1. データ取得
     let searchResults;
@@ -32,12 +36,25 @@ export class RAGEngine {
     } else if (isEventQuery) {
       // イベント質問の場合は専用設定でハイブリッド検索（document_embeddingsテーブルから）
       // ベクトル検索 + 全文検索を組み合わせることで、キーワードマッチングも活用
-      console.log('📅 イベント専用ハイブリッド検索を実行（document_embeddings）...');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📅 [EVENT SEARCH] イベント検索がトリガーされました');
+      console.log('🔍 [EVENT SEARCH] クエリ:', query);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       searchResults = await hybridSearch(query, {
         topK: 30,
         threshold: 0.03, // より低い閾値で幅広く取得
         type: 'event'
       });
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📊 [EVENT SEARCH] 検索結果:', searchResults.length, '件');
+      if (searchResults.length > 0) {
+        searchResults.slice(0, 5).forEach((result: any, idx: number) => {
+          console.log(`  ${idx + 1}. スコア: ${result.combined_score?.toFixed(3)} (vector: ${result.vector_score?.toFixed(3)}, text: ${result.text_score?.toFixed(3)}) - ${result.title}`);
+        });
+      } else {
+        console.warn('⚠️  [EVENT SEARCH] 検索結果が0件です！');
+      }
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     } else if (isInstructorQuery) {
       // インストラクター質問の場合は専用設定
       console.log('👩‍🏫 インストラクター専用検索を実行...');
