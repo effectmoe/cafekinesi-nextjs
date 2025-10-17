@@ -16,12 +16,28 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const documentId = useFormValue(['_id']) as string
   const documentType = useFormValue(['_type']) as string
   const extractedText = useFormValue(['extractedText']) as string | undefined
+  const manuallyEdited = useFormValue(['manuallyEdited']) as boolean | undefined
 
   // draft ID を published ID に変換（useDocumentOperation は draft ID を受け付けない）
   const publishedId = documentId?.replace(/^drafts\./, '') || documentId
   const { patch } = useDocumentOperation(publishedId, documentType)
   const lastProcessedRef = useRef<string>('')
   const isProcessingRef = useRef<boolean>(false)
+  const previousExtractedTextRef = useRef<string>('')
+
+  // 手動編集を検出
+  useEffect(() => {
+    if (extractedText && previousExtractedTextRef.current) {
+      // extractedTextが変更された（手動編集された）
+      if (extractedText !== previousExtractedTextRef.current) {
+        console.log('✏️ Manual edit detected, setting manuallyEdited flag')
+        if (patch) {
+          patch.execute([{ set: { manuallyEdited: true } }])
+        }
+      }
+    }
+    previousExtractedTextRef.current = extractedText || ''
+  }, [extractedText, patch])
 
   // Extract text when file is uploaded
   useEffect(() => {
@@ -31,10 +47,17 @@ export function FileWithTextExtraction(props: FileInputProps) {
         assetRef: value?.asset?._ref?.substring(0, 30) + '...',
         lastProcessed: lastProcessedRef.current?.substring(0, 30) + '...',
         hasExtractedText: !!extractedText,
-        extractedTextLength: extractedText?.length || 0
+        extractedTextLength: extractedText?.length || 0,
+        manuallyEdited
       })
 
       if (!value?.asset?._ref) {
+        return
+      }
+
+      // 手動編集されたドキュメントはスキップ（手動編集を最優先で保護）
+      if (manuallyEdited) {
+        console.log('🚫 Document was manually edited, skipping auto-extraction')
         return
       }
 
@@ -50,13 +73,17 @@ export function FileWithTextExtraction(props: FileInputProps) {
       // 【重要】同じファイルで、extractedTextが既に存在する場合はスキップ（手動編集を保護）
       // 新しいファイルの場合は、extractedTextが存在していても抽出を実行
       if (isSameFile && extractedText && extractedText.trim().length > 10) {
-        console.log('✅ Same file with existing text, skipping to preserve manual edits')
+        console.log('✅ Same file with existing text, skipping to preserve edits')
         return
       }
 
       // 新しいファイルまたはextractedTextが空の場合は抽出を続行
       if (!isSameFile) {
         console.log('🆕 New file detected, extracting text...')
+        // 新しいファイルの場合、manuallyEditedフラグをリセット
+        if (manuallyEdited && patch) {
+          patch.execute([{ unset: ['manuallyEdited'] }])
+        }
       } else {
         console.log('📝 Same file but no text, extracting...')
       }
