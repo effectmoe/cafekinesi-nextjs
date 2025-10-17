@@ -128,6 +128,43 @@ export async function vectorSearch(
 }
 
 /**
+ * クエリから重要なキーワードを動的に抽出
+ */
+function extractKeywords(query: string): string[] {
+  // 助詞や疑問詞などの不要な単語を除外
+  const stopWords = [
+    'の', 'は', 'を', 'が', 'に', 'へ', 'と', 'から', 'で', 'や',
+    'か', 'ですか', 'ください', 'ます', 'です', 'だ', 'である',
+    'でき', 'し', 'れ', 'られ', 'なり', 'あり',
+    '可能', '教えて', '知りたい', 'したい', 'する', 'いる', 'ある',
+    '何', 'いつ', 'どこ', 'だれ', '誰', 'どう', 'なぜ', 'どの',
+    '？', '?', '！', '!', '、', '。', '。'
+  ];
+
+  // 助詞で分割するための正規表現（の、は、を、が、に、へ、と、から、で、や）
+  const particlePattern = /[のはをがにへとからでや]/g;
+
+  // まず助詞で分割
+  let segments = query.split(particlePattern);
+
+  // 各セグメントから単語を抽出
+  let words: string[] = [];
+  for (const segment of segments) {
+    // 2文字以上の連続する文字列を抽出
+    const extracted = segment.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAFa-zA-Z0-9ー]+/g) || [];
+    words.push(...extracted);
+  }
+
+  // ストップワードを除外し、2文字以上のキーワードを抽出
+  const keywords = words
+    .filter(word => word.length >= 2)
+    .filter(word => !stopWords.includes(word));
+
+  // 重複を削除してソート（長い順）
+  return Array.from(new Set(keywords)).sort((a, b) => b.length - a.length);
+}
+
+/**
  * ハイブリッド検索（ベクトル検索 + 全文検索）
  */
 export async function hybridSearch(
@@ -151,13 +188,27 @@ export async function hybridSearch(
   try {
     console.log(`🔍 Hybrid search: "${query}"`)
 
+    // キーワードを動的に抽出
+    const keywords = extractKeywords(query);
+    console.log(`🔑 抽出されたキーワード: ${keywords.join(', ')}`)
+
     // 1. クエリをベクトル化
     const { embedding: queryEmbedding } = await deepseekEmbedder.embed(query)
 
     // 2. ハイブリッド検索実行
     let results
 
+    // キーワードベースの検索条件を構築
+    if (keywords.length === 0) {
+      keywords.push(query); // キーワードが抽出できない場合は元のクエリを使用
+    }
+
+    // 最も関連性の高いキーワードを使用（長いキーワードほど重要）
+    const primaryKeyword = keywords.sort((a, b) => b.length - a.length)[0];
+    console.log(`🎯 主要キーワード: "${primaryKeyword}"`);
+
     if (type) {
+      // 主要キーワードで検索
       results = await sql`
         WITH vector_search AS (
           SELECT
@@ -176,43 +227,49 @@ export async function hybridSearch(
         text_search AS (
           SELECT
             id,
-            -- 日本語対応: LIKE検索でキーワードマッチング
+            type,
+            title,
+            content,
+            url,
+            metadata,
+            -- 主要キーワードでのLIKE検索
             (CASE
-              WHEN content LIKE '%' || ${query} || '%' THEN 1.0
-              WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+              WHEN content LIKE '%' || ${primaryKeyword} || '%' THEN 1.0
+              WHEN title LIKE '%' || ${primaryKeyword} || '%' THEN 0.8
               ELSE 0.0
             END)::double precision as text_score,
             ROW_NUMBER() OVER (
               ORDER BY (
                 CASE
-                  WHEN content LIKE '%' || ${query} || '%' THEN 1.0
-                  WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+                  WHEN content LIKE '%' || ${primaryKeyword} || '%' THEN 1.0
+                  WHEN title LIKE '%' || ${primaryKeyword} || '%' THEN 0.8
                   ELSE 0.0
                 END
               ) DESC
             ) as text_rank
           FROM document_embeddings
-          WHERE (content LIKE '%' || ${query} || '%' OR title LIKE '%' || ${query} || '%')
+          WHERE (content LIKE '%' || ${primaryKeyword} || '%' OR title LIKE '%' || ${primaryKeyword} || '%')
             AND type = ${type}
         )
         SELECT
-          v.id,
-          v.type,
-          v.title,
-          v.content,
-          v.url,
-          v.metadata,
-          v.vector_score,
+          COALESCE(v.id, t.id) as id,
+          COALESCE(v.type, t.type) as type,
+          COALESCE(v.title, t.title) as title,
+          COALESCE(v.content, t.content) as content,
+          COALESCE(v.url, t.url) as url,
+          COALESCE(v.metadata, t.metadata) as metadata,
+          COALESCE(v.vector_score, 0) as vector_score,
           COALESCE(t.text_score, 0) as text_score,
-          (v.vector_score * ${vectorWeight} + COALESCE(t.text_score, 0) * ${textWeight}) as combined_score,
+          (COALESCE(v.vector_score, 0) * ${vectorWeight} + COALESCE(t.text_score, 0) * ${textWeight}) as combined_score,
           v.vector_rank,
           t.text_rank
         FROM vector_search v
-        LEFT JOIN text_search t ON v.id = t.id
+        FULL OUTER JOIN text_search t ON v.id = t.id
         ORDER BY combined_score DESC
         LIMIT ${topK};
       `
     } else {
+      // type指定なしの場合も主要キーワードで検索
       results = await sql`
         WITH vector_search AS (
           SELECT
@@ -230,38 +287,43 @@ export async function hybridSearch(
         text_search AS (
           SELECT
             id,
-            -- 日本語対応: LIKE検索でキーワードマッチング
+            type,
+            title,
+            content,
+            url,
+            metadata,
+            -- 主要キーワードでのLIKE検索
             (CASE
-              WHEN content LIKE '%' || ${query} || '%' THEN 1.0
-              WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+              WHEN content LIKE '%' || ${primaryKeyword} || '%' THEN 1.0
+              WHEN title LIKE '%' || ${primaryKeyword} || '%' THEN 0.8
               ELSE 0.0
             END)::double precision as text_score,
             ROW_NUMBER() OVER (
               ORDER BY (
                 CASE
-                  WHEN content LIKE '%' || ${query} || '%' THEN 1.0
-                  WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+                  WHEN content LIKE '%' || ${primaryKeyword} || '%' THEN 1.0
+                  WHEN title LIKE '%' || ${primaryKeyword} || '%' THEN 0.8
                   ELSE 0.0
                 END
               ) DESC
             ) as text_rank
           FROM document_embeddings
-          WHERE (content LIKE '%' || ${query} || '%' OR title LIKE '%' || ${query} || '%')
+          WHERE (content LIKE '%' || ${primaryKeyword} || '%' OR title LIKE '%' || ${primaryKeyword} || '%')
         )
         SELECT
-          v.id,
-          v.type,
-          v.title,
-          v.content,
-          v.url,
-          v.metadata,
-          v.vector_score,
+          COALESCE(v.id, t.id) as id,
+          COALESCE(v.type, t.type) as type,
+          COALESCE(v.title, t.title) as title,
+          COALESCE(v.content, t.content) as content,
+          COALESCE(v.url, t.url) as url,
+          COALESCE(v.metadata, t.metadata) as metadata,
+          COALESCE(v.vector_score, 0) as vector_score,
           COALESCE(t.text_score, 0) as text_score,
-          (v.vector_score * ${vectorWeight} + COALESCE(t.text_score, 0) * ${textWeight}) as combined_score,
+          (COALESCE(v.vector_score, 0) * ${vectorWeight} + COALESCE(t.text_score, 0) * ${textWeight}) as combined_score,
           v.vector_rank,
           t.text_rank
         FROM vector_search v
-        LEFT JOIN text_search t ON v.id = t.id
+        FULL OUTER JOIN text_search t ON v.id = t.id
         ORDER BY combined_score DESC
         LIMIT ${topK};
       `
