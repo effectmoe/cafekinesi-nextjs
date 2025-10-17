@@ -176,10 +176,23 @@ export async function hybridSearch(
         text_search AS (
           SELECT
             id,
-            ts_rank(to_tsvector('simple', content), plainto_tsquery('simple', ${query})) as text_score,
-            ROW_NUMBER() OVER (ORDER BY ts_rank(to_tsvector('simple', content), plainto_tsquery('simple', ${query})) DESC) as text_rank
+            -- 日本語対応: LIKE検索でキーワードマッチング
+            (CASE
+              WHEN content LIKE '%' || ${query} || '%' THEN 1.0
+              WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+              ELSE 0.0
+            END)::double precision as text_score,
+            ROW_NUMBER() OVER (
+              ORDER BY (
+                CASE
+                  WHEN content LIKE '%' || ${query} || '%' THEN 1.0
+                  WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+                  ELSE 0.0
+                END
+              ) DESC
+            ) as text_rank
           FROM document_embeddings
-          WHERE to_tsvector('simple', content) @@ plainto_tsquery('simple', ${query})
+          WHERE (content LIKE '%' || ${query} || '%' OR title LIKE '%' || ${query} || '%')
             AND type = ${type}
         )
         SELECT
@@ -217,10 +230,23 @@ export async function hybridSearch(
         text_search AS (
           SELECT
             id,
-            ts_rank(to_tsvector('simple', content), plainto_tsquery('simple', ${query})) as text_score,
-            ROW_NUMBER() OVER (ORDER BY ts_rank(to_tsvector('simple', content), plainto_tsquery('simple', ${query})) DESC) as text_rank
+            -- 日本語対応: LIKE検索でキーワードマッチング
+            (CASE
+              WHEN content LIKE '%' || ${query} || '%' THEN 1.0
+              WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+              ELSE 0.0
+            END)::double precision as text_score,
+            ROW_NUMBER() OVER (
+              ORDER BY (
+                CASE
+                  WHEN content LIKE '%' || ${query} || '%' THEN 1.0
+                  WHEN title LIKE '%' || ${query} || '%' THEN 0.8
+                  ELSE 0.0
+                END
+              ) DESC
+            ) as text_rank
           FROM document_embeddings
-          WHERE to_tsvector('simple', content) @@ plainto_tsquery('simple', ${query})
+          WHERE (content LIKE '%' || ${query} || '%' OR title LIKE '%' || ${query} || '%')
         )
         SELECT
           v.id,
