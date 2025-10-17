@@ -63,7 +63,13 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
 
           {/* Link Cards Layout */}
           {section.layout === 'link-cards' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={`grid grid-cols-1 ${
+              section.linkCards && section.linkCards.length === 1
+                ? 'md:grid-cols-1 max-w-md mx-auto'
+                : section.linkCards && section.linkCards.length === 2
+                ? 'md:grid-cols-2 max-w-4xl mx-auto'
+                : 'md:grid-cols-2 lg:grid-cols-3'
+            } gap-6`}>
               {section.linkCards?.map((card, cardIndex) => {
                 const bgColorMap: Record<string, string> = {
                   'white': 'bg-white',
@@ -180,30 +186,32 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
               ) : (
                 /* Text only - 1 column centered */
                 <div className="max-w-4xl mx-auto mb-8">
-                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base">
+                  <div className="space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base text-center">
                     {section.content && <PortableText value={section.content} />}
                   </div>
                 </div>
               )}
 
-              {/* Highlight Box */}
-              {section.highlightBox?.show && section.highlightBox.content && (
-                <div className="bg-[hsl(35,22%,95%)] rounded-lg p-8 md:p-10 mb-6">
-                  <div className="max-w-3xl mx-auto text-center space-y-4 text-[hsl(var(--text-secondary))] leading-relaxed text-base">
-                    <PortableText value={section.highlightBox.content} />
-                  </div>
-                </div>
-              )}
-
-              {/* Button Link */}
+              {/* Button Link - スクリーンショットと同じデザイン */}
               {section.button?.show && section.button.text && section.button.link && (
                 <div className="flex justify-center mt-6">
                   <Link
                     href={section.button.link}
-                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[hsl(var(--text-primary))] text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--text-primary))] hover:text-white transition-all duration-300 rounded"
+                    className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-stone-200 hover:bg-stone-300 text-[hsl(35,45%,45%)] hover:shadow-md transition-all duration-200 rounded-3xl"
                   >
                     <span className="text-base font-medium">{section.button.text}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="group-hover:translate-x-1 transition-transform"
+                    >
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
                     </svg>
