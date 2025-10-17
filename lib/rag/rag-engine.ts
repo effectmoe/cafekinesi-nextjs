@@ -32,68 +32,65 @@ export class RAGEngine {
 
     // 1. データ取得
     let searchResults;
+    let priorityType: string | null = null;
 
     if (isAggregationQuery) {
       // 集計質問の場合はAI Knowledge APIから全件取得
       console.log('🔢 集計質問を検出: AI Knowledge APIから全件取得...');
       searchResults = await this.fetchFromKnowledgeAPI(query);
-    } else if (isAccessInfoQuery) {
-      // アクセス情報質問の場合はknowledgeBaseを検索
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('📍 [ACCESS INFO SEARCH] アクセス情報検索がトリガーされました');
-      console.log('🔍 [ACCESS INFO SEARCH] クエリ:', query);
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      searchResults = await hybridSearch(query, {
-        topK: 10,
-        threshold: 0.03,
-        type: 'knowledgeBase'
-      });
-      console.log('📊 [ACCESS INFO SEARCH] 検索結果:', searchResults.length, '件');
-      if (searchResults.length > 0) {
-        searchResults.slice(0, 5).forEach((result: any, idx: number) => {
-          console.log(`  ${idx + 1}. スコア: ${result.combined_score?.toFixed(3)} (vector: ${result.vector_score?.toFixed(3)}, text: ${result.text_score?.toFixed(3)}) - ${result.title}`);
-        });
-      }
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    } else if (isEventQuery) {
-      // イベント質問の場合は専用設定でハイブリッド検索（document_embeddingsテーブルから）
-      // ベクトル検索 + 全文検索を組み合わせることで、キーワードマッチングも活用
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('📅 [EVENT SEARCH] イベント検索がトリガーされました');
-      console.log('🔍 [EVENT SEARCH] クエリ:', query);
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      searchResults = await hybridSearch(query, {
-        topK: 30,
-        threshold: 0.03, // より低い閾値で幅広く取得
-        type: 'event'
-      });
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('📊 [EVENT SEARCH] 検索結果:', searchResults.length, '件');
-      if (searchResults.length > 0) {
-        searchResults.slice(0, 5).forEach((result: any, idx: number) => {
-          console.log(`  ${idx + 1}. スコア: ${result.combined_score?.toFixed(3)} (vector: ${result.vector_score?.toFixed(3)}, text: ${result.text_score?.toFixed(3)}) - ${result.title}`);
-        });
-      } else {
-        console.warn('⚠️  [EVENT SEARCH] PostgreSQL検索結果が0件！Sanity APIへフォールバック...');
-        // フォールバック: Sanity APIから直接取得
-        searchResults = await this.fetchFromKnowledgeAPI(query);
-        console.log('📊 [EVENT SEARCH FALLBACK] Sanityから取得:', searchResults.length, '件');
-      }
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    } else if (isInstructorQuery) {
-      // インストラクター質問の場合は専用設定
-      console.log('👩‍🏫 インストラクター専用検索を実行...');
-      searchResults = await vectorSearch(query, {
-        topK: 50,
-        threshold: 0.05,
-        type: 'instructor'
-      });
     } else {
-      // 通常質問はハイブリッド検索を使用
+      // 質問タイプに応じた優先度を設定
+      if (isAccessInfoQuery) {
+        priorityType = 'knowledgeBase';
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📍 [ACCESS INFO SEARCH] アクセス情報検索がトリガーされました');
+        console.log('🔍 [ACCESS INFO SEARCH] クエリ:', query);
+        console.log('💡 優先タイプ: knowledgeBase (全タイプから検索、knowledgeBaseを優先)');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      } else if (isEventQuery) {
+        priorityType = 'event';
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📅 [EVENT SEARCH] イベント検索がトリガーされました');
+        console.log('🔍 [EVENT SEARCH] クエリ:', query);
+        console.log('💡 優先タイプ: event (全タイプから検索、eventを優先)');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      } else if (isInstructorQuery) {
+        priorityType = 'instructor';
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('👩‍🏫 [INSTRUCTOR SEARCH] インストラクター検索がトリガーされました');
+        console.log('🔍 [INSTRUCTOR SEARCH] クエリ:', query);
+        console.log('💡 優先タイプ: instructor (全タイプから検索、instructorを優先)');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      }
+
+      // 全タイプから検索（type指定なし）
       searchResults = await hybridSearch(query, {
-        topK: config.vectorSearch?.topK || 20,
-        threshold: config.vectorSearch?.threshold || 0.15
+        topK: 30, // より多くの結果を取得
+        threshold: 0.03 // 低い閾値で幅広く取得
+        // type指定なし = 全タイプ検索
       });
+
+      console.log('📊 検索結果:', searchResults.length, '件');
+
+      // 質問タイプに応じて結果を優先度付けソート
+      if (priorityType) {
+        searchResults = this.prioritizeResults(searchResults, priorityType);
+        console.log(`🔄 優先度付けソート完了 (${priorityType}優先)`);
+      }
+
+      if (searchResults.length > 0) {
+        console.log('📋 トップ5結果:');
+        searchResults.slice(0, 5).forEach((result: any, idx: number) => {
+          const typeLabel = result.type === priorityType ? `[${result.type}★]` : `[${result.type}]`;
+          console.log(`  ${idx + 1}. ${typeLabel} スコア: ${result.combined_score?.toFixed(3)} - ${result.title}`);
+        });
+      } else if (isEventQuery) {
+        console.warn('⚠️  検索結果が0件！Sanity APIへフォールバック...');
+        searchResults = await this.fetchFromKnowledgeAPI(query);
+        console.log('📊 Sanityから取得:', searchResults.length, '件');
+      }
+
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     }
 
     // 結果を旧形式に変換（互換性のため）
@@ -470,6 +467,24 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       filtered: [...filteredEvents, ...nonEvents],
       filterInfo
     };
+  }
+
+  // 検索結果を質問タイプに応じて優先度付けソート
+  private prioritizeResults(results: any[], priorityType: string): any[] {
+    return results.sort((a, b) => {
+      const aIsPriority = a.type === priorityType ? 1 : 0;
+      const bIsPriority = b.type === priorityType ? 1 : 0;
+
+      // 優先タイプが異なる場合、優先タイプを上位に
+      if (aIsPriority !== bIsPriority) {
+        return bIsPriority - aIsPriority;
+      }
+
+      // 同じ優先度の場合、combined_scoreでソート
+      const aScore = a.combined_score || a.vector_score || 0;
+      const bScore = b.combined_score || b.vector_score || 0;
+      return bScore - aScore;
+    });
   }
 
   // アクセス情報の質問かどうか判定
