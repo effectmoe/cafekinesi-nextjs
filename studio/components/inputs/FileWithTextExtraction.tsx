@@ -23,9 +23,9 @@ export function FileWithTextExtraction(props: FileInputProps) {
   const lastProcessedRef = useRef<string>('')
   const isProcessingRef = useRef<boolean>(false)
 
-  // Extract text when file is uploaded
-  useEffect(() => {
-    const extractText = async () => {
+  // 【重要】useEffectを完全に無効化 - 自動抽出を停止
+  // ファイルアップロード時に自動実行されないようにする
+  const manualExtractText = async () => {
       if (!value?.asset?._ref) {
         return
       }
@@ -147,11 +147,10 @@ export function FileWithTextExtraction(props: FileInputProps) {
         // Always reset processing flag
         isProcessingRef.current = false
       }
-    }
+  }
 
-    extractText()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value?.asset?._ref])  // extractedTextを削除 - 手動編集時に再実行されないようにする
+  // useEffectを削除 - 自動抽出を完全に無効化
+  // これにより、保存時やパブリッシュ時に再実行されなくなる
 
   // Render the default file input
   return <FileInput {...props} />
