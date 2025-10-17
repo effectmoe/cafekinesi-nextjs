@@ -151,14 +151,16 @@ export function generateSchemaOrg({ post, siteUrl, siteName }: SchemaOrgGenerato
       }
 
     case 'FAQPage':
-      const faqItems = post.faq?.map((item: any) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: item.answer
-        }
-      })) || []
+      const faqItems = (post.faq && Array.isArray(post.faq))
+        ? post.faq.map((item: any) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer
+            }
+          }))
+        : []
 
       if (faqItems.length > 0) {
         return {
@@ -341,7 +343,7 @@ export function generateBlogSchemas(post: any, siteUrl: string, siteName: string
   }
 
   // FAQがある場合はFAQPage schemaも追加
-  if (post.faq && post.faq.length > 0) {
+  if (post.faq && Array.isArray(post.faq) && post.faq.length > 0) {
     const baseUrl = siteUrl || 'https://cafekinesi.com'
     const postUrl = `${baseUrl}/blog/${post.slug?.current}`
 

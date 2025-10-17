@@ -315,7 +315,7 @@ export default async function BlogPostPage({
 
             <div className="bg-yellow-50 rounded p-4 mb-4">
               <p className="text-sm text-yellow-800">
-                <a href="/api/debug-sanity?slug={slug}" target="_blank" className="underline">
+                <a href={`/api/debug-sanity?slug=${slug}`} target="_blank" className="underline">
                   デバッグ情報を表示
                 </a>
               </p>
