@@ -268,7 +268,7 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     const locationMatch = query.match(/(東京|大阪|名古屋|福岡|札幌|仙台|広島|神戸|京都|横浜|千葉|埼玉|渋谷|新宿|池袋)/);
     const isOnlineQuery = /オンライン|online/i.test(query);
     const priceMatch = query.match(/(\d+)円以下|(\d+)円以内|予算\s*(\d+)|(\d+)円/);
-    const isOpenQuery = /受付中|参加できる|空き|申し込める/.test(query);
+    const isOpenQuery = /受付中|参加できる|空き|申し込める|予約.*でき|予約.*可能|予約.*したい/.test(query);
 
     // 時間軸の条件を抽出
     const now = new Date();
@@ -421,9 +421,9 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       'イベント', 'event', 'カレンダー', 'スケジュール',
       '開催', '予定', '今月', '来月', '今週', '来週',
       '講座', 'セッション', 'ワークショップ', '説明会',
-      '空き', '受付', '申し込み', '参加', '定員',
+      '空き', '受付', '申し込み', '参加', '定員', '予約',
       'いつ', 'どこで', 'どこ', '場所', '日程',
-      'ピーチタッチ', 'キネシ', 'チャクラ'
+      'ピーチタッチ', 'キネシ', 'チャクラ', 'ハッピーオーラ'
     ];
 
     const lowerQuery = query.toLowerCase();

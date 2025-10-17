@@ -83,13 +83,21 @@ function getDocumentTitle(document: any, documentType: string): string {
   return document.title || 'Untitled';
 }
 
-export async function syncSingleDocument(documentId: string, documentType: string) {
+export async function syncSingleDocument(documentId: string, documentType: string, providedDocument?: any) {
   console.log(`📄 Syncing document: ${documentId} (${documentType})`);
 
   try {
-    // Sanityからドキュメントを取得
-    const query = getDocumentQuery(documentType);
-    const document = await publicClient.fetch(query, { documentId });
+    // Webhookから提供されたドキュメントを優先的に使用
+    let document = providedDocument;
+
+    // 提供されていない場合のみSanityから取得
+    if (!document) {
+      console.log('📡 Fetching document from Sanity...');
+      const query = getDocumentQuery(documentType);
+      document = await publicClient.fetch(query, { documentId });
+    } else {
+      console.log('✅ Using provided document from webhook');
+    }
 
     if (!document) {
       console.error(`❌ Document not found: ${documentId}`);

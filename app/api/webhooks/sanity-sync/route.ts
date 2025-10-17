@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 Processing ${documentType} document: ${documentId}`);
 
-    await syncSingleDocument(documentId, documentType);
+    // Webhookから受け取ったドキュメントデータを使用（Sanityから再取得しない）
+    await syncSingleDocument(documentId, documentType, payload);
 
     console.log('✅ Webhook processing completed');
 
