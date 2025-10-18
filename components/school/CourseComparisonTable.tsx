@@ -67,8 +67,8 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
                     )}
                   </Link>
                 </td>
-                <td className="border border-gray-300 px-4 py-3 text-center">
-                  <span className={`text-xs px-2 py-1 rounded-full ${course.courseType === 'auxiliary' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                <td className="border border-gray-300 px-2 py-3 text-center min-w-[90px]">
+                  <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap inline-block ${course.courseType === 'auxiliary' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                     {course.courseType === 'auxiliary' ? '発展コース' : '主要講座'}
                   </span>
                 </td>
