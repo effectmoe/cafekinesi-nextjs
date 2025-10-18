@@ -1,21 +1,17 @@
-import { Facebook, Instagram, Twitter, Youtube, Music } from "lucide-react";
+import { Facebook, Instagram, Youtube } from "lucide-react";
 
 const SocialLinks = () => {
   // Album card colors from AlbumGrid (HSL形式で統一)
   const albumColors = [
     "hsl(35, 22%, 91%)",    // beige
     "hsl(210, 20%, 70%)",   // blue-gray
-    "hsl(260, 15%, 75%)",   // purple
     "hsl(180, 20%, 85%)",   // teal
-    "hsl(0, 0%, 91%)",      // light-gray
   ];
 
   const socialLinks = [
-    { name: "Facebook", url: "#", Icon: Facebook, color: albumColors[0] },
-    { name: "Instagram", url: "#", Icon: Instagram, color: albumColors[1] },
-    { name: "Twitter", url: "#", Icon: Twitter, color: albumColors[2] },
-    { name: "YouTube", url: "#", Icon: Youtube, color: albumColors[3] },
-    { name: "Bandcamp", url: "#", Icon: Music, color: albumColors[4] },
+    { name: "Facebook", url: "https://www.facebook.com/cafekinesi/", Icon: Facebook, color: albumColors[0] },
+    { name: "Instagram", url: "https://www.instagram.com/cafekinesi/", Icon: Instagram, color: albumColors[1] },
+    { name: "YouTube", url: "https://www.youtube.com/@cafekinesi4298", Icon: Youtube, color: albumColors[2] },
   ];
 
   return (
