@@ -348,20 +348,20 @@ export default async function SchoolPage() {
                 基礎から応用まで、段階的に学べる<strong className="text-[#8B5A3C]">{totalCourses}種類</strong>の講座をご用意しています。
               </p>
 
-              <div className="flex flex-wrap gap-6">
-                <div className="bg-white rounded-lg shadow-md px-6 py-4">
-                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">{courses.length}</div>
-                  <div className="text-sm text-gray-600">主要講座</div>
+              <div className="flex flex-wrap gap-2 sm:gap-4 md:gap-6">
+                <div className="bg-white rounded-lg shadow-md px-3 py-3 sm:px-6 sm:py-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#8B5A3C] mb-1">{courses.length}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">主要講座</div>
                 </div>
-                <div className="bg-white rounded-lg shadow-md px-6 py-4">
-                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">
+                <div className="bg-white rounded-lg shadow-md px-3 py-3 sm:px-6 sm:py-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#8B5A3C] mb-1">
                     {courses.reduce((sum, c) => sum + (c.childCourses?.length || 0), 0)}
                   </div>
-                  <div className="text-sm text-gray-600">発展コース</div>
+                  <div className="text-xs sm:text-sm text-gray-600">発展コース</div>
                 </div>
-                <div className="bg-white rounded-lg shadow-md px-6 py-4">
-                  <div className="text-3xl font-bold text-[#8B5A3C] mb-1">{totalCourses}</div>
-                  <div className="text-sm text-gray-600">総講座数</div>
+                <div className="bg-white rounded-lg shadow-md px-3 py-3 sm:px-6 sm:py-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#8B5A3C] mb-1">{totalCourses}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">総講座数</div>
                 </div>
               </div>
             </div>
