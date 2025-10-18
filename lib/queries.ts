@@ -419,6 +419,11 @@ export const COURSE_DETAIL_QUERY = `
       showContactButton,
       contactButtonText,
       contactButtonLink,
+      socialMedia {
+        facebookUrl,
+        instagramPostUrl,
+        youtubeVideoUrl
+      },
       customSections[] {
         title,
         items[] {

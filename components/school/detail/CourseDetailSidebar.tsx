@@ -28,6 +28,11 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
   const contactButtonLink = course.sidebar?.contactButtonLink || '/contact'
   const customSections = course.sidebar?.customSections || []
 
+  // ソーシャルメディアURL（Sanityから取得、なければデフォルト）
+  const facebookUrl = course.sidebar?.socialMedia?.facebookUrl || 'https://www.facebook.com/cafekinesi/'
+  const instagramPostUrl = course.sidebar?.socialMedia?.instagramPostUrl || 'https://www.instagram.com/p/DP3vzmOD-ZK/'
+  const youtubeVideoUrl = course.sidebar?.socialMedia?.youtubeVideoUrl || 'https://www.youtube.com/watch?v=6HjtOD8NzYY'
+
   // Facebook SDK の読み込み
   useEffect(() => {
     // Facebook SDK がすでに読み込まれている場合は何もしない
@@ -99,7 +104,7 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
         <div id="fb-root"></div>
         <div
           className="fb-page"
-          data-href="https://www.facebook.com/cafekinesi/"
+          data-href={facebookUrl}
           data-tabs="timeline"
           data-width="340"
           data-height="500"
@@ -108,8 +113,8 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
           data-hide-cover="false"
           data-show-facepile="true"
         >
-          <blockquote cite="https://www.facebook.com/cafekinesi/" className="fb-xfbml-parse-ignore">
-            <a href="https://www.facebook.com/cafekinesi/">カフェキネシ</a>
+          <blockquote cite={facebookUrl} className="fb-xfbml-parse-ignore">
+            <a href={facebookUrl}>カフェキネシ</a>
           </blockquote>
         </div>
       </div>
@@ -119,7 +124,7 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
         <h3 className="font-semibold text-sm mb-3">Instagram</h3>
         <div className="flex justify-center">
           <iframe
-            src="https://www.instagram.com/p/DP3vzmOD-ZK/embed"
+            src={`${instagramPostUrl}embed`}
             width="328"
             height="450"
             frameBorder="0"
@@ -135,7 +140,7 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
         <h3 className="font-semibold text-sm mb-3">YouTube</h3>
         <div className="flex justify-center">
           <YouTubeEmbed
-            url="https://www.youtube.com/watch?v=6HjtOD8NzYY"
+            url={youtubeVideoUrl}
             width={325}
             height={220}
           />

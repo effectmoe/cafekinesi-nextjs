@@ -72,6 +72,11 @@ export interface CourseSidebar {
   showContactButton?: boolean
   contactButtonText?: string
   contactButtonLink?: string
+  socialMedia?: {
+    facebookUrl?: string
+    instagramPostUrl?: string
+    youtubeVideoUrl?: string
+  }
   customSections?: SidebarSection[]
 }
 

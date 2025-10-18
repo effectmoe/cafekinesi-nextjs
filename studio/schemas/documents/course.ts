@@ -655,6 +655,35 @@ export default defineType({
           initialValue: '/contact',
         }),
         defineField({
+          name: 'socialMedia',
+          title: 'ソーシャルメディア設定',
+          type: 'object',
+          description: 'Facebook、Instagram、YouTubeの埋め込みURLを設定します',
+          fields: [
+            defineField({
+              name: 'facebookUrl',
+              title: 'FacebookページURL',
+              type: 'url',
+              description: '例: https://www.facebook.com/cafekinesi/',
+              placeholder: 'https://www.facebook.com/cafekinesi/',
+            }),
+            defineField({
+              name: 'instagramPostUrl',
+              title: 'Instagram投稿URL',
+              type: 'url',
+              description: '埋め込みたい投稿のURL（例: https://www.instagram.com/p/DP3vzmOD-ZK/）',
+              placeholder: 'https://www.instagram.com/p/DP3vzmOD-ZK/',
+            }),
+            defineField({
+              name: 'youtubeVideoUrl',
+              title: 'YouTube動画URL',
+              type: 'url',
+              description: '埋め込みたい動画のURL（例: https://www.youtube.com/watch?v=6HjtOD8NzYY）',
+              placeholder: 'https://www.youtube.com/watch?v=6HjtOD8NzYY',
+            }),
+          ],
+        }),
+        defineField({
           name: 'customSections',
           title: 'カスタムセクション',
           type: 'array',
