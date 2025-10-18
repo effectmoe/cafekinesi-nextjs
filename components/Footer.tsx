@@ -56,6 +56,11 @@ const Footer = () => {
                   よくある質問
                 </Link>
               </li>
+              <li>
+                <Link href="/privacy" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  プライバシーポリシー
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -74,16 +79,9 @@ const Footer = () => {
 
         {/* コピーライト */}
         <div className="border-t border-gray-200 pt-6">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <Link href="/privacy" className="hover:text-gray-900 transition-colors hover:underline">
-                プライバシーポリシー
-              </Link>
-            </div>
-            <p className="text-center text-sm text-gray-600">
-              © {new Date().getFullYear()} Cafe Kinesi. All rights reserved.
-            </p>
-          </div>
+          <p className="text-center text-sm text-gray-600">
+            © {new Date().getFullYear()} Cafe Kinesi. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
