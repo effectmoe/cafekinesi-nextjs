@@ -1,5 +1,24 @@
 [
   {
+    "_id": "648cec8e-2c1c-4e87-a8fe-803edfaaa8bd",
+    "category": "wellness",
+    "excerpt": "20〜40代の初学者向けに、正しい歯磨き方法を学べる。2〜3分のブラッシングで歯の健康を守る安心感。",
+    "featured": false,
+    "mainImage": {
+      "_type": "image",
+      "asset": {
+        "_ref": "image-499c6a0fc5bac8a99c18fd5ccdc2d3717f5c2d9b-1265x691-jpg",
+        "_type": "reference"
+      }
+    },
+    "publishedAt": "2025-10-17T17:42:33.949Z",
+    "slug": {
+      "_type": "slug",
+      "current": "dental"
+    },
+    "title": "今日から始める！正しい歯磨き方法（ブラッシング）の基本ステップ"
+  },
+  {
     "_id": "b6ddf900-679b-4f16-b8d8-d721d4b8c31b",
     "category": "lifestyle",
     "excerpt": "カフェキネシは、夢を叶えるための新しいツールです。2時間で資格を取得し、自由な働き方を手に入れましょう。",
