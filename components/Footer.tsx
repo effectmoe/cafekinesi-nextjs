@@ -52,11 +52,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  よくある質問
-                </Link>
-              </li>
-              <li>
                 <Link href="/privacy" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                   プライバシーポリシー
                 </Link>
@@ -71,6 +66,11 @@ const Footer = () => {
               <li>
                 <Link href="/#chat" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                   AIチャット
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  よくある質問
                 </Link>
               </li>
             </ul>
