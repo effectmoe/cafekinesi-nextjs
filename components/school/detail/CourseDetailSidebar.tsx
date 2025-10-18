@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { CourseDetail } from '@/lib/types/course'
 import SidebarCalendar from '@/components/calendar/SidebarCalendar'
 import { useEffect } from 'react'
-import { InstagramEmbed, YouTubeEmbed } from 'react-social-media-embed'
+import { YouTubeEmbed } from 'react-social-media-embed'
 
 interface CourseDetailSidebarProps {
   course: CourseDetail
@@ -118,9 +118,14 @@ export default function CourseDetailSidebar({ course }: CourseDetailSidebarProps
       <div className="bg-gray-50 p-4 rounded mb-6">
         <h3 className="font-semibold text-sm mb-3">Instagram</h3>
         <div className="flex justify-center">
-          <InstagramEmbed
-            url="https://www.instagram.com/p/DP3vzmOD-ZK/"
-            width={328}
+          <iframe
+            src="https://www.instagram.com/p/DP3vzmOD-ZK/embed"
+            width="328"
+            height="450"
+            frameBorder="0"
+            scrolling="no"
+            allowTransparency
+            className="border-0"
           />
         </div>
       </div>
