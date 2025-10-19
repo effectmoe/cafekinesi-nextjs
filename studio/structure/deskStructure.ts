@@ -14,6 +14,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('📊 スキーママップ')
         .child(
           S.component(SchemaMapDashboard)
+            .id('schema-map-dashboard')
             .title('スキーママップ')
         ),
 
