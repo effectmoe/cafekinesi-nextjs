@@ -36,6 +36,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('📄 ページ管理')
         .child(
           S.list()
+            .id('pages')
             .title('ページ')
             .items([
               S.documentTypeListItem('homepage')
@@ -62,6 +63,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('📝 ブログ記事')
         .child(
           S.list()
+            .id('blog')
             .title('ブログ記事')
             .items([
               S.documentTypeListItem('blogPost')
@@ -116,6 +118,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('💬 チャット設定')
         .child(
           S.list()
+            .id('chat')
             .title('チャット設定')
             .items([
               S.documentTypeListItem('chatModal')
@@ -136,6 +139,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('🤖 AI/RAG設定')
         .child(
           S.list()
+            .id('ai-rag')
             .title('AI/RAG設定')
             .items([
               S.documentTypeListItem('ragConfiguration')
@@ -168,6 +172,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('🗂️ その他のコンテンツタイプ')
         .child(
           S.list()
+            .id('other')
             .title('その他')
             .items([
               // すべてのスキーマを表示するオプション
