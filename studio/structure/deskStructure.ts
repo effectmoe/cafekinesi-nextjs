@@ -10,6 +10,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 📊 スキーママップ（ダッシュボード）
       // ================================================
       S.listItem()
+        .id('schema-map')
         .title('📊 スキーママップ')
         .child(
           S.component(SchemaMapDashboard)
@@ -22,6 +23,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 🏠 サイト設定
       // ================================================
       S.listItem()
+        .id('site-settings')
         .title('🏠 サイト設定（LLMO/SEO）')
         .child(
           S.documentTypeListItem('siteSettings')
@@ -34,10 +36,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 📄 ページ管理
       // ================================================
       S.listItem()
+        .id('pages')
         .title('📄 ページ管理')
         .child(
           S.list()
-            .id('pages')
+            .id('pages-list')
             .title('ページ')
             .items([
               S.documentTypeListItem('homepage')
@@ -61,10 +64,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 📝 ブログ記事
       // ================================================
       S.listItem()
+        .id('blog')
         .title('📝 ブログ記事')
         .child(
           S.list()
-            .id('blog')
+            .id('blog-list')
             .title('ブログ記事')
             .items([
               S.documentTypeListItem('blogPost')
@@ -80,6 +84,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 🎓 講座
       // ================================================
       S.listItem()
+        .id('course')
         .title('🎓 講座')
         .child(
           S.documentTypeListItem('course')
@@ -92,6 +97,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 👨‍🏫 インストラクター
       // ================================================
       S.listItem()
+        .id('instructor')
         .title('👨‍🏫 インストラクター')
         .child(
           S.documentTypeListItem('instructor')
@@ -104,6 +110,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 📅 イベント
       // ================================================
       S.listItem()
+        .id('event')
         .title('📅 イベント')
         .child(
           S.documentTypeListItem('event')
@@ -116,10 +123,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 💬 チャット設定
       // ================================================
       S.listItem()
+        .id('chat')
         .title('💬 チャット設定')
         .child(
           S.list()
-            .id('chat')
+            .id('chat-list')
             .title('チャット設定')
             .items([
               S.documentTypeListItem('chatModal')
@@ -137,10 +145,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 🤖 AI/RAG設定
       // ================================================
       S.listItem()
+        .id('ai-rag')
         .title('🤖 AI/RAG設定')
         .child(
           S.list()
-            .id('ai-rag')
+            .id('ai-rag-list')
             .title('AI/RAG設定')
             .items([
               S.documentTypeListItem('ragConfiguration')
@@ -158,6 +167,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 👤 代表者
       // ================================================
       S.listItem()
+        .id('representative')
         .title('👤 代表者')
         .child(
           S.documentTypeListItem('representative')
@@ -170,10 +180,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       // 🗂️ その他のコンテンツタイプ
       // ================================================
       S.listItem()
+        .id('other')
         .title('🗂️ その他のコンテンツタイプ')
         .child(
           S.list()
-            .id('other')
+            .id('other-list')
             .title('その他')
             .items([
               // すべてのスキーマを表示するオプション
