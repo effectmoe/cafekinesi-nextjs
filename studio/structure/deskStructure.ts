@@ -23,17 +23,8 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       S.listItem()
         .title('🏠 サイト設定（LLMO/SEO）')
         .child(
-          S.list()
-            .title('サイト設定')
-            .items([
-              S.documentTypeListItem('siteSettings')
-                .title('📱 サイト設定 (LLMO/SEO)')
-                .child(
-                  S.documentList()
-                    .title('サイト設定')
-                    .filter('_type == "siteSettings"')
-                ),
-            ])
+          S.documentTypeListItem('siteSettings')
+            .title('📱 サイト設定 (LLMO/SEO)')
         ),
 
       S.divider(),
@@ -48,47 +39,17 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('ページ')
             .items([
               S.documentTypeListItem('homepage')
-                .title('🏠 ホームページ｜使用: /')
-                .child(
-                  S.documentList()
-                    .title('ホームページ')
-                    .filter('_type == "homepage"')
-                ),
+                .title('🏠 ホームページ｜使用: /'),
               S.documentTypeListItem('aboutPage')
-                .title('ℹ️ カフェキネシについて｜使用: /')
-                .child(
-                  S.documentList()
-                    .title('カフェキネシについて')
-                    .filter('_type == "aboutPage"')
-                ),
+                .title('ℹ️ カフェキネシについて｜使用: /'),
               S.documentTypeListItem('page')
-                .title('📄 ページ｜使用: /[slug]')
-                .child(
-                  S.documentList()
-                    .title('ページ')
-                    .filter('_type == "page"')
-                ),
+                .title('📄 ページ｜使用: /[slug]'),
               S.documentTypeListItem('schoolPage')
-                .title('🎓 スクールページ設定｜使用: /school')
-                .child(
-                  S.documentList()
-                    .title('スクールページ設定')
-                    .filter('_type == "schoolPage"')
-                ),
+                .title('🎓 スクールページ設定｜使用: /school'),
               S.documentTypeListItem('instructorPage')
-                .title('👨‍🏫 インストラクターページ設定｜使用: /instructor')
-                .child(
-                  S.documentList()
-                    .title('インストラクターページ設定')
-                    .filter('_type == "instructorPage"')
-                ),
+                .title('👨‍🏫 インストラクターページ設定｜使用: /instructor'),
               S.documentTypeListItem('profilePage')
-                .title('👤 プロフィールページ｜使用: /profile')
-                .child(
-                  S.documentList()
-                    .title('プロフィールページ')
-                    .filter('_type == "profilePage"')
-                ),
+                .title('👤 プロフィールページ｜使用: /profile'),
             ])
         ),
 
@@ -104,19 +65,9 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('ブログ記事')
             .items([
               S.documentTypeListItem('blogPost')
-                .title('📝 ブログ記事｜使用: /blog, /blog/[slug]')
-                .child(
-                  S.documentList()
-                    .title('ブログ記事')
-                    .filter('_type == "blogPost"')
-                ),
+                .title('📝 ブログ記事｜使用: /blog, /blog/[slug]'),
               S.documentTypeListItem('author')
-                .title('✏️ 著者｜使用: /author/[slug], /blog/*')
-                .child(
-                  S.documentList()
-                    .title('著者')
-                    .filter('_type == "author"')
-                ),
+                .title('✏️ 著者｜使用: /author/[slug], /blog/*'),
             ])
         ),
 
@@ -168,26 +119,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('チャット設定')
             .items([
               S.documentTypeListItem('chatModal')
-                .title('💬 チャットモーダル設定｜使用: /')
-                .child(
-                  S.documentList()
-                    .title('チャットモーダル設定')
-                    .filter('_type == "chatModal"')
-                ),
+                .title('💬 チャットモーダル設定｜使用: /'),
               S.documentTypeListItem('faqCard')
-                .title('❓ FAQ質問カード｜使用: / (チャットモーダル)')
-                .child(
-                  S.documentList()
-                    .title('FAQ質問カード')
-                    .filter('_type == "faqCard"')
-                ),
+                .title('❓ FAQ質問カード｜使用: / (チャットモーダル)'),
               S.documentTypeListItem('chatConfiguration')
-                .title('⚙️ チャット設定｜使用: /api/chat/rag')
-                .child(
-                  S.documentList()
-                    .title('チャット設定')
-                    .filter('_type == "chatConfiguration"')
-                ),
+                .title('⚙️ チャット設定｜使用: /api/chat/rag'),
             ])
         ),
 
@@ -203,33 +139,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('AI/RAG設定')
             .items([
               S.documentTypeListItem('ragConfiguration')
-                .title('🔧 RAG設定｜使用: /api/chat/rag')
-                .child(
-                  S.documentList()
-                    .title('RAG設定')
-                    .filter('_type == "ragConfiguration"')
-                ),
+                .title('🔧 RAG設定｜使用: /api/chat/rag'),
               S.documentTypeListItem('aiGuardrails')
-                .title('🛡️ AIガードレール設定｜使用: /api/chat/rag')
-                .child(
-                  S.documentList()
-                    .title('AIガードレール設定')
-                    .filter('_type == "aiGuardrails"')
-                ),
+                .title('🛡️ AIガードレール設定｜使用: /api/chat/rag'),
               S.documentTypeListItem('aiProviderSettings')
-                .title('🔌 AIプロバイダー設定｜使用: /api/chat/rag')
-                .child(
-                  S.documentList()
-                    .title('AIプロバイダー設定')
-                    .filter('_type == "aiProviderSettings"')
-                ),
-              S.documentTypeListItem('knowledgeBase')
-                .title('📚 ナレッジベース')
-                .child(
-                  S.documentList()
-                    .title('ナレッジベース')
-                    .filter('_type == "knowledgeBase"')
-                ),
+                .title('🔌 AIプロバイダー設定｜使用: /api/chat/rag'),
             ])
         ),
 
@@ -248,58 +162,6 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
       S.divider(),
 
       // ================================================
-      // 📋 AI context
-      // ================================================
-      S.listItem()
-        .title('📋 AI context')
-        .child(
-          S.documentTypeListItem('aiContext')
-            .title('📋 AI context')
-        ),
-
-      S.divider(),
-
-      // ================================================
-      // ❓ FAQ
-      // ================================================
-      S.listItem()
-        .title('❓ FAQ')
-        .child(
-          S.list()
-            .title('FAQ')
-            .items([
-              S.documentTypeListItem('faq')
-                .title('❓ FAQ')
-                .child(
-                  S.documentList()
-                    .title('FAQ')
-                    .filter('_type == "faq"')
-                ),
-              S.documentTypeListItem('faqCategory')
-                .title('📁 FAQカテゴリー')
-                .child(
-                  S.documentList()
-                    .title('FAQカテゴリー')
-                    .filter('_type == "faqCategory"')
-                ),
-            ])
-        ),
-
-      S.divider(),
-
-      // ================================================
-      // 📢 お知らせ
-      // ================================================
-      S.listItem()
-        .title('📢 お知らせ')
-        .child(
-          S.documentTypeListItem('announcement')
-            .title('📢 お知らせ')
-        ),
-
-      S.divider(),
-
-      // ================================================
       // 🗂️ その他のコンテンツタイプ
       // ================================================
       S.listItem()
@@ -308,27 +170,6 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
           S.list()
             .title('その他')
             .items([
-              S.documentTypeListItem('seoSettings')
-                .title('🔍 SEO設定')
-                .child(
-                  S.documentList()
-                    .title('SEO設定')
-                    .filter('_type == "seoSettings"')
-                ),
-              S.documentTypeListItem('redirects')
-                .title('🔀 リダイレクト設定')
-                .child(
-                  S.documentList()
-                    .title('リダイレクト設定')
-                    .filter('_type == "redirects"')
-                ),
-              S.documentTypeListItem('sitemap')
-                .title('🗺️ サイトマップ設定')
-                .child(
-                  S.documentList()
-                    .title('サイトマップ設定')
-                    .filter('_type == "sitemap"')
-                ),
               // すべてのスキーマを表示するオプション
               ...S.documentTypeListItems().filter(
                 (listItem) => {
@@ -353,15 +194,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
                     'ragConfiguration',
                     'aiGuardrails',
                     'aiProviderSettings',
-                    'knowledgeBase',
                     'representative',
-                    'aiContext',
-                    'faq',
-                    'faqCategory',
-                    'announcement',
-                    'seoSettings',
-                    'redirects',
-                    'sitemap',
                   ]
                   return id ? !definedTypes.includes(id) : true
                 }
