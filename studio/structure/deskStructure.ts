@@ -28,7 +28,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('🏠 サイト設定（LLMO/SEO）')
         .child(
           S.documentTypeListItem('siteSettings')
-            .title('📱 サイト設定 (LLMO/SEO)')
+            .title('サイト設定 (LLMO/SEO)')
         ),
 
       S.divider(),
@@ -45,17 +45,17 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('ページ')
             .items([
               S.documentTypeListItem('homepage')
-                .title('🏠 ホームページ｜使用: /'),
+                .title('ホームページ｜使用: /'),
               S.documentTypeListItem('aboutPage')
-                .title('ℹ️ カフェキネシについて｜使用: /'),
+                .title('カフェキネシについて｜使用: /'),
               S.documentTypeListItem('page')
-                .title('📄 ページ｜使用: /[slug]'),
+                .title('ページ｜使用: /[slug]'),
               S.documentTypeListItem('schoolPage')
-                .title('🎓 スクールページ設定｜使用: /school'),
+                .title('スクールページ設定｜使用: /school'),
               S.documentTypeListItem('instructorPage')
-                .title('👨‍🏫 インストラクターページ設定｜使用: /instructor'),
+                .title('インストラクターページ設定｜使用: /instructor'),
               S.documentTypeListItem('profilePage')
-                .title('👤 プロフィールページ｜使用: /profile'),
+                .title('プロフィールページ｜使用: /profile'),
             ])
         ),
 
@@ -73,9 +73,9 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('ブログ記事')
             .items([
               S.documentTypeListItem('blogPost')
-                .title('📝 ブログ記事｜使用: /blog, /blog/[slug]'),
+                .title('ブログ記事｜使用: /blog, /blog/[slug]'),
               S.documentTypeListItem('author')
-                .title('✏️ 著者｜使用: /author/[slug], /blog/*'),
+                .title('著者｜使用: /author/[slug], /blog/*'),
             ])
         ),
 
@@ -89,7 +89,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('🎓 講座')
         .child(
           S.documentTypeListItem('course')
-            .title('📚 講座｜使用: /school, /school/[courseId]')
+            .title('講座｜使用: /school, /school/[courseId]')
         ),
 
       S.divider(),
@@ -102,7 +102,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('👨‍🏫 インストラクター')
         .child(
           S.documentTypeListItem('instructor')
-            .title('👨‍🏫 インストラクター｜使用: /instructor, /instructor/[prefecture]/[slug]')
+            .title('インストラクター｜使用: /instructor, /instructor/[prefecture]/[slug]')
         ),
 
       S.divider(),
@@ -115,7 +115,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('📅 イベント')
         .child(
           S.documentTypeListItem('event')
-            .title('📅 イベント｜使用: /events/[slug], /calendar')
+            .title('イベント｜使用: /events/[slug], /calendar')
         ),
 
       S.divider(),
@@ -132,11 +132,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('チャット設定')
             .items([
               S.documentTypeListItem('chatModal')
-                .title('💬 チャットモーダル設定｜使用: /'),
+                .title('チャットモーダル設定｜使用: /'),
               S.documentTypeListItem('faqCard')
-                .title('❓ FAQ質問カード｜使用: / (チャットモーダル)'),
+                .title('FAQ質問カード｜使用: / (チャットモーダル)'),
               S.documentTypeListItem('chatConfiguration')
-                .title('⚙️ チャット設定｜使用: /api/chat/rag'),
+                .title('チャット設定｜使用: /api/chat/rag'),
             ])
         ),
 
@@ -154,11 +154,11 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
             .title('AI/RAG設定')
             .items([
               S.documentTypeListItem('ragConfiguration')
-                .title('🔧 RAG設定｜使用: /api/chat/rag'),
+                .title('RAG設定｜使用: /api/chat/rag'),
               S.documentTypeListItem('aiGuardrails')
-                .title('🛡️ AIガードレール設定｜使用: /api/chat/rag'),
+                .title('AIガードレール設定｜使用: /api/chat/rag'),
               S.documentTypeListItem('aiProviderSettings')
-                .title('🔌 AIプロバイダー設定｜使用: /api/chat/rag'),
+                .title('AIプロバイダー設定｜使用: /api/chat/rag'),
             ])
         ),
 
@@ -172,7 +172,7 @@ export const structure = (S: StructureBuilder, context: StructureResolverContext
         .title('👤 代表者')
         .child(
           S.documentTypeListItem('representative')
-            .title('👤 代表者｜使用: API（DB同期）')
+            .title('代表者｜使用: API（DB同期）')
         ),
 
       S.divider(),
