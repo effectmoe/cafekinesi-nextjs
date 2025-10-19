@@ -3,6 +3,7 @@ import {SchemaMapDashboard} from '../components/SchemaMapDashboard'
 
 export const structure = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
+    .id('root')
     .title('コンテンツ')
     .items([
       // ================================================
