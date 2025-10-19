@@ -3,8 +3,10 @@ import { defineField, defineType } from 'sanity'
 // AI-First: 統合された人物エンティティ
 export default defineType({
   name: 'person',
-  title: '人物',
+  title: '人物 (AI-First)',
   type: 'document',
+  icon: () => '⚠️',
+  description: '📍 使用箇所: なし | ステータス: ⚠️ 未実装 | 注意: instructorスキーマと重複の可能性',
 
   // AI最適化グループ
   groups: [

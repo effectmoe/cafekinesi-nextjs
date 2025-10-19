@@ -2,11 +2,15 @@ export default {
   name: 'menuItem',
   title: 'メニューアイテム',
   type: 'document',
+  icon: () => '🍽️',
+  description: '📍 使用箇所: 不明確 | ステータス: ⚠️ 確認必要 | カフェメニューの管理（フロントエンドページ未実装？）',
   fields: [
     {
       name: 'name',
       title: '商品名',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】商品名を入力',
       validation: (Rule: any) => Rule.required(),
     },
     {
@@ -28,12 +32,15 @@ export default {
       name: 'price',
       title: '価格',
       type: 'number',
+      description: '🔴 必須',
+      placeholder: '0',
       validation: (Rule: any) => Rule.required().positive(),
     },
     {
       name: 'category',
       title: 'カテゴリー',
       type: 'reference',
+      description: '🔴 必須',
       to: [{type: 'category'}],
       validation: (Rule: any) => Rule.required(),
     },
@@ -41,6 +48,7 @@ export default {
       name: 'image',
       title: 'メイン画像',
       type: 'image',
+      description: '🔴 必須',
       options: {
         hotspot: true,
       },

@@ -2,11 +2,15 @@ export default {
   name: 'shopInfo',
   title: '店舗情報',
   type: 'document',
+  icon: () => '🏪',
+  description: '📍 使用箇所: 不明確 | ステータス: ⚠️ 確認必要 | 店舗情報の管理（フロントエンドページ未実装？）',
   fields: [
     {
       name: 'name',
       title: '店舗名',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】店舗名を入力',
       validation: (Rule: any) => Rule.required(),
     },
     {

@@ -4,19 +4,22 @@ export default defineType({
   name: 'faqCard',
   title: 'FAQ質問カード',
   type: 'document',
+  icon: () => '❓',
+  description: '📍 使用箇所: / (トップページ) | ステータス: ✅ 使用中 | FAQカードの管理（チャットモーダル用）',
   fields: [
     defineField({
       name: 'title',
       title: 'タイトル',
       type: 'string',
-      description: '質問カードに表示されるタイトル（例: 営業時間を教えて）',
+      description: '🔴 必須 | 質問カードに表示されるタイトル（例: 営業時間を教えて）',
+      placeholder: '【必須】タイトルを入力',
       validation: Rule => Rule.required()
     }),
     defineField({
       name: 'icon',
       title: 'アイコン',
       type: 'string',
-      description: 'Lucide Reactアイコン名',
+      description: '🔴 必須 | Lucide Reactアイコン名',
       options: {
         list: [
           {title: '⏰ 時計 (Clock)', value: 'Clock'},
@@ -38,7 +41,7 @@ export default defineType({
       name: 'bgColor',
       title: '背景色',
       type: 'string',
-      description: 'Tailwindクラス（例: bg-[hsl(35,22%,91%)]）',
+      description: '🔴 必須 | Tailwindクラス（例: bg-[hsl(35,22%,91%)]）',
       options: {
         list: [
           {title: '🟤 ベージュ', value: 'bg-[hsl(35,22%,91%)]'},
@@ -56,7 +59,7 @@ export default defineType({
       name: 'iconColor',
       title: 'アイコン色',
       type: 'string',
-      description: 'Tailwindクラス（例: text-[hsl(35,45%,45%)]）',
+      description: '🔴 必須 | Tailwindクラス（例: text-[hsl(35,45%,45%)]）',
       options: {
         list: [
           {title: '🟤 ブラウン（デフォルト）', value: 'text-[hsl(35,45%,45%)]'},
@@ -74,7 +77,8 @@ export default defineType({
       name: 'order',
       title: '表示順',
       type: 'number',
-      description: '小さい数字ほど先に表示されます',
+      description: '🔴 必須 | 小さい数字ほど先に表示されます',
+      placeholder: '0',
       initialValue: 0,
       validation: Rule => Rule.required().min(0)
     }),

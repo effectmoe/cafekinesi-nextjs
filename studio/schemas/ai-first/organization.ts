@@ -3,8 +3,10 @@ import { defineField, defineType } from 'sanity'
 // AI-First: 組織エンティティ
 export default defineType({
   name: 'organization',
-  title: '組織',
+  title: '組織 (AI-First)',
   type: 'document',
+  icon: () => '⚠️',
+  description: '📍 使用箇所: なし | ステータス: ⚠️ 未実装 | AI検索用の組織情報（将来的な実装を想定）',
 
   groups: [
     { name: 'ai', title: 'AI検索情報' },

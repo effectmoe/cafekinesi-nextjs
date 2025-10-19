@@ -4,11 +4,15 @@ export default defineType({
   name: 'aboutPage',
   title: 'カフェキネシについて（Aboutページ）',
   type: 'document',
+  icon: () => 'ℹ️',
+  description: '📍 使用箇所: /about | ステータス: ✅ 使用中 | チャットAPI | カフェキネシの紹介ページ',
   fields: [
     defineField({
       name: 'title',
       title: 'ページタイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】ページタイトルを入力',
       validation: Rule => Rule.required(),
       initialValue: 'カフェキネシについて'
     }),
@@ -27,6 +31,8 @@ export default defineType({
               name: 'alt',
               type: 'string',
               title: '代替テキスト',
+              description: '🔴 必須',
+              placeholder: '【必須】代替テキストを入力',
               validation: Rule => Rule.required()
             }
           ]
@@ -258,6 +264,8 @@ export default defineType({
                       name: 'title',
                       title: 'タイトル',
                       type: 'string',
+                      description: '🔴 必須',
+                      placeholder: '【必須】タイトルを入力',
                       validation: Rule => Rule.required()
                     },
                     {
@@ -270,8 +278,9 @@ export default defineType({
                       name: 'link',
                       title: 'リンク先URL',
                       type: 'string',
-                      validation: Rule => Rule.required(),
-                      description: '例: /school または https://example.com'
+                      description: '🔴 必須 | 例: /school または https://example.com',
+                      placeholder: '【必須】リンク先URLを入力',
+                      validation: Rule => Rule.required()
                     },
                     {
                       name: 'image',

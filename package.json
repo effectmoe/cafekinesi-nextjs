@@ -17,7 +17,8 @@
     "vector:sync": "tsx scripts/sync-courses-to-vector-db.ts",
     "vector:sync-events": "tsx scripts/sync-events-to-vector-db.ts",
     "vector:search": "tsx scripts/test-vector-search.ts",
-    "algolia:sync": "tsx scripts/sync-algolia.ts"
+    "algolia:sync": "tsx scripts/sync-algolia.ts",
+    "analyze:schemas": "node scripts/analyze-schemas.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

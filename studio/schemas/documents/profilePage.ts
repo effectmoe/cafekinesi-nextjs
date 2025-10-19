@@ -6,6 +6,7 @@ export default defineType({
   title: 'プロフィールページ設定',
   type: 'document',
   icon: User,
+  description: '📍 使用箇所: /profile | ステータス: ✅ 使用中 | API（DB同期） | 代表者のプロフィールページ',
   groups: [
     {
       name: 'profile',
@@ -30,6 +31,8 @@ export default defineType({
       name: 'title',
       title: 'ページタイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】ページタイトルを入力',
       initialValue: 'プロフィール',
       validation: (Rule) => Rule.required(),
       group: 'profile',
@@ -44,6 +47,7 @@ export default defineType({
           name: 'photo',
           title: 'プロフィール写真',
           type: 'image',
+          description: '🔴 必須',
           options: {
             hotspot: true,
           },
@@ -53,6 +57,8 @@ export default defineType({
           name: 'name',
           title: '名前',
           type: 'string',
+          description: '🔴 必須',
+          placeholder: '【必須】名前を入力',
           initialValue: '星 ユカリ',
           validation: (Rule) => Rule.required(),
         }),
@@ -81,6 +87,7 @@ export default defineType({
       name: 'historyItems',
       title: '経歴項目',
       type: 'array',
+      description: '🔴 必須',
       of: [
         {
           type: 'object',
@@ -90,12 +97,16 @@ export default defineType({
               title: 'テキスト',
               type: 'text',
               rows: 3,
+              description: '🔴 必須',
+              placeholder: '【必須】経歴テキストを入力',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'order',
               title: '表示順',
               type: 'number',
+              description: '🔴 必須',
+              placeholder: '1',
               validation: (Rule) => Rule.required().integer().min(1),
             }),
           ],
@@ -135,6 +146,7 @@ export default defineType({
       name: 'activitiesItems',
       title: '活動項目',
       type: 'array',
+      description: '🔴 必須',
       of: [
         {
           type: 'object',
@@ -143,12 +155,16 @@ export default defineType({
               name: 'title',
               title: 'タイトル',
               type: 'string',
+              description: '🔴 必須',
+              placeholder: '【必須】活動タイトルを入力',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'order',
               title: '表示順',
               type: 'number',
+              description: '🔴 必須',
+              placeholder: '1',
               validation: (Rule) => Rule.required().integer().min(1),
             }),
           ],

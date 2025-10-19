@@ -1,0 +1,97 @@
+/**
+ * Sanity Studio カスタムスタイル
+ * 必須フィールドに赤い「*」マークを自動表示
+ */
+
+/* ========== 必須フィールドに赤い「*」を表示 ========== */
+
+/* validation: (Rule) => Rule.required() が設定されているフィールドのラベルに赤い「*」を追加 */
+
+/* すべてのFormField内のLabelで、対応するinput/textarea/selectにrequired属性がある場合 */
+[data-ui="FormField"]:has(input[required]) > [data-ui="Stack"] > [data-ui="Stack"] [data-ui="Label"] span::after,
+[data-ui="FormField"]:has(textarea[required]) > [data-ui="Stack"] > [data-ui="Stack"] [data-ui="Label"] span::after,
+[data-ui="FormField"]:has(select[required]) > [data-ui="Stack"] > [data-ui="Stack"] [data-ui="Label"] span::after {
+  content: ' *';
+  color: #ef4444; /* 赤色 (Tailwind red-500) */
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* より広範なセレクター：他の構造にも対応 */
+[data-ui="FormField"][data-__field__="true"]:has(input[required]) [data-ui="Label"] span::after,
+[data-ui="FormField"][data-__field__="true"]:has(textarea[required]) [data-ui="Label"] span::after,
+[data-ui="FormField"][data-__field__="true"]:has(select[required]) [data-ui="Label"] span::after,
+[data-ui="FormField"][data-__field__="true"]:has([aria-required="true"]) [data-ui="Label"] span::after {
+  content: ' *';
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* アクセシビリティ属性を利用（より広範囲に対応） */
+[aria-required="true"] ~ [data-ui="Label"] span::after,
+[data-ui="FormField"]:has([aria-required="true"]) [data-ui="Label"] span::after {
+  content: ' *';
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* 特定のフィールドタイプに対する対応 */
+/* String Input */
+[data-ui="FormField"]:has([data-testid="string-input"][required]) [data-ui="Label"] span::after,
+/* Text Input */
+[data-ui="FormField"]:has([data-testid="text-input"][required]) [data-ui="Label"] span::after,
+/* Number Input */
+[data-ui="FormField"]:has([data-testid="number-input"][required]) [data-ui="Label"] span::after,
+/* Slug Input */
+[data-ui="FormField"]:has([data-testid="slug-input"][required]) [data-ui="Label"] span::after,
+/* DateTime Input */
+[data-ui="FormField"]:has([data-testid="datetime-input"][required]) [data-ui="Label"] span::after,
+/* Array Input */
+[data-ui="FormField"]:has([data-testid="array-input"][required]) [data-ui="Label"] span::after,
+/* Image Input */
+[data-ui="FormField"]:has([data-testid="image-input"][required]) [data-ui="Label"] span::after {
+  content: ' *';
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* フォーカス時の必須マークの色を強調 */
+[data-ui="FormField"]:has(input[required]:focus) [data-ui="Label"] span::after,
+[data-ui="FormField"]:has(textarea[required]:focus) [data-ui="Label"] span::after,
+[data-ui="FormField"]:has(select[required]:focus) [data-ui="Label"] span::after {
+  color: #dc2626; /* より濃い赤色 (Tailwind red-600) */
+  animation: pulse 1s ease-in-out;
+}
+
+/* エラー状態の必須フィールドのスタイル調整 */
+[data-ui="FormField"]:has([data-testid*="input-error"]) [data-ui="Label"] span::after {
+  color: #dc2626;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ダークモード対応 */
+[data-scheme="dark"] [data-ui="FormField"]:has(input[required]) [data-ui="Label"] span::after,
+[data-scheme="dark"] [data-ui="FormField"]:has(textarea[required]) [data-ui="Label"] span::after,
+[data-scheme="dark"] [data-ui="FormField"]:has(select[required]) [data-ui="Label"] span::after,
+[data-scheme="dark"] [aria-required="true"] ~ [data-ui="Label"] span::after {
+  color: #f87171; /* 明るい赤色 (Tailwind red-400) */
+}
+
+/* 必須フィールドのラベルを少し太字に */
+[data-ui="FormField"]:has(input[required]) [data-ui="Label"],
+[data-ui="FormField"]:has(textarea[required]) [data-ui="Label"],
+[data-ui="FormField"]:has(select[required]) [data-ui="Label"] {
+  font-weight: 500;
+}

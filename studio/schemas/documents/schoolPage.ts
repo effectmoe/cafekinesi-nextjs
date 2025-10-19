@@ -6,6 +6,7 @@ export default defineType({
   title: 'スクールページ設定',
   type: 'document',
   icon: GraduationCap,
+  description: '📍 使用箇所: /school | ステータス: ✅ 使用中 | スクールページの設定（FAQ、学習フローなど）',
   groups: [
     {
       name: 'content',
@@ -30,6 +31,8 @@ export default defineType({
       name: 'title',
       title: 'ページタイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】ページタイトルを入力',
       initialValue: 'スクール',
       validation: (Rule) => Rule.required(),
       group: 'content',

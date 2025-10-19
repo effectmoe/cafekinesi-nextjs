@@ -15,6 +15,7 @@ export default defineType({
   title: '講座',
   type: 'document',
   icon: BookOpen,
+  description: '📍 使用箇所: /school, /school/[courseId] | ステータス: ✅ 使用中 | AI検索対応 | 講座の管理',
   groups: [
     {
       name: 'ai',
@@ -110,7 +111,8 @@ export default defineType({
       name: 'courseId',
       title: '講座ID',
       type: 'string',
-      description: '⚠️ 重要: URLに使用される一意の識別子（例：kinesi1, peach-touch）。他の講座と重複しないようにしてください。',
+      description: '🔴 必須 | ⚠️ 重要: URLに使用される一意の識別子（例：kinesi1, peach-touch）。他の講座と重複しないようにしてください。',
+      placeholder: '【必須】例：kinesi1',
       validation: (Rule) => Rule.required().custom(async (value, context) => {
         if (!value) return true
 
@@ -143,7 +145,8 @@ export default defineType({
       name: 'title',
       title: '講座名',
       type: 'string',
-      description: '例：カフェキネシⅠ',
+      description: '🔴 必須',
+      placeholder: '【必須】例：カフェキネシⅠ',
       validation: (Rule) => Rule.required(),
       group: 'basic',
     }),
@@ -151,7 +154,8 @@ export default defineType({
       name: 'subtitle',
       title: 'サブタイトル',
       type: 'string',
-      description: '例：基礎セラピー講座',
+      description: '🔴 必須',
+      placeholder: '【必須】例：基礎セラピー講座',
       validation: (Rule) => Rule.required(),
       group: 'basic',
     }),
@@ -160,6 +164,8 @@ export default defineType({
       title: '講座説明',
       type: 'text',
       rows: 3,
+      description: '🔴 必須',
+      placeholder: '【必須】講座の説明を入力してください',
       validation: (Rule) => Rule.required(),
       group: 'basic',
     }),
@@ -168,7 +174,7 @@ export default defineType({
       title: '講座の特徴',
       type: 'array',
       of: [{ type: 'string' }],
-      description: '講座の主な特徴をリスト形式で入力',
+      description: '🔴 必須（最低3つ） | 講座の主な特徴をリスト形式で入力',
       validation: (Rule) => Rule.required().min(3),
       group: 'basic',
     }),
@@ -205,7 +211,7 @@ export default defineType({
         layout: 'radio'
       },
       validation: (Rule) => Rule.required().error('カラーテーマを選択してください'),
-      description: '講座カードの背景色を設定します',
+      description: '🔴 必須 | 講座カードの背景色を設定します',
       group: 'basic',
     }),
     defineField({
@@ -228,7 +234,8 @@ export default defineType({
       name: 'order',
       title: '表示順序',
       type: 'number',
-      description: '⚠️ 重要: 講座の表示順序（小さい番号が上に表示）。他の講座と重複しないようにしてください。',
+      description: '🔴 必須 | ⚠️ 重要: 講座の表示順序（小さい番号が上に表示）。他の講座と重複しないようにしてください。',
+      placeholder: '【必須】数字を入力（例：1, 2, 3...）',
       validation: (Rule) => Rule.required().min(0).custom(async (value, context) => {
         if (value === undefined || value === null) return true
 
@@ -271,7 +278,7 @@ export default defineType({
       },
       initialValue: 'main',
       validation: (Rule) => Rule.required(),
-      description: 'この講座が主要講座か補助講座かを選択してください',
+      description: '🔴 必須 | この講座が主要講座か補助講座かを選択してください',
       group: 'basic',
     }),
     defineField({

@@ -4,11 +4,15 @@ export default defineType({
   name: 'homepage',
   title: 'トップページ',
   type: 'document',
+  icon: () => '🏠',
+  description: '📍 使用箇所: / (トップページ) | ステータス: ✅ 使用中 | トップページの設定（カテゴリーカード、ブログセクションなど）',
   fields: [
     defineField({
       name: 'title',
       title: 'ページタイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】ページタイトルを入力',
       validation: Rule => Rule.required(),
       initialValue: 'カフェキネシ - Cafe Kinesi'
     }),
@@ -17,8 +21,8 @@ export default defineType({
       title: 'カテゴリーカード',
       type: 'array',
       of: [{ type: 'categoryCard' }],
-      validation: Rule => Rule.required().min(6).max(6).error('6枚のカードを設定してください'),
-      description: 'TOPページに表示する6枚のカテゴリーカード'
+      description: '🔴 必須 | TOPページに表示する6枚のカテゴリーカード',
+      validation: Rule => Rule.required().min(6).max(6).error('6枚のカードを設定してください')
     }),
     defineField({
       name: 'blogSection',

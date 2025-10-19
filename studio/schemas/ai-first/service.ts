@@ -3,8 +3,10 @@ import { defineField, defineType } from 'sanity'
 // AI-First: 統合サービスエンティティ
 export default defineType({
   name: 'service',
-  title: 'サービス',
+  title: 'サービス (AI-First)',
   type: 'document',
+  icon: () => '⚠️',
+  description: '📍 使用箇所: なし | ステータス: ⚠️ 未実装 | 注意: instructorPage.tsのservicesSectionと混同注意',
 
   groups: [
     { name: 'ai', title: 'AI検索情報' },

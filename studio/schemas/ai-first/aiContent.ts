@@ -3,8 +3,10 @@ import { defineField, defineType } from 'sanity'
 // AI-First: AI最適化コンテンツエンティティ
 export default defineType({
   name: 'aiContent',
-  title: 'AI最適化コンテンツ',
+  title: 'AI最適化コンテンツ (AI-First)',
   type: 'document',
+  icon: () => '⚠️',
+  description: '📍 使用箇所: なし | ステータス: ⚠️ 未実装 | AI検索最適化用のコンテンツ（将来的な実装を想定）',
 
   groups: [
     { name: 'ai', title: 'AI最適化' },

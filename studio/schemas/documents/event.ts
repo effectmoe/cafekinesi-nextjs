@@ -2,11 +2,15 @@ export default {
   name: 'event',
   title: 'イベント',
   type: 'document',
+  icon: () => '📅',
+  description: '📍 使用箇所: /events/[slug], /calendar | ステータス: ✅ 使用中 | AI検索対応 | イベントの管理',
   fields: [
     {
       name: 'title',
       title: 'イベント名',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】イベント名を入力',
       validation: (Rule: any) => Rule.required(),
     },
     {
@@ -18,6 +22,7 @@ export default {
       name: 'slug',
       title: 'スラッグ',
       type: 'slug',
+      description: '🔴 必須 | タイトルから自動生成されます',
       options: {
         source: 'title',
         maxLength: 96,
@@ -60,12 +65,14 @@ export default {
       name: 'startDate',
       title: '開始日時',
       type: 'datetime',
+      description: '🔴 必須',
       validation: (Rule: any) => Rule.required(),
     },
     {
       name: 'endDate',
       title: '終了日時',
       type: 'datetime',
+      description: '🔴 必須',
       validation: (Rule: any) => Rule.required(),
     },
     {

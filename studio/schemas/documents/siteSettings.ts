@@ -2,6 +2,8 @@ export default {
   name: 'siteSettings',
   type: 'document',
   title: 'サイト設定',
+  icon: () => '⚙️',
+  description: '📍 使用箇所: 全ページ（グローバル設定） | ステータス: ⚠️ 確認必要 | サイト全体の設定（シングルトン）',
   __experimental_actions: ['update', 'publish'], // create, deleteを無効化
   fields: [
     {

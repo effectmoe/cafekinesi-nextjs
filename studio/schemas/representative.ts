@@ -4,6 +4,8 @@ export default defineType({
   name: 'representative',
   title: '代表者',
   type: 'document',
+  icon: () => '👔',
+  description: '📍 使用箇所: API（DB同期） | ステータス: ✅ 使用中 | 代表者情報の管理（データベース同期用）',
   fields: [
     defineField({
       name: 'name',

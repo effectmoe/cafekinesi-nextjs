@@ -6,6 +6,7 @@ export default defineType({
   title: 'インストラクターページ設定',
   type: 'document',
   icon: Users,
+  description: '📍 使用箇所: /instructor | ステータス: ✅ 使用中 | インストラクターページの設定（サービスセクション含む）',
   groups: [
     {
       name: 'content',
@@ -26,6 +27,8 @@ export default defineType({
       name: 'title',
       title: 'ページタイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】ページタイトルを入力',
       initialValue: 'インストラクターを探す',
       validation: (Rule) => Rule.required(),
       group: 'content',
@@ -133,6 +136,8 @@ export default defineType({
                   name: 'title',
                   title: 'サービス名',
                   type: 'string',
+                  description: '🔴 必須',
+                  placeholder: '【必須】サービス名を入力',
                   validation: (Rule) => Rule.required(),
                 }),
                 defineField({
@@ -140,6 +145,8 @@ export default defineType({
                   title: '説明',
                   type: 'text',
                   rows: 4,
+                  description: '🔴 必須',
+                  placeholder: '【必須】説明を入力',
                   validation: (Rule) => Rule.required(),
                 }),
                 defineField({

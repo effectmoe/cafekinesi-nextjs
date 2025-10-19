@@ -2,11 +2,15 @@ export default {
   name: 'news',
   title: 'お知らせ',
   type: 'document',
+  icon: () => '📢',
+  description: '📍 使用箇所: 不明確 | ステータス: ⚠️ 確認必要 | ニュース・お知らせの管理（フロントエンドページ未実装？）',
   fields: [
     {
       name: 'title',
       title: 'タイトル',
       type: 'string',
+      description: '🔴 必須',
+      placeholder: '【必須】お知らせのタイトルを入力',
       validation: (Rule: any) => Rule.required(),
     },
     {
@@ -22,6 +26,7 @@ export default {
         source: 'title',
         maxLength: 96,
       },
+      description: '🔴 必須 | タイトルから自動生成されます',
       validation: (Rule: any) => Rule.required(),
     },
     {
@@ -60,6 +65,7 @@ export default {
       name: 'publishedAt',
       title: '公開日',
       type: 'datetime',
+      description: '🔴 必須',
       validation: (Rule: any) => Rule.required(),
       initialValue: () => new Date().toISOString(),
     },

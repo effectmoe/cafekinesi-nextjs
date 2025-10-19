@@ -2,6 +2,8 @@ export default {
   name: 'blogPost',
   title: 'ブログ記事',
   type: 'document',
+  icon: () => '📝',
+  description: '📍 使用箇所: /blog, /blog/[slug] | ステータス: ✅ 使用中 | ブログ記事の管理',
   groups: [
     {
       name: 'basic',
@@ -79,6 +81,8 @@ export default {
       title: 'タイトル',
       type: 'string',
       group: 'basic',
+      description: '🔴 必須',
+      placeholder: '【必須】記事のタイトルを入力',
       validation: (Rule: any) => Rule.required(),
     },
     {
@@ -86,7 +90,7 @@ export default {
       title: 'スラッグ',
       type: 'slug',
       group: 'basic',
-      description: '記事のURL用の識別子です。タイトルから自動生成されます。',
+      description: '🔴 必須 | 記事のURL用の識別子です。タイトルから自動生成されます。',
       options: {
         source: 'title',
         maxLength: 96,
@@ -175,7 +179,7 @@ export default {
       title: '公開日時',
       type: 'datetime',
       group: 'basic',
-      description: '記事が公開される日時を設定します。未来の日時を設定すると予約投稿になります。',
+      description: '🔴 必須 | 記事が公開される日時を設定します。未来の日時を設定すると予約投稿になります。',
       validation: (Rule: any) => Rule.required(),
       initialValue: () => new Date().toISOString(),
       options: {
@@ -190,6 +194,7 @@ export default {
       title: 'カテゴリー',
       type: 'string',
       group: 'basic',
+      description: '🔴 必須',
       options: {
         list: [
           {title: 'ウェルネス', value: 'wellness'},
@@ -220,7 +225,8 @@ export default {
       type: 'text',
       group: 'basic',
       rows: 3,
-      description: '記事一覧・SNSシェア用の短い説明文（トップページやSNSでの表示に使用）',
+      description: '🔴 必須 | 記事一覧・SNSシェア用の短い説明文（トップページやSNSでの表示に使用）',
+      placeholder: '【必須】記事の要約を200文字以内で入力',
       validation: (Rule: any) => Rule.required().max(200),
     },
     {
@@ -238,6 +244,7 @@ export default {
       title: 'メイン画像',
       type: 'image',
       group: 'media',
+      description: '🔴 必須',
       options: {
         hotspot: true,
       },

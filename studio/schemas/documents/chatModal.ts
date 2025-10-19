@@ -4,6 +4,8 @@ export default defineType({
   name: 'chatModal',
   title: 'チャットモーダル設定',
   type: 'document',
+  icon: () => '💬',
+  description: '📍 使用箇所: / (トップページ) | ステータス: ✅ 使用中 | チャットモーダルの設定',
   // シングルトン設定
   __experimental_singleton: true,
   fields: [
@@ -11,7 +13,8 @@ export default defineType({
       name: 'headerTitle',
       title: 'ヘッダータイトル',
       type: 'string',
-      description: 'チャットモーダルのヘッダーに表示されるタイトル',
+      description: '🔴 必須 | チャットモーダルのヘッダーに表示されるタイトル',
+      placeholder: '【必須】ヘッダータイトルを入力',
       initialValue: 'AIチャットアシスタント',
       validation: Rule => Rule.required()
     }),
@@ -19,7 +22,8 @@ export default defineType({
       name: 'headerSubtitle',
       title: 'ヘッダーサブタイトル',
       type: 'string',
-      description: 'ヘッダーに表示されるサブタイトル',
+      description: '🔴 必須 | ヘッダーに表示されるサブタイトル',
+      placeholder: '【必須】サブタイトルを入力',
       initialValue: '24時間いつでもお答えします',
       validation: Rule => Rule.required()
     }),
@@ -27,7 +31,8 @@ export default defineType({
       name: 'inputPlaceholder',
       title: '入力フィールドのプレースホルダー',
       type: 'string',
-      description: 'メッセージ入力欄に表示されるプレースホルダー',
+      description: '🔴 必須 | メッセージ入力欄に表示されるプレースホルダー',
+      placeholder: '【必須】プレースホルダーを入力',
       initialValue: 'メッセージを入力...',
       validation: Rule => Rule.required()
     }),
@@ -35,7 +40,8 @@ export default defineType({
       name: 'footerMessage',
       title: 'フッターメッセージ',
       type: 'string',
-      description: '入力エリアの下に表示されるメッセージ',
+      description: '🔴 必須 | 入力エリアの下に表示されるメッセージ',
+      placeholder: '【必須】フッターメッセージを入力',
       initialValue: 'セキュア接続・プライバシー保護・会話は保存されません',
       validation: Rule => Rule.required()
     }),
@@ -43,7 +49,8 @@ export default defineType({
       name: 'welcomeMessage',
       title: '初期メッセージ',
       type: 'text',
-      description: 'チャット開始時にAIが表示する最初のメッセージ',
+      description: '🔴 必須 | チャット開始時にAIが表示する最初のメッセージ',
+      placeholder: '【必須】初期メッセージを入力',
       initialValue: 'こんにちは！Cafe Kinesiへようこそ☕ カフェについて何でもお尋ねください。',
       validation: Rule => Rule.required()
     }),
@@ -60,6 +67,7 @@ export default defineType({
               name: 'role',
               title: '送信者',
               type: 'string',
+              description: '🔴 必須',
               options: {
                 list: [
                   {title: 'ユーザー', value: 'user'},
@@ -72,13 +80,16 @@ export default defineType({
               name: 'content',
               title: 'メッセージ内容',
               type: 'text',
+              description: '🔴 必須',
+              placeholder: '【必須】メッセージ内容を入力',
               validation: Rule => Rule.required()
             },
             {
               name: 'time',
               title: '表示時刻',
               type: 'string',
-              description: '例: 03:07',
+              description: '🔴 必須 | 例: 03:07',
+              placeholder: '【必須】表示時刻を入力（例: 03:07）',
               validation: Rule => Rule.required()
             }
           ],
