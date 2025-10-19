@@ -1,187 +1,371 @@
-import {StructureBuilder} from 'sanity/structure'
-import {PreviewPane} from '../components/PreviewPane'
+import {StructureBuilder, StructureResolverContext} from 'sanity/structure'
+import {SchemaMapDashboard} from '../components/SchemaMapDashboard'
 
-export const structure = (S: StructureBuilder) =>
+export const structure = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
-    .id('root')
     .title('コンテンツ')
     .items([
-      // サイト設定（LLMO/SEO）シングルトン
+      // ================================================
+      // 📊 スキーママップ（ダッシュボード）
+      // ================================================
       S.listItem()
-        .title('サイト設定 (LLMO/SEO)')
-        .id('siteConfig')
+        .title('📊 スキーママップ')
         .child(
-          S.document()
-            .schemaType('siteConfig')
-            .documentId('ouiRwKup4ANFrhR4PnqqqH')
-        ),
-
-      // サイト設定（シングルトン）
-      S.listItem()
-        .title('サイト設定')
-        .id('siteSettings')
-        .child(
-          S.document()
-            .schemaType('siteSettings')
-            .documentId('siteSettings')
-            .views([
-              S.view.form().id('siteSettingsEditor').title('編集'),
-              S.view.component(PreviewPane).id('siteSettingsPreview').title('プレビュー')
-            ])
-        ),
-
-      // ホームページ（シングルトン）
-      S.listItem()
-        .title('ホームページ')
-        .id('homepage')
-        .child(
-          S.document()
-            .schemaType('homepage')
-            .documentId('homepage')
+          S.component(SchemaMapDashboard)
+            .title('スキーママップ')
         ),
 
       S.divider(),
 
-      // カフェキネシについて（Aboutページ）シングルトン
+      // ================================================
+      // 🏠 サイト設定
+      // ================================================
       S.listItem()
-        .title('カフェキネシについて（Aboutページ）')
-        .id('aboutPage')
-        .child(
-          S.document()
-            .schemaType('aboutPage')
-            .documentId('aboutPage')
-            .views([
-              S.view.form().id('aboutPageEditor').title('編集'),
-              S.view.component(PreviewPane).id('aboutPagePreview').title('プレビュー')
-            ])
-        ),
-
-      // チャットモーダル設定（シングルトン）
-      S.listItem()
-        .title('チャットモーダル設定')
-        .id('chatModal')
-        .child(
-          S.document()
-            .schemaType('chatModal')
-            .documentId('chatModal-main')
-            .views([
-              S.view.form().id('chatModalEditor').title('編集'),
-              S.view.component(PreviewPane).id('chatModalPreview').title('プレビュー')
-            ])
-        ),
-
-      S.divider(),
-
-      // ページ
-      S.listItem()
-        .title('ページ')
-        .id('pages')
-        .child(
-          S.documentTypeList('page')
-            .title('ページ')
-        ),
-
-      // ブログ記事
-      S.listItem()
-        .title('ブログ記事')
-        .id('blogPosts')
-        .child(
-          S.documentTypeList('blogPost')
-            .title('ブログ記事')
-            .filter('_type == "blogPost"')
-            .apiVersion('2024-01-01')
-            .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
-        ),
-
-      S.divider(),
-
-      // スクールページ設定（シングルトン）
-      S.listItem()
-        .title('スクールページ設定')
-        .id('schoolPage')
-        .child(
-          S.document()
-            .schemaType('schoolPage')
-            .documentId('schoolPage')
-            .views([
-              S.view.form().id('schoolPageEditor').title('編集'),
-              S.view.component(PreviewPane).id('schoolPagePreview').title('プレビュー')
-            ])
-        ),
-
-      // 講座を階層的に表示
-      S.listItem()
-        .title('講座')
-        .id('courses')
+        .title('🏠 サイト設定（LLMO/SEO）')
         .child(
           S.list()
-            .id('courses-list')
-            .title('講座一覧')
+            .title('サイト設定')
             .items([
-              // すべての講座
-              S.listItem()
-                .title('すべての講座')
-                .id('all-courses')
-                .child(
-                  S.documentTypeList('course')
-                    .title('すべての講座')
-                    .filter('_type == "course"')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                ),
-
-              S.divider(),
-
-              // 主要講座
-              S.listItem()
-                .title('主要講座')
-                .id('main-courses')
+              S.documentTypeListItem('siteSettings')
+                .title('📱 サイト設定 (LLMO/SEO)')
                 .child(
                   S.documentList()
-                    .id('main-courses-list')
-                    .title('主要講座')
-                    .filter('_type == "course" && courseType == "main"')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                ),
-
-              // 補助講座
-              S.listItem()
-                .title('補助講座')
-                .id('auxiliary-courses')
-                .child(
-                  S.documentList()
-                    .id('auxiliary-courses-list')
-                    .title('補助講座')
-                    .filter('_type == "course" && courseType == "auxiliary"')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                    .title('サイト設定')
+                    .filter('_type == "siteSettings"')
                 ),
             ])
         ),
 
       S.divider(),
 
-      // その他のコンテンツ
-      ...S.documentTypeListItems().filter(
-        (listItem) => ![
-          'siteConfig',  // サイト設定（LLMO/SEO）は上で明示的に定義
-          'siteSettings',
-          'homepage',
-          'aboutPage',
-          'chatModal',
-          'page',
-          'blogPost',
-          'course',  // 講座は上で明示的に定義
-          'schoolPage',  // スクールページは上で明示的に定義
-          // オブジェクト・コンポーネントスキーマは非表示
-          'seo',
-          'hero',
-          'cta',
-          'feature',
-          'testimonial',
-          'customImage',
-          'portableText',
-          'videoEmbed',
-          'socialEmbed',
-          'codeBlock'
-        ].includes(listItem.getId() ?? '')
-      )
+      // ================================================
+      // 📄 ページ管理
+      // ================================================
+      S.listItem()
+        .title('📄 ページ管理')
+        .child(
+          S.list()
+            .title('ページ')
+            .items([
+              S.documentTypeListItem('homepage')
+                .title('🏠 ホームページ｜使用: /')
+                .child(
+                  S.documentList()
+                    .title('ホームページ')
+                    .filter('_type == "homepage"')
+                ),
+              S.documentTypeListItem('aboutPage')
+                .title('ℹ️ カフェキネシについて｜使用: /')
+                .child(
+                  S.documentList()
+                    .title('カフェキネシについて')
+                    .filter('_type == "aboutPage"')
+                ),
+              S.documentTypeListItem('page')
+                .title('📄 ページ｜使用: /[slug]')
+                .child(
+                  S.documentList()
+                    .title('ページ')
+                    .filter('_type == "page"')
+                ),
+              S.documentTypeListItem('schoolPage')
+                .title('🎓 スクールページ設定｜使用: /school')
+                .child(
+                  S.documentList()
+                    .title('スクールページ設定')
+                    .filter('_type == "schoolPage"')
+                ),
+              S.documentTypeListItem('instructorPage')
+                .title('👨‍🏫 インストラクターページ設定｜使用: /instructor')
+                .child(
+                  S.documentList()
+                    .title('インストラクターページ設定')
+                    .filter('_type == "instructorPage"')
+                ),
+              S.documentTypeListItem('profilePage')
+                .title('👤 プロフィールページ｜使用: /profile')
+                .child(
+                  S.documentList()
+                    .title('プロフィールページ')
+                    .filter('_type == "profilePage"')
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 📝 ブログ記事
+      // ================================================
+      S.listItem()
+        .title('📝 ブログ記事')
+        .child(
+          S.list()
+            .title('ブログ記事')
+            .items([
+              S.documentTypeListItem('blogPost')
+                .title('📝 ブログ記事｜使用: /blog, /blog/[slug]')
+                .child(
+                  S.documentList()
+                    .title('ブログ記事')
+                    .filter('_type == "blogPost"')
+                ),
+              S.documentTypeListItem('author')
+                .title('✏️ 著者｜使用: /author/[slug], /blog/*')
+                .child(
+                  S.documentList()
+                    .title('著者')
+                    .filter('_type == "author"')
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 🎓 講座
+      // ================================================
+      S.listItem()
+        .title('🎓 講座')
+        .child(
+          S.documentTypeListItem('course')
+            .title('📚 講座｜使用: /school, /school/[courseId]')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 👨‍🏫 インストラクター
+      // ================================================
+      S.listItem()
+        .title('👨‍🏫 インストラクター')
+        .child(
+          S.documentTypeListItem('instructor')
+            .title('👨‍🏫 インストラクター｜使用: /instructor, /instructor/[prefecture]/[slug]')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 📅 イベント
+      // ================================================
+      S.listItem()
+        .title('📅 イベント')
+        .child(
+          S.documentTypeListItem('event')
+            .title('📅 イベント｜使用: /events/[slug], /calendar')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 💬 チャット設定
+      // ================================================
+      S.listItem()
+        .title('💬 チャット設定')
+        .child(
+          S.list()
+            .title('チャット設定')
+            .items([
+              S.documentTypeListItem('chatModal')
+                .title('💬 チャットモーダル設定｜使用: /')
+                .child(
+                  S.documentList()
+                    .title('チャットモーダル設定')
+                    .filter('_type == "chatModal"')
+                ),
+              S.documentTypeListItem('faqCard')
+                .title('❓ FAQ質問カード｜使用: / (チャットモーダル)')
+                .child(
+                  S.documentList()
+                    .title('FAQ質問カード')
+                    .filter('_type == "faqCard"')
+                ),
+              S.documentTypeListItem('chatConfiguration')
+                .title('⚙️ チャット設定｜使用: /api/chat/rag')
+                .child(
+                  S.documentList()
+                    .title('チャット設定')
+                    .filter('_type == "chatConfiguration"')
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 🤖 AI/RAG設定
+      // ================================================
+      S.listItem()
+        .title('🤖 AI/RAG設定')
+        .child(
+          S.list()
+            .title('AI/RAG設定')
+            .items([
+              S.documentTypeListItem('ragConfiguration')
+                .title('🔧 RAG設定｜使用: /api/chat/rag')
+                .child(
+                  S.documentList()
+                    .title('RAG設定')
+                    .filter('_type == "ragConfiguration"')
+                ),
+              S.documentTypeListItem('aiGuardrails')
+                .title('🛡️ AIガードレール設定｜使用: /api/chat/rag')
+                .child(
+                  S.documentList()
+                    .title('AIガードレール設定')
+                    .filter('_type == "aiGuardrails"')
+                ),
+              S.documentTypeListItem('aiProviderSettings')
+                .title('🔌 AIプロバイダー設定｜使用: /api/chat/rag')
+                .child(
+                  S.documentList()
+                    .title('AIプロバイダー設定')
+                    .filter('_type == "aiProviderSettings"')
+                ),
+              S.documentTypeListItem('knowledgeBase')
+                .title('📚 ナレッジベース')
+                .child(
+                  S.documentList()
+                    .title('ナレッジベース')
+                    .filter('_type == "knowledgeBase"')
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 👤 代表者
+      // ================================================
+      S.listItem()
+        .title('👤 代表者')
+        .child(
+          S.documentTypeListItem('representative')
+            .title('👤 代表者｜使用: API（DB同期）')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 📋 AI context
+      // ================================================
+      S.listItem()
+        .title('📋 AI context')
+        .child(
+          S.documentTypeListItem('aiContext')
+            .title('📋 AI context')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // ❓ FAQ
+      // ================================================
+      S.listItem()
+        .title('❓ FAQ')
+        .child(
+          S.list()
+            .title('FAQ')
+            .items([
+              S.documentTypeListItem('faq')
+                .title('❓ FAQ')
+                .child(
+                  S.documentList()
+                    .title('FAQ')
+                    .filter('_type == "faq"')
+                ),
+              S.documentTypeListItem('faqCategory')
+                .title('📁 FAQカテゴリー')
+                .child(
+                  S.documentList()
+                    .title('FAQカテゴリー')
+                    .filter('_type == "faqCategory"')
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 📢 お知らせ
+      // ================================================
+      S.listItem()
+        .title('📢 お知らせ')
+        .child(
+          S.documentTypeListItem('announcement')
+            .title('📢 お知らせ')
+        ),
+
+      S.divider(),
+
+      // ================================================
+      // 🗂️ その他のコンテンツタイプ
+      // ================================================
+      S.listItem()
+        .title('🗂️ その他のコンテンツタイプ')
+        .child(
+          S.list()
+            .title('その他')
+            .items([
+              S.documentTypeListItem('seoSettings')
+                .title('🔍 SEO設定')
+                .child(
+                  S.documentList()
+                    .title('SEO設定')
+                    .filter('_type == "seoSettings"')
+                ),
+              S.documentTypeListItem('redirects')
+                .title('🔀 リダイレクト設定')
+                .child(
+                  S.documentList()
+                    .title('リダイレクト設定')
+                    .filter('_type == "redirects"')
+                ),
+              S.documentTypeListItem('sitemap')
+                .title('🗺️ サイトマップ設定')
+                .child(
+                  S.documentList()
+                    .title('サイトマップ設定')
+                    .filter('_type == "sitemap"')
+                ),
+              // すべてのスキーマを表示するオプション
+              ...S.documentTypeListItems().filter(
+                (listItem) => {
+                  const id = listItem.getId()
+                  // すでに上で定義したスキーマは除外
+                  const definedTypes = [
+                    'siteSettings',
+                    'homepage',
+                    'aboutPage',
+                    'page',
+                    'schoolPage',
+                    'instructorPage',
+                    'profilePage',
+                    'blogPost',
+                    'author',
+                    'course',
+                    'instructor',
+                    'event',
+                    'chatModal',
+                    'faqCard',
+                    'chatConfiguration',
+                    'ragConfiguration',
+                    'aiGuardrails',
+                    'aiProviderSettings',
+                    'knowledgeBase',
+                    'representative',
+                    'aiContext',
+                    'faq',
+                    'faqCategory',
+                    'announcement',
+                    'seoSettings',
+                    'redirects',
+                    'sitemap',
+                  ]
+                  return id ? !definedTypes.includes(id) : true
+                }
+              ),
+            ])
+        ),
     ])
