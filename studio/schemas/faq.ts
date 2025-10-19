@@ -20,10 +20,15 @@ export const faq = defineType({
     defineField({
       name: 'category',
       title: 'カテゴリー',
-      type: 'reference',
-      to: [{type: 'faqCategory'}],
-      validation: Rule => Rule.required(),
-      description: 'FAQのカテゴリーを選択してください。カテゴリーは「FAQカテゴリー」から追加・編集できます。'
+      type: 'string',
+      options: {
+        list: [
+          {title: '料金について', value: 'pricing'},
+          {title: 'サービスについて', value: 'service'},
+          {title: 'アクセス', value: 'access'},
+          {title: 'その他', value: 'other'}
+        ]
+      }
     }),
     defineField({
       name: 'order',
@@ -35,14 +40,7 @@ export const faq = defineType({
   preview: {
     select: {
       title: 'question',
-      categoryTitle: 'category.title',
-      categorySlug: 'category.slug.current'
-    },
-    prepare({title, categoryTitle, categorySlug}) {
-      return {
-        title: title,
-        subtitle: categoryTitle || categorySlug || 'カテゴリーなし'
-      }
+      subtitle: 'category'
     }
   }
 })

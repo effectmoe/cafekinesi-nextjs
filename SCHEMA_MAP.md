@@ -22,8 +22,8 @@
 
 ### 現在のスキーマ構成
 
-- **総スキーマ数**: 20個（使用中）
-- **非推奨化**: 8個
+- **総スキーマ数**: 19個（使用中）
+- **非推奨化**: 17個
 - **AI検索対応**: 4個
 
 ### ディレクトリ構造
@@ -45,30 +45,29 @@ studio/schemas/
 
 ## スキーマ一覧
 
-### ✅ 使用中のスキーマ（20個）
+### ✅ 使用中のスキーマ（19個）
 
 | # | スキーマ名 | タイプ | 使用箇所 | AI検索 | GROQクエリ |
 |---|-----------|-------|---------|--------|-----------|
-| 1 | blogPost | document | `/blog`<br>`/blog/[slug]` | ✅ | `BLOG_POSTS_QUERY`<br>`BLOG_POST_BY_SLUG_QUERY`<br>`BLOG_POST_PREVIEW_QUERY` |
+| 1 | blogPost | document | `/blog`<br>`/blog/[slug]`<br>`/author/[slug]` | ✅ | `BLOG_POSTS_QUERY`<br>`BLOG_POST_BY_SLUG_QUERY`<br>`BLOG_POST_PREVIEW_QUERY` |
 | 2 | course | document | `/school`<br>`/school/[courseId]` | ✅ | `COURSES_WITH_DETAILS_QUERY`<br>`COURSE_DETAIL_QUERY` |
-| 3 | event | document | `/events/[slug]`<br>`/calendar` | ✅ | `EVENTS_QUERY`<br>`EVENTS_BY_MONTH_QUERY`<br>`EVENTS_BY_DATE_RANGE_QUERY`<br>`AVAILABLE_EVENTS_QUERY`<br>`EVENT_DETAIL_QUERY` |
-| 4 | instructor | document | `/instructor`<br>`/instructor/[prefecture]/[slug]` | ✅ | `INSTRUCTORS_QUERY`<br>`INSTRUCTOR_DETAIL_QUERY`<br>`FEATURED_INSTRUCTORS_QUERY` |
+| 3 | event | document | `/events/[slug]`<br>`/calendar` | ✅ | `EVENTS_QUERY`<br>`EVENTS_BY_MONTH_QUERY`<br>`EVENTS_BY_DATE_RANGE_QUERY`<br>`EVENT_DETAIL_QUERY` |
+| 4 | instructor | document | `/instructor`<br>`/instructor/[prefecture]`<br>`/instructor/[prefecture]/[slug]` | ✅ | `INSTRUCTORS_QUERY`<br>`INSTRUCTOR_DETAIL_QUERY`<br>`FEATURED_INSTRUCTORS_QUERY` |
 | 5 | instructorPage | document | `/instructor` | - | `INSTRUCTOR_PAGE_QUERY` |
-| 6 | author | document | `/author/[slug]`<br>`/blog/*` | - | (blogPostから参照) |
+| 6 | author | document | `/author/[slug]`<br>`/blog/*` | - | `AUTHOR_QUERY` |
 | 7 | homepage | document | `/` | - | `HOMEPAGE_QUERY`<br>`HOMEPAGE_SECTIONS_QUERY` |
 | 8 | page | document | `/[slug]` | - | `PAGE_QUERY`<br>`ALL_PAGES_QUERY` |
-| 9 | schoolPage | document | `/school` | - | `SCHOOL_PAGE_QUERY` |
-| 10 | profilePage | document | `/profile` | - | `PROFILE_PAGE_QUERY` |
-| 11 | aboutPage | document | `/about` | - | `ABOUT_PAGE_QUERY` |
-| 12 | representative | document | API（DB同期） | - | - |
-| 13 | siteSettings | document | 全ページ | - | - |
-| 14 | faqCard | document | `/` | - | `FAQ_CARDS_QUERY` |
-| 15 | chatModal | document | `/` | - | `CHAT_MODAL_QUERY` |
-| 16 | chatConfiguration | document | チャットAPI | - | - |
-| 17 | aiGuardrails | document | チャットAPI | - | `/api/chat/rag` |
-| 18 | aiProviderSettings | document | チャットAPI | - | `/api/chat/rag` |
-| 19 | ragConfiguration | document | RAG設定 | - | `/api/chat/rag` |
-| 20 | knowledgeBase | document | RAG設定 | - | - |
+| 9 | profilePage | document | `/profile` | - | `PROFILE_PAGE_QUERY` |
+| 10 | aboutPage | document | `/`（Aboutセクション）<br>`/api/chat` | - | `ABOUT_PAGE_QUERY` |
+| 11 | faq | document | `/faq` | - | `FAQ_QUERY` |
+| 12 | faqCategory | document | `/faq`（カテゴリー別） | - | `FAQ_CATEGORY_QUERY` |
+| 13 | faqCard | document | `/`（FAQカード） | - | `FAQ_CARDS_QUERY` |
+| 14 | chatModal | document | `/`（チャットモーダル） | - | `CHAT_MODAL_QUERY` |
+| 15 | chatConfiguration | document | `useSanityConfig()` | - | リアルタイム購読 |
+| 16 | aiGuardrails | document | `useSanityConfig()` | - | リアルタイム購読 |
+| 17 | aiProviderSettings | document | `useSanityConfig()` | - | リアルタイム購読 |
+| 18 | ragConfiguration | document | `useSanityConfig()`<br>`rag-engine.ts` | - | リアルタイム購読 |
+| 19 | knowledgeBase | document | `rag-engine.ts`<br>`/api/webhooks/sanity-sync` | - | ベクトル検索 |
 
 ---
 
@@ -273,14 +272,19 @@ studio/schemas/
 | organization | 将来的な実装を想定して保持 | `index.ts` のコメントアウト解除 |
 | aiContent | AI検索最適化用（将来的な実装を想定） | `index.ts` のコメントアウト解除 |
 
-### ドキュメントスキーマ（4個）
+### ドキュメントスキーマ（13個）
 
 | スキーマ名 | 理由 | 復元方法 |
 |-----------|------|---------|
-| news | フロントエンドページ未実装 | `index.ts` のコメントアウト解除 |
-| menuItem | カフェメニュー機能未実装 | `index.ts` のコメントアウト解除 |
-| shopInfo | 店舗情報ページ未実装 | `index.ts` のコメントアウト解除 |
-| category | menuItemの参照先、menuItem自体が未使用 | `index.ts` のコメントアウト解除 |
+| news | フロントエンドページ未実装（2025-10-19） | `index.ts` のコメントアウト解除 |
+| menuItem | カフェメニュー機能未実装（2025-10-19） | `index.ts` のコメントアウト解除 |
+| shopInfo | 店舗情報ページ未実装（2025-10-19） | `index.ts` のコメントアウト解除 |
+| category | menuItemの参照先、menuItem自体が未使用（2025-10-19） | `index.ts` のコメントアウト解除 |
+| siteSettings | homepageスキーマで代替（2025-10-20） | `index.ts` のコメントアウト解除 |
+| schoolPage | フロントエンド実装なし（2025-10-20） | `index.ts` のコメントアウト解除 |
+| schoolPageContent | フロントエンド実装なし（2025-10-20） | `index.ts` のコメントアウト解除 |
+| representative | profilePageスキーマで代替（2025-10-20） | `index.ts` のコメントアウト解除 |
+| siteConfig | chatConfiguration等の個別スキーマで代替（2025-10-20） | `index.ts` のコメントアウト解除 |
 
 ---
 
@@ -382,4 +386,5 @@ studio/schemas/
 
 **作成日**: 2025-10-19
 **更新履歴**:
+- 2025-10-20: フロントエンド使用状況を徹底調査。5スキーマを新たに非推奨化（siteSettings, schoolPage, schoolPageContent, representative, siteConfig）、faq/faqCategoryを使用中に追加。合計19個使用中、17個非推奨化
 - 2025-10-19: 初版作成（20スキーマ、8個非推奨化）

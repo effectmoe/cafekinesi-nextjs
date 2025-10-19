@@ -88,7 +88,15 @@ export default defineType({
           name: 'description',
           title: '説明文',
           type: 'array',
-          of: [{ type: 'block' }],
+          of: [{
+            type: 'block',
+            marks: {
+              decorators: [
+                {title: '太字', value: 'strong'},
+                {title: '斜体', value: 'em'},
+              ],
+            },
+          }],
           description: '複数段落の説明文を入力できます',
         }),
         defineField({

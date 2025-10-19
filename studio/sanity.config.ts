@@ -11,9 +11,6 @@ import { type UserConfig } from 'vite'
 import {updateEmbeddingAction} from './components/actions/updateEmbeddingAction'
 import {jaJPLocale} from '@sanity/locale-ja-jp'
 
-// カスタムスタイルをインポート（必須フィールドに赤い「*」マークを表示）
-import './styles/custom.css'
-
 export default defineConfig({
   name: 'default',
   title: 'cafekinesi',

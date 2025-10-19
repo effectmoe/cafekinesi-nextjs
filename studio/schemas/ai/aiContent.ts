@@ -113,7 +113,15 @@ export default defineType({
       title: '詳細内容',
       description: 'AIが回答する際の完全な内容',
       type: 'array',
-      of: [{ type: 'block' }]
+      of: [{
+        type: 'block',
+        marks: {
+          decorators: [
+            {title: '太字', value: 'strong'},
+            {title: '斜体', value: 'em'},
+          ],
+        },
+      }]
     }),
     defineField({
       name: 'priority',

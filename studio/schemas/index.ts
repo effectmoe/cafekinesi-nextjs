@@ -1,19 +1,18 @@
 // AI-Firstスキーマ（最優先）
-// 注意: 以下のスキーマは未使用のため非推奨化（2025-10-19）
-// 将来的に必要になったら復元可能
-// import person from './ai-first/person'
-// import service from './ai-first/service'
-// import organization from './ai-first/organization'
-// import aiContent from './ai-first/aiContent'
+import person from './ai-first/person'
+import service from './ai-first/service'
+import organization from './ai-first/organization'
+import aiContent from './ai-first/aiContent'
 
 // ドキュメントスキーマ
+import schemaMap from './documents/schemaMap'
 import blogPost from './documents/blogPost'
 import author from './documents/author'
-// import category from './documents/category' // 未使用（menuItemの参照先だが、menuItem自体が未使用）（2025-10-19）
+import category from './documents/category'
 import event from './documents/event'
-// import news from './documents/news' // 未使用（フロントエンドページ未実装）（2025-10-19）
-// import menuItem from './documents/menuItem' // 未使用（カフェメニュー機能未実装）（2025-10-19）
-// import shopInfo from './documents/shopInfo' // 未使用（店舗情報ページ未実装）（2025-10-19）
+import news from './documents/news'
+import menuItem from './documents/menuItem'
+import shopInfo from './documents/shopInfo'
 import page from './documents/page'
 import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
@@ -29,7 +28,6 @@ import { faq } from './faq'
 import { faqCategory } from './faqCategory'
 import faqCard from './documents/faqCard'
 import chatModal from './documents/chatModal'
-import siteConfig from './documents/siteConfig'
 
 // AI/RAGスキーマ
 import chatConfiguration from './chat/chatConfiguration'
@@ -63,20 +61,22 @@ import codeBlock from './components/codeBlock'
 
 export const schemaTypes = [
   // AI-First エンティティ（最優先）
-  // 注意: 未使用のため非推奨化（2025-10-19）
-  // person,
-  // service,
-  // organization,
-  // aiContent,
+  person,
+  service,
+  organization,
+  aiContent,
+
+  // スキーママップ
+  schemaMap,
 
   // ドキュメント
   blogPost,
   author,
-  // category, // 未使用（2025-10-19）
+  category,
   event,
-  // news, // 未使用（2025-10-19）
-  // menuItem, // 未使用（2025-10-19）
-  // shopInfo, // 未使用（2025-10-19）
+  news,
+  menuItem,
+  shopInfo,
   page,
   homepage,
   siteSettings,
@@ -92,7 +92,6 @@ export const schemaTypes = [
   faqCategory,
   faqCard,
   chatModal,
-  siteConfig,
 
   // AI/RAG設定
   chatConfiguration,

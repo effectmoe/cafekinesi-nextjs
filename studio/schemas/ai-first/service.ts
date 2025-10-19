@@ -98,7 +98,15 @@ export default defineType({
       name: 'description',
       title: '詳細説明',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{
+        type: 'block',
+        marks: {
+          decorators: [
+            {title: '太字', value: 'strong'},
+            {title: '斜体', value: 'em'},
+          ],
+        },
+      }],
       group: 'detail'
     }),
 

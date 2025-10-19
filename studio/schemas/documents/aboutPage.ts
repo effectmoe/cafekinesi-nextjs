@@ -152,7 +152,13 @@ export default defineType({
               type: 'array',
               of: [
                 {
-                  type: 'block'
+                  type: 'block',
+                  marks: {
+                    decorators: [
+                      {title: '太字', value: 'strong'},
+                      {title: '斜体', value: 'em'},
+                    ],
+                  },
                 }
               ],
               hidden: ({ parent }) => parent?.layout === 'cards' || parent?.layout === 'link-cards'
@@ -172,7 +178,15 @@ export default defineType({
                   name: 'content',
                   title: '内容',
                   type: 'array',
-                  of: [{ type: 'block' }]
+                  of: [{
+                    type: 'block',
+                    marks: {
+                      decorators: [
+                        {title: '太字', value: 'strong'},
+                        {title: '斜体', value: 'em'},
+                      ],
+                    },
+                  }]
                 }
               ]
             },

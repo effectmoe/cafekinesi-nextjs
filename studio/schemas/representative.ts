@@ -38,7 +38,15 @@ export default defineType({
       name: 'biography',
       title: '経歴・プロフィール',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{
+        type: 'block',
+        marks: {
+          decorators: [
+            {title: '太字', value: 'strong'},
+            {title: '斜体', value: 'em'},
+          ],
+        },
+      }],
     }),
     defineField({
       name: 'qualifications',
@@ -56,7 +64,15 @@ export default defineType({
       name: 'achievements',
       title: '実績・功績',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{
+        type: 'block',
+        marks: {
+          decorators: [
+            {title: '太字', value: 'strong'},
+            {title: '斜体', value: 'em'},
+          ],
+        },
+      }],
     }),
     defineField({
       name: 'philosophy',

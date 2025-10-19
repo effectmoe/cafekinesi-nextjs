@@ -18,11 +18,15 @@
     "@sanity/icons": "^3.7.4",
     "@sanity/locale-ja-jp": "^1.1.26",
     "@sanity/rich-date-input": "^3.0.6",
+    "@sanity/ui": "^3.1.10",
     "@sanity/vision": "^4.9.0",
     "@vercel/og": "^0.8.5",
     "date-fns": "^4.1.0",
     "sanity": "^4.10.0",
     "sanity-plugin-content-model-graph": "^2.0.0",
     "styled-components": "^6.1.19"
+  },
+  "overrides": {
+    "@sanity/ui": "^3.1.10"
   }
 }

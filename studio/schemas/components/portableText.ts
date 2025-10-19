@@ -22,8 +22,7 @@ export default {
           { title: '太字', value: 'strong' },
           { title: '斜体', value: 'em' },
           { title: 'アンダーライン', value: 'underline' },
-          { title: '取り消し線', value: 'strike-through' },
-          { title: 'コード', value: 'code' }
+          { title: '取り消し線', value: 'strike-through' }
         ],
         annotations: [
           {

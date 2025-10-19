@@ -128,7 +128,15 @@ export default defineType({
       name: 'profileDetails',
       title: '詳細プロフィール',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{
+        type: 'block',
+        marks: {
+          decorators: [
+            {title: '太字', value: 'strong'},
+            {title: '斜体', value: 'em'},
+          ],
+        },
+      }],
       description: '詳細なプロフィール（複数段落可）',
       group: 'profile',
     }),

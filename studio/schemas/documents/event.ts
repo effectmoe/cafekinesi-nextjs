@@ -36,6 +36,12 @@ export default {
       of: [
         {
           type: 'block',
+          marks: {
+            decorators: [
+              {title: '太字', value: 'strong'},
+              {title: '斜体', value: 'em'},
+            ],
+          },
         },
         {
           type: 'image',
@@ -52,6 +58,12 @@ export default {
       of: [
         {
           type: 'block',
+          marks: {
+            decorators: [
+              {title: '太字', value: 'strong'},
+              {title: '斜体', value: 'em'},
+            ],
+          },
         },
         {
           type: 'image',
