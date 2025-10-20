@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { client } from '@/sanity/lib/client';
-import { urlFor } from '@/sanity/lib/image';
+import { client, urlFor } from '@/lib/sanity.client';
 
 // PWA設定を取得するGROQクエリ
 const PWA_SETTINGS_QUERY = `*[_type == "pwaSettings"][0]{
