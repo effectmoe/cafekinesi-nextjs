@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import VisualEditing from "@/app/components/VisualEditing";
 import InAppBrowserNotice from "@/components/InAppBrowserNotice";
+import UnregisterServiceWorker from "@/components/UnregisterServiceWorker";
 import { draftMode } from 'next/headers';
 import "./globals.css";
 import "@/styles/accessibility.css";
@@ -62,6 +63,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <Providers>
+          <UnregisterServiceWorker />
           <InAppBrowserNotice />
           <a href="#main-content" className="skip-to-content">
             メインコンテンツへスキップ
