@@ -35,7 +35,7 @@ export const metadata: Metadata = {
       { url: '/logo.png', type: 'image/png' }
     ],
     apple: [
-      { url: '/apple-touch-icon.png', type: 'image/png' }
+      { url: '/pwa-apple-touch.png', type: 'image/png' }
     ],
   },
   viewport: {
