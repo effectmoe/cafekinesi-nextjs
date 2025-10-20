@@ -779,6 +779,9 @@ export const CHAT_MODAL_QUERY = `
     calendarButtonEnabled,
     calendarButtonText,
     calendarButtonUrl,
+    contactFormButtonEnabled,
+    contactFormButtonText,
+    contactFormButtonUrl,
     isActive
   }
 `
