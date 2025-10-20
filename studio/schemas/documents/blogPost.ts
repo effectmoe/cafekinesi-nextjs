@@ -327,6 +327,10 @@ export default {
             {title: '見出し4', value: 'h4'},
             {title: '引用', value: 'blockquote'},
           ],
+          lists: [
+            {title: '箇条書き', value: 'bullet'},
+            {title: '番号付きリスト', value: 'number'}
+          ],
           marks: {
             decorators: [
               {title: '太字', value: 'strong'},

@@ -288,6 +288,7 @@ export default function BlogContentRenderer({
               value={post.content}
               components={{
                 block: {
+                  normal: ({children}: any) => <p className="mb-6 text-gray-700 leading-relaxed">{children}</p>,
                   h2: ({children, value}: any) => {
                     const index = post.content.findIndex((b: any) => b._key === value._key)
                     return <h2 id={`heading-${index}`} className="scroll-mt-20">{children}</h2>
@@ -295,7 +296,30 @@ export default function BlogContentRenderer({
                   h3: ({children, value}: any) => {
                     const index = post.content.findIndex((b: any) => b._key === value._key)
                     return <h3 id={`heading-${index}`} className="scroll-mt-20">{children}</h3>
-                  }
+                  },
+                  h4: ({children, value}: any) => {
+                    const index = post.content.findIndex((b: any) => b._key === value._key)
+                    return <h4 id={`heading-${index}`} className="text-lg font-medium text-gray-900 mt-6 mb-3 scroll-mt-20">{children}</h4>
+                  },
+                  blockquote: ({children}: any) => (
+                    <blockquote className="border-l-4 border-gray-300 pl-6 py-2 my-6 italic text-gray-600">
+                      {children}
+                    </blockquote>
+                  ),
+                },
+                list: {
+                  bullet: ({children}: any) => <ul className="list-disc list-outside ml-6 my-6 space-y-2">{children}</ul>,
+                  number: ({children}: any) => <ol className="list-decimal list-outside ml-6 my-6 space-y-2">{children}</ol>,
+                },
+                listItem: {
+                  bullet: ({children}: any) => <li className="text-gray-700 leading-relaxed pl-2">{children}</li>,
+                  number: ({children}: any) => <li className="text-gray-700 leading-relaxed pl-2">{children}</li>,
+                },
+                marks: {
+                  strong: ({children}: any) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                  em: ({children}: any) => <em className="italic text-gray-700">{children}</em>,
+                  underline: ({children}: any) => <span className="underline decoration-gray-400 underline-offset-2">{children}</span>,
+                  highlight: ({children}: any) => <mark className="bg-yellow-200 px-1 py-0.5 rounded">{children}</mark>,
                 },
                 types: {
                   image: ({value}: any) => {
