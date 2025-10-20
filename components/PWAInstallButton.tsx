@@ -11,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 export default function PWAInstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [showIOSModal, setShowIOSModal] = useState(false);
   const [showAndroidModal, setShowAndroidModal] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -19,6 +20,10 @@ export default function PWAInstallButton() {
     // iOS判定
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(iOS);
+
+    // モバイル判定（スマートフォン・タブレット）
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setIsMobile(mobile);
 
     // すでにインストール済みか確認
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -186,35 +191,66 @@ export default function PWAInstallButton() {
               {/* 手順 */}
               <div className="space-y-4 text-sm text-gray-700">
                 <p>
-                  カフェキネシをホーム画面に追加して、アプリのように使用できます：
+                  カフェキネシを{isMobile ? 'ホーム画面に追加' : 'インストール'}して、アプリのように使用できます：
                 </p>
 
-                <ol className="space-y-3 pl-1">
-                  <li className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
-                      1
-                    </span>
-                    <span>
-                      画面右上の <strong>︙</strong>（3点メニュー）をタップ
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
-                      2
-                    </span>
-                    <span>
-                      <strong>「アプリをインストール」</strong>または<strong>「ホーム画面に追加」</strong>を選択
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
-                      3
-                    </span>
-                    <span>
-                      <strong>「インストール」</strong>または<strong>「追加」</strong>をタップ
-                    </span>
-                  </li>
-                </ol>
+                {isMobile ? (
+                  // モバイル用の手順
+                  <ol className="space-y-3 pl-1">
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        1
+                      </span>
+                      <span>
+                        画面右上の <strong>︙</strong>（3点メニュー）をタップ
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        2
+                      </span>
+                      <span>
+                        <strong>「アプリをインストール」</strong>または<strong>「ホーム画面に追加」</strong>を選択
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        3
+                      </span>
+                      <span>
+                        <strong>「インストール」</strong>または<strong>「追加」</strong>をタップ
+                      </span>
+                    </li>
+                  </ol>
+                ) : (
+                  // PC用の手順
+                  <ol className="space-y-3 pl-1">
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        1
+                      </span>
+                      <span>
+                        画面右上の <strong>︙</strong>（3点メニュー）をクリック
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        2
+                      </span>
+                      <span>
+                        <strong>「キャスト、保存、共有」</strong>にマウスオーバー
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        3
+                      </span>
+                      <span>
+                        <strong>「カフェキネシをインストール...」</strong>をクリック
+                      </span>
+                    </li>
+                  </ol>
+                )}
               </div>
 
               {/* 閉じるボタン */}

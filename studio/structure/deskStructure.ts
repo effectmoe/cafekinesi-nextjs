@@ -217,6 +217,18 @@ export const structure = (S: StructureBuilder) =>
 
               S.divider(),
 
+              // PWA設定
+              S.listItem()
+                .id('pwa-settings')
+                .title('PWA設定｜使用: /api/manifest（アプリインストール）')
+                .child(
+                  S.document()
+                    .schemaType('pwaSettings')
+                    .documentId('pwaSettings')
+                ),
+
+              S.divider(),
+
               // その他設定
               S.documentTypeListItem('menuItem')
                 .title('メニューアイテム｜使用: menuItem参照（フロントエンドページ未実装？）'),
@@ -321,6 +333,7 @@ export const structure = (S: StructureBuilder) =>
 
           // 設定
           'siteSettings',
+          'pwaSettings',
           'chatModal',
           'faqCard',
           'chatConfiguration',
