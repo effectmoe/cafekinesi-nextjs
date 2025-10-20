@@ -348,7 +348,9 @@ export default async function FAQPage() {
               お気軽にお問い合わせください。
             </p>
             <Link
-              href="/#contact"
+              href="https://effectmoe.notion.site/28fb802cb0c680b6823bdb7c1d0a1651?pvs=105"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block bg-[#8B5A3C] text-white px-8 py-3 rounded-lg hover:bg-[#6D4830] transition-colors font-medium"
             >
               お問い合わせはこちら
