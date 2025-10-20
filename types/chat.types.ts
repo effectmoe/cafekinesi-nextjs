@@ -27,7 +27,15 @@ export interface ChatModalSettings {
   contactFormButtonText?: string
   contactFormButtonUrl?: string
   contactFormButtonIcon?: string
+  contactFormButtonCustomIcon?: {
+    asset?: {
+      _id: string
+      url: string
+    }
+    alt?: string
+  }
   contactFormButtonBgColor?: string
+  contactFormButtonCustomBgColor?: string
   isActive: boolean
 }
 

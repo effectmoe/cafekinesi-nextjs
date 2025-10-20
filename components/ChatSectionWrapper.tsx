@@ -6,7 +6,12 @@ import InlineChatModal from './InlineChatModal';
 import { FAQCard, ChatModalSettings } from '@/types/chat.types';
 import Link from 'next/link';
 import { Card } from "@/components/ui/card";
-import { Calendar, Mail, MessageSquare, FileText, ExternalLink, Send, Phone } from 'lucide-react';
+import {
+  Calendar, Mail, MessageSquare, FileText, ExternalLink, Send, Phone,
+  Clock, Navigation, Coffee, CalendarCheck, MapPin, Info, HelpCircle, Home
+} from 'lucide-react';
+import { urlForImage } from '@/lib/sanity.fetch';
+import Image from 'next/image';
 
 interface ChatSectionWrapperProps {
   faqCards: FAQCard[];
@@ -121,44 +126,62 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
             </div>
 
             {/* お問い合わせフォームボタン - フル幅 */}
-            {chatSettings?.contactFormButtonEnabled && (
-              <div className="mt-4 w-full">
-                <Link
-                  href={chatSettings.contactFormButtonUrl || '/'}
-                  {...(chatSettings.contactFormButtonUrl?.startsWith('http') && {
-                    target: "_blank",
-                    rel: "noopener noreferrer"
-                  })}
-                >
-                  <Card
-                    className="group p-5 hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95"
-                    style={{ backgroundColor: chatSettings.contactFormButtonBgColor || 'hsl(180,15%,88%)' }}
+            {chatSettings?.contactFormButtonEnabled && (() => {
+              // 背景色: カスタム色 > プリセット色 > デフォルト
+              const bgColor = chatSettings.contactFormButtonCustomBgColor || chatSettings.contactFormButtonBgColor || 'hsl(180,15%,88%)';
+
+              // カスタムアイコン画像のURL取得
+              const customIconUrl = chatSettings.contactFormButtonCustomIcon?.asset?.url
+                ? urlForImage(chatSettings.contactFormButtonCustomIcon)?.width(32).height(32).url()
+                : null;
+
+              return (
+                <div className="mt-4 w-full">
+                  <Link
+                    href={chatSettings.contactFormButtonUrl || '/'}
+                    {...(chatSettings.contactFormButtonUrl?.startsWith('http') && {
+                      target: "_blank",
+                      rel: "noopener noreferrer"
+                    })}
                   >
-                    <div className="flex items-center justify-center gap-3">
-                      {chatSettings.contactFormButtonIcon && chatSettings.contactFormButtonIcon !== 'none' && (() => {
-                        const iconMap = {
-                          Mail: Mail,
-                          MessageSquare: MessageSquare,
-                          FileText: FileText,
-                          ExternalLink: ExternalLink,
-                          Send: Send,
-                          Phone: Phone
-                        };
-                        const IconComponent = iconMap[chatSettings.contactFormButtonIcon as keyof typeof iconMap];
-                        return IconComponent ? (
-                          <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 transition-opacity">
-                            <IconComponent className="w-8 h-8" strokeWidth={1.5} />
+                    <Card
+                      className="group p-5 hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95"
+                      style={{ backgroundColor: bgColor }}
+                    >
+                      <div className="flex items-center justify-center gap-3">
+                        {/* カスタムアイコン画像 > プリセットアイコン */}
+                        {customIconUrl ? (
+                          <div className="opacity-70 group-hover:opacity-100 transition-opacity">
+                            <Image
+                              src={customIconUrl}
+                              alt={chatSettings.contactFormButtonCustomIcon?.alt || 'ボタンアイコン'}
+                              width={32}
+                              height={32}
+                              className="w-8 h-8 object-contain"
+                            />
                           </div>
-                        ) : null;
-                      })()}
-                      <p className="text-sm font-medium text-text-primary">
-                        {chatSettings.contactFormButtonText || 'フォームから問い合わせる'}
-                      </p>
-                    </div>
-                  </Card>
-                </Link>
-              </div>
-            )}
+                        ) : chatSettings.contactFormButtonIcon && chatSettings.contactFormButtonIcon !== 'none' && (() => {
+                          const iconMap = {
+                            Clock, Navigation, Coffee, Calendar, CalendarCheck, MapPin,
+                            Phone, Mail, Info, HelpCircle, Home, MessageSquare,
+                            FileText, ExternalLink, Send
+                          };
+                          const IconComponent = iconMap[chatSettings.contactFormButtonIcon as keyof typeof iconMap];
+                          return IconComponent ? (
+                            <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 transition-opacity">
+                              <IconComponent className="w-8 h-8" strokeWidth={1.5} />
+                            </div>
+                          ) : null;
+                        })()}
+                        <p className="text-sm font-medium text-text-primary">
+                          {chatSettings.contactFormButtonText || 'フォームから問い合わせる'}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
+                </div>
+              );
+            })()}
           </div>
         </section>
       )}

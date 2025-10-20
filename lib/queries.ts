@@ -783,7 +783,15 @@ export const CHAT_MODAL_QUERY = `
     contactFormButtonText,
     contactFormButtonUrl,
     contactFormButtonIcon,
+    contactFormButtonCustomIcon {
+      asset-> {
+        _id,
+        url
+      },
+      alt
+    },
     contactFormButtonBgColor,
+    contactFormButtonCustomBgColor,
     isActive
   }
 `

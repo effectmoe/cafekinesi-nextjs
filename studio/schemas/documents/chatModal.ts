@@ -186,38 +186,76 @@ export default defineType({
     }),
     defineField({
       name: 'contactFormButtonIcon',
-      title: 'お問い合わせボタンのアイコン',
+      title: 'お問い合わせボタンのアイコン（プリセット）',
       type: 'string',
-      description: 'ボタンに表示するアイコン',
+      description: 'プリセットアイコンを選択、またはカスタム画像を使用する場合は下のフィールドでアップロード',
       options: {
         list: [
           {title: 'なし', value: 'none'},
-          {title: '📧 メール', value: 'Mail'},
-          {title: '💬 メッセージ', value: 'MessageSquare'},
-          {title: '📝 フォーム', value: 'FileText'},
-          {title: '🔗 外部リンク', value: 'ExternalLink'},
-          {title: '📤 送信', value: 'Send'},
-          {title: '📞 電話', value: 'Phone'}
+          {title: '⏰ 時計 (Clock)', value: 'Clock'},
+          {title: '🧭 ナビゲーション (Navigation)', value: 'Navigation'},
+          {title: '☕ コーヒー (Coffee)', value: 'Coffee'},
+          {title: '📅 カレンダー (Calendar)', value: 'Calendar'},
+          {title: '📅 カレンダーチェック (CalendarCheck)', value: 'CalendarCheck'},
+          {title: '📍 マップピン (MapPin)', value: 'MapPin'},
+          {title: '📞 電話 (Phone)', value: 'Phone'},
+          {title: '✉️ メール (Mail)', value: 'Mail'},
+          {title: 'ℹ️ 情報 (Info)', value: 'Info'},
+          {title: '❓ ヘルプ (HelpCircle)', value: 'HelpCircle'},
+          {title: '🏠 ホーム (Home)', value: 'Home'},
+          {title: '💬 メッセージ (MessageSquare)', value: 'MessageSquare'},
+          {title: '📝 フォーム (FileText)', value: 'FileText'},
+          {title: '🔗 外部リンク (ExternalLink)', value: 'ExternalLink'},
+          {title: '📤 送信 (Send)', value: 'Send'}
         ]
       },
       initialValue: 'none',
       hidden: ({document}) => !document?.contactFormButtonEnabled
     }),
     defineField({
+      name: 'contactFormButtonCustomIcon',
+      title: 'お問い合わせボタンのアイコン（カスタム画像）',
+      type: 'image',
+      description: '任意の画像をアップロード。設定するとプリセットアイコンより優先されます。推奨サイズ: 32x32px（透過PNG推奨）',
+      options: {
+        hotspot: true
+      },
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
       name: 'contactFormButtonBgColor',
-      title: 'お問い合わせボタンの背景色',
+      title: 'お問い合わせボタンの背景色（プリセット）',
       type: 'string',
-      description: 'ボタンの背景色（HSL形式）',
+      description: 'プリセットから選択、またはカスタム色を使用する場合は下のフィールドで設定',
       options: {
         list: [
-          {title: '水色（イベントボタンと同じ）', value: 'hsl(180,15%,88%)'},
-          {title: '紫色（FAQボタンと同じ）', value: 'hsl(260,15%,88%)'},
-          {title: 'ベージュ', value: 'hsl(35,22%,91%)'},
-          {title: 'ピンク', value: 'hsl(340,15%,88%)'},
-          {title: 'グリーン', value: 'hsl(120,15%,88%)'}
+          {title: '🌊 水色（イベントボタンと同じ）', value: 'hsl(180,15%,88%)'},
+          {title: '🟣 パープル（FAQボタンと同じ）', value: 'hsl(260,15%,88%)'},
+          {title: '🟤 ベージュ（FAQカードで使用）', value: 'hsl(35,22%,91%)'},
+          {title: '🔵 ブルー（FAQカードで使用）', value: 'hsl(210,20%,88%)'},
+          {title: '🟢 グリーン（FAQカードで使用）', value: 'hsl(120,15%,88%)'},
+          {title: '🟡 イエロー（FAQカードで使用）', value: 'hsl(45,25%,88%)'},
+          {title: '⚪ グレー（FAQカードで使用）', value: 'hsl(0,0%,91%)'}
         ]
       },
       initialValue: 'hsl(180,15%,88%)',
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
+      name: 'contactFormButtonCustomBgColor',
+      title: 'お問い合わせボタンの背景色（カスタム）',
+      type: 'string',
+      description: '任意のカラーコードを入力（例: #FF5733, rgb(255,87,51), hsl(9,100%,60%)）。設定するとプリセットより優先されます。',
+      placeholder: '例: #FF5733 または hsl(180,50%,70%)',
+      validation: Rule => Rule.custom((value) => {
+        if (!value) return true;
+        // HEX, RGB, RGBA, HSL, HSLA形式をサポート
+        const colorRegex = /^(#[0-9A-Fa-f]{3,8}|rgb\(|rgba\(|hsl\(|hsla\()/;
+        if (colorRegex.test(value)) {
+          return true;
+        }
+        return 'カラーコードの形式が正しくありません（例: #FF5733, rgb(255,87,51), hsl(9,100%,60%)）';
+      }),
       hidden: ({document}) => !document?.contactFormButtonEnabled
     }),
     defineField({
