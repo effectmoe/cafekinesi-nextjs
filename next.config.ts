@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import withPWA from '@ducanh2912/next-pwa';
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -90,65 +89,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// PWA設定でラップ
-export default withPWA({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  register: true,
-  skipWaiting: true,
-  // オフラインフォールバック
-  fallbacks: {
-    document: '/offline',
-  },
-  // キャッシュ戦略
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/cdn\.sanity\.io\/.*/i,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'sanity-images',
-        expiration: {
-          maxEntries: 200,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-        cacheableResponse: {
-          statuses: [0, 200],
-        },
-      },
-    },
-    {
-      urlPattern: /^https:\/\/.*\.sanity\.io\/.*$/i,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'sanity-data',
-        networkTimeoutSeconds: 10,
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60, // 24 hours
-        },
-      },
-    },
-    {
-      urlPattern: /\.(?:jpg|jpeg|png|gif|webp|svg)$/i,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'static-images',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-      },
-    },
-    {
-      urlPattern: /\.(?:js|css)$/i,
-      handler: 'StaleWhileRevalidate',
-      options: {
-        cacheName: 'static-resources',
-        expiration: {
-          maxEntries: 60,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-      },
-    },
-  ],
-})(nextConfig);
+export default nextConfig;

@@ -21,7 +21,6 @@
     "analyze:schemas": "node scripts/analyze-schemas.js"
   },
   "dependencies": {
-    "@ducanh2912/next-pwa": "^10.2.9",
     "@heroicons/react": "^2.2.0",
     "@langchain/community": "^0.3.57",
     "@notionhq/client": "^5.1.0",
