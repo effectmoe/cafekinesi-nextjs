@@ -10,9 +10,9 @@ interface BeforeInstallPromptEvent extends Event {
 
 export default function PWAInstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSModal, setShowIOSModal] = useState(false);
+  const [showAndroidModal, setShowAndroidModal] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
@@ -26,16 +26,10 @@ export default function PWAInstallButton() {
       return;
     }
 
-    // iOSの場合、インストール可能と判定
-    if (iOS) {
-      setIsInstallable(true);
-    }
-
     // Android/Chrome: beforeinstallprompt イベントをキャプチャ
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setIsInstallable(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -43,7 +37,6 @@ export default function PWAInstallButton() {
     // インストール完了時
     window.addEventListener('appinstalled', () => {
       setIsInstalled(true);
-      setIsInstallable(false);
       setDeferredPrompt(null);
     });
 
@@ -66,12 +59,14 @@ export default function PWAInstallButton() {
       }
 
       setDeferredPrompt(null);
-      setIsInstallable(false);
+    } else {
+      // Android/Chromeだが、beforeinstallpromptが発火していない場合
+      setShowAndroidModal(true);
     }
   };
 
-  // インストール済み、またはインストール不可の場合は非表示
-  if (isInstalled || !isInstallable) {
+  // インストール済みの場合は非表示
+  if (isInstalled) {
     return null;
   }
 
@@ -153,6 +148,78 @@ export default function PWAInstallButton() {
               {/* 閉じるボタン */}
               <button
                 onClick={() => setShowIOSModal(false)}
+                className="mt-6 w-full py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Android インストール手順モーダル */}
+      {showAndroidModal && (
+        <>
+          {/* オーバーレイ */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-[60]"
+            onClick={() => setShowAndroidModal(false)}
+          />
+
+          {/* モーダル */}
+          <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl z-[70] max-w-md mx-auto">
+            <div className="p-6">
+              {/* ヘッダー */}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  アプリをインストール
+                </h3>
+                <button
+                  onClick={() => setShowAndroidModal(false)}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="閉じる"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+
+              {/* 手順 */}
+              <div className="space-y-4 text-sm text-gray-700">
+                <p>
+                  カフェキネシをホーム画面に追加して、アプリのように使用できます：
+                </p>
+
+                <ol className="space-y-3 pl-1">
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                      1
+                    </span>
+                    <span>
+                      画面右上の <strong>︙</strong>（3点メニュー）をタップ
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                      2
+                    </span>
+                    <span>
+                      <strong>「アプリをインストール」</strong>または<strong>「ホーム画面に追加」</strong>を選択
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                      3
+                    </span>
+                    <span>
+                      <strong>「インストール」</strong>または<strong>「追加」</strong>をタップ
+                    </span>
+                  </li>
+                </ol>
+              </div>
+
+              {/* 閉じるボタン */}
+              <button
+                onClick={() => setShowAndroidModal(false)}
                 className="mt-6 w-full py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium"
               >
                 閉じる
