@@ -4,6 +4,7 @@ import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import SearchModal from "./SearchModal";
+import PWAInstallButton from "./PWAInstallButton";
 const logo = "/logo.jpeg";
 
 interface NavigationItem {
@@ -116,6 +117,11 @@ const Header = ({ navigationItems = [], headerIcons }: HeaderProps) => {
                   {item.label}
                 </Link>
               ))}
+
+              {/* PWA インストールボタン */}
+              <div className="pt-4 border-t border-gray-200">
+                <PWAInstallButton />
+              </div>
             </nav>
           </div>
         )}
