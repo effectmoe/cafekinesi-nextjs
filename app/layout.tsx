@@ -21,13 +21,29 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Cafe Kinesi",
   description: "Welcome to Cafe Kinesi",
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'カフェキネシ',
+  },
   icons: {
     icon: [
       { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
       { url: '/favicon-16.png', type: 'image/png', sizes: '16x16' },
       { url: '/logo.png', type: 'image/png' }
     ],
+    apple: [
+      { url: '/apple-touch-icon.png', type: 'image/png' }
+    ],
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: '#8B7355',
 };
 
 export default async function RootLayout({
