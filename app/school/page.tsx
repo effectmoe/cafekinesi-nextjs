@@ -557,14 +557,16 @@ export default async function SchoolPage() {
                 体験講座を定期的に開催しています。お気軽にご参加ください。
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/contact"
+                <a
+                  href="https://effectmoe.notion.site/28fb802cb0c680b6823bdb7c1d0a1651?pvs=105"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-block bg-white text-[#8B5A3C] px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
                 >
                   お問い合わせ
-                </Link>
+                </a>
                 <Link
-                  href="/events"
+                  href="/calendar"
                   className="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/10 transition-colors"
                 >
                   イベント一覧を見る
