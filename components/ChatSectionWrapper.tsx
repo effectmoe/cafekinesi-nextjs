@@ -130,7 +130,7 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
                     rel: "noopener noreferrer"
                   })}
                 >
-                  <Card className="group p-5 bg-[hsl(35,22%,91%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
+                  <Card className="group p-5 bg-[hsl(180,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
                     <div className="flex items-center justify-center gap-3">
                       <p className="text-sm font-medium text-text-primary">
                         {chatSettings.contactFormButtonText || 'フォームから問い合わせる'}
