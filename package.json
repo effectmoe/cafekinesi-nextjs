@@ -10,6 +10,7 @@
     "lint": "eslint",
     "populate-sanity": "npx tsx scripts/populate-sanity-data.ts",
     "populate-chat-faq": "npx tsx scripts/populate-chat-faq-data.ts",
+    "populate-pwa": "npx tsx scripts/populate-pwa-settings.ts",
     "db:init": "tsx scripts/init-vector-db.ts",
     "db:reset": "tsx scripts/reset-vector-db.ts",
     "db:setup-document": "tsx scripts/setup-document-embeddings.ts",

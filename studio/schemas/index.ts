@@ -16,6 +16,7 @@ import shopInfo from './documents/shopInfo'
 import page from './documents/page'
 import homepage from './documents/homepage'
 import siteSettings from './documents/siteSettings'
+import pwaSettings from './documents/pwaSettings'
 import course from './documents/course'
 import schoolPage from './documents/schoolPage'
 import schoolPageContent from './documents/schoolPageContent'
@@ -80,6 +81,7 @@ export const schemaTypes = [
   page,
   homepage,
   siteSettings,
+  pwaSettings,
   course,
   schoolPage,
   schoolPageContent,
