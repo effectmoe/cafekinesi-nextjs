@@ -782,6 +782,8 @@ export const CHAT_MODAL_QUERY = `
     contactFormButtonEnabled,
     contactFormButtonText,
     contactFormButtonUrl,
+    contactFormButtonIcon,
+    contactFormButtonBgColor,
     isActive
   }
 `

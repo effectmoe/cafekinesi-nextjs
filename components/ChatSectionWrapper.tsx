@@ -6,7 +6,7 @@ import InlineChatModal from './InlineChatModal';
 import { FAQCard, ChatModalSettings } from '@/types/chat.types';
 import Link from 'next/link';
 import { Card } from "@/components/ui/card";
-import { Calendar } from 'lucide-react';
+import { Calendar, Mail, MessageSquare, FileText, ExternalLink, Send, Phone } from 'lucide-react';
 
 interface ChatSectionWrapperProps {
   faqCards: FAQCard[];
@@ -130,8 +130,27 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
                     rel: "noopener noreferrer"
                   })}
                 >
-                  <Card className="group p-5 bg-[hsl(180,15%,88%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
+                  <Card
+                    className="group p-5 hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95"
+                    style={{ backgroundColor: chatSettings.contactFormButtonBgColor || 'hsl(180,15%,88%)' }}
+                  >
                     <div className="flex items-center justify-center gap-3">
+                      {chatSettings.contactFormButtonIcon && chatSettings.contactFormButtonIcon !== 'none' && (() => {
+                        const iconMap = {
+                          Mail: Mail,
+                          MessageSquare: MessageSquare,
+                          FileText: FileText,
+                          ExternalLink: ExternalLink,
+                          Send: Send,
+                          Phone: Phone
+                        };
+                        const IconComponent = iconMap[chatSettings.contactFormButtonIcon as keyof typeof iconMap];
+                        return IconComponent ? (
+                          <div className="text-[hsl(35,45%,45%)] opacity-70 group-hover:opacity-100 transition-opacity">
+                            <IconComponent className="w-8 h-8" strokeWidth={1.5} />
+                          </div>
+                        ) : null;
+                      })()}
                       <p className="text-sm font-medium text-text-primary">
                         {chatSettings.contactFormButtonText || 'フォームから問い合わせる'}
                       </p>

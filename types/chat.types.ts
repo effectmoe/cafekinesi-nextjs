@@ -26,6 +26,8 @@ export interface ChatModalSettings {
   contactFormButtonEnabled?: boolean
   contactFormButtonText?: string
   contactFormButtonUrl?: string
+  contactFormButtonIcon?: string
+  contactFormButtonBgColor?: string
   isActive: boolean
 }
 

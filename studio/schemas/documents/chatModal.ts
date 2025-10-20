@@ -185,6 +185,42 @@ export default defineType({
       hidden: ({document}) => !document?.contactFormButtonEnabled
     }),
     defineField({
+      name: 'contactFormButtonIcon',
+      title: 'お問い合わせボタンのアイコン',
+      type: 'string',
+      description: 'ボタンに表示するアイコン',
+      options: {
+        list: [
+          {title: 'なし', value: 'none'},
+          {title: '📧 メール', value: 'Mail'},
+          {title: '💬 メッセージ', value: 'MessageSquare'},
+          {title: '📝 フォーム', value: 'FileText'},
+          {title: '🔗 外部リンク', value: 'ExternalLink'},
+          {title: '📤 送信', value: 'Send'},
+          {title: '📞 電話', value: 'Phone'}
+        ]
+      },
+      initialValue: 'none',
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
+      name: 'contactFormButtonBgColor',
+      title: 'お問い合わせボタンの背景色',
+      type: 'string',
+      description: 'ボタンの背景色（HSL形式）',
+      options: {
+        list: [
+          {title: '水色（イベントボタンと同じ）', value: 'hsl(180,15%,88%)'},
+          {title: '紫色（FAQボタンと同じ）', value: 'hsl(260,15%,88%)'},
+          {title: 'ベージュ', value: 'hsl(35,22%,91%)'},
+          {title: 'ピンク', value: 'hsl(340,15%,88%)'},
+          {title: 'グリーン', value: 'hsl(120,15%,88%)'}
+        ]
+      },
+      initialValue: 'hsl(180,15%,88%)',
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
       name: 'isActive',
       title: '有効',
       type: 'boolean',
