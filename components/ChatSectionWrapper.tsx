@@ -119,6 +119,27 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
                 </Card>
               </Link>
             </div>
+
+            {/* お問い合わせフォームボタン - フル幅 */}
+            {chatSettings?.contactFormButtonEnabled && (
+              <div className="mt-4 w-full">
+                <Link
+                  href={chatSettings.contactFormButtonUrl || '/'}
+                  {...(chatSettings.contactFormButtonUrl?.startsWith('http') && {
+                    target: "_blank",
+                    rel: "noopener noreferrer"
+                  })}
+                >
+                  <Card className="group p-5 bg-[hsl(35,22%,91%)] hover:shadow-lg transition-all duration-200 cursor-pointer border border-border/30 rounded-2xl hover:-translate-y-0.5 active:scale-95">
+                    <div className="flex items-center justify-center gap-3">
+                      <p className="text-sm font-medium text-text-primary">
+                        {chatSettings.contactFormButtonText || 'フォームから問い合わせる'}
+                      </p>
+                    </div>
+                  </Card>
+                </Link>
+              </div>
+            )}
           </div>
         </section>
       )}

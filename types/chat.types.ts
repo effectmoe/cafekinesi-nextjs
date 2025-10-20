@@ -23,6 +23,9 @@ export interface ChatModalSettings {
   calendarButtonEnabled?: boolean
   calendarButtonText?: string
   calendarButtonUrl?: string
+  contactFormButtonEnabled?: boolean
+  contactFormButtonText?: string
+  contactFormButtonUrl?: string
   isActive: boolean
 }
 

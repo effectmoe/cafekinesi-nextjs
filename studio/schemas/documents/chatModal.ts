@@ -154,6 +154,37 @@ export default defineType({
       hidden: ({document}) => !document?.calendarButtonEnabled
     }),
     defineField({
+      name: 'contactFormButtonEnabled',
+      title: 'お問い合わせフォームボタンを表示',
+      type: 'boolean',
+      description: 'チャットモーダル下部に「フォームから問い合わせる」ボタンを表示するかどうか',
+      initialValue: true
+    }),
+    defineField({
+      name: 'contactFormButtonText',
+      title: 'お問い合わせボタンのテキスト',
+      type: 'string',
+      description: 'ボタンに表示するテキスト',
+      initialValue: 'フォームから問い合わせる',
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
+      name: 'contactFormButtonUrl',
+      title: 'お問い合わせボタンのリンク先',
+      type: 'string',
+      description: 'ボタンをクリックした時の遷移先URL（外部URLも可）',
+      initialValue: 'https://effectmoe.notion.site/28fb802cb0c680b6823bdb7c1d0a1651?pvs=105',
+      validation: Rule => Rule.custom((value) => {
+        if (!value) return true;
+        // 外部URLまたは内部URLの両方を許可
+        if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/')) {
+          return true;
+        }
+        return 'URLはhttps://または/から始まる必要があります';
+      }),
+      hidden: ({document}) => !document?.contactFormButtonEnabled
+    }),
+    defineField({
       name: 'isActive',
       title: '有効',
       type: 'boolean',
