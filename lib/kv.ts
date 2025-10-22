@@ -9,7 +9,25 @@ function getRedisClient(): Redis {
     if (!redisUrl) {
       throw new Error('KV_URL or REDIS_URL environment variable is not set');
     }
-    redis = new Redis(redisUrl);
+
+    // Vercelサーバーレス環境向けの設定
+    redis = new Redis(redisUrl, {
+      maxRetriesPerRequest: null,        // Vercel推奨設定：ブロッキング操作を防止
+      enableReadyCheck: false,           // サーバーレス環境で推奨：ready checkをスキップ
+      enableOfflineQueue: false,         // オフラインキューを無効化
+      connectTimeout: 10000,             // 接続タイムアウト: 10秒
+      retryStrategy(times) {
+        if (times > 3) return null;      // 3回までリトライ
+        return Math.min(times * 50, 2000);
+      },
+      // Redis Cloudの場合、TLSが必要
+      tls: redisUrl.startsWith('rediss://') ? {} : undefined,
+    });
+
+    // エラーハンドリング
+    redis.on('error', (err) => {
+      console.error('❌ Redis connection error:', err);
+    });
   }
   return redis;
 }
