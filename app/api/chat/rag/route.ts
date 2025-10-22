@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
       ragConfig || {}
     );
 
-    // AIプロバイダー取得（Sanity設定から）
+    // AIプロバイダー取得（Sanity設定 > 環境変数の優先順位）
     const aiProvider = AIProviderFactory.create(
-      providerSettings?.provider || 'deepseek'
+      providerSettings?.provider || process.env.AI_PROVIDER
     );
 
     // システムプロンプト構築（ガードレール適用）
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       response,
       sources: augmentedData.sources,
       confidence: augmentedData.confidence,
-      provider: providerSettings?.provider || 'deepseek',
+      provider: providerSettings?.provider || process.env.AI_PROVIDER || 'deepseek',
       searchResults: augmentedData.searchResults?.length || 0,
       webResults: augmentedData.webResults?.length || 0
     };
