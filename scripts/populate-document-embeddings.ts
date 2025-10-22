@@ -102,7 +102,10 @@ async function fetchFAQs(): Promise<DocumentToEmbed[]> {
     id: `faq-${faq._id}`,
     type: 'faq',
     title: faq.question,
-    content: extractTextFromPortableText(faq.answer) || '',
+    // FAQ answers can be plain text or Portable Text
+    content: typeof faq.answer === 'string'
+      ? faq.answer
+      : extractTextFromPortableText(faq.answer) || '',
     url: `/faq#${faq._id}`,
     metadata: {
       category: faq.category,
@@ -172,7 +175,22 @@ async function fetchEvents(): Promise<DocumentToEmbed[]> {
     id: `event-${event.slug.current}`,
     type: 'event',
     title: event.title,
-    content: extractTextFromPortableText(event.content) || event.description || '',
+    // Event content and description can be plain text or Portable Text
+    content: (() => {
+      // Try content first
+      if (event.content) {
+        return typeof event.content === 'string'
+          ? event.content
+          : extractTextFromPortableText(event.content);
+      }
+      // Fall back to description
+      if (event.description) {
+        return typeof event.description === 'string'
+          ? event.description
+          : extractTextFromPortableText(event.description);
+      }
+      return '';
+    })(),
     url: `/calendar/${event.slug.current}`,
     metadata: {
       category: event.category,

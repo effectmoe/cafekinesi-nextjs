@@ -258,9 +258,12 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
           context += `${idx + 1}位. ${e.title}: ¥${e.price.toLocaleString()}${statusText}\n`;
         });
 
-        context += '\n⚠️ 価格比較の際は、必ずこの表の順位を参照してください\n';
-        context += `⚠️ 最も安い = 1位（${eventPrices[0].title}）\n`;
-        context += `⚠️ 最も高い = ${eventPrices.length}位（${eventPrices[eventPrices.length - 1].title}）\n`;
+        // Only add price comparison summary if we have prices
+        if (eventPrices.length > 0) {
+          context += '\n⚠️ 価格比較の際は、必ずこの表の順位を参照してください\n';
+          context += `⚠️ 最も安い = 1位（${eventPrices[0].title}）\n`;
+          context += `⚠️ 最も高い = ${eventPrices.length}位（${eventPrices[eventPrices.length - 1].title}）\n`;
+        }
         context += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
       }
     }
