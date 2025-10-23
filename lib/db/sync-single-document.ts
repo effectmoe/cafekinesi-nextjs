@@ -41,7 +41,18 @@ function getDocumentQuery(documentType: string): string {
 
     case 'faq':
       return `*[_id == $documentId][0] {
-        _id, _type, question, answer, category, isActive
+        _id, _type, question, answer, category, useForAI
+      }`;
+
+    case 'event':
+      return `*[_id == $documentId][0] {
+        _id, _type, title, description, startDate, endDate, location,
+        category, status, capacity, currentParticipants, fee, useForAI
+      }`;
+
+    case 'faqCard':
+      return `*[_id == $documentId][0] {
+        _id, _type, title, icon, order, isActive, useForAI
       }`;
 
     default:
@@ -68,6 +79,39 @@ function extractContent(document: any, documentType: string): string {
     case 'faq':
       return `Q: ${document.question}\nA: ${document.answer}`;
 
+    case 'event':
+      const parts: string[] = [];
+      if (document.title) parts.push(`イベント名: ${document.title}`);
+      if (document.startDate) {
+        const startDate = new Date(document.startDate);
+        const endDate = document.endDate ? new Date(document.endDate) : startDate;
+        const formatDate = (date: Date) => {
+          return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }) + ' ' +
+                 date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+        };
+        parts.push(`開催日時: ${formatDate(startDate)}〜${formatDate(endDate)}`);
+      }
+      if (document.location) parts.push(`開催場所: ${document.location}`);
+      if (document.status) {
+        const statusLabel = document.status === 'open' ? '受付中' :
+                           document.status === 'full' ? '満席' :
+                           document.status === 'closed' ? '終了' :
+                           document.status === 'cancelled' ? 'キャンセル' : document.status;
+        parts.push(`ステータス: ${statusLabel}`);
+      }
+      if (document.capacity !== undefined) {
+        const availableSeats = document.capacity - (document.currentParticipants || 0);
+        parts.push(`定員: ${document.capacity}名（残り${availableSeats}席）`);
+      }
+      if (document.fee !== undefined) {
+        parts.push(`参加費: ${document.fee === 0 ? '無料' : `¥${document.fee.toLocaleString()}`}`);
+      }
+      if (document.description) parts.push(`説明: ${document.description}`);
+      return parts.join('\n');
+
+    case 'faqCard':
+      return `質問カード: ${document.title}`;
+
     default:
       return JSON.stringify(document);
   }
@@ -79,6 +123,8 @@ function getDocumentTitle(document: any, documentType: string): string {
     return document.name || 'Untitled';
   } else if (documentType === 'faq') {
     return document.question || 'Untitled';
+  } else if (documentType === 'event' || documentType === 'faqCard') {
+    return document.title || 'Untitled';
   }
   return document.title || 'Untitled';
 }
@@ -132,8 +178,10 @@ export async function syncSingleDocument(documentId: string, documentType: strin
       return;
     }
 
-    if (document.isActive === false) {
-      console.log(`⏭️  Document is not active, deleting from vector DB if exists`);
+    // useForAI または isActive がfalseの場合は削除
+    const shouldDelete = document.useForAI === false || document.isActive === false;
+    if (shouldDelete) {
+      console.log(`⏭️  Document is not active (useForAI or isActive = false), deleting from vector DB if exists`);
       await sql`DELETE FROM document_embeddings WHERE id = ${documentId};`;
       return;
     }

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // サポートするドキュメントタイプ
-    const supportedTypes = ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq'];
+    const supportedTypes = ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq', 'event', 'faqCard'];
 
     if (!supportedTypes.includes(documentType)) {
       console.log(`⏭️  Skipping document type: ${documentType}`);
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
       message: 'Sanity Sync Webhook Endpoint',
       status: 'active',
       endpoint: '/api/webhooks/sanity-sync',
-      supportedTypes: ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq'],
+      supportedTypes: ['knowledgeBase', 'blogPost', 'course', 'instructor', 'faq', 'event', 'faqCard'],
       usage: 'Configure this endpoint in Sanity webhooks settings',
       debug: 'Add ?debug=true to see vector DB contents. Optionally filter by ?type=knowledgeBase'
     }, { headers: corsHeaders });
