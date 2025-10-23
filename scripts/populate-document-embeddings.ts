@@ -201,6 +201,79 @@ async function fetchEvents(): Promise<DocumentToEmbed[]> {
 }
 
 /**
+ * Fetch instructors from Sanity CMS
+ */
+async function fetchInstructors(): Promise<DocumentToEmbed[]> {
+  console.log('👩‍🏫 Fetching instructors from Sanity...');
+
+  const instructors = await publicClient.fetch(groq`
+    *[_type == "instructor" && defined(slug.current)] {
+      _id,
+      name,
+      slug,
+      bio,
+      region,
+      specialties,
+      profileDetails,
+      website,
+      email,
+      _updatedAt
+    }
+  `);
+
+  console.log(`✅ Found ${instructors.length} instructors`);
+
+  return instructors.map((instructor: any) => ({
+    id: `instructor-${instructor.slug.current}`,
+    type: 'instructor',
+    title: instructor.name,
+    content: `インストラクター: ${instructor.name}\n地域: ${instructor.region || ''}\n専門分野: ${instructor.specialties?.join(', ') || ''}\n経歴: ${extractTextFromPortableText(instructor.bio) || ''}\n詳細: ${extractTextFromPortableText(instructor.profileDetails) || ''}\nウェブサイト: ${instructor.website || ''}\nメール: ${instructor.email || ''}`,
+    url: instructor.region ? `/instructor/${instructor.region.toLowerCase()}/${instructor.slug.current}` : `/instructor/${instructor.slug.current}`,
+    metadata: {
+      region: instructor.region,
+      specialties: instructor.specialties || [],
+      updatedAt: instructor._updatedAt
+    }
+  }));
+}
+
+/**
+ * Fetch knowledge base from Sanity CMS
+ */
+async function fetchKnowledgeBase(): Promise<DocumentToEmbed[]> {
+  console.log('📚 Fetching knowledge base from Sanity...');
+
+  const knowledgeBase = await publicClient.fetch(groq`
+    *[_type == "knowledgeBase" && isActive == true] {
+      _id,
+      title,
+      description,
+      extractedText,
+      category,
+      tags,
+      priority,
+      _updatedAt
+    }
+  `);
+
+  console.log(`✅ Found ${knowledgeBase.length} knowledge base documents`);
+
+  return knowledgeBase.map((kb: any) => ({
+    id: `kb-${kb._id}`,
+    type: 'knowledgeBase',
+    title: kb.title,
+    content: kb.extractedText || kb.description || '',
+    url: `/knowledge/${kb._id}`,
+    metadata: {
+      category: kb.category,
+      tags: kb.tags || [],
+      priority: kb.priority || 5,
+      updatedAt: kb._updatedAt
+    }
+  }));
+}
+
+/**
  * Extract plain text from Portable Text (Sanity rich text format)
  */
 function extractTextFromPortableText(portableText: any): string {
@@ -328,20 +401,24 @@ async function main() {
 
   try {
     // Fetch all documents
-    const [blogPosts, faqs, courses, events] = await Promise.all([
+    const [blogPosts, faqs, courses, events, instructors, knowledgeBase] = await Promise.all([
       fetchBlogPosts(),
       fetchFAQs(),
       fetchCourses(),
-      fetchEvents()
+      fetchEvents(),
+      fetchInstructors(),
+      fetchKnowledgeBase()
     ]);
 
-    const allDocuments = [...blogPosts, ...faqs, ...courses, ...events];
+    const allDocuments = [...blogPosts, ...faqs, ...courses, ...events, ...instructors, ...knowledgeBase];
 
     console.log(`\n📊 Total documents: ${allDocuments.length}`);
     console.log(`   - Blog posts: ${blogPosts.length}`);
     console.log(`   - FAQs: ${faqs.length}`);
     console.log(`   - Courses: ${courses.length}`);
     console.log(`   - Events: ${events.length}`);
+    console.log(`   - Instructors: ${instructors.length}`);
+    console.log(`   - Knowledge Base: ${knowledgeBase.length}`);
 
     if (allDocuments.length === 0) {
       console.log('\n⚠️  No documents found. Exiting.');
