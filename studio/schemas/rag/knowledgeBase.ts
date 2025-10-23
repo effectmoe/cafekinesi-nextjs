@@ -66,7 +66,7 @@ export const knowledgeBase = defineType({
       description: '検索用のタグ（例: 料金, 予約, アクセス）'
     }),
     defineField({
-      name: 'isActive',
+      name: 'useForAI',
       title: 'AI学習に使用',
       type: 'boolean',
       initialValue: true,
@@ -125,11 +125,11 @@ export const knowledgeBase = defineType({
       title: 'title',
       subtitle: 'category',
       description: 'description',
-      isActive: 'isActive'
+      useForAI: 'useForAI'
     },
-    prepare({title, subtitle, description, isActive}) {
+    prepare({title, subtitle, description, useForAI}) {
       return {
-        title: `${isActive ? '✅' : '⏸️'} ${title}`,
+        title: `${useForAI ? '✅' : '⏸️'} ${title}`,
         subtitle: subtitle ? subtitle.replace(/[^a-z]/gi, '') : 'その他',
         description: description
       }

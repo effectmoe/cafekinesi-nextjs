@@ -49,7 +49,7 @@ async function fetchBlogPosts(): Promise<DocumentToEmbed[]> {
   console.log('📚 Fetching blog posts from Sanity...');
 
   const posts = await publicClient.fetch(groq`
-    *[_type == "blogPost" && !(_id in path("drafts.*")) && defined(slug.current)] {
+    *[_type == "blogPost" && !(_id in path("drafts.*")) && defined(slug.current) && useForAI == true] {
       _id,
       title,
       slug,
@@ -86,7 +86,7 @@ async function fetchFAQs(): Promise<DocumentToEmbed[]> {
   console.log('❓ Fetching FAQs from Sanity...');
 
   const faqs = await publicClient.fetch(groq`
-    *[_type == "faq"] {
+    *[_type == "faq" && useForAI == true] {
       _id,
       question,
       answer,
@@ -122,7 +122,7 @@ async function fetchCourses(): Promise<DocumentToEmbed[]> {
   console.log('🎓 Fetching courses from Sanity...');
 
   const courses = await publicClient.fetch(groq`
-    *[_type == "course" && defined(slug.current)] {
+    *[_type == "course" && defined(slug.current) && useForAI == true] {
       _id,
       title,
       slug,
@@ -157,7 +157,7 @@ async function fetchEvents(): Promise<DocumentToEmbed[]> {
   console.log('📅 Fetching events from Sanity...');
 
   const events = await publicClient.fetch(groq`
-    *[_type == "event" && defined(slug.current)] {
+    *[_type == "event" && defined(slug.current) && useForAI == true] {
       _id,
       title,
       slug,

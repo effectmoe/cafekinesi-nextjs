@@ -88,6 +88,13 @@ export default defineType({
       type: 'boolean',
       description: 'このカードを表示するかどうか',
       initialValue: true
+    }),
+    defineField({
+      name: 'useForAI',
+      title: 'AI学習に使用',
+      type: 'boolean',
+      initialValue: true,
+      description: 'AIチャットボットでこのFAQカード情報を参照可能にする（デフォルト: ON）',
     })
   ],
   orderings: [

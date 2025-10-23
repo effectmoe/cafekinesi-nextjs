@@ -104,7 +104,7 @@ async function syncCoursesToVectorDB() {
     // 1. courseドキュメントを取得
     console.log('📚 Fetching courses from Sanity...')
     const courses = await client.fetch(`
-      *[_type == "course" && isActive == true] {
+      *[_type == "course" && isActive == true && useForAI == true] {
         _id,
         courseId,
         title,
@@ -166,7 +166,7 @@ async function syncInstructorsToVectorDB() {
     // 1. instructorドキュメントを取得
     console.log('👥 Fetching instructors from Sanity...')
     const instructors = await client.fetch(`
-      *[_type == "instructor" && isActive == true] {
+      *[_type == "instructor" && isActive == true && useForAI == true] {
         _id,
         slug,
         name,

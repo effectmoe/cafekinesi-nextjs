@@ -35,6 +35,13 @@ export const faq = defineType({
       title: '表示順',
       type: 'number',
       initialValue: 0
+    }),
+    defineField({
+      name: 'useForAI',
+      title: 'AI学習に使用',
+      type: 'boolean',
+      initialValue: true,
+      description: 'AIチャットボットでこのFAQ情報を参照可能にする（デフォルト: ON）',
     })
   ],
   preview: {

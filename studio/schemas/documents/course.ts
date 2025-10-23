@@ -59,6 +59,14 @@ export default defineType({
   fields: [
     // ========== AI最適化フィールド ==========
     defineField({
+      name: 'useForAI',
+      title: 'AI学習に使用',
+      type: 'boolean',
+      group: 'ai',
+      initialValue: true,
+      description: 'AIチャットボットでこの講座情報を参照可能にする（デフォルト: ON）',
+    }),
+    defineField({
       name: 'aiSearchKeywords',
       title: 'AI検索キーワード',
       description: 'AIチャットで検索されるキーワード（例：「カフェキネシ」「基礎講座」「初心者向け」）',

@@ -264,6 +264,117 @@ export const structure = (S: StructureBuilder) =>
       S.divider(),
 
       // ================================================
+      // 🤖 AI RAGコンテンツ（AI学習に使用するコンテンツ）
+      // ================================================
+      S.listItem()
+        .id('ai-rag-content')
+        .title('🤖 AI RAGコンテンツ')
+        .child(
+          S.list()
+            .id('ai-rag-content-list')
+            .title('AI RAGコンテンツ')
+            .items([
+              // イベント
+              S.listItem()
+                .id('ai-events')
+                .title('イベント')
+                .child(
+                  S.documentList()
+                    .id('ai-events-list')
+                    .title('イベント（AI学習用）')
+                    .filter('_type == "event" && useForAI == true')
+                    .defaultOrdering([{ field: 'startDate', direction: 'desc' }])
+                ),
+
+              S.divider(),
+
+              // ブログ記事
+              S.listItem()
+                .id('ai-blog-posts')
+                .title('ブログ記事')
+                .child(
+                  S.documentList()
+                    .id('ai-blog-posts-list')
+                    .title('ブログ記事（AI学習用）')
+                    .filter('_type == "blogPost" && useForAI == true')
+                    .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
+                ),
+
+              S.divider(),
+
+              // 講座
+              S.listItem()
+                .id('ai-courses')
+                .title('講座')
+                .child(
+                  S.documentList()
+                    .id('ai-courses-list')
+                    .title('講座（AI学習用）')
+                    .filter('_type == "course" && useForAI == true')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              S.divider(),
+
+              // インストラクター
+              S.listItem()
+                .id('ai-instructors')
+                .title('インストラクター')
+                .child(
+                  S.documentList()
+                    .id('ai-instructors-list')
+                    .title('インストラクター（AI学習用）')
+                    .filter('_type == "instructor" && useForAI == true')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              S.divider(),
+
+              // FAQ
+              S.listItem()
+                .id('ai-faqs')
+                .title('FAQ')
+                .child(
+                  S.documentList()
+                    .id('ai-faqs-list')
+                    .title('FAQ（AI学習用）')
+                    .filter('_type == "faq" && useForAI == true')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              S.divider(),
+
+              // FAQカード
+              S.listItem()
+                .id('ai-faq-cards')
+                .title('FAQカード')
+                .child(
+                  S.documentList()
+                    .id('ai-faq-cards-list')
+                    .title('FAQカード（AI学習用）')
+                    .filter('_type == "faqCard" && useForAI == true')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                ),
+
+              S.divider(),
+
+              // ナレッジベース
+              S.listItem()
+                .id('ai-knowledge-base')
+                .title('ナレッジベース')
+                .child(
+                  S.documentList()
+                    .id('ai-knowledge-base-list')
+                    .title('ナレッジベース（AI学習用）')
+                    .filter('_type == "knowledgeBase" && useForAI == true')
+                    .defaultOrdering([{ field: 'priority', direction: 'desc' }])
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // ================================================
       // 🤖 AI-First（非推奨・参照用）
       // ================================================
       S.listItem()

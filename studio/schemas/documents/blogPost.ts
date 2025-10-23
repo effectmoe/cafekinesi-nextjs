@@ -30,6 +30,10 @@ export default {
       name: 'seo',
       title: 'SEO',
     },
+    {
+      name: 'ai',
+      title: 'AI設定',
+    },
   ],
   fields: [
     // === レイアウト設定 ===
@@ -469,6 +473,16 @@ export default {
       title: 'SEO設定',
       type: 'seo',  // seo.tsオブジェクトを参照
       group: 'seo',
+    },
+
+    // === AI設定 ===
+    {
+      name: 'useForAI',
+      title: 'AI学習に使用',
+      type: 'boolean',
+      group: 'ai',
+      initialValue: true,
+      description: 'AIチャットボットでこのブログ記事を参照可能にする（デフォルト: ON）',
     },
   ],
   preview: {
