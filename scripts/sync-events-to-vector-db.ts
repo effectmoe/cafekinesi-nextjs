@@ -111,7 +111,7 @@ async function syncEventsToVectorDB() {
     // 1. eventドキュメントを取得（useForAI === true のもののみ）
     console.log('📅 Fetching events from Sanity...')
     const events = await client.fetch(`
-      *[_type == "event" && useForAI == true && endDate >= now()] | order(startDate) {
+      *[_type == "event" && useForAI == true] | order(startDate) {
         _id,
         title,
         slug,

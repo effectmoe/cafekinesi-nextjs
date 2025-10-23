@@ -36,5 +36,18 @@
       "current": "breathing-stress-relief"
     },
     "title": "呼吸法で日常のストレスを解放"
+  },
+  {
+    "_id": "1d71252c-ee04-47b3-afa8-8dbcfdc54ff8",
+    "category": "lifestyle",
+    "excerpt": "カフェキネシの新商品「桜ブレンドティー」で春の訪れを感じましょう。桜の香りとほうじ茶のハーモニーが楽しめる一杯です。",
+    "featured": true,
+    "mainImage": null,
+    "publishedAt": "2025-03-01T10:00:00Z",
+    "slug": {
+      "_type": "slug",
+      "current": "sakura-blend-tea-spring"
+    },
+    "title": "春の訪れを感じる一杯: 桜ブレンドティーの魅力"
   }
 ]

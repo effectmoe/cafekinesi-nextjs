@@ -30,6 +30,10 @@ export class RAGEngine {
     const isEventQuery = this.isEventRelatedQuery(query);
     console.log('📅 イベント質問?', isEventQuery);
 
+    // メニュー・商品関連の質問を検出
+    const isMenuQuery = this.isMenuOrProductQuery(query);
+    console.log('🍽️  メニュー・商品質問?', isMenuQuery);
+
     // 1. データ取得
     let searchResults;
     let priorityType: string | null = null;
@@ -225,7 +229,11 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
     if (vectorResults.length > 0) {
       context += '【サイト内情報】\n';
       vectorResults.forEach((r, index) => {
-        context += `${index + 1}. ${r.content}\n`;
+        // ブログ記事の場合は明示的にタイプを表示
+        const typePrefix = (r.metadata?.type === 'blog' || r.metadata?.type === 'blogPost' || r.type === 'blog' || r.type === 'blogPost')
+          ? '[ブログ記事] '
+          : '';
+        context += `${index + 1}. ${typePrefix}${r.content}\n`;
       });
 
       // イベントデータがある場合は、価格の一覧表も追加
@@ -488,6 +496,21 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       const bScore = b.combined_score || b.vector_score || 0;
       return bScore - aScore;
     });
+  }
+
+  // メニュー・商品関連の質問かどうか判定
+  private isMenuOrProductQuery(query: string): boolean {
+    const menuKeywords = [
+      'メニュー', 'menu', '商品', 'product', '飲み物', 'ドリンク', '食べ物',
+      '注文', 'order', '購入', 'buy', '買', '値段', '価格', 'price',
+      'ブレンド', 'blend', 'ティー', 'tea', 'お茶', 'コーヒー', 'coffee',
+      '売っている', '販売', '提供'
+    ];
+
+    const lowerQuery = query.toLowerCase();
+    return menuKeywords.some(keyword =>
+      lowerQuery.includes(keyword.toLowerCase())
+    );
   }
 
   // アクセス情報の質問かどうか判定
