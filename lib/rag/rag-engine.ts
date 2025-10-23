@@ -395,7 +395,8 @@ ${isComparisonQuery ? '  5. 自分で計算や比較をせず、表の順位を�
       conditions.push(`時期: ${targetYear}年${targetMonth}月${isThisMonthQuery ? '（今月）' : '（来月）'}`);
 
       filteredEvents = filteredEvents.filter((e: any) => {
-        const dateMatch = e.content.match(/日時[：:]\s*(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+        // 「2025年10月15日」形式にマッチ
+        const dateMatch = e.content.match(/日時[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日/);
         if (!dateMatch) return false;
         const eventYear = parseInt(dateMatch[1]);
         const eventMonth = parseInt(dateMatch[2]);
