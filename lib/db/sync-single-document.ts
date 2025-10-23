@@ -106,7 +106,10 @@ function extractContent(document: any, documentType: string): string {
       if (document.fee !== undefined) {
         parts.push(`参加費: ${document.fee === 0 ? '無料' : `¥${document.fee.toLocaleString()}`}`);
       }
-      if (document.description) parts.push(`説明: ${document.description}`);
+      if (document.description) {
+        const descriptionText = extractTextFromPortableText(document.description);
+        if (descriptionText) parts.push(`説明: ${descriptionText}`);
+      }
       return parts.join('\n');
 
     case 'faqCard':
