@@ -33,7 +33,13 @@ export interface Instructor {
   bio: string
   profileDetails?: any[] // PortableText
   region?: string
-  prefecture?: string
+  prefecture?: string | {
+    _id?: string
+    name: string
+    slug: {
+      current: string
+    }
+  }
   certifications?: Certification[]
   experience?: Experience[]
   teachingCourses?: Course[]

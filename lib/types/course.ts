@@ -47,7 +47,6 @@ export interface Course {
     _type: string
   }
   childCourses?: Course[] // 子講座（補助講座）のリスト
-  recommendations?: string[] // こんな方におすすめ
 }
 
 // 講座詳細ページ用のセクション定義

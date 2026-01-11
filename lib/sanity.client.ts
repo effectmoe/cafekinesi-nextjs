@@ -59,3 +59,12 @@ export function urlFor(source: any) {
 
 // groqをエクスポート（公式推奨）
 export { groq }
+
+// Fetcher functions for React Query hooks
+export async function sanityFetcher<T = unknown>(query: string, params?: Record<string, unknown>): Promise<T> {
+  return publicClient.fetch<T>(query, params as any)
+}
+
+export async function sanityPreviewFetcher<T = unknown>(query: string, params?: Record<string, unknown>): Promise<T> {
+  return previewClient.fetch<T>(query, params as any)
+}
