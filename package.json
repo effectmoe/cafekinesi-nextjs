@@ -7,7 +7,7 @@
     "prebuild": "node scripts/fetch-sanity-data.js",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint",
     "populate-sanity": "npx tsx scripts/populate-sanity-data.ts",
     "populate-chat-faq": "npx tsx scripts/populate-chat-faq-data.ts",
     "populate-pwa": "npx tsx scripts/populate-pwa-settings.ts",

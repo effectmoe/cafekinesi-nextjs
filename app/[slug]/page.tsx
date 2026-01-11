@@ -57,7 +57,7 @@ export async function generateStaticParams() {
 export default async function DynamicPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
   const page = await getPage(slug)

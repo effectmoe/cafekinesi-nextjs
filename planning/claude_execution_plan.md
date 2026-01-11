@@ -56,11 +56,17 @@ Next.js 16およびReact 19へのメジャーアップデートに伴い、以�
     - `@portabletext/react`: Unknown block type "undefined" 警告
     - 画像URL生成エラー1件（`asset`プロパティ欠落）
 
-### Phase 3: デプロイ準備 (Preparation for Deployment)
-- [ ] **リモートへのプッシュ**:
-  - 変更を `develop` ブランチにプッシュします。
-- [ ] **デプロイ**:
-  - Vercelへのデプロイ（`develop` ブランチ指定）を行い、動作確認します。
+### Phase 3: デプロイ準備と動作確認 (Deployment & Validation)
+- [x] **リモートへのプッシュ**:
+  - `develop` ブランチへプッシュ完了 (`c5109801`)。
+- [x] **デプロイ**:
+  - `params`のPromise化対応
+  - `revalidatePath`引数変更対応
+  - Sanity型定義の修正
+- [ ] **Lint OOM問題の解決**
+  - Node.jsメモリ制限の調整または段階的Lint実行
+- [ ] **脆弱性対応**
+  - `npm audit fix`で対応可能なものを修正
 
 ## 3. 推奨アクション
 まずは Phase 1 の `tsconfig.json` のコミットから開始してください。これにより、ベースとなるコードステートが確定します。
