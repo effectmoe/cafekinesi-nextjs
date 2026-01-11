@@ -133,6 +133,7 @@ export interface Page extends SanityDocument {
     current: string;
   };
   pageBuilder?: PageSection[];
+  sections?: PageSection[]; // Alias for pageBuilder
   seo?: SeoSettings;
 }
 

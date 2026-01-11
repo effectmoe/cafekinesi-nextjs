@@ -23,6 +23,7 @@ export interface Instructor {
     current: string
   }
   title?: string
+  description?: string
   image?: {
     asset: {
       url: string
@@ -32,6 +33,7 @@ export interface Instructor {
   bio: string
   profileDetails?: any[] // PortableText
   region?: string
+  prefecture?: string
   certifications?: Certification[]
   experience?: Experience[]
   teachingCourses?: Course[]

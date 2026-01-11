@@ -18,9 +18,9 @@ interface MenuItem {
 }
 
 export function MenuList() {
-  const { data: menuItems, loading, error } = useSanityData<MenuItem[]>(MENU_ITEMS_QUERY)
+  const { data: menuItems, isLoading, error } = useSanityData<MenuItem[]>(MENU_ITEMS_QUERY)
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         {[1, 2, 3, 4, 5, 6].map((i) => (

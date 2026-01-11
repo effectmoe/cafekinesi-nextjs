@@ -39,19 +39,19 @@ export async function POST(request: NextRequest) {
           revalidatePath('/', 'page')
         }
         // タグベースの再検証
-        revalidateTag('blogPost')
+        revalidateTag('blogPost', 'max')
         break
 
       case 'page':
         if (slug?.current) {
           revalidatePath(`/${slug.current}`, 'page')
         }
-        revalidateTag('page')
+        revalidateTag('page', 'max')
         break
 
       case 'homepage':
         revalidatePath('/', 'page')
-        revalidateTag('homepage')
+        revalidateTag('homepage', 'max')
         break
 
       case 'post':
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           revalidatePath('/', 'page')
         }
         // タグベースの再検証
-        revalidateTag('post')
+        revalidateTag('post', 'max')
         break
 
       case 'album':
@@ -72,19 +72,19 @@ export async function POST(request: NextRequest) {
           revalidatePath(`/albums/${slug.current}`, 'page')
           revalidatePath('/albums', 'page')
         }
-        revalidateTag('album')
+        revalidateTag('album', 'max')
         break
 
       case 'author':
         // 著者が更新された場合、全ブログ記事を再検証
-        revalidateTag('blogPost')
+        revalidateTag('blogPost', 'max')
         revalidatePath('/blog', 'page')
         break
 
       case 'category':
         // カテゴリが更新された場合、関連する全ページを再検証
-        revalidateTag('blogPost')
-        revalidateTag('category')
+        revalidateTag('blogPost', 'max')
+        revalidateTag('category', 'max')
         break
 
       default:
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
   try {
     // テスト用の再検証実行
     revalidatePath(`/blog/${slug}`, 'page')
-    revalidateTag(type)
+    revalidateTag(type, 'max')
 
     return NextResponse.json({
       revalidated: true,
