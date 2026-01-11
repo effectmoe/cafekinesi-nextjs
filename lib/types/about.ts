@@ -1,4 +1,13 @@
-import { SanityDocument, SanityImageObject } from '@sanity/types'
+import type { SanityDocument } from '@sanity/types'
+
+// Custom image type since SanityImageObject is not exported from @sanity/types
+interface SanityImageObject {
+  _type: 'image'
+  asset: {
+    _ref: string
+    _type: 'reference'
+  }
+}
 import { PortableTextBlock } from '@portabletext/types'
 
 export interface AboutHeroSection {

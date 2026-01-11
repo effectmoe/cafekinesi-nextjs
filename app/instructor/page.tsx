@@ -12,6 +12,21 @@ import InstructorAboutSection from '@/components/instructor/InstructorAboutSecti
 import InstructorServicesSection from '@/components/instructor/InstructorServicesSection'
 import InstructorMapSection from '@/components/instructor/InstructorMapSection'
 
+// Helper to safely get prefecture properties
+function getPrefectureSlug(prefecture: Instructor['prefecture']): string | undefined {
+  if (typeof prefecture === 'object' && prefecture !== null) {
+    return prefecture.slug?.current
+  }
+  return undefined
+}
+
+function getPrefectureName(prefecture: Instructor['prefecture']): string | undefined {
+  if (typeof prefecture === 'object' && prefecture !== null) {
+    return prefecture.name
+  }
+  return typeof prefecture === 'string' ? prefecture : undefined
+}
+
 // Sanityから公開インストラクターを取得
 async function getInstructors(): Promise<Instructor[]> {
   try {
@@ -186,32 +201,35 @@ export default async function InstructorPage() {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     numberOfItems: instructors.length,
-    itemListElement: instructors.map((instructor: Instructor, index: number) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      url: `${baseUrl}/instructor/${instructor.prefecture?.slug?.current}/${instructor.slug?.current}`,
-      name: instructor.name,
-      item: {
-        '@type': 'Person',
-        '@id': `${baseUrl}/instructor/${instructor.prefecture?.slug?.current}/${instructor.slug?.current}#person`,
+    itemListElement: instructors.map((instructor: Instructor, index: number) => {
+      const prefSlug = getPrefectureSlug(instructor.prefecture)
+      const prefName = getPrefectureName(instructor.prefecture)
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${baseUrl}/instructor/${prefSlug}/${instructor.slug?.current}`,
         name: instructor.name,
-        description: instructor.description || instructor.name,
-        jobTitle: 'キネシオロジーインストラクター',
-        url: `${baseUrl}/instructor/${instructor.prefecture?.slug?.current}/${instructor.slug?.current}`,
-        ...(instructor.email && { email: instructor.email }),
-        ...(instructor.phone && { telephone: instructor.phone }),
-        address: instructor.prefecture?.name ? {
-          '@type': 'PostalAddress',
-          addressRegion: instructor.prefecture.name,
-          addressCountry: 'JP',
-        } : undefined,
+        item: {
+          '@type': 'Person',
+          '@id': `${baseUrl}/instructor/${prefSlug}/${instructor.slug?.current}#person`,
+          name: instructor.name,
+          description: instructor.description || instructor.name,
+          jobTitle: 'キネシオロジーインストラクター',
+          url: `${baseUrl}/instructor/${prefSlug}/${instructor.slug?.current}`,
+          ...(instructor.email && { email: instructor.email }),
+          ...(instructor.phone && { telephone: instructor.phone }),
+          address: prefName ? {
+            '@type': 'PostalAddress',
+            addressRegion: prefName,
+            addressCountry: 'JP',
+          } : undefined,
         affiliation: {
           '@type': 'Organization',
           name: 'Cafe Kinesi',
           url: baseUrl,
         },
       },
-    })),
+    }}),
   } : null
 
   return (

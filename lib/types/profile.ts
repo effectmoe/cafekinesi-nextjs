@@ -1,4 +1,7 @@
-import { SanityImageAsset } from '@sanity/image-url/lib/types/types'
+import type { SanityAsset } from '@sanity/image-url/lib/types/types'
+
+// Re-export for compatibility
+export type SanityImageAsset = SanityAsset
 
 // プロフィール写真の型
 export interface ProfilePhoto {
