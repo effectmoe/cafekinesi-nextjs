@@ -12,9 +12,9 @@ interface InstructorDetailProps {
 
 interface LinkPreview {
   title: string
-  image: string | null
-  description: string | null
-  favicon: string | null
+  image?: string | null
+  description?: string | null
+  favicon?: string | null
   url: string
 }
 
@@ -220,7 +220,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                   {linkPreviews[instructor.website]?.image ? (
                     <div className="relative w-full h-48 bg-gray-100">
                       <img
-                        src={linkPreviews[instructor.website].image}
+                        src={linkPreviews[instructor.website].image ?? undefined}
                         alt={linkPreviews[instructor.website]?.title || 'Website preview'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -234,7 +234,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                   ) : linkPreviews[instructor.website]?.favicon ? (
                     <div className="relative w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                       <img
-                        src={linkPreviews[instructor.website].favicon}
+                        src={linkPreviews[instructor.website].favicon ?? undefined}
                         alt="site icon"
                         className="w-20 h-20 object-contain opacity-80"
                         onError={(e) => {
@@ -257,7 +257,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                         <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
                           {linkPreviews[instructor.website]?.favicon ? (
                             <img
-                              src={linkPreviews[instructor.website].favicon}
+                              src={linkPreviews[instructor.website].favicon ?? undefined}
                               alt="favicon"
                               className="w-5 h-5 object-contain"
                               onError={(e) => {
@@ -401,7 +401,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                     {linkPreviews[social.url]?.image ? (
                       <div className="relative w-full h-48 bg-gray-100">
                         <img
-                          src={linkPreviews[social.url].image}
+                          src={linkPreviews[social.url].image ?? undefined}
                           alt={linkPreviews[social.url]?.title || 'Preview'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
@@ -415,7 +415,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                     ) : linkPreviews[social.url]?.favicon ? (
                       <div className="relative w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                         <img
-                          src={linkPreviews[social.url].favicon}
+                          src={linkPreviews[social.url].favicon ?? undefined}
                           alt="site icon"
                           className="w-20 h-20 object-contain opacity-80"
                           onError={(e) => {
@@ -438,7 +438,7 @@ export default function InstructorDetail({ instructor }: InstructorDetailProps) 
                         <div className={`w-10 h-10 flex items-center justify-center ${getPlatformColor(social.platform)} rounded-lg transition-colors overflow-hidden`}>
                           {social.platform === 'other' && linkPreviews[social.url]?.favicon ? (
                             <img
-                              src={linkPreviews[social.url].favicon}
+                              src={linkPreviews[social.url].favicon ?? undefined}
                               alt="favicon"
                               className="w-6 h-6 object-contain"
                               onError={(e) => {

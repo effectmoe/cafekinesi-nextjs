@@ -101,7 +101,7 @@ export interface CourseDetail extends Course {
     }
     profileUrl?: string
   }
-  relatedCourses?: Course[] // 実際の講座オブジェクト
+  relatedCourses?: Course[] | string[] // 実際の講座オブジェクトまたはcourseIdの配列
   sidebar?: CourseSidebar // サイドバー設定
   faq?: FAQItem[] // クラスターページ用FAQ
   isClusterPage?: boolean // クラスターページフラグ

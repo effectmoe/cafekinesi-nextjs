@@ -1,6 +1,6 @@
 import { useSanityData } from '@/hooks/useSanityData'
 import { MENU_ITEMS_QUERY } from '@/lib/queries'
-import { urlFor } from '@/lib/sanity'
+import { urlFor } from '@/lib/sanity.client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
