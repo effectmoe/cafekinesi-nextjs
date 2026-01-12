@@ -15,7 +15,7 @@ export default defineType({
   title: '講座',
   type: 'document',
   icon: BookOpen,
-  description: '📍 使用箇所: /school, /school/[courseId] | ステータス: ✅ 使用中 | AI検索対応 | 講座の管理',
+  description: '📍 講座カード（/school）と講座詳細ページ（/school/[courseId]）の両方に表示されるコンテンツを管理します',
   groups: [
     {
       name: 'ai',
@@ -153,7 +153,7 @@ export default defineType({
       name: 'title',
       title: '講座名',
       type: 'string',
-      description: '🔴 必須',
+      description: '🔴 必須 | 📍 表示箇所: 講座カード + 講座詳細ページのタイトル + ブラウザタブ',
       placeholder: '【必須】例：カフェキネシⅠ',
       validation: (Rule) => Rule.required(),
       group: 'basic',
@@ -162,7 +162,7 @@ export default defineType({
       name: 'subtitle',
       title: 'サブタイトル',
       type: 'string',
-      description: '🔴 必須',
+      description: '🔴 必須 | 📍 表示箇所: 講座カードの説明文 + 講座詳細ページのサブタイトル',
       placeholder: '【必須】例：基礎セラピー講座',
       validation: (Rule) => Rule.required(),
       group: 'basic',
@@ -172,7 +172,7 @@ export default defineType({
       title: '講座説明',
       type: 'text',
       rows: 3,
-      description: '🔴 必須',
+      description: '🔴 必須 | 📍 表示箇所: 講座詳細ページのメタデータ（検索結果に表示）',
       placeholder: '【必須】講座の説明を入力してください',
       validation: (Rule) => Rule.required(),
       group: 'basic',
@@ -190,6 +190,7 @@ export default defineType({
       name: 'image',
       title: '講座画像',
       type: 'image',
+      description: '📍 表示箇所: 講座カードの左側 + 講座詳細ページのヘッダー',
       options: {
         hotspot: true,
       },
@@ -240,9 +241,9 @@ export default defineType({
     }),
     defineField({
       name: 'order',
-      title: '表示順序',
+      title: 'レベル番号',
       type: 'number',
-      description: '🔴 必須 | ⚠️ 重要: 講座の表示順序（小さい番号が上に表示）。他の講座と重複しないようにしてください。',
+      description: '🔴 必須 | 📍 表示箇所: 講座カードの「レベル X」バッジ + 並び順の制御',
       placeholder: '【必須】数字を入力（例：1, 2, 3...）',
       validation: (Rule) => Rule.required().min(0).custom(async (value, context) => {
         if (value === undefined || value === null) return true
@@ -313,6 +314,16 @@ export default defineType({
       }),
     }),
     defineField({
+      name: 'childCourseGuidance',
+      title: '📢 子講座（発展コース）の設定について',
+      type: 'string',
+      readOnly: true,
+      initialValue: '⚠️ 子講座はこの画面からは追加できません。子講座となる各講座の編集画面で、この講座を「親講座」として選択してください。',
+      description: 'この講座の下に表示される「発展コース」は、子講座側の「親講座」設定で紐付けられます。',
+      group: 'basic',
+      hidden: ({ document }) => document?.courseType === 'auxiliary',
+    }),
+    defineField({
       name: 'isActive',
       title: '公開状態',
       type: 'boolean',
@@ -335,6 +346,7 @@ export default defineType({
       name: 'price',
       title: '受講料',
       type: 'object',
+      description: '📍 表示箇所: 講座カードの価格表示 + 講座詳細ページ',
       fields: [
         defineField({
           name: 'amount',
@@ -360,6 +372,7 @@ export default defineType({
       name: 'duration',
       title: '講座時間',
       type: 'object',
+      description: '📍 表示箇所: 講座カードの時間表示 + 講座詳細ページ',
       fields: [
         defineField({
           name: 'hours',
@@ -810,10 +823,6 @@ export default defineType({
       rows: 5,
       readOnly: true,
       description: 'ベクトルDBに保存されるテキスト（自動生成）',
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
     }),
   ],
   preview: {
