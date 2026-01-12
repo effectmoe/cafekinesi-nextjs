@@ -4,11 +4,13 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import AboutSection from '@/components/AboutSection'
 import { ChatSectionWrapper } from '@/components/ChatSectionWrapper'
+import CourseCard from '@/components/school/CourseCard'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
-import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY } from '@/lib/queries'
+import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY, HOMEPAGE_COURSES_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
 import { AboutPage } from '@/lib/types/about'
 import { FAQCard, ChatModalSettings } from '@/types/chat.types'
+import { Course } from '@/lib/types/course'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -181,6 +183,13 @@ export default async function HomePage() {
       tags: ['chatModal']
     })
 
+    // 講座データ取得
+    const courses = await sanityFetch<Course[]>({
+      query: HOMEPAGE_COURSES_QUERY,
+      tags: ['course'],
+      preview: isPreview,
+    })
+
     // アクティブなナビゲーションメニュー項目のみフィルタリング
     const activeNavigationItems = homepage.navigationMenu?.filter(item => item.isActive).sort((a, b) => a.order - b.order) || []
 
@@ -350,6 +359,25 @@ export default async function HomePage() {
               </div>
             )}
           </div>
+
+          {/* 講座リストセクション */}
+          {courses && courses.length > 0 && (
+            <div className="w-full max-w-screen-xl mx-auto px-6 mb-16">
+              <div className="text-center mb-12">
+                <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
+                  COURSES
+                </h2>
+                <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto mb-4"></div>
+                <h3 className="text-2xl font-bold text-gray-900">講座一覧</h3>
+              </div>
+
+              <div className="space-y-12">
+                {courses.map((course) => (
+                  <CourseCard key={course._id} course={course} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* FAQ & Chat Section - 統合コンポーネント */}
           <ChatSectionWrapper
