@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 
+# editor
+*.swp
+*.swo
+*~
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -53,3 +58,6 @@ studio/node_modules/
 /public/workbox-*.js
 /public/workbox-*.js.map
 /public/fallback-*.js
+
+# planning/investigation (local only)
+/planning/
