@@ -3,7 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {assist} from '@sanity/assist'
-import contentModelGraph from 'sanity-plugin-content-model-graph'
+// import contentModelGraph from 'sanity-plugin-content-model-graph' // React 19互換性問題で一時無効化
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'
 import {previewPlugin} from './plugins/previewPlugin'
@@ -28,26 +28,27 @@ export default defineConfig({
       structureTool({
         structure
       }),
-      contentModelGraph({
-        exclude: ['system.*', 'sanity.*'],
-        maxDepth: 4,
-        style: {
-          node: {
-            base: {
-              fill: '#667eea',
-              stroke: '#764ba2',
-            },
-            hover: {
-              fill: '#764ba2',
-              stroke: '#667eea',
-            },
-          },
-          edge: {
-            stroke: '#667eea',
-            strokeWidth: 2,
-          },
-        },
-      }),
+      // contentModelGraph - React 19互換性問題で一時無効化
+      // contentModelGraph({
+      //   exclude: ['system.*', 'sanity.*'],
+      //   maxDepth: 4,
+      //   style: {
+      //     node: {
+      //       base: {
+      //         fill: '#667eea',
+      //         stroke: '#764ba2',
+      //       },
+      //       hover: {
+      //         fill: '#764ba2',
+      //         stroke: '#667eea',
+      //       },
+      //     },
+      //     edge: {
+      //       stroke: '#667eea',
+      //       strokeWidth: 2,
+      //     },
+      //   },
+      // }),
       previewPlugin({
         baseUrl: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio')
           ? 'https://cafekinesi-nextjs.vercel.app'
