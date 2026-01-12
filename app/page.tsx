@@ -4,13 +4,11 @@ import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
 import AboutSection from '@/components/AboutSection'
 import { ChatSectionWrapper } from '@/components/ChatSectionWrapper'
-import CourseCard from '@/components/school/CourseCard'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
-import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY, HOMEPAGE_COURSES_QUERY } from '@/lib/queries'
+import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY } from '@/lib/queries'
 import { Homepage, Post } from '@/types/homepage.types'
 import { AboutPage } from '@/lib/types/about'
 import { FAQCard, ChatModalSettings } from '@/types/chat.types'
-import { Course } from '@/lib/types/course'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -183,13 +181,6 @@ export default async function HomePage() {
       tags: ['chatModal']
     })
 
-    // 講座データ取得
-    const courses = await sanityFetch<Course[]>({
-      query: HOMEPAGE_COURSES_QUERY,
-      tags: ['course'],
-      preview: isPreview,
-    })
-
     // アクティブなナビゲーションメニュー項目のみフィルタリング
     const activeNavigationItems = homepage.navigationMenu?.filter(item => item.isActive).sort((a, b) => a.order - b.order) || []
 
@@ -266,199 +257,181 @@ export default async function HomePage() {
 
         <div className="min-h-screen bg-white">
           <Header navigationItems={activeNavigationItems} headerIcons={homepage.headerIcons} />
-        <main className="relative">
-          {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
-          <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {homepage.categoryCards?.map((card, index) => {
-                // Sanityの画像を使用、ない場合はローカル画像にフォールバック
-                const fallbackImageMap: { [key: string]: string } = {
-                  'カフェキネシについて': '/images/about.webp',
-                  'スクール': '/images/school.webp',
-                  'インストラクター': '/images/instructor.webp',
-                  'ブログ': '/images/blog.webp',
-                  'アロマ購入': '/images/aroma.webp',
-                  'メンバー': '/images/member.webp'
-                }
+          <main className="relative">
+            {/* カテゴリーカードグリッド - 既存のデザインを完全維持 */}
+            <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {homepage.categoryCards?.map((card, index) => {
+                  // Sanityの画像を使用、ない場合はローカル画像にフォールバック
+                  const fallbackImageMap: { [key: string]: string } = {
+                    'カフェキネシについて': '/images/about.webp',
+                    'スクール': '/images/school.webp',
+                    'インストラクター': '/images/instructor.webp',
+                    'ブログ': '/images/blog.webp',
+                    'アロマ購入': '/images/aroma.webp',
+                    'メンバー': '/images/member.webp'
+                  }
 
-                // Sanityの画像があれば使用、なければフォールバック
-                const imageSrc = card.image
-                  ? urlForImage(card.image)?.url() || fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
-                  : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
+                  // Sanityの画像があれば使用、なければフォールバック
+                  const imageSrc = card.image
+                    ? urlForImage(card.image)?.url() || fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
+                    : fallbackImageMap[card.titleJa] || '/images/placeholder.svg'
 
-                // リンク先を決定
-                const linkHref = card.titleJa === 'カフェキネシについて' ? '#about-section' : card.link
+                  // リンク先を決定
+                  const linkHref = card.titleJa === 'カフェキネシについて' ? '#about-section' : card.link
 
-                // 外部リンクかどうかを判定
-                const isExternalLink = linkHref?.startsWith('http://') || linkHref?.startsWith('https://')
+                  // 外部リンクかどうかを判定
+                  const isExternalLink = linkHref?.startsWith('http://') || linkHref?.startsWith('https://')
 
-                const cardContent = (
-                  <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
-                    <div className="aspect-square relative mb-6 pointer-events-none">
-                      <Image
-                        alt={card.image?.alt || card.titleJa || ''}
-                        src={imageSrc}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
+                  const cardContent = (
+                    <div className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
+                      <div className="aspect-square relative mb-6 pointer-events-none">
+                        <Image
+                          alt={card.image?.alt || card.titleJa || ''}
+                          src={imageSrc}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      </div>
+                      <div className="space-y-1 pointer-events-none">
+                        <h3 className="album-title">{card.titleJa || ''}</h3>
+                        <p className="album-title opacity-80">{card.titleEn || ''}</p>
+                      </div>
                     </div>
-                    <div className="space-y-1 pointer-events-none">
-                      <h3 className="album-title">{card.titleJa || ''}</h3>
-                      <p className="album-title opacity-80">{card.titleEn || ''}</p>
-                    </div>
-                  </div>
-                )
-
-                return card.isActive !== false ? (
-                  isExternalLink ? (
-                    <a
-                      key={index}
-                      className="album-link"
-                      href={linkHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {cardContent}
-                    </a>
-                  ) : (
-                    <Link
-                      key={index}
-                      className="album-link"
-                      href={linkHref || '#'}
-                    >
-                      {cardContent}
-                    </Link>
                   )
-                ) : (
-                  <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
-                    <div className="aspect-square relative mb-6">
-                      <Image
-                        alt={card.image?.alt || card.titleJa || ''}
-                        src={imageSrc}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
+
+                  return card.isActive !== false ? (
+                    isExternalLink ? (
+                      <a
+                        key={index}
+                        className="album-link"
+                        href={linkHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {cardContent}
+                      </a>
+                    ) : (
+                      <Link
+                        key={index}
+                        className="album-link"
+                        href={linkHref || '#'}
+                      >
+                        {cardContent}
+                      </Link>
+                    )
+                  ) : (
+                    <div key={index} className={`album-card ${card.colorScheme} p-8 rounded-none aspect-square`}>
+                      <div className="aspect-square relative mb-6">
+                        <Image
+                          alt={card.image?.alt || card.titleJa || ''}
+                          src={imageSrc}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="album-title">{card.titleJa || ''}</h3>
+                        <p className="album-title opacity-80">{card.titleEn || ''}</p>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="album-title">{card.titleJa || ''}</h3>
-                      <p className="album-title opacity-80">{card.titleEn || ''}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* View Allボタン - 既存デザイン維持 */}
-            {homepage.viewAllButton?.show && (
-              <div className="flex justify-center mt-12">
-                <button className="view-all-button">
-                  {homepage.viewAllButton.text}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* 講座リストセクション */}
-          {courses && courses.length > 0 && (
-            <div className="w-full max-w-screen-xl mx-auto px-6 mb-16">
-              <div className="text-center mb-12">
-                <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
-                  COURSES
-                </h2>
-                <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto mb-4"></div>
-                <h3 className="text-2xl font-bold text-gray-900">講座一覧</h3>
+                  )
+                })}
               </div>
 
-              <div className="space-y-12">
-                {courses.map((course) => (
-                  <CourseCard key={course._id} course={course} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* FAQ & Chat Section - 統合コンポーネント */}
-          <ChatSectionWrapper
-            faqCards={faqCards}
-            chatSettings={chatSettings}
-          />
-
-          {/* About Section - カフェキネシについて */}
-          {aboutPage && aboutPage.isActive ? (
-            <AboutSection aboutData={aboutPage} />
-          ) : (
-            <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
-              <div className="text-center py-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">カフェキネシについて</h2>
-                <p className="text-gray-600 mb-4">
-                  Aboutページのデータを読み込んでいます...
-                </p>
-                <p className="text-sm text-gray-500">
-                  データ取得状態: {aboutPage ? 'データあり' : 'データなし'} /
-                  有効化: {aboutPage?.isActive ? 'ON' : 'OFF'}
-                </p>
-              </div>
-            </section>
-          )}
-
-          {/* ブログセクション - 既存のデザインを完全維持 */}
-          {homepage.blogSection?.showLatestPosts && (
-            <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
-              <div className="text-center mb-12">
-                <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
-                  {homepage.blogSection?.title || '最新の記事'}
-                </h2>
-                <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
-              </div>
-
-              {posts?.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {posts.map((post) => (
-                      <BlogCard
-                        key={post._id}
-                        image={urlForImage(post.mainImage)?.url() || '/images/blog-1.webp'}
-                        title={post.title}
-                        excerpt={post.excerpt}
-                        date={new Date(post.publishedAt).toLocaleDateString('ja-JP')}
-                        author={post.author}
-                        slug={post.slug}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="text-center mt-12">
-                    <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">
-                      ※ 最新の{homepage.blogSection.numberOfPosts}件を表示しています
-                    </p>
-                    <Link
-                      href="/blog"
-                      className="inline-flex items-center gap-2 px-6 py-2 text-sm font-medium text-[hsl(var(--text-primary))] border border-[hsl(var(--border))] rounded-full hover:bg-[hsl(var(--background-secondary))] transition-colors"
-                    >
-                      すべての記事を見る
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-[hsl(var(--text-secondary))]">
-                    記事がまだありません
-                  </p>
+              {/* View Allボタン - 既存デザイン維持 */}
+              {homepage.viewAllButton?.show && (
+                <div className="flex justify-center mt-12">
+                  <button className="view-all-button">
+                    {homepage.viewAllButton.text}
+                  </button>
                 </div>
               )}
-            </section>
-          )}
-        </main>
-        <SocialLinks />
-        <Footer />
-      </div>
-    </>
+            </div>
+
+
+            {/* FAQ & Chat Section - 統合コンポーネント */}
+            <ChatSectionWrapper
+              faqCards={faqCards}
+              chatSettings={chatSettings}
+            />
+
+            {/* About Section - カフェキネシについて */}
+            {aboutPage && aboutPage.isActive ? (
+              <AboutSection aboutData={aboutPage} />
+            ) : (
+              <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
+                <div className="text-center py-12">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">カフェキネシについて</h2>
+                  <p className="text-gray-600 mb-4">
+                    Aboutページのデータを読み込んでいます...
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    データ取得状態: {aboutPage ? 'データあり' : 'データなし'} /
+                    有効化: {aboutPage?.isActive ? 'ON' : 'OFF'}
+                  </p>
+                </div>
+              </section>
+            )}
+
+            {/* ブログセクション - 既存のデザインを完全維持 */}
+            {homepage.blogSection?.showLatestPosts && (
+              <section className="w-full max-w-screen-xl mx-auto px-6 py-16">
+                <div className="text-center mb-12">
+                  <h2 className="font-noto-serif text-sm font-medium text-[hsl(var(--text-primary))] tracking-[0.2em] uppercase mb-2">
+                    {homepage.blogSection?.title || '最新の記事'}
+                  </h2>
+                  <div className="w-12 h-px bg-[hsl(var(--border))] mx-auto"></div>
+                </div>
+
+                {posts?.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {posts.map((post) => (
+                        <BlogCard
+                          key={post._id}
+                          image={urlForImage(post.mainImage)?.url() || '/images/blog-1.webp'}
+                          title={post.title}
+                          excerpt={post.excerpt}
+                          date={new Date(post.publishedAt).toLocaleDateString('ja-JP')}
+                          author={post.author}
+                          slug={post.slug}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="text-center mt-12">
+                      <p className="text-sm text-[hsl(var(--text-secondary))] mb-4">
+                        ※ 最新の{homepage.blogSection.numberOfPosts}件を表示しています
+                      </p>
+                      <Link
+                        href="/blog"
+                        className="inline-flex items-center gap-2 px-6 py-2 text-sm font-medium text-[hsl(var(--text-primary))] border border-[hsl(var(--border))] rounded-full hover:bg-[hsl(var(--background-secondary))] transition-colors"
+                      >
+                        すべての記事を見る
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12h14" />
+                          <path d="m12 5 7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-[hsl(var(--text-secondary))]">
+                      記事がまだありません
+                    </p>
+                  </div>
+                )}
+              </section>
+            )}
+          </main>
+          <SocialLinks />
+          <Footer />
+        </div>
+      </>
     )
   } catch (error) {
     console.error('Error loading homepage:', error)

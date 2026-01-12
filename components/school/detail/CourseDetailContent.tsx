@@ -119,8 +119,8 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
         // 要素が表示されているかチェック
         if (style.display !== 'none' &&
-            style.visibility !== 'hidden' &&
-            rect.height > 0) {
+          style.visibility !== 'hidden' &&
+          rect.height > 0) {
           visibleElement = el
         }
       })
@@ -154,6 +154,14 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
 
   return (
     <article className="space-y-8">
+
+      {/* 講座説明セクション */}
+      {course.description && (
+        <section className="mb-12 prose prose-lg max-w-none text-gray-700 leading-relaxed">
+          <div dangerouslySetInnerHTML={{ __html: processMarkdownText(course.description) }} />
+        </section>
+      )}
+
       {/* 目次セクション */}
       {sections.length > 0 && (
         <nav className="mb-8 p-6 bg-gray-50 rounded-lg" aria-label="目次">
@@ -208,13 +216,13 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
         <div className="space-y-12">
           {sections.map((section) => (
             <section key={section.id} id={section.id} className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                  {section.title}
-                </h2>
-                <div
-                  className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: parseMarkdown(section.content) }}
-                />
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                {section.title}
+              </h2>
+              <div
+                className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: parseMarkdown(section.content) }}
+              />
             </section>
           ))}
         </div>
@@ -232,17 +240,17 @@ export default function CourseDetailContent({ course }: CourseDetailContentProps
       {/* 受講後の効果セクション */}
       {course.effects && course.effects.length > 0 && (
         <section id="effects" className="scroll-mt-24 border-l-4 border-gray-300 pl-6 min-h-[200px]">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
-              受講後の効果
-            </h2>
-            <ul className="text-gray-700 leading-relaxed space-y-2">
-              {course.effects.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="mr-2">•</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900">
+            受講後の効果
+          </h2>
+          <ul className="text-gray-700 leading-relaxed space-y-2">
+            {course.effects.map((item, index) => (
+              <li key={index} className="flex items-start">
+                <span className="mr-2">•</span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

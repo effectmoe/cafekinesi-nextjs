@@ -824,36 +824,4 @@ export const FAQ_LIST_QUERY = `
   }
 `
 
-// ホームページ用講座取得（階層構造付き）
-export const HOMEPAGE_COURSES_QUERY = `
-  *[_type == "course" && isActive == true && courseType == "main"] | order(order asc) {
-    _id,
-    courseId,
-    title,
-    subtitle,
-    description,
-    features,
-    image {
-      asset->,
-      alt
-    },
-    backgroundClass,
-    order,
-    ctaBox,
-    "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true] | order(order asc) {
-      _id,
-      courseId,
-      title,
-      subtitle,
-      description,
-      features,
-      image {
-        asset->,
-        alt
-      },
-      backgroundClass,
-      order,
-      ctaBox
-    }
-  }
-`
+
