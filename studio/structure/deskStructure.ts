@@ -1,8 +1,9 @@
 import {StructureBuilder} from 'sanity/structure'
+import {orderableDocumentListDeskItem} from '@sanity/orderable-document-list'
 import {PreviewPane} from '../components/PreviewPane'
 import {SchemaMapDashboard} from '../components/SchemaMapDashboard'
 
-export const structure = (S: StructureBuilder) =>
+export const structure = (S: StructureBuilder, context: any) =>
   S.list()
     .id('root')
     .title('コンテンツ')
@@ -122,29 +123,29 @@ export const structure = (S: StructureBuilder) =>
                           S.documentTypeList('course')
                             .title('すべての講座')
                             .filter('_type == "course"')
-                            .defaultOrdering([{ field: 'order', direction: 'asc' }])
+                            .defaultOrdering([{ field: 'orderRank', direction: 'asc' }])
                         ),
                       S.divider(),
-                      S.listItem()
-                        .title('主要講座')
-                        .id('main-courses')
-                        .child(
-                          S.documentList()
-                            .id('main-courses-list')
-                            .title('主要講座')
-                            .filter('_type == "course" && courseType == "main"')
-                            .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                        ),
-                      S.listItem()
-                        .title('補助講座')
-                        .id('auxiliary-courses')
-                        .child(
-                          S.documentList()
-                            .id('auxiliary-courses-list')
-                            .title('補助講座')
-                            .filter('_type == "course" && courseType == "auxiliary"')
-                            .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                        ),
+                      // 主要講座（ドラッグ&ドロップ並び替え可能）
+                      orderableDocumentListDeskItem({
+                        type: 'course',
+                        title: '主要講座（並び替え可能）',
+                        icon: () => '📚',
+                        id: 'orderable-main-courses',
+                        filter: 'courseType == "main"',
+                        S,
+                        context,
+                      }),
+                      // 補助講座（ドラッグ&ドロップ並び替え可能）
+                      orderableDocumentListDeskItem({
+                        type: 'course',
+                        title: '補助講座（並び替え可能）',
+                        icon: () => '📖',
+                        id: 'orderable-auxiliary-courses',
+                        filter: 'courseType == "auxiliary"',
+                        S,
+                        context,
+                      }),
                     ])
                 ),
 

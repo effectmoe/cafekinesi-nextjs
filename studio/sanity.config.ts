@@ -3,6 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import {orderableDocumentListDeskItem} from '@sanity/orderable-document-list'
 // import contentModelGraph from 'sanity-plugin-content-model-graph' // React 19互換性問題で一時無効化
 import {schemaTypes} from './schemas'
 import {structure} from './structure/deskStructure'

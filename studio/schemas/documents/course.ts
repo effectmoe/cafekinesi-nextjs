@@ -113,6 +113,14 @@ export default defineType({
       initialValue: 'informational',
     }),
 
+    // ========== 並び替え用フィールド ==========
+    defineField({
+      name: 'orderRank',
+      title: '並び順',
+      type: 'string',
+      hidden: true, // UIには表示しない（ドラッグ&ドロップで自動管理）
+    }),
+
     // ========== 既存フィールド ==========
     defineField({
       name: 'courseId',
