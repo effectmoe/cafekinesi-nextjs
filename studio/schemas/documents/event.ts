@@ -6,12 +6,12 @@ export default {
   description: '📍 使用箇所: /events/[slug], /calendar | ステータス: ✅ 使用中 | AI検索対応 | イベントの管理',
   fields: [
     // 並び替え用フィールド
-    defineField({
+    {
       name: 'orderRank',
       title: '並び順',
       type: 'string',
       hidden: true,
-    }),
+    },
     {
       name: 'title',
       title: 'イベント名',

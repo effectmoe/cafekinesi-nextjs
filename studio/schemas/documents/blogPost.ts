@@ -38,12 +38,12 @@ export default {
   ],
   fields: [
     // 並び替え用フィールド
-    defineField({
+    {
       name: 'orderRank',
       title: '並び順',
       type: 'string',
       hidden: true,
-    }),
+    },
     // === レイアウト設定 ===
     {
       name: 'contentOrder',
