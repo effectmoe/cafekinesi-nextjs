@@ -89,19 +89,19 @@ export const structure = (S: StructureBuilder, context: any) =>
             .id('content-list')
             .title('コンテンツ')
             .items([
-              // ブログ記事（並び替え可能）
+              // ブログ記事
               orderableDocumentListDeskItem({
                 type: 'blogPost',
-                title: 'ブログ記事（並び替え可能）',
+                title: 'ブログ記事',
                 icon: () => '📝',
                 id: 'orderable-blog-posts',
                 S,
                 context,
               }),
-              // 著者（並び替え可能）
+              // 著者
               orderableDocumentListDeskItem({
                 type: 'author',
-                title: '著者（並び替え可能）',
+                title: '著者',
                 icon: () => '✍️',
                 id: 'orderable-authors',
                 S,
@@ -134,7 +134,7 @@ export const structure = (S: StructureBuilder, context: any) =>
                       // 主要講座（ドラッグ&ドロップ並び替え可能）
                       orderableDocumentListDeskItem({
                         type: 'course',
-                        title: '主要講座（並び替え可能）',
+                        title: '主要講座',
                         icon: () => '📚',
                         id: 'orderable-main-courses',
                         filter: 'courseType == "main"',
@@ -144,7 +144,7 @@ export const structure = (S: StructureBuilder, context: any) =>
                       // 補助講座（ドラッグ&ドロップ並び替え可能）
                       orderableDocumentListDeskItem({
                         type: 'course',
-                        title: '補助講座（並び替え可能）',
+                        title: '補助講座',
                         icon: () => '📖',
                         id: 'orderable-auxiliary-courses',
                         filter: 'courseType == "auxiliary"',
@@ -156,20 +156,20 @@ export const structure = (S: StructureBuilder, context: any) =>
 
               S.divider(),
 
-              // イベント（並び替え可能）
+              // イベント
               orderableDocumentListDeskItem({
                 type: 'event',
-                title: 'イベント（並び替え可能）',
+                title: 'イベント',
                 icon: () => '📅',
                 id: 'orderable-events',
                 S,
                 context,
               }),
 
-              // インストラクター（並び替え可能）
+              // インストラクター
               orderableDocumentListDeskItem({
                 type: 'instructor',
-                title: 'インストラクター（並び替え可能）',
+                title: 'インストラクター',
                 icon: () => '👤',
                 id: 'orderable-instructors',
                 S,
