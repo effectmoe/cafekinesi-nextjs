@@ -59,7 +59,8 @@ function processMarkdownText(text: string): string {
       if (para.startsWith('**') && para.endsWith('**')) {
         return `<h3 class="font-semibold text-lg mt-6 mb-3">${para.replace(/\*\*/g, '')}</h3>`
       }
-      return `<p class="mb-4">${para}</p>`
+      // 単一の改行を<br>に変換
+      return `<p class="mb-4">${para.replace(/\n/g, '<br />')}</p>`
     })
     .filter(p => p)
     .join('')
