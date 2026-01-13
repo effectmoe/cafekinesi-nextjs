@@ -119,10 +119,16 @@ export default defineType({
       name: 'courseId',
       title: '講座ID',
       type: 'string',
-      description: '🔴 必須 | ⚠️ 重要: URLに使用される一意の識別子（例：kinesi1, peach-touch）。他の講座と重複しないようにしてください。',
-      placeholder: '【必須】例：kinesi1',
+      description: '🔴 必須 | ⚠️ 重要: URLに使用される一意の識別子（例：kinesi1, peach-touch）。英数字とハイフンのみ使用可能。日本語は使用できません。',
+      placeholder: '【必須】例：kinesi1, peach-touch',
       validation: (Rule) => Rule.required().custom(async (value, context) => {
         if (!value) return true
+
+        // 英数字とハイフンのみ許可（日本語禁止）
+        const validPattern = /^[a-zA-Z0-9-]+$/
+        if (!validPattern.test(value)) {
+          return '❌ 講座IDには英数字とハイフン（-）のみ使用できます。日本語は使用できません。\n\n例: peach-touch, kinesi1, chakra-kinesi'
+        }
 
         const { document } = context as any
         const currentId = document._id.replace(/^drafts\./, '')
