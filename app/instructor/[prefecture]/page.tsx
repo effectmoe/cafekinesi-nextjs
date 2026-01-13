@@ -85,8 +85,9 @@ async function getInstructorsByPrefecture(prefecture: string): Promise<Instructo
       } as any
     )
 
-    // 都道府県でフィルタリング
-    return (data || []).filter((instructor: Instructor) => instructor.region === prefecture)
+    // 都道府県でフィルタリング（日本語名で比較）
+    const prefectureName = PREFECTURE_NAMES[prefecture]
+    return (data || []).filter((instructor: Instructor) => instructor.region === prefectureName)
   } catch (error) {
     console.error('Failed to fetch instructors:', error)
     return []
@@ -127,7 +128,7 @@ export default async function PrefecturePage({ params }: PrefecturePageProps) {
     notFound()
   }
 
-  const instructors = await getInstructorsByPrefecture(prefectureName)
+  const instructors = await getInstructorsByPrefecture(prefecture)
 
   return (
     <div className="min-h-screen bg-white">

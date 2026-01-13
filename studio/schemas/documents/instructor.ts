@@ -8,16 +8,15 @@ export default defineType({
   type: 'document',
   icon: User,
   description: '📍 使用箇所: /instructor, /instructor/[prefecture]/[slug] | ステータス: ✅ 使用中 | AI検索対応 | インストラクター情報の管理',
+  // デフォルトで全フィールド表示（グループなし）
   groups: [
     {
       name: 'ai',
       title: 'AI最適化',
-      default: false,
     },
     {
       name: 'basic',
       title: '基本情報',
-      default: true,
     },
     {
       name: 'profile',
@@ -82,7 +81,7 @@ export default defineType({
       type: 'string',
       description: '🔴 必須 | インストラクターの氏名',
       placeholder: '【必須】インストラクター名を入力',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().error('【名前】は必須です。インストラクター名を入力してください。'),
       group: 'basic',
     }),
     defineField({
@@ -95,7 +94,7 @@ export default defineType({
         maxLength: 96,
         slugify: instructorSlugify,
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().error('【スラッグ】は必須です。「Generate」ボタンをクリックしてください。'),
       group: 'basic',
     }),
     defineField({
@@ -131,8 +130,8 @@ export default defineType({
       rows: 5,
       description: '🔴 必須 | 短い自己紹介文',
       placeholder: '【必須】自己紹介を入力',
-      validation: (Rule) => Rule.required(),
-      group: 'profile',
+      validation: (Rule) => Rule.required().error('【自己紹介】は必須です。短い自己紹介文を入力してください。'),
+      group: 'basic',  // プロフィールタブから基本情報タブに移動
     }),
     defineField({
       name: 'profileDetails',
