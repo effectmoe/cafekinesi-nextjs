@@ -11,7 +11,6 @@ export default defineType({
     {
       name: 'content',
       title: 'コンテンツ',
-      default: true,
     },
     {
       name: 'services',

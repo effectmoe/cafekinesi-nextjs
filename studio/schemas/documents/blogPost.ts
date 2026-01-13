@@ -10,7 +10,6 @@ export default {
     {
       name: 'basic',
       title: '基本情報',
-      default: true,
     },
     {
       name: 'media',

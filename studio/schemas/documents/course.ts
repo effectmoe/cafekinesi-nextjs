@@ -25,7 +25,6 @@ export default defineType({
     {
       name: 'basic',
       title: '基本情報',
-      default: true,
     },
     {
       name: 'details',

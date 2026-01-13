@@ -11,7 +11,6 @@ export default defineType({
     {
       name: 'profile',
       title: 'プロフィール',
-      default: true,
     },
     {
       name: 'history',
