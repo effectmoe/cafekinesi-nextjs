@@ -40,6 +40,13 @@ export default defineType({
     },
   ],
   fields: [
+    // 並び替え用フィールド
+    defineField({
+      name: 'orderRank',
+      title: '並び順',
+      type: 'string',
+      hidden: true,
+    }),
     // ========== AI最適化フィールド ==========
     defineField({
       name: 'useForAI',

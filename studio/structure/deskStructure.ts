@@ -89,19 +89,24 @@ export const structure = (S: StructureBuilder, context: any) =>
             .id('content-list')
             .title('コンテンツ')
             .items([
-              // ブログ記事
-              S.listItem()
-                .id('blogPost')
-                .title('ブログ記事｜使用: /blog, /blog/[slug]')
-                .child(
-                  S.documentTypeList('blogPost')
-                    .title('ブログ記事')
-                    .filter('_type == "blogPost"')
-                    .apiVersion('2024-01-01')
-                    .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
-                ),
-              S.documentTypeListItem('author')
-                .title('著者｜使用: /author/[slug], /blog/*'),
+              // ブログ記事（並び替え可能）
+              orderableDocumentListDeskItem({
+                type: 'blogPost',
+                title: 'ブログ記事（並び替え可能）',
+                icon: () => '📝',
+                id: 'orderable-blog-posts',
+                S,
+                context,
+              }),
+              // 著者（並び替え可能）
+              orderableDocumentListDeskItem({
+                type: 'author',
+                title: '著者（並び替え可能）',
+                icon: () => '✍️',
+                id: 'orderable-authors',
+                S,
+                context,
+              }),
               S.documentTypeListItem('category')
                 .title('カテゴリー｜使用: menuItem参照（フロントエンドページ未実装？）'),
 
@@ -151,13 +156,25 @@ export const structure = (S: StructureBuilder, context: any) =>
 
               S.divider(),
 
-              // イベント
-              S.documentTypeListItem('event')
-                .title('イベント｜使用: /events/[slug], /calendar'),
+              // イベント（並び替え可能）
+              orderableDocumentListDeskItem({
+                type: 'event',
+                title: 'イベント（並び替え可能）',
+                icon: () => '📅',
+                id: 'orderable-events',
+                S,
+                context,
+              }),
 
-              // インストラクター
-              S.documentTypeListItem('instructor')
-                .title('インストラクター｜使用: /instructor, /instructor/[prefecture]/[slug]'),
+              // インストラクター（並び替え可能）
+              orderableDocumentListDeskItem({
+                type: 'instructor',
+                title: 'インストラクター（並び替え可能）',
+                icon: () => '👤',
+                id: 'orderable-instructors',
+                S,
+                context,
+              }),
             ])
         ),
 
