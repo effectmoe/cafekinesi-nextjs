@@ -1,5 +1,6 @@
 import { defineType, defineField } from 'sanity'
 import { User } from 'lucide-react'
+import { instructorSlugify } from '../../utils/slugify'
 
 export default defineType({
   name: 'instructor',
@@ -92,6 +93,7 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 96,
+        slugify: instructorSlugify,
       },
       validation: (Rule) => Rule.required(),
       group: 'basic',
@@ -117,7 +119,7 @@ export default defineType({
           type: 'string',
           description: '🔴 必須',
           placeholder: '【必須】画像の代替テキストを入力',
-          validation: (Rule) => Rule.required(),
+          validation: (Rule) => Rule.required().error('画像の代替テキスト（アクセシビリティ用）は必須です。'),
         }),
       ],
       group: 'basic',
@@ -140,8 +142,8 @@ export default defineType({
         type: 'block',
         marks: {
           decorators: [
-            {title: '太字', value: 'strong'},
-            {title: '斜体', value: 'em'},
+            { title: '太字', value: 'strong' },
+            { title: '斜体', value: 'em' },
           ],
         },
       }],
@@ -152,7 +154,7 @@ export default defineType({
       name: 'region',
       title: '活動地域',
       type: 'string',
-      description: 'インストラクターの主な活動地域を選択',
+      description: '🔴 必須 | インストラクターの主な活動地域を選択（地図のフィルタリングに使用されます）',
       options: {
         list: [
           // 北海道
@@ -216,6 +218,7 @@ export default defineType({
         ],
         layout: 'dropdown',
       },
+      validation: (Rule) => Rule.required().error('活動地域を選択してください。'),
       group: 'basic',
     }),
     defineField({
@@ -480,10 +483,6 @@ export default defineType({
       rows: 5,
       readOnly: true,
       description: 'ベクトルDBに保存されるテキスト（自動生成）',
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
     }),
   ],
   preview: {

@@ -24,9 +24,13 @@
     "date-fns": "^4.1.0",
     "sanity": "^4.10.0",
     "sanity-plugin-content-model-graph": "^2.0.0",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "wanakana": "^5.3.1"
   },
   "overrides": {
     "@sanity/ui": "^3.1.10"
+  },
+  "devDependencies": {
+    "@types/wanakana": "^4.0.6"
   }
 }
