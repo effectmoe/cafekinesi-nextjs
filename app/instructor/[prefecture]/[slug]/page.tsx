@@ -37,17 +37,19 @@ async function getInstructor(slug: string): Promise<Instructor | null> {
 export async function generateStaticParams() {
   try {
     const instructors = await publicClient.fetch<Instructor[]>(INSTRUCTORS_QUERY)
-    return instructors.map((instructor) => {
-      // インストラクターのregionから都道府県スラッグを取得
-      const prefectureSlug = instructor.region
-        ? (Object.entries(SLUG_TO_PREFECTURE).find(([_, name]) => name === instructor.region)?.[0] || 'hokkaido')
-        : 'hokkaido'
+    return instructors
+      .filter((instructor) => instructor.slug?.current) // slugがないインストラクターを除外
+      .map((instructor) => {
+        // インストラクターのregionから都道府県スラッグを取得
+        const prefectureSlug = instructor.region
+          ? (Object.entries(SLUG_TO_PREFECTURE).find(([_, name]) => name === instructor.region)?.[0] || 'hokkaido')
+          : 'hokkaido'
 
-      return {
-        prefecture: prefectureSlug,
-        slug: instructor.slug.current,
-      }
-    })
+        return {
+          prefecture: prefectureSlug,
+          slug: instructor.slug.current,
+        }
+      })
   } catch (error) {
     console.error('Failed to generate static params:', error)
     return []
@@ -78,9 +80,9 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: instructor.seo?.ogImage
+      images: instructor.seo?.ogImage?.asset?.url
         ? [instructor.seo.ogImage.asset.url]
-        : instructor.image
+        : instructor.image?.asset?.url
         ? [instructor.image.asset.url]
         : ['/og-image.jpg'],
     },
