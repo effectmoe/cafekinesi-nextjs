@@ -52,7 +52,7 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
 
       {/* AI Chat Section - インラインチャットモーダル */}
       {chatSettings?.isActive !== false && (
-        <div ref={chatSectionRef}>
+        <div ref={chatSectionRef} id="inline-chat-section">
           <Suspense fallback={
             <div className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
               <div className="max-w-5xl mx-auto">
