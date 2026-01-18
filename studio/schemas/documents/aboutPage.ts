@@ -95,6 +95,36 @@ export default defineType({
               type: 'string'
             },
             {
+              name: 'cardBgColor',
+              title: 'カード背景色（トップページ用）',
+              type: 'string',
+              description: 'トップページの「カフェキネシへようこそ」セクションでのカード背景色',
+              options: {
+                list: [
+                  { title: '自動（デフォルト）', value: 'auto' },
+                  { title: 'ウォームベージュ', value: '#f8f6f3' },
+                  { title: 'ソフトセージ', value: '#f5f7f6' },
+                  { title: 'ラベンダーミスト', value: '#f6f5f8' },
+                  { title: 'クリーム', value: '#f7f6f4' },
+                  { title: 'ペールティール', value: '#f4f7f7' },
+                  { title: 'アイボリー', value: '#f8f7f5' },
+                  { title: 'クールグレー', value: '#f5f6f8' },
+                  { title: 'ミントクリーム', value: '#f7f8f6' },
+                  { title: 'ブラッシュ', value: '#f8f5f6' },
+                  { title: 'シーフォーム', value: '#f6f8f7' },
+                  { title: 'カスタム', value: 'custom' }
+                ]
+              },
+              initialValue: 'auto'
+            },
+            {
+              name: 'customCardBgColor',
+              title: 'カスタムカード背景色',
+              type: 'string',
+              description: 'HEXカラーコード（例: #f8f6f3）',
+              hidden: ({ parent }: { parent?: { cardBgColor?: string } }) => parent?.cardBgColor !== 'custom'
+            },
+            {
               name: 'layout',
               title: 'レイアウト',
               type: 'string',
@@ -212,6 +242,52 @@ export default defineType({
                   title: 'リンク先URL',
                   type: 'string',
                   description: '例: /school または https://example.com'
+                },
+                {
+                  name: 'bgColor',
+                  title: '背景色',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'ストーン（デフォルト）', value: 'stone' },
+                      { title: 'ダークグレー', value: 'dark' },
+                      { title: 'プライマリ（緑）', value: 'primary' },
+                      { title: 'セカンダリ（青）', value: 'secondary' },
+                      { title: 'アクセント（オレンジ）', value: 'accent' },
+                      { title: 'ティール', value: 'teal' },
+                      { title: 'パープル', value: 'purple' },
+                      { title: 'カスタム', value: 'custom' }
+                    ]
+                  },
+                  initialValue: 'stone'
+                },
+                {
+                  name: 'customBgColor',
+                  title: 'カスタム背景色',
+                  type: 'string',
+                  description: 'HEXカラーコード（例: #3B82F6）',
+                  hidden: ({ parent }: { parent?: { bgColor?: string } }) => parent?.bgColor !== 'custom'
+                },
+                {
+                  name: 'textColor',
+                  title: 'テキスト色',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'ブラウン（デフォルト）', value: 'brown' },
+                      { title: '白', value: 'white' },
+                      { title: '黒', value: 'black' },
+                      { title: 'カスタム', value: 'custom' }
+                    ]
+                  },
+                  initialValue: 'brown'
+                },
+                {
+                  name: 'customTextColor',
+                  title: 'カスタムテキスト色',
+                  type: 'string',
+                  description: 'HEXカラーコード（例: #FFFFFF）',
+                  hidden: ({ parent }: { parent?: { textColor?: string } }) => parent?.textColor !== 'custom'
                 }
               ],
               hidden: ({ parent }) => parent?.layout === 'cards' || parent?.layout === 'link-cards'

@@ -2,7 +2,8 @@ import BlogCard from '@/components/BlogCard'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import SocialLinks from '@/components/SocialLinks'
-import AboutSection from '@/components/AboutSection'
+// import AboutSection from '@/components/AboutSection' // バックアップ: 元のレイアウト
+import AboutSectionCompact from '@/components/AboutSectionCompact' // 新しいコンパクトレイアウト
 import { ChatSectionWrapper } from '@/components/ChatSectionWrapper'
 import { sanityFetch, urlForImage } from '@/lib/sanity.fetch'
 import { HOMEPAGE_QUERY, RECENT_POSTS_QUERY, ABOUT_PAGE_QUERY, FAQ_CARDS_QUERY, CHAT_MODAL_QUERY } from '@/lib/queries'
@@ -267,7 +268,7 @@ export default async function HomePage() {
                     'カフェキネシについて': '/images/about.webp',
                     'スクール': '/images/school.webp',
                     'インストラクター': '/images/instructor.webp',
-                    'ブログ': '/images/blog.webp',
+                    'カフェキネシ登録のご案内': '/images/blog.webp',
                     'アロマ購入': '/images/aroma.webp',
                     'メンバー': '/images/member.webp'
                   }
@@ -359,8 +360,9 @@ export default async function HomePage() {
             />
 
             {/* About Section - カフェキネシについて */}
+            {/* 元のレイアウトに戻す場合: AboutSection を使用し、AboutSectionCompact をコメントアウト */}
             {aboutPage && aboutPage.isActive ? (
-              <AboutSection aboutData={aboutPage} />
+              <AboutSectionCompact aboutData={aboutPage} />
             ) : (
               <section id="about-section" className="w-full max-w-screen-xl mx-auto px-6 py-16">
                 <div className="text-center py-12">

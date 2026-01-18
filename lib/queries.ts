@@ -695,6 +695,8 @@ export const ABOUT_PAGE_QUERY = `
     sections[] {
       id,
       title,
+      cardBgColor,
+      customCardBgColor,
       layout,
       backgroundColor,
       customBackgroundColor,
@@ -713,7 +715,11 @@ export const ABOUT_PAGE_QUERY = `
       button {
         show,
         text,
-        link
+        link,
+        bgColor,
+        customBgColor,
+        textColor,
+        customTextColor
       },
       cards[] {
         number,
@@ -821,6 +827,37 @@ export const FAQ_LIST_QUERY = `
       order
     },
     order
+  }
+`
+
+// カフェキネシ登録のご案内ページ情報を取得
+export const REGISTRATION_PAGE_QUERY = `
+  *[_type == "registrationPage" && isActive == true][0] {
+    _id,
+    title,
+    titleEn,
+    showTableOfContents,
+    sections[] {
+      id,
+      title,
+      content,
+      button {
+        show,
+        text,
+        url,
+        isExternal,
+        bgColor,
+        customBgColor,
+        textColor,
+        customTextColor
+      }
+    },
+    seo {
+      title,
+      description,
+      keywords
+    },
+    isActive
   }
 `
 

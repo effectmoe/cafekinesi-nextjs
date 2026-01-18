@@ -24,6 +24,7 @@ import instructor from './documents/instructor'
 import instructorPage from './documents/instructorPage'
 import profilePage from './documents/profilePage'
 import aboutPage from './documents/aboutPage'
+import registrationPage from './documents/registrationPage'
 import representative from './representative'
 import { faq } from './faq'
 import { faqCategory } from './faqCategory'
@@ -89,6 +90,7 @@ export const schemaTypes = [
   instructorPage,
   profilePage,
   aboutPage,
+  registrationPage,
   representative,
   faq,
   faqCategory,

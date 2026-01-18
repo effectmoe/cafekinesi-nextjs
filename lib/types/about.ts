@@ -44,6 +44,8 @@ export interface AboutLinkCard {
 export interface AboutSection {
   id: string
   title: string
+  cardBgColor?: string
+  customCardBgColor?: string
   layout: 'image-left' | 'image-right' | 'text-only' | 'cards' | 'link-cards'
   backgroundColor?: string
   customBackgroundColor?: string
@@ -59,6 +61,10 @@ export interface AboutSection {
     show: boolean
     text?: string
     link?: string
+    bgColor?: string
+    customBgColor?: string
+    textColor?: string
+    customTextColor?: string
   }
   cards?: AboutFeatureCard[]
   linkCards?: AboutLinkCard[]

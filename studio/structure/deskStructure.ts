@@ -73,6 +73,18 @@ export const structure = (S: StructureBuilder, context: any) =>
                 .title('インストラクターページ設定｜使用: /instructor'),
               S.documentTypeListItem('profilePage')
                 .title('プロフィールページ｜使用: /profile'),
+              S.listItem()
+                .id('registrationPage')
+                .title('📝 カフェキネシ登録のご案内｜使用: /registration')
+                .child(
+                  S.document()
+                    .schemaType('registrationPage')
+                    .documentId('registrationPage')
+                    .views([
+                      S.view.form().id('registrationPageEditor').title('編集'),
+                      S.view.component(PreviewPane).id('registrationPagePreview').title('プレビュー')
+                    ])
+                ),
             ])
         ),
 
@@ -450,6 +462,7 @@ export const structure = (S: StructureBuilder, context: any) =>
           'schoolPageContent',
           'instructorPage',
           'profilePage',
+          'registrationPage',
 
           // コンテンツ
           'blogPost',

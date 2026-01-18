@@ -43,15 +43,17 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
   return (
     <>
       {/* FAQセクション - 新デザイン */}
+      {/* AI無効化中のため、onQuestionClickを無効化 */}
       <FAQSection
         faqs={faqCards}
         title={chatSettings?.faqSectionTitle}
         subtitle={chatSettings?.faqSectionSubtitle}
-        onQuestionClick={handleQuestionClick}
+        // onQuestionClick={handleQuestionClick}
       />
 
       {/* AI Chat Section - インラインチャットモーダル */}
-      {chatSettings?.isActive !== false && (
+      {/* 一時的に無効化（DeepSeek API残高不足のため） */}
+      {/* chatSettings?.isActive !== false && (
         <div ref={chatSectionRef} id="inline-chat-section">
           <Suspense fallback={
             <div className="w-full py-6 px-6 bg-[hsl(35,25%,95%)]">
@@ -70,7 +72,7 @@ export function ChatSectionWrapper({ faqCards, chatSettings }: ChatSectionWrappe
             />
           </Suspense>
         </div>
-      )}
+      ) */}
 
       {/* アクションボタン - チャットモーダルの下 */}
       {chatSettings?.calendarButtonEnabled && (
