@@ -29,7 +29,7 @@ export default function CourseComparisonTable({ courses }: CourseComparisonTable
 
   // 対象者を判定
   const getTarget = (course: Course) => {
-    if (course.courseId.includes('kinesi1') || course.order === 1) {
+    if ((course.courseId && course.courseId.includes('kinesi1')) || course.order === 1) {
       return '初心者・誰でもOK'
     }
     return 'カフェキネシⅠ修了者'

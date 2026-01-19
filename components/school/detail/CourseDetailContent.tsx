@@ -9,6 +9,9 @@ interface CourseDetailContentProps {
 
 // 簡易マークダウンパーサー（HTML table対応）
 function parseMarkdown(text: string): string {
+  // textがnullまたはundefinedの場合は空文字を返す
+  if (!text) return ''
+
   // HTMLテーブルが含まれている場合は特別処理
   if (text.includes('<table')) {
     // テーブルにTailwindスタイルを追加
